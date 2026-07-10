@@ -56,7 +56,7 @@ export function generateFallback(pantry, avoid = []) {
   return withVibe({
     id: `custom-${Date.now()}`,
     name,
-    tagline: 'Composed offline by the house template — the AI was unreachable.',
+    tagline: 'Improvised off-menu while our robot bartender takes a breather.',
     category: 'AI Original',
     alcoholic: base && isBoozeCategory(base.cat) ? 'Alcoholic' : 'Non alcoholic',
     glass,

@@ -7,6 +7,14 @@ import { useEffect, useRef, useState, type ReactNode } from 'react';
 
 export const EASE: [number, number, number, number] = [0.22, 0.9, 0.3, 1];
 
+/**
+ * True when the page loaded in a hidden/background tab. requestAnimationFrame
+ * doesn't tick there, so entrance animations would freeze content at its
+ * invisible initial frame — in that case we skip entrances entirely.
+ */
+export const LOADED_HIDDEN =
+  typeof document !== 'undefined' && document.visibilityState === 'hidden';
+
 /** Fade-and-rise reveal for blocks. */
 export function Reveal({
   children,
@@ -22,7 +30,7 @@ export function Reveal({
   return (
     <motion.div
       className={className}
-      initial={{ opacity: 0, y }}
+      initial={LOADED_HIDDEN ? false : { opacity: 0, y }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: '-60px' }}
       transition={{ duration: 0.7, delay, ease: EASE }}
@@ -55,7 +63,7 @@ export function Lines({
   return (
     <Tag
       className={className}
-      initial="hidden"
+      initial={LOADED_HIDDEN ? false : 'hidden'}
       whileInView="show"
       viewport={{ once: true, margin: '-40px' }}
       transition={{ staggerChildren: stagger }}
@@ -82,7 +90,7 @@ export function Rule({ delay = 0 }: { delay?: number }) {
   return (
     <motion.div
       className="rule"
-      initial={{ scaleX: 0 }}
+      initial={LOADED_HIDDEN ? false : { scaleX: 0 }}
       whileInView={{ scaleX: 1 }}
       viewport={{ once: true, margin: '-40px' }}
       transition={{ duration: 0.9, delay, ease: EASE }}
@@ -91,7 +99,11 @@ export function Rule({ delay = 0 }: { delay?: number }) {
   );
 }
 
-/** Counts up when scrolled into view. */
+/**
+ * Counts up when scrolled into view. Always lands on the final number —
+ * if the animation can't run (reduced motion, hidden/background tab, or it
+ * gets interrupted) the value snaps to `to` instead of freezing mid-count.
+ */
 export function Counter({ to, duration = 1.4 }: { to: number; duration?: number }) {
   const ref = useRef<HTMLSpanElement>(null);
   const inView = useInView(ref, { once: true, margin: '-40px' });
@@ -99,7 +111,7 @@ export function Counter({ to, duration = 1.4 }: { to: number; duration?: number 
   const [val, setVal] = useState(0);
   useEffect(() => {
     if (!inView) return;
-    if (reduced) {
+    if (reduced || document.visibilityState === 'hidden') {
       setVal(to);
       return;
     }
@@ -107,8 +119,22 @@ export function Counter({ to, duration = 1.4 }: { to: number; duration?: number 
       duration,
       ease: EASE,
       onUpdate: (v) => setVal(Math.round(v)),
+      onComplete: () => setVal(to),
     });
-    return () => controls.stop();
+    const snap = () => {
+      if (document.visibilityState === 'hidden') {
+        controls.stop();
+        setVal(to);
+      }
+    };
+    document.addEventListener('visibilitychange', snap);
+    const safety = setTimeout(() => setVal(to), duration * 1000 + 400);
+    return () => {
+      controls.stop();
+      clearTimeout(safety);
+      document.removeEventListener('visibilitychange', snap);
+      setVal(to);
+    };
   }, [inView, to, duration, reduced]);
   return <span ref={ref}>{val}</span>;
 }

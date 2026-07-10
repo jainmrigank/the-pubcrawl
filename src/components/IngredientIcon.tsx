@@ -1,23 +1,10 @@
-import { useState } from 'react';
+import { CategoryGlyph } from '../icons';
 
-/** Small ingredient thumbnail; falls back to a bordered mono initial when no image exists. */
-export function IngredientIcon({ name, image, size = 24 }: { name: string; image?: string; category?: string; size?: number }) {
-  const [broken, setBroken] = useState(false);
-  if (!image || broken)
-    return (
-      <span className="ing-letter" style={{ width: size, height: size, fontSize: size * 0.5 }}>
-        {name.trim().charAt(0).toUpperCase()}
-      </span>
-    );
+/** Small hand-drawn glyph for an ingredient, keyed off its category. */
+export function IngredientIcon({ category, size = 20 }: { name?: string; image?: string; category?: string; size?: number }) {
   return (
-    <img
-      className="ing-img"
-      src={image}
-      alt=""
-      width={size}
-      height={size}
-      loading="lazy"
-      onError={() => setBroken(true)}
-    />
+    <span className="ing-glyph" style={{ width: size, height: size }}>
+      <CategoryGlyph category={category} size={size - 2} />
+    </span>
   );
 }

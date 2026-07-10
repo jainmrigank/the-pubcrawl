@@ -70,12 +70,26 @@ export const KNOWLEDGE: KGroup[] = [
   {
     id: 'language',
     index: 'D',
-    title: 'The Language',
+    title: 'The Lingo',
     note: 'Terms worth knowing cold',
     terms: [
+      {
+        id: 'oz',
+        term: 'What’s an Oz?',
+        icon: 'jigger',
+        def: `One ounce (oz) is 30 ml — the basic brick every recipe is built from. The pours you'll actually meet:
+1 oz = 30 ml
+¾ oz = 22.5 ml
+½ oz = 15 ml
+¼ oz = 7.5 ml
+1 barspoon = 5 ml
+1 dash ≈ 1 ml
+1 "shot" = 45–60 ml, depending where you drink
+A "splash" is a short, casual pour (5–10 ml), "top up" means fill the rest of the glass with your mixer, and "a part" is just one unit of the ratio — any size you like, as long as every part matches.`,
+      },
       { id: 'abv', term: 'ABV & Proof', icon: 'percent', def: 'Alcohol by volume — spirits sit around 40%, liqueurs 15–30%, vermouth 15–18%. "Proof" is simply double the ABV in the US system: 80 proof = 40%.' },
       { id: 'dash', term: 'Dash', icon: 'drop', def: 'The smallest working measure — roughly 0.8–1 ml, a firm flick from a bitters bottle. Two or three dashes season a drink the way salt seasons food.' },
-      { id: 'measures', term: 'The Jigger Standard', icon: 'ratio', def: 'Recipes speak in ratios: 60 ml (2 oz) of base spirit, 30 ml (1 oz) of modifier, 15–25 ml of citrus or syrup. Learn a recipe as a ratio and you can scale it anywhere.' },
+      { id: 'measures', term: 'Ratios, Not Recipes', icon: 'ratio', def: 'Good recipes speak in ratios: 60 ml (2 oz) of base spirit, 30 ml (1 oz) of modifier, 15–25 ml of citrus or syrup. Learn a drink as a ratio and you can scale it to any glass, jug or party.' },
       { id: 'syrup', term: 'Simple Syrup', icon: 'drop', def: 'Equal parts sugar and hot water, stirred until clear; keeps two weeks refrigerated. "Rich" syrup is 2:1 sugar to water — sweeter per millilitre, so use less.' },
       { id: 'bitters', term: 'Bitters', icon: 'drop', def: 'Intense botanical tinctures — Angostura, Peychaud\'s, orange — dosed by the dash. They bind sweet and strong flavours together; a Manhattan without bitters is just cold whiskey and vermouth.' },
       { id: 'vermouth', term: 'Vermouth', icon: 'wine', def: 'Wine fortified with spirit and infused with botanicals: dry (French, pale) or sweet (Italian, red). It is wine — refrigerate after opening and use within a month.' },

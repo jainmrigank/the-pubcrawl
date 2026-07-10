@@ -59,7 +59,7 @@ export function createApp() {
     const { imageBase64, mimeType } = req.body || {};
     if (!imageBase64) return res.status(400).json({ error: 'imageBase64 required' });
     if (!llmAvailable())
-      return res.status(503).json({ error: 'No LLM_API_KEY configured — add one to .env to enable photo identification.' });
+      return res.status(503).json({ error: 'Photo recognition isn\'t set up yet — add an API key to .env to switch it on.' });
     try {
       const reply = await chat(
         [
@@ -88,7 +88,7 @@ export function createApp() {
       res.json({ detected });
     } catch (err) {
       console.error('[identify]', err.message);
-      res.status(502).json({ error: `Could not identify ingredients: ${err.message}` });
+      res.status(502).json({ error: `Couldn't read that photo — ${err.message}` });
     }
   });
 

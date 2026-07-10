@@ -79,7 +79,7 @@ export function Typeahead({ onAdd }: Props) {
           onChange={(e) => setQ(e.target.value)}
           onKeyDown={onKey}
           onFocus={() => q.trim() && setOpen(true)}
-          placeholder="GIN, YUZU, APEROL, MINT…"
+          placeholder="GIN, MINT, WHATEVER YOU'VE GOT…"
           aria-label="Search ingredients"
         />
       </div>
@@ -97,7 +97,7 @@ export function Typeahead({ onAdd }: Props) {
                 choose(i);
               }}
             >
-              <IngredientIcon name={r.name} image={r.image} size={26} />
+              <IngredientIcon category={r.category} size={22} />
               <span className="ta-name">{r.name}</span>
               <span className="ta-cat">{r.category}</span>
             </li>

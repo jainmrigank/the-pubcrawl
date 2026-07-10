@@ -50,7 +50,7 @@ export function UploadZone({ onAdd, onAddAll, pantry }: Props) {
       setPreview(preview);
       const res = await identifyImage(b64, mime);
       setDetected(res.detected);
-      if (!res.detected.length) setError('Nothing legible in that shot. Try closer, straighter, brighter.');
+      if (!res.detected.length) setError('Couldn\'t make anything out — try a closer, brighter shot.');
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Identification failed');
     } finally {
@@ -94,8 +94,8 @@ export function UploadZone({ onAdd, onAddAll, pantry }: Props) {
         />
         {preview ? <img className="dz-preview" src={preview} alt="your shelf" /> : <Camera size={26} />}
         <div className="dz-text">
-          <strong>{busy ? 'READING LABELS' : 'DROP A PHOTO'}</strong>
-          <span>{busy ? 'The machine is squinting at your bottles.' : 'Bottles, fruit, herbs — we identify all of it.'}</span>
+          <strong>{busy ? 'HAVING A LOOK…' : 'SNAP YOUR SHELF'}</strong>
+          <span>{busy ? 'Checking your bottles and bits.' : 'Bottles, fruit, whatever\'s lying around — we\'ll spot it.'}</span>
         </div>
         {busy && <span className="scanline" aria-hidden />}
       </div>
@@ -105,15 +105,15 @@ export function UploadZone({ onAdd, onAddAll, pantry }: Props) {
       {fresh.length > 0 && (
         <div className="detected">
           <div className="detected-head">
-            <span className="k-label">FOUND IN FRAME — {fresh.length}</span>
+            <span className="k-label">SPOTTED IN YOUR PHOTO — {fresh.length}</span>
             <button className="text-btn" onClick={() => onAddAll(fresh)}>
               ADD ALL <Plus size={12} />
             </button>
           </div>
           <div className="chip-row">
             {fresh.map((d) => (
-              <button key={d.name} className="chip chip-add" onClick={() => onAdd(d)} title={`Detected as “${d.detectedAs}”`}>
-                <IngredientIcon name={d.name} image={d.image} size={20} />
+              <button key={d.name} className="chip chip-add" onClick={() => onAdd(d)} title={`Spotted as “${d.detectedAs}”`}>
+                <IngredientIcon category={d.category} size={18} />
                 {d.name}
                 <Plus size={11} />
               </button>

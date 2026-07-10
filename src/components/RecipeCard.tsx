@@ -40,13 +40,13 @@ export function RecipeCard({ recipe, vibe, index, onVideo }: Props) {
             </div>
           ) : (
             <div className="fc-img fc-img-ai">
-              <span className="fc-ai-mark">{recipe.source === 'ai' ? 'AI' : 'HOUSE'}</span>
+              <span className="fc-ai-mark">SPECIAL</span>
               <GlassIcon glass={recipe.glass} size={72} />
             </div>
           )}
           <div className="fc-strip">
             <div className="fc-toprow">
-              <span className="k-label">{isAI ? (recipe.source === 'ai' ? 'MACHINE DRAFT' : 'HOUSE DRAFT') : `Nº ${String(index + 1).padStart(3, '0')}`}</span>
+              <span className="k-label">{isAI ? (recipe.source === 'ai' ? 'HOUSE SPECIAL' : 'HOUSE SPECIAL — OFF-MENU') : `Nº ${String(index + 1).padStart(3, '0')}`}</span>
               <span className="fc-vibe">
                 <i className="swatch" />
                 {vibe.label}
@@ -58,16 +58,12 @@ export function RecipeCard({ recipe, vibe, index, onVideo }: Props) {
                 <GlassIcon glass={recipe.glass} size={16} />
                 {recipe.glass || 'Any glass'}
               </span>
-              {recipe.iba && <span className="k-label dim">IBA</span>}
+              {recipe.iba && <span className="k-label dim">CLASSIC</span>}
               {(recipe.alcoholic || '').toLowerCase().includes('non') && <span className="k-label dim">ZERO-PROOF</span>}
             </div>
             {recipe.total != null && (
               <div className={`fc-status ${ready ? 'ready' : ''}`}>
-                {ready ? (
-                  <>READY TO POUR</>
-                ) : (
-                  <>MISSING {missing.length} — {missing.join(', ').toUpperCase()}</>
-                )}
+                {ready ? <>READY TO POUR</> : <>NEEDS {missing.join(', ').toUpperCase()}</>}
               </div>
             )}
           </div>
@@ -76,7 +72,7 @@ export function RecipeCard({ recipe, vibe, index, onVideo }: Props) {
         {/* ---------- back ---------- */}
         <div className="ff back">
           <div className="fb-head">
-            <span className="k-label">{isAI ? 'ORIGINAL' : `Nº ${String(index + 1).padStart(3, '0')}`}</span>
+            <span className="k-label">{isAI ? 'HOUSE SPECIAL' : `Nº ${String(index + 1).padStart(3, '0')}`}</span>
             <h3>{recipe.name}</h3>
             {recipe.tagline && <p className="fb-tagline">{recipe.tagline}</p>}
           </div>
@@ -104,7 +100,7 @@ export function RecipeCard({ recipe, vibe, index, onVideo }: Props) {
                 onVideo(recipe);
               }}
             >
-              WATCH <Play size={11} />
+              WATCH IT MADE <Play size={11} />
             </button>
           </div>
         </div>

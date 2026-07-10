@@ -71,7 +71,7 @@ export async function chat(messages, { temperature = 0.7 } = {}) {
       console.warn(`[llm] ${err.message} — trying next model`);
     }
   }
-  throw new Error('All AI models are over quota right now — try again in a minute.');
+  throw new Error('Our bartender is swamped right now — give it a minute and try again.');
 }
 
 /** Pull the first JSON value out of an LLM reply (handles ```json fences). */
