@@ -109,31 +109,45 @@ export function Counter({ to, duration = 1.4 }: { to: number; duration?: number 
   const inView = useInView(ref, { once: true, margin: '-40px' });
   const reduced = useReducedMotion();
   const [val, setVal] = useState(0);
+  const current = useRef(0);
   useEffect(() => {
     if (!inView) return;
     if (reduced || document.visibilityState === 'hidden') {
+      current.current = to;
       setVal(to);
       return;
     }
-    const controls = animate(0, to, {
-      duration,
+    // continue from wherever the count already is — when the live number
+    // arrives mid-animation the counter glides on instead of restarting at 0
+    const from = current.current;
+    const controls = animate(from, to, {
+      duration: from > 0 ? Math.min(0.6, duration) : duration,
       ease: EASE,
-      onUpdate: (v) => setVal(Math.round(v)),
-      onComplete: () => setVal(to),
+      onUpdate: (v) => {
+        current.current = Math.round(v);
+        setVal(current.current);
+      },
+      onComplete: () => {
+        current.current = to;
+        setVal(to);
+      },
     });
     const snap = () => {
       if (document.visibilityState === 'hidden') {
         controls.stop();
+        current.current = to;
         setVal(to);
       }
     };
     document.addEventListener('visibilitychange', snap);
-    const safety = setTimeout(() => setVal(to), duration * 1000 + 400);
+    const safety = setTimeout(() => {
+      current.current = to;
+      setVal(to);
+    }, duration * 1000 + 400);
     return () => {
       controls.stop();
       clearTimeout(safety);
       document.removeEventListener('visibilitychange', snap);
-      setVal(to);
     };
   }, [inView, to, duration, reduced]);
 

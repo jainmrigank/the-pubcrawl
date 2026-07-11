@@ -63,6 +63,7 @@ export default function App() {
   const [browseQ, setBrowseQ] = useState('');
   const [browseLimit, setBrowseLimit] = useState(12);
   const [browseLoading, setBrowseLoading] = useState(true);
+  const [browseError, setBrowseError] = useState(false);
   const [aiDrinks, setAiDrinks] = useState<Recipe[]>([]);
   const [vibeFilter, setVibeFilter] = useState<string>('');
   const [generating, setGenerating] = useState(false);
@@ -99,6 +100,14 @@ export default function App() {
     fetchLikes().then(setLikes).catch(() => {});
   }, []);
 
+  // the page behind the mobile drawer shouldn't scroll while it's open
+  useEffect(() => {
+    document.body.style.overflow = menuOpen ? 'hidden' : '';
+    return () => {
+      document.body.style.overflow = '';
+    };
+  }, [menuOpen]);
+
   useEffect(() => {
     try {
       localStorage.setItem('pubcrawl.tab', JSON.stringify(tab));
@@ -128,14 +137,15 @@ export default function App() {
     [likedIds]
   );
 
-  /* menu search / browse. Mood + search both apply server-side over all 441,
+  /* menu search / browse. Mood + search both apply server-side over the full catalogue,
      so a mood is never silently filtering a search down to nothing. */
   useEffect(() => {
     setBrowseLoading(true);
+    setBrowseError(false);
     const t = setTimeout(() => {
       fetchRecipes({ q: browseQ, vibe: vibeFilter, limit: browseLimit, seed: browseSeed, sort: loved ? 'likes' : undefined })
         .then(setBrowse)
-        .catch(() => {})
+        .catch(() => setBrowseError(true))
         .finally(() => setBrowseLoading(false));
     }, browseQ ? 220 : 0);
     return () => clearTimeout(t);
@@ -356,11 +366,11 @@ export default function App() {
                     </Reveal>
                     <div className="hero-stats">
                       <div className="stat">
-                        <span className="stat-n"><Counter to={health?.cocktails ?? 441} /></span>
+                        <span className="stat-n"><Counter to={health?.cocktails ?? 611} /></span>
                         <span className="k-label dim">DRINKS TO TRY</span>
                       </div>
                       <div className="stat">
-                        <span className="stat-n"><Counter to={health?.ingredients ?? 400} /></span>
+                        <span className="stat-n"><Counter to={health?.ingredients ?? 431} /></span>
                         <span className="k-label dim">INGREDIENTS WE KNOW</span>
                       </div>
                       <div className="stat">
@@ -382,7 +392,7 @@ export default function App() {
                           ? 'THE CROWD’S FAVOURITES FIRST'
                           : vibeFilter
                             ? `SHOWING ${featured.length} IN THIS MOOD`
-                            : `SHOWING ${featured.length} OF ${health?.cocktails ?? 441}`
+                            : `SHOWING ${featured.length} OF ${health?.cocktails ?? 611}`
                     }
                     loading={browseLoading}
                   />
@@ -404,7 +414,20 @@ export default function App() {
                       </button>
                     </div>
                   </div>
-                  {featured.length === 0 && !browseLoading ? (
+                  {featured.length === 0 && browseLoading ? (
+                    <div className="empty">
+                      <p className="empty-big">OPENING THE BAR…</p>
+                      <p className="k-label dim">FIRST VISIT OF THE DAY CAN TAKE HALF A MINUTE WHILE THE KITCHEN WAKES.</p>
+                    </div>
+                  ) : featured.length === 0 && browseError ? (
+                    <div className="empty">
+                      <p className="empty-big">THE BAR’S STILL WAKING UP.</p>
+                      <p className="k-label dim">GIVE IT A MOMENT, THEN KNOCK AGAIN.</p>
+                      <button className="btn empty-retry" onClick={() => setBrowseSeed(String(Math.random()))}>
+                        KNOCK AGAIN <ArrowRight size={14} />
+                      </button>
+                    </div>
+                  ) : featured.length === 0 && !browseLoading ? (
                     <div className="empty">
                       <p className="empty-big">NOTHING BY THAT NAME.</p>
                       <p className="k-label dim">TRY “NEGRONI” OR “RUM”, OR CLEAR THE MOOD FILTER.</p>
@@ -418,7 +441,7 @@ export default function App() {
                             SHOW 12 MORE DRINKS <ArrowDown size={14} />
                           </button>
                           <span className="k-label dim">
-                            {browse.length} OF {health?.cocktails ?? 441} ON SHOW
+                            {browse.length} OF {health?.cocktails ?? 611} ON SHOW
                           </span>
                           <button className="text-btn" onClick={surpriseMe}>
                             OR SURPRISE ME <Shuffle size={12} />

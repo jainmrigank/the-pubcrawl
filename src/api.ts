@@ -17,21 +17,49 @@ const HEADERS: Record<string, string> = API_BASE.includes('ngrok')
   ? { 'ngrok-skip-browser-warning': '1' }
   : {};
 
-async function get<T>(url: string): Promise<T> {
-  const res = await fetch(API_BASE + url, { headers: HEADERS });
-  if (!res.ok) throw new Error(`${url} → ${res.status}`);
-  return res.json();
+const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
+
+/**
+ * Reads retry with backoff: a free-tier API host sleeps when idle and the
+ * first request of a visit can hit it mid-wake (network error or 5xx).
+ * 4xx responses are real answers and are never retried.
+ */
+async function get<T>(url: string, tries = 4): Promise<T> {
+  let lastErr: unknown;
+  for (let i = 0; i < tries; i++) {
+    try {
+      const res = await fetch(API_BASE + url, { headers: HEADERS });
+      if (res.ok) return res.json();
+      if (res.status < 500) throw new Error(`${url} → ${res.status}`);
+      lastErr = new Error(`${url} → ${res.status}`);
+    } catch (err) {
+      lastErr = err;
+    }
+    if (i < tries - 1) await sleep(1500 * (i + 1));
+  }
+  throw lastErr;
 }
 
-async function post<T>(url: string, body: unknown): Promise<T> {
-  const res = await fetch(API_BASE + url, {
-    method: 'POST',
-    headers: { 'content-type': 'application/json', ...HEADERS },
-    body: JSON.stringify(body),
-  });
-  const json = await res.json().catch(() => ({}));
-  if (!res.ok) throw new Error((json as { error?: string }).error || `${url} → ${res.status}`);
-  return json as T;
+async function post<T>(url: string, body: unknown, retryable = false): Promise<T> {
+  let lastErr: unknown;
+  for (let i = 0; i < (retryable ? 3 : 1); i++) {
+    try {
+      const res = await fetch(API_BASE + url, {
+        method: 'POST',
+        headers: { 'content-type': 'application/json', ...HEADERS },
+        body: JSON.stringify(body),
+      });
+      const json = await res.json().catch(() => ({}));
+      if (res.ok) return json as T;
+      const msg = (json as { error?: string }).error || `${url} → ${res.status}`;
+      if (res.status < 500) throw new Error(msg);
+      lastErr = new Error(msg);
+    } catch (err) {
+      lastErr = err;
+    }
+    if (retryable && i < 2) await sleep(1500 * (i + 1));
+  }
+  throw lastErr;
 }
 
 export const fetchHealth = () => get<Health>('/api/health');
@@ -52,7 +80,7 @@ export const fetchRecipes = (opts: { vibe?: string; q?: string; limit?: number; 
 };
 
 export const matchRecipes = (ingredients: string[]) =>
-  post<MatchResult>('/api/recipes/match', { ingredients });
+  post<MatchResult>('/api/recipes/match', { ingredients }, true);
 
 export const identifyImage = (imageBase64: string, mimeType: string) =>
   post<{ detected: Ingredient[] }>('/api/identify', { imageBase64, mimeType });

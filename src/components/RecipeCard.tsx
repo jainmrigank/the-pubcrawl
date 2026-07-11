@@ -86,10 +86,13 @@ export function RecipeCard({ recipe, vibe, index, onVideo, onToggleTab, inTab = 
       <div className="fc-inner">
         {/* ---------- front ---------- */}
         <div className="ff front">
-          <CardActions recipe={recipe} vibe={vibe} onToggleTab={onToggleTab} inTab={inTab} removeMode={removeMode} />
+          {/* actions render only on the visible face: some mobile browsers let
+              composited children of the hidden face leak through backface-visibility,
+              which showed a mirrored second set of buttons on the left */}
+          {!flipped && <CardActions recipe={recipe} vibe={vibe} onToggleTab={onToggleTab} inTab={inTab} removeMode={removeMode} />}
           {recipe.thumb ? (
             <div className="fc-img">
-              <img src={recipe.thumb} alt={recipe.name} loading="lazy" />
+              <img src={recipe.thumb} alt={recipe.name} loading="lazy" decoding="async" />
             </div>
           ) : (
             <div className="fc-img fc-img-ai">
@@ -139,7 +142,7 @@ export function RecipeCard({ recipe, vibe, index, onVideo, onToggleTab, inTab = 
 
         {/* ---------- back ---------- */}
         <div className="ff back">
-          <CardActions recipe={recipe} vibe={vibe} onToggleTab={onToggleTab} inTab={inTab} removeMode={removeMode} />
+          {flipped && <CardActions recipe={recipe} vibe={vibe} onToggleTab={onToggleTab} inTab={inTab} removeMode={removeMode} />}
           <div className="fb-head">
             <span className="k-label">{isAI ? 'HOUSE SPECIAL' : `Nº ${String(index + 1).padStart(3, '0')}`}</span>
             <h3>{recipe.name}</h3>
