@@ -756,7 +756,9 @@ main { flex: 1; width: 100%; max-width: 1440px; margin: 0 auto; padding: 0 clamp
 .act-btn.on { background: var(--accent); border-color: var(--accent); color: var(--paper); }
 .act-btn.on:hover { background: var(--ink); border-color: var(--ink); }
 .act-btn.done { background: var(--accent); border-color: var(--accent); color: var(--paper); }
-.ff.back .fb-head { padding-right: 46px; }
+/* the corner buttons span 88px from the top; keep the head at least that tall
+   so the ingredient list's top rule never collides with them */
+.ff.back .fb-head { padding-right: 52px; min-height: 82px; }
 
 /* show-more row under the menu grid */
 .more-row {
