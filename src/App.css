@@ -709,12 +709,17 @@ main { flex: 1; width: 100%; max-width: 1440px; margin: 0 auto; padding: 0 clamp
 /* AI card accent */
 .fc.ai .ff { outline: 1px solid var(--ink); outline-offset: -5px; }
 
-/* put-it-on-the-tab button */
-.tab-btn {
+/* card corner actions: put-it-on-the-tab + share, on both faces */
+.card-actions {
   position: absolute;
   top: 10px;
   right: 10px;
   z-index: 3;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.act-btn {
   width: 36px;
   height: 36px;
   display: inline-flex;
@@ -726,9 +731,11 @@ main { flex: 1; width: 100%; max-width: 1440px; margin: 0 auto; padding: 0 clamp
   cursor: pointer;
   transition: background var(--t-fast) var(--ease), color var(--t-fast) var(--ease), transform var(--t-fast) var(--ease);
 }
-.tab-btn:hover { background: var(--ink); color: var(--paper); transform: scale(1.06); }
-.tab-btn.on { background: var(--accent); border-color: var(--accent); color: var(--paper); }
-.tab-btn.on:hover { background: var(--ink); border-color: var(--ink); }
+.act-btn:hover { background: var(--ink); color: var(--paper); transform: scale(1.06); }
+.act-btn.on { background: var(--accent); border-color: var(--accent); color: var(--paper); }
+.act-btn.on:hover { background: var(--ink); border-color: var(--ink); }
+.act-btn.done { background: var(--accent); border-color: var(--accent); color: var(--paper); }
+.ff.back .fb-head { padding-right: 46px; }
 
 /* show-more row under the menu grid */
 .more-row {
@@ -748,6 +755,7 @@ main { flex: 1; width: 100%; max-width: 1440px; margin: 0 auto; padding: 0 clamp
   flex-wrap: wrap;
   margin-bottom: 20px;
 }
+.tab-head-actions { display: flex; align-items: center; gap: 24px; }
 .empty-link { color: var(--accent); }
 
 /* routed pages start tighter under the nav */

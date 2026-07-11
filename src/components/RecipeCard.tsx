@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import type { Recipe, Vibe } from '../types';
-import { Check, GlassIcon, Play, Plus } from '../icons';
+import { Check, GlassIcon, Play, Plus, Share } from '../icons';
+import { recipeShareText, shareContent } from '../share';
 
 interface Props {
   recipe: Recipe;
@@ -9,6 +10,46 @@ interface Props {
   onVideo: (recipe: Recipe) => void;
   onToggleTab?: (recipe: Recipe) => void;
   inTab?: boolean;
+}
+
+/** Tab + share buttons, shown on both faces of the card. */
+function CardActions({ recipe, vibe, onToggleTab, inTab }: Pick<Props, 'recipe' | 'vibe' | 'onToggleTab' | 'inTab'>) {
+  const [shareState, setShareState] = useState<'idle' | 'copied' | 'failed'>('idle');
+
+  async function doShare(e: React.MouseEvent) {
+    e.stopPropagation();
+    const outcome = await shareContent(`${recipe.name} · The PubCrawl`, recipeShareText(recipe, vibe.label));
+    if (outcome === 'copied' || outcome === 'failed') {
+      setShareState(outcome);
+      setTimeout(() => setShareState('idle'), 1600);
+    }
+  }
+
+  return (
+    <div className="card-actions">
+      {onToggleTab && (
+        <button
+          className={`act-btn ${inTab ? 'on' : ''}`}
+          onClick={(e) => {
+            e.stopPropagation();
+            onToggleTab(recipe);
+          }}
+          aria-label={inTab ? `Take ${recipe.name} off your tab` : `Put ${recipe.name} on your tab`}
+          title={inTab ? 'On your tab. Tap to remove' : 'Put it on your tab'}
+        >
+          {inTab ? <Check size={15} /> : <Plus size={15} />}
+        </button>
+      )}
+      <button
+        className={`act-btn ${shareState === 'copied' ? 'done' : ''}`}
+        onClick={doShare}
+        aria-label={`Share ${recipe.name}`}
+        title={shareState === 'copied' ? 'Copied to clipboard' : shareState === 'failed' ? 'Sharing not available here' : 'Share this drink'}
+      >
+        {shareState === 'copied' ? <Check size={15} /> : <Share size={15} />}
+      </button>
+    </div>
+  );
 }
 
 /** Flip flash card. Photo and vibe on the front, the full recipe on the back. */
@@ -36,19 +77,7 @@ export function RecipeCard({ recipe, vibe, index, onVideo, onToggleTab, inTab = 
       <div className="fc-inner">
         {/* ---------- front ---------- */}
         <div className="ff front">
-          {onToggleTab && (
-            <button
-              className={`tab-btn ${inTab ? 'on' : ''}`}
-              onClick={(e) => {
-                e.stopPropagation();
-                onToggleTab(recipe);
-              }}
-              aria-label={inTab ? `Take ${recipe.name} off your tab` : `Put ${recipe.name} on your tab`}
-              title={inTab ? 'On your tab. Tap to remove' : 'Put it on your tab'}
-            >
-              {inTab ? <Check size={15} /> : <Plus size={15} />}
-            </button>
-          )}
+          <CardActions recipe={recipe} vibe={vibe} onToggleTab={onToggleTab} inTab={inTab} />
           {recipe.thumb ? (
             <div className="fc-img">
               <img src={recipe.thumb} alt={recipe.name} loading="lazy" />
@@ -86,6 +115,7 @@ export function RecipeCard({ recipe, vibe, index, onVideo, onToggleTab, inTab = 
 
         {/* ---------- back ---------- */}
         <div className="ff back">
+          <CardActions recipe={recipe} vibe={vibe} onToggleTab={onToggleTab} inTab={inTab} />
           <div className="fb-head">
             <span className="k-label">{isAI ? 'HOUSE SPECIAL' : `Nº ${String(index + 1).padStart(3, '0')}`}</span>
             <h3>{recipe.name}</h3>

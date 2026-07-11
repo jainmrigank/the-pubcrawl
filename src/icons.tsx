@@ -217,6 +217,12 @@ export const Check = (p: P) => (
     <path d="M4 13 Q7.5 15 9.5 18 Q13.5 10 20 5.5" />
   </S>
 );
+export const Share = (p: P) => (
+  <S {...p}>
+    <path d="M12 14.5 Q11.7 8.5 12 3M8.5 6 Q10.2 4.2 12 3 Q13.8 4.2 15.5 6" />
+    <path d="M7 10H5v11 Q12 20.3 19 21V10h-2" />
+  </S>
+);
 
 /* ---------- bar-basics + ingredient glyphs ---------- */
 export const TOOL_ICONS: Record<string, (p: P) => JSX.Element> = {

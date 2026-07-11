@@ -8,7 +8,8 @@ import { RecipeCard } from './components/RecipeCard';
 import { IngredientIcon } from './components/IngredientIcon';
 import { Knowledge } from './components/Knowledge';
 import { Counter, EASE, Lines, LOADED_HIDDEN, Reveal } from './motion';
-import { ArrowDown, ArrowRight, PubGlyph, SketchDefs, X } from './icons';
+import { ArrowDown, ArrowRight, Check, PubGlyph, Share, SketchDefs, X } from './icons';
+import { shareContent, tabShareText } from './share';
 import './App.css';
 
 const FALLBACK_VIBE: Vibe = { id: 'boozy', label: 'Spirit-Forward', color: '#8A5A24' };
@@ -66,6 +67,7 @@ export default function App() {
       return [];
     }
   });
+  const [tabShared, setTabShared] = useState(false);
   const browseSeed = useRef(String(Math.random()));
 
   const vibeOf = useCallback(
@@ -466,9 +468,27 @@ export default function App() {
                   <>
                     <div className="tab-head">
                       <span className="k-label dim">SAVED ON THIS DEVICE. IT KEEPS BETWEEN VISITS.</span>
-                      <button className="text-btn" onClick={() => setTab([])}>
-                        CLEAR THE TAB <X size={11} />
-                      </button>
+                      <div className="tab-head-actions">
+                        <button
+                          className="text-btn"
+                          onClick={async () => {
+                            const outcome = await shareContent("Tonight's Tab · The PubCrawl", tabShareText(tab));
+                            if (outcome === 'copied') {
+                              setTabShared(true);
+                              setTimeout(() => setTabShared(false), 1600);
+                            }
+                          }}
+                        >
+                          {tabShared ? (
+                            <>COPIED <Check size={11} /></>
+                          ) : (
+                            <>SHARE THE TAB <Share size={11} /></>
+                          )}
+                        </button>
+                        <button className="text-btn" onClick={() => setTab([])}>
+                          CLEAR THE TAB <X size={11} />
+                        </button>
+                      </div>
                     </div>
                     <div className="grid">{tab.map(card)}</div>
                   </>
