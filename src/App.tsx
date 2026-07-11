@@ -205,7 +205,12 @@ export default function App() {
 
   const canMake = useMemo(() => byVibe(match?.canMake ?? []), [match, byVibe]);
   const almost = useMemo(() => byVibe(match?.almost ?? []), [match, byVibe]);
-  const featured = browse; // already mood- and search-filtered by the server
+  // mood + search are server-filtered; in the Most Loved view also sort here
+  // with the same counts the hearts display, so order always matches them
+  const featured = useMemo(
+    () => (loved ? [...browse].sort((a, b) => (likes[b.id] || 0) - (likes[a.id] || 0)) : browse),
+    [browse, loved, likes]
+  );
   const inventions = useMemo(() => byVibe(aiDrinks), [aiDrinks, byVibe]);
   const hasPantry = pantry.length > 0;
   const moreLeft = browse.length >= browseLimit && browseLimit < MENU_MAX;
@@ -386,7 +391,10 @@ export default function App() {
                     <div className="menu-actions">
                       <button
                         className={`text-btn ${loved ? 'loved-on' : ''}`}
-                        onClick={() => setLoved((v) => !v)}
+                        onClick={() => {
+                          if (!loved) fetchLikes().then(setLikes).catch(() => {});
+                          setLoved((v) => !v);
+                        }}
                         aria-pressed={loved}
                       >
                         MOST LOVED <Heart size={12} />

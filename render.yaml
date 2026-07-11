@@ -1,0 +1,19 @@
+# Render blueprint: deploys the PubCrawl API as a free web service.
+# In the Render dashboard: New → Blueprint → pick this repo → set LLM_API_KEY.
+services:
+  - type: web
+    name: pubcrawl-api
+    runtime: node
+    plan: free
+    buildCommand: npm install --omit=dev
+    startCommand: node server/index.mjs
+    healthCheckPath: /api/health
+    envVars:
+      - key: LLM_API_KEY
+        sync: false # set in the dashboard; never committed
+      - key: LLM_MODEL
+        value: gemini-3.5-flash
+      - key: LLM_BASE_URL
+        value: https://generativelanguage.googleapis.com/v1beta/openai
+      - key: LLM_TIMEOUT_SECONDS
+        value: "45"

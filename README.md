@@ -73,32 +73,38 @@ npm run scrape     # TheCocktailDB catalogue (letter pass + category sweep)
 npm run videos     # YouTube link per drink (resumable; re-run to fill gaps)
 ```
 
-## Deployment: Vercel frontend + tunnelled API
+## Deployment
 
-The frontend is a static Vite build (Vercel auto-detects it). The Express API
-runs wherever you like and is announced to the frontend via `VITE_API_BASE`.
+The frontend is a static Vite build (Vercel auto-detects it, deploys from
+git). The Express API runs anywhere and is announced to the frontend via
+`VITE_API_BASE` (build-time env var), with a per-browser runtime override:
+`localStorage.setItem('pubcrawl.api', 'https://…')`.
 
-1. **Run the API** on the machine that has the data + LLM key:
+### Recommended: API on Render (permanent free URL)
 
-   ```bash
-   npm run serve            # standalone API on http://localhost:8790
-   ```
+`render.yaml` in this repo is a ready blueprint:
 
-2. **Tunnel it** (ngrok). One free ngrok agent session can carry several
-   tunnels when they're defined in ngrok.yml and started together:
+1. Render dashboard → **New → Blueprint** → select this repo.
+2. Set `LLM_API_KEY` when prompted (the other LLM vars are prefilled).
+3. Wait for deploy, note the URL (e.g. `https://pubcrawl-api.onrender.com`),
+   and check `…/api/health` returns counts.
+4. In Vercel → Project → Settings → Environment Variables set
+   `VITE_API_BASE` to that URL and redeploy the frontend.
 
-   ```bash
-   ngrok start --all        # main-app (reserved domain) + pubcrawl
-   ```
+Free-tier notes: the instance sleeps after ~15 idle minutes (first request
+then takes ~half a minute), and the filesystem is ephemeral, so public like
+counts reset on redeploys/restarts. Attach a paid disk or move likes to a
+hosted store when they start mattering.
 
-   The free plan includes a single reserved domain; extra tunnels get a fresh
-   random URL each start. Either give The PubCrawl the reserved domain, accept
-   the rotating URL, or upgrade for a second reserved domain.
+### Alternative: API on your own machine via ngrok
 
-3. **Point the frontend at it**: in Vercel → Project → Settings →
-   Environment Variables set `VITE_API_BASE` to the tunnel URL and redeploy.
-   For a quick switch without redeploying (per-browser):
-   `localStorage.setItem('pubcrawl.api', 'https://your-tunnel-url')`.
+```bash
+npm run serve            # standalone API on http://localhost:8790
+ngrok start --all        # main-app (reserved domain) + pubcrawl tunnels
+```
+
+One free ngrok agent session carries both tunnels, but the free plan has a
+single reserved domain; the second tunnel's URL rotates each start.
 
 CORS is open on the API, and requests carry `ngrok-skip-browser-warning`
 automatically when the base URL is an ngrok domain.
