@@ -50,7 +50,7 @@ export function UploadZone({ onAdd, onAddAll, pantry }: Props) {
       setPreview(preview);
       const res = await identifyImage(b64, mime);
       setDetected(res.detected);
-      if (!res.detected.length) setError('Couldn\'t make anything out — try a closer, brighter shot.');
+      if (!res.detected.length) setError('Couldn\'t make anything out. Try a closer, brighter shot.');
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Identification failed');
     } finally {
@@ -95,7 +95,7 @@ export function UploadZone({ onAdd, onAddAll, pantry }: Props) {
         {preview ? <img className="dz-preview" src={preview} alt="your shelf" /> : <Camera size={26} />}
         <div className="dz-text">
           <strong>{busy ? 'HAVING A LOOK…' : 'SNAP YOUR SHELF'}</strong>
-          <span>{busy ? 'Checking your bottles and bits.' : 'Bottles, fruit, whatever\'s lying around — we\'ll spot it.'}</span>
+          <span>{busy ? 'Checking your bottles and bits.' : 'Bottles, fruit, whatever\'s lying around. We\'ll spot it.'}</span>
         </div>
         {busy && <span className="scanline" aria-hidden />}
       </div>
@@ -105,7 +105,7 @@ export function UploadZone({ onAdd, onAddAll, pantry }: Props) {
       {fresh.length > 0 && (
         <div className="detected">
           <div className="detected-head">
-            <span className="k-label">SPOTTED IN YOUR PHOTO — {fresh.length}</span>
+            <span className="k-label">SPOTTED IN YOUR PHOTO: {fresh.length}</span>
             <button className="text-btn" onClick={() => onAddAll(fresh)}>
               ADD ALL <Plus size={12} />
             </button>

@@ -212,6 +212,11 @@ export const Play = (p: P) => (
     <path d="M8 5l11 7-11 7z" />
   </S>
 );
+export const Check = (p: P) => (
+  <S {...p}>
+    <path d="M4 13 Q7.5 15 9.5 18 Q13.5 10 20 5.5" />
+  </S>
+);
 
 /* ---------- bar-basics + ingredient glyphs ---------- */
 export const TOOL_ICONS: Record<string, (p: P) => JSX.Element> = {

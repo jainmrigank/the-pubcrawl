@@ -1,16 +1,18 @@
 import { useState } from 'react';
 import type { Recipe, Vibe } from '../types';
-import { GlassIcon, Play } from '../icons';
+import { Check, GlassIcon, Play, Plus } from '../icons';
 
 interface Props {
   recipe: Recipe;
   vibe: Vibe;
   index: number;
   onVideo: (recipe: Recipe) => void;
+  onToggleTab?: (recipe: Recipe) => void;
+  inTab?: boolean;
 }
 
-/** Flip flash card — image + vibe on the front, the full spec sheet on the back. */
-export function RecipeCard({ recipe, vibe, index, onVideo }: Props) {
+/** Flip flash card. Photo and vibe on the front, the full recipe on the back. */
+export function RecipeCard({ recipe, vibe, index, onVideo, onToggleTab, inTab = false }: Props) {
   const [flipped, setFlipped] = useState(false);
   const isAI = recipe.source === 'ai' || recipe.source === 'fallback';
   const missing = recipe.missing ?? [];
@@ -29,11 +31,24 @@ export function RecipeCard({ recipe, vibe, index, onVideo }: Props) {
       }}
       role="button"
       tabIndex={0}
-      aria-label={`${recipe.name} — flip for the recipe`}
+      aria-label={`${recipe.name}. Flip for the recipe`}
     >
       <div className="fc-inner">
         {/* ---------- front ---------- */}
         <div className="ff front">
+          {onToggleTab && (
+            <button
+              className={`tab-btn ${inTab ? 'on' : ''}`}
+              onClick={(e) => {
+                e.stopPropagation();
+                onToggleTab(recipe);
+              }}
+              aria-label={inTab ? `Take ${recipe.name} off your tab` : `Put ${recipe.name} on your tab`}
+              title={inTab ? 'On your tab. Tap to remove' : 'Put it on your tab'}
+            >
+              {inTab ? <Check size={15} /> : <Plus size={15} />}
+            </button>
+          )}
           {recipe.thumb ? (
             <div className="fc-img">
               <img src={recipe.thumb} alt={recipe.name} loading="lazy" />
@@ -46,7 +61,7 @@ export function RecipeCard({ recipe, vibe, index, onVideo }: Props) {
           )}
           <div className="fc-strip">
             <div className="fc-toprow">
-              <span className="k-label">{isAI ? (recipe.source === 'ai' ? 'HOUSE SPECIAL' : 'HOUSE SPECIAL — OFF-MENU') : `Nº ${String(index + 1).padStart(3, '0')}`}</span>
+              <span className="k-label">{isAI ? (recipe.source === 'ai' ? 'HOUSE SPECIAL' : 'OFF-MENU SPECIAL') : `Nº ${String(index + 1).padStart(3, '0')}`}</span>
               <span className="fc-vibe">
                 <i className="swatch" />
                 {vibe.label}

@@ -126,6 +126,8 @@ main { flex: 1; width: 100%; max-width: 1440px; margin: 0 auto; padding: 0 clamp
   transition: transform var(--t-fast) var(--ease);
 }
 .nav-link:hover::after { transform: scaleX(1); transform-origin: left; }
+.nav-link.active { color: var(--accent); }
+.nav-link.active::after { transform: scaleX(1); background: var(--accent); }
 
 .nav-status { margin-left: 8px; white-space: nowrap; }
 
@@ -706,6 +708,50 @@ main { flex: 1; width: 100%; max-width: 1440px; margin: 0 auto; padding: 0 clamp
 
 /* AI card accent */
 .fc.ai .ff { outline: 1px solid var(--ink); outline-offset: -5px; }
+
+/* put-it-on-the-tab button */
+.tab-btn {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  z-index: 3;
+  width: 36px;
+  height: 36px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--paper);
+  border: 1px solid var(--ink);
+  color: var(--ink);
+  cursor: pointer;
+  transition: background var(--t-fast) var(--ease), color var(--t-fast) var(--ease), transform var(--t-fast) var(--ease);
+}
+.tab-btn:hover { background: var(--ink); color: var(--paper); transform: scale(1.06); }
+.tab-btn.on { background: var(--accent); border-color: var(--accent); color: var(--paper); }
+.tab-btn.on:hover { background: var(--ink); border-color: var(--ink); }
+
+/* show-more row under the menu grid */
+.more-row {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  padding: 30px 0 4px;
+}
+
+/* the tab page */
+.tab-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
+  margin-bottom: 20px;
+}
+.empty-link { color: var(--accent); }
+
+/* routed pages start tighter under the nav */
+.page-top { padding-top: clamp(28px, 5vh, 56px); }
 
 /* ==========================================================================
    index section

@@ -12,14 +12,38 @@ import { ArrowDown, ArrowRight, PubGlyph, SketchDefs, X } from './icons';
 import './App.css';
 
 const FALLBACK_VIBE: Vibe = { id: 'boozy', label: 'Spirit-Forward', color: '#8A5A24' };
-const NAV = [
-  { href: '#bar', label: 'THE BAR' },
-  { href: '#shelf', label: 'YOUR SHELF' },
-  { href: '#pour', label: 'POUR' },
-  { href: '#basics', label: 'BASICS' },
+
+type Route = 'menu' | 'bar' | 'basics' | 'tab';
+const ROUTES: Route[] = ['menu', 'bar', 'basics', 'tab'];
+const NAV: { route: Route; label: string }[] = [
+  { route: 'menu', label: 'THE MENU' },
+  { route: 'bar', label: 'THE BAR' },
+  { route: 'basics', label: 'BASICS' },
+  { route: 'tab', label: 'THE TAB' },
 ];
 
+function parseRoute(): Route {
+  const h = window.location.hash.replace(/^#\/?/, '') as Route;
+  return ROUTES.includes(h) ? h : 'menu';
+}
+
+function useRoute(): Route {
+  const [route, setRoute] = useState<Route>(parseRoute);
+  useEffect(() => {
+    const onChange = () => {
+      setRoute(parseRoute());
+      window.scrollTo(0, 0);
+    };
+    window.addEventListener('hashchange', onChange);
+    return () => window.removeEventListener('hashchange', onChange);
+  }, []);
+  return route;
+}
+
+const MENU_MAX = 120;
+
 export default function App() {
+  const route = useRoute();
   const [vibes, setVibes] = useState<Vibe[]>([]);
   const [health, setHealth] = useState<Health | null>(null);
   const [pantry, setPantry] = useState<Ingredient[]>([]);
@@ -27,6 +51,7 @@ export default function App() {
   const [matching, setMatching] = useState(false);
   const [browse, setBrowse] = useState<Recipe[]>([]);
   const [browseQ, setBrowseQ] = useState('');
+  const [browseLimit, setBrowseLimit] = useState(12);
   const [browseLoading, setBrowseLoading] = useState(true);
   const [aiDrinks, setAiDrinks] = useState<Recipe[]>([]);
   const [vibeFilter, setVibeFilter] = useState<string>('');
@@ -34,6 +59,13 @@ export default function App() {
   const [genError, setGenError] = useState('');
   const [video, setVideo] = useState<Recipe | null>(null);
   const [menuOpen, setMenuOpen] = useState(false);
+  const [tab, setTab] = useState<Recipe[]>(() => {
+    try {
+      return JSON.parse(localStorage.getItem('pubcrawl.tab') || '[]');
+    } catch {
+      return [];
+    }
+  });
   const browseSeed = useRef(String(Math.random()));
 
   const vibeOf = useCallback(
@@ -46,17 +78,21 @@ export default function App() {
     fetchHealth().then(setHealth).catch(() => {});
   }, []);
 
-  /* drink search / browse */
+  useEffect(() => {
+    localStorage.setItem('pubcrawl.tab', JSON.stringify(tab));
+  }, [tab]);
+
+  /* menu search / browse */
   useEffect(() => {
     setBrowseLoading(true);
     const t = setTimeout(() => {
-      fetchRecipes({ q: browseQ, limit: 12, seed: browseSeed.current })
+      fetchRecipes({ q: browseQ, limit: browseLimit, seed: browseSeed.current })
         .then(setBrowse)
         .catch(() => {})
         .finally(() => setBrowseLoading(false));
     }, browseQ ? 220 : 0);
     return () => clearTimeout(t);
-  }, [browseQ]);
+  }, [browseQ, browseLimit]);
 
   /* shelf matching */
   useEffect(() => {
@@ -82,6 +118,13 @@ export default function App() {
   const addAll = useCallback((ings: Ingredient[]) => ings.forEach(addIngredient), [addIngredient]);
   const removeIngredient = (name: string) => setPantry((prev) => prev.filter((p) => p.name !== name));
 
+  const toggleTab = useCallback((recipe: Recipe) => {
+    setTab((prev) =>
+      prev.some((r) => r.id === recipe.id) ? prev.filter((r) => r.id !== recipe.id) : [...prev, recipe]
+    );
+  }, []);
+  const tabIds = useMemo(() => new Set(tab.map((r) => r.id)), [tab]);
+
   async function invent() {
     if (!pantry.length || generating) return;
     setGenerating(true);
@@ -94,20 +137,11 @@ export default function App() {
       );
       setAiDrinks((prev) => [drink, ...prev].slice(0, 6));
     } catch (err) {
-      setGenError(err instanceof Error ? err.message : 'That didn\'t work — try again.');
+      setGenError(err instanceof Error ? err.message : 'That did not work. Try again.');
     } finally {
       setGenerating(false);
     }
   }
-
-  const anotherRound = () => {
-    browseSeed.current = String(Math.random());
-    setBrowseLoading(true);
-    fetchRecipes({ q: browseQ, limit: 12, seed: browseSeed.current })
-      .then(setBrowse)
-      .catch(() => {})
-      .finally(() => setBrowseLoading(false));
-  };
 
   const byVibe = useCallback(
     (list: Recipe[]) => (vibeFilter ? list.filter((r) => r.vibe === vibeFilter) : list),
@@ -119,10 +153,39 @@ export default function App() {
   const featured = useMemo(() => byVibe(browse), [browse, byVibe]);
   const inventions = useMemo(() => byVibe(aiDrinks), [aiDrinks, byVibe]);
   const hasPantry = pantry.length > 0;
+  const moreLeft = browse.length >= browseLimit && browseLimit < MENU_MAX;
 
-  const scrollToBar = () => {
-    document.querySelector('#bar')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-  };
+  const card = (r: Recipe, i: number) => (
+    <RecipeCard
+      key={r.id}
+      recipe={r}
+      vibe={vibeOf(r.vibe)}
+      index={i}
+      onVideo={setVideo}
+      onToggleTab={toggleTab}
+      inTab={tabIds.has(r.id)}
+    />
+  );
+
+  const moodBar = (
+    <div className="vibe-bar" role="group" aria-label="Filter by mood">
+      <span className="k-label dim">MOOD</span>
+      <button className={`vibe-chip ${vibeFilter === '' ? 'on' : ''}`} onClick={() => setVibeFilter('')}>
+        ALL
+      </button>
+      {vibes.map((v) => (
+        <button
+          key={v.id}
+          className={`vibe-chip ${vibeFilter === v.id ? 'on' : ''}`}
+          style={{ ['--vc' as string]: v.color }}
+          onClick={() => setVibeFilter(vibeFilter === v.id ? '' : v.id)}
+        >
+          <i className="swatch" />
+          {v.label.toUpperCase()}
+        </button>
+      ))}
+    </div>
+  );
 
   return (
     <MotionConfig reducedMotion="user">
@@ -131,14 +194,20 @@ export default function App() {
 
         {/* ================= nav ================= */}
         <header className="nav">
-          <a className="brand" href="#top">
+          <a className="brand" href="#/menu">
             <PubGlyph size={30} />
             <span className="wordmark">The PubCrawl</span>
           </a>
-          <nav className="nav-links" aria-label="Sections">
+          <nav className="nav-links" aria-label="Pages">
             {NAV.map((n) => (
-              <a key={n.href} href={n.href} className="nav-link">
+              <a
+                key={n.route}
+                href={`#/${n.route}`}
+                className={`nav-link ${route === n.route ? 'active' : ''}`}
+                aria-current={route === n.route ? 'page' : undefined}
+              >
                 {n.label}
+                {n.route === 'tab' && tab.length > 0 ? ` (${tab.length})` : ''}
               </a>
             ))}
           </nav>
@@ -169,11 +238,11 @@ export default function App() {
                   CLOSE <X size={12} />
                 </button>
               </div>
-              <nav className="drawer-links" aria-label="Sections">
+              <nav className="drawer-links" aria-label="Pages">
                 {NAV.map((n, i) => (
                   <motion.a
-                    key={n.href}
-                    href={n.href}
+                    key={n.route}
+                    href={`#/${n.route}`}
                     onClick={() => setMenuOpen(false)}
                     initial={{ y: 44, opacity: 0 }}
                     animate={{ y: 0, opacity: 1 }}
@@ -181,6 +250,7 @@ export default function App() {
                   >
                     <span className="k-label dim">0{i + 1}</span>
                     {n.label}
+                    {n.route === 'tab' && tab.length > 0 ? ` (${tab.length})` : ''}
                   </motion.a>
                 ))}
               </nav>
@@ -189,201 +259,223 @@ export default function App() {
           )}
         </AnimatePresence>
 
-        <main id="top">
-          {/* ================= hero ================= */}
-          <section className="hero">
-            <div className="hero-kicker">
-              <span className="k-label">EVERY BAR, ONE KITCHEN</span>
-              <span className="k-label dim">EST. 2026</span>
-            </div>
-            <Lines className="hero-h1" lines={['WHAT’S YOUR', 'POISON?']} />
-            <div className="hero-lower">
-              <Reveal delay={0.35} className="hero-copy">
-                <p>
-                  Hop from drink to drink without leaving the kitchen. Search any cocktail below,
-                  or tell us what’s on your shelf and we’ll find the ones you can pour tonight —
-                  plus a few nobody’s ever tasted.
-                </p>
-                <div className="field hero-search">
-                  <input
-                    value={browseQ}
-                    onChange={(e) => setBrowseQ(e.target.value)}
-                    onKeyDown={(e) => e.key === 'Enter' && scrollToBar()}
-                    placeholder="SEARCH ANY DRINK — MOJITO, NEGRONI, RUM…"
-                    aria-label="Search drinks"
-                  />
-                </div>
-                <a className="btn" href="#shelf">
-                  WHAT CAN I MAKE? <ArrowDown size={14} />
-                </a>
-              </Reveal>
-              <div className="hero-stats">
-                <div className="stat">
-                  <span className="stat-n"><Counter to={health?.cocktails ?? 441} /></span>
-                  <span className="k-label dim">DRINKS TO TRY</span>
-                </div>
-                <div className="stat">
-                  <span className="stat-n"><Counter to={health?.ingredients ?? 400} /></span>
-                  <span className="k-label dim">INGREDIENTS WE KNOW</span>
-                </div>
-                <div className="stat">
-                  <span className="stat-n"><Counter to={6} duration={0.8} /></span>
-                  <span className="k-label dim">MOODS TO MATCH</span>
-                </div>
-              </div>
-            </div>
-          </section>
-
-          {/* ================= 01 the bar ================= */}
-          <section className="sec" id="bar">
-            <SectionHead
-              index="01"
-              title="THE BAR"
-              note={browseQ ? `${featured.length} FOR “${browseQ.toUpperCase()}”` : 'TONIGHT’S DOZEN — OR SEARCH ABOVE'}
-              loading={browseLoading}
-            />
-            <div className="bar-controls">
-              <div className="vibe-bar" role="group" aria-label="Filter by mood">
-                <span className="k-label dim">MOOD</span>
-                <button className={`vibe-chip ${vibeFilter === '' ? 'on' : ''}`} onClick={() => setVibeFilter('')}>
-                  ALL
-                </button>
-                {vibes.map((v) => (
-                  <button
-                    key={v.id}
-                    className={`vibe-chip ${vibeFilter === v.id ? 'on' : ''}`}
-                    style={{ ['--vc' as string]: v.color }}
-                    onClick={() => setVibeFilter(vibeFilter === v.id ? '' : v.id)}
-                  >
-                    <i className="swatch" />
-                    {v.label.toUpperCase()}
-                  </button>
-                ))}
-              </div>
-              <button className="text-btn" onClick={anotherRound}>
-                ANOTHER ROUND <ArrowRight size={12} />
-              </button>
-            </div>
-            {featured.length === 0 && !browseLoading ? (
-              <div className="empty">
-                <p className="empty-big">NOTHING BY THAT NAME.</p>
-                <p className="k-label dim">TRY “NEGRONI” OR “RUM” — OR CLEAR THE MOOD FILTER.</p>
-              </div>
-            ) : (
-              <div className="grid">
-                {featured.map((r, i) => (
-                  <RecipeCard key={r.id} recipe={r} vibe={vibeOf(r.vibe)} index={i} onVideo={setVideo} />
-                ))}
-              </div>
-            )}
-          </section>
-
-          {/* ================= 02 your shelf ================= */}
-          <section className="sec" id="shelf">
-            <SectionHead index="02" title="YOUR SHELF" note="TYPE IT — OR SNAP IT" />
-            <div className="shelf-grid">
-              <div className="shelf-col">
-                <span className="k-label field-label">WHAT HAVE YOU GOT?</span>
-                <Typeahead onAdd={addIngredient} />
-                <p className="k-label dim hint">GIN, YUZU, MINT — IF YOU’VE GOT IT, WE KNOW IT.</p>
-              </div>
-              <div className="shelf-col">
-                <span className="k-label field-label">OR SHOW US</span>
-                <UploadZone onAdd={addIngredient} onAddAll={addAll} pantry={pantry} />
-              </div>
-            </div>
-
-            {hasPantry && (
-              <div className="pantry">
-                <div className="pantry-head">
-                  <span className="k-label">ON THE SHELF — {String(pantry.length).padStart(2, '0')}</span>
-                  <button className="text-btn" onClick={() => setPantry([])}>
-                    CLEAR ALL <X size={11} />
-                  </button>
-                </div>
-                <div className="chip-row">
-                  {pantry.map((p) => (
-                    <span key={p.name} className="chip">
-                      <IngredientIcon category={p.category} size={18} />
-                      {p.name}
-                      <button className="chip-x" onClick={() => removeIngredient(p.name)} aria-label={`Remove ${p.name}`}>
-                        <X size={11} />
-                      </button>
-                    </span>
-                  ))}
-                </div>
-              </div>
-            )}
-          </section>
-
-          {/* ================= 03 pour tonight ================= */}
-          <section className="sec" id="pour">
-            <SectionHead
-              index="03"
-              title="POUR TONIGHT"
-              note={hasPantry ? `${canMake.length} READY — NO SHOPPING NEEDED` : 'WAITING ON YOUR SHELF'}
-              loading={matching}
-            />
-            {!hasPantry ? (
-              <div className="empty">
-                <p className="empty-big">YOUR SHELF’S EMPTY.</p>
-                <p className="k-label dim">ADD A FEW BOTTLES ABOVE — WE’LL DO THE REST.</p>
-              </div>
-            ) : (
+        <main>
+          <motion.div
+            key={route}
+            initial={LOADED_HIDDEN ? false : { opacity: 0, y: 14 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.35, ease: EASE }}
+          >
+            {route === 'menu' && (
               <>
-                <div className="invent-row">
-                  <div>
-                    <span className="k-label">HOUSE SPECIALS</span>
-                    <p className="invent-note">
-                      A brand-new drink, dreamed up from exactly what you’ve got
-                      {vibeFilter ? ' in your chosen mood' : ''}. Every press pours something different.
-                    </p>
+                {/* ================= the menu (landing) ================= */}
+                <section className="hero">
+                  <div className="hero-kicker">
+                    <span className="k-label">EVERY BAR, ONE KITCHEN</span>
+                    <span className="k-label dim">EST. 2026</span>
                   </div>
-                  <button className="btn btn-solid" onClick={invent} disabled={generating}>
-                    {generating ? 'MIXING…' : 'MIX ME SOMETHING NEW'} <ArrowRight size={14} />
-                  </button>
-                </div>
-                {genError && <p className="err" role="alert">{genError}</p>}
+                  <Lines className="hero-h1" lines={['WHAT’S YOUR', 'POISON?']} />
+                  <div className="hero-lower">
+                    <Reveal delay={0.35} className="hero-copy">
+                      <p>
+                        Hop from drink to drink without leaving the kitchen. Search the menu below,
+                        or head to The Bar with what’s on your shelf and we’ll find the drinks you
+                        can pour tonight, plus a few nobody’s ever tasted.
+                      </p>
+                      <div className="field hero-search">
+                        <input
+                          value={browseQ}
+                          onChange={(e) => setBrowseQ(e.target.value)}
+                          placeholder="SEARCH ANY DRINK… MOJITO, NEGRONI, RUM"
+                          aria-label="Search drinks"
+                        />
+                      </div>
+                      <a className="btn" href="#/bar">
+                        WHAT CAN I MAKE? <ArrowRight size={14} />
+                      </a>
+                    </Reveal>
+                    <div className="hero-stats">
+                      <div className="stat">
+                        <span className="stat-n"><Counter to={health?.cocktails ?? 441} /></span>
+                        <span className="k-label dim">DRINKS TO TRY</span>
+                      </div>
+                      <div className="stat">
+                        <span className="stat-n"><Counter to={health?.ingredients ?? 400} /></span>
+                        <span className="k-label dim">INGREDIENTS WE KNOW</span>
+                      </div>
+                      <div className="stat">
+                        <span className="stat-n"><Counter to={6} duration={0.8} /></span>
+                        <span className="k-label dim">MOODS TO MATCH</span>
+                      </div>
+                    </div>
+                  </div>
+                </section>
 
-                {(inventions.length > 0 || canMake.length > 0) ? (
-                  <div className="grid">
-                    {inventions.map((r, i) => (
-                      <RecipeCard key={r.id} recipe={r} vibe={vibeOf(r.vibe)} index={i} onVideo={setVideo} />
-                    ))}
-                    {canMake.map((r, i) => (
-                      <RecipeCard key={r.id} recipe={r} vibe={vibeOf(r.vibe)} index={i} onVideo={setVideo} />
-                    ))}
-                  </div>
-                ) : (
-                  !matching && (
+                <section className="sec" id="menu-list">
+                  <SectionHead
+                    index="01"
+                    title="THE MENU"
+                    note={browseQ ? `${featured.length} FOR “${browseQ.toUpperCase()}”` : `SHOWING ${featured.length} OF ${health?.cocktails ?? 441}`}
+                    loading={browseLoading}
+                  />
+                  <div className="bar-controls">{moodBar}</div>
+                  {featured.length === 0 && !browseLoading ? (
                     <div className="empty">
-                      <p className="empty-big">NOTHING POURS CLEAN YET.</p>
-                      <p className="k-label dim">ONE OR TWO MORE BOTTLES — SEE “SO CLOSE” BELOW.</p>
+                      <p className="empty-big">NOTHING BY THAT NAME.</p>
+                      <p className="k-label dim">TRY “NEGRONI” OR “RUM”, OR CLEAR THE MOOD FILTER.</p>
                     </div>
-                  )
-                )}
-
-                {almost.length > 0 && (
-                  <>
-                    <SectionHead index="04" title="SO CLOSE" note="ONE BOTTLE SHORT" sub />
-                    <div className="grid">
-                      {almost.map((r, i) => (
-                        <RecipeCard key={r.id} recipe={r} vibe={vibeOf(r.vibe)} index={i} onVideo={setVideo} />
-                      ))}
-                    </div>
-                  </>
-                )}
+                  ) : (
+                    <>
+                      <div className="grid">{featured.map(card)}</div>
+                      {moreLeft && !browseLoading && (
+                        <div className="more-row">
+                          <button className="btn" onClick={() => setBrowseLimit((l) => l + 12)}>
+                            SHOW 12 MORE DRINKS <ArrowDown size={14} />
+                          </button>
+                          <span className="k-label dim">
+                            {browse.length} OF {health?.cocktails ?? 441} ON SHOW
+                          </span>
+                        </div>
+                      )}
+                    </>
+                  )}
+                </section>
               </>
             )}
-          </section>
 
-          {/* ================= 05 bar basics ================= */}
-          <section className="sec" id="basics">
-            <SectionHead index="05" title="BAR BASICS" note="EVERYTHING WORTH KNOWING — NO SNOBBERY" />
-            <Reveal>
-              <Knowledge />
-            </Reveal>
-          </section>
+            {route === 'bar' && (
+              <>
+                {/* ================= the bar: shelf + pour ================= */}
+                <section className="sec page-top" id="shelf">
+                  <SectionHead index="01" title="YOUR SHELF" note="TYPE IT OR SNAP IT" />
+                  <div className="shelf-grid">
+                    <div className="shelf-col">
+                      <span className="k-label field-label">WHAT HAVE YOU GOT?</span>
+                      <Typeahead onAdd={addIngredient} />
+                      <p className="k-label dim hint">GIN, YUZU, MINT. IF YOU’VE GOT IT, WE KNOW IT.</p>
+                    </div>
+                    <div className="shelf-col">
+                      <span className="k-label field-label">OR SHOW US</span>
+                      <UploadZone onAdd={addIngredient} onAddAll={addAll} pantry={pantry} />
+                    </div>
+                  </div>
+
+                  {hasPantry && (
+                    <div className="pantry">
+                      <div className="pantry-head">
+                        <span className="k-label">ON THE SHELF: {String(pantry.length).padStart(2, '0')}</span>
+                        <button className="text-btn" onClick={() => setPantry([])}>
+                          CLEAR ALL <X size={11} />
+                        </button>
+                      </div>
+                      <div className="chip-row">
+                        {pantry.map((p) => (
+                          <span key={p.name} className="chip">
+                            <IngredientIcon category={p.category} size={18} />
+                            {p.name}
+                            <button className="chip-x" onClick={() => removeIngredient(p.name)} aria-label={`Remove ${p.name}`}>
+                              <X size={11} />
+                            </button>
+                          </span>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                </section>
+
+                <section className="sec" id="pour">
+                  <SectionHead
+                    index="02"
+                    title="POUR TONIGHT"
+                    note={hasPantry ? `${canMake.length} READY, NO SHOPPING NEEDED` : 'WAITING ON YOUR SHELF'}
+                    loading={matching}
+                  />
+                  {!hasPantry ? (
+                    <div className="empty">
+                      <p className="empty-big">YOUR SHELF’S EMPTY.</p>
+                      <p className="k-label dim">ADD A FEW BOTTLES ABOVE. WE’LL DO THE REST.</p>
+                    </div>
+                  ) : (
+                    <>
+                      <div className="bar-controls">{moodBar}</div>
+                      <div className="invent-row">
+                        <div>
+                          <span className="k-label">HOUSE SPECIALS</span>
+                          <p className="invent-note">
+                            A brand-new drink, dreamed up from exactly what you’ve got
+                            {vibeFilter ? ' in your chosen mood' : ''}. Every press pours something different.
+                          </p>
+                        </div>
+                        <button className="btn btn-solid" onClick={invent} disabled={generating}>
+                          {generating ? 'MIXING…' : 'MIX ME SOMETHING NEW'} <ArrowRight size={14} />
+                        </button>
+                      </div>
+                      {genError && <p className="err" role="alert">{genError}</p>}
+
+                      {(inventions.length > 0 || canMake.length > 0) ? (
+                        <div className="grid">
+                          {inventions.map(card)}
+                          {canMake.map(card)}
+                        </div>
+                      ) : (
+                        !matching && (
+                          <div className="empty">
+                            <p className="empty-big">NOTHING POURS CLEAN YET.</p>
+                            <p className="k-label dim">ONE OR TWO MORE BOTTLES AND YOU’RE THERE. SEE “SO CLOSE” BELOW.</p>
+                          </div>
+                        )
+                      )}
+
+                      {almost.length > 0 && (
+                        <>
+                          <SectionHead index="03" title="SO CLOSE" note="ONE BOTTLE SHORT" sub />
+                          <div className="grid">{almost.map(card)}</div>
+                        </>
+                      )}
+                    </>
+                  )}
+                </section>
+              </>
+            )}
+
+            {route === 'basics' && (
+              <section className="sec page-top" id="basics">
+                <SectionHead index="01" title="BAR BASICS" note="EVERYTHING WORTH KNOWING, NO SNOBBERY" />
+                <Reveal>
+                  <Knowledge />
+                </Reveal>
+              </section>
+            )}
+
+            {route === 'tab' && (
+              <section className="sec page-top" id="tab-page">
+                <SectionHead
+                  index="01"
+                  title="THE TAB"
+                  note={tab.length ? `${tab.length} ON YOUR TAB TONIGHT` : 'YOUR MENU FOR THE NIGHT'}
+                />
+                {tab.length === 0 ? (
+                  <div className="empty">
+                    <p className="empty-big">NOTHING ON THE TAB YET.</p>
+                    <p className="k-label dim">
+                      TAP THE + ON ANY DRINK CARD TO START TONIGHT’S LINEUP.{' '}
+                      <a className="empty-link" href="#/menu">BROWSE THE MENU</a>
+                    </p>
+                  </div>
+                ) : (
+                  <>
+                    <div className="tab-head">
+                      <span className="k-label dim">SAVED ON THIS DEVICE. IT KEEPS BETWEEN VISITS.</span>
+                      <button className="text-btn" onClick={() => setTab([])}>
+                        CLEAR THE TAB <X size={11} />
+                      </button>
+                    </div>
+                    <div className="grid">{tab.map(card)}</div>
+                  </>
+                )}
+              </section>
+            )}
+          </motion.div>
         </main>
 
         {/* ================= footer ================= */}
@@ -391,7 +483,7 @@ export default function App() {
           <Lines as="p" className="foot-big" lines={['POUR SOMETHING', 'PROPER.']} stagger={0.08} />
           <div className="foot-meta">
             <span className="k-label">RECIPES FROM THECOCKTAILDB</span>
-            <span className="k-label">HOUSE SPECIALS ARE ROBOT-MADE — TASTE BEFORE SERVING</span>
+            <span className="k-label">HOUSE SPECIALS ARE ROBOT-MADE. TASTE BEFORE SERVING.</span>
             <span className="k-label">THE PUBCRAWL © 2026</span>
           </div>
         </footer>
@@ -470,7 +562,7 @@ function VideoModal({ recipe, onClose }: { recipe: Recipe; onClose: () => void }
         transition={{ duration: 0.34, ease: EASE }}
       >
         <div className="modal-head">
-          <span className="k-label">{id ? 'WATCH IT MADE' : 'FINDING A VIDEO'} — {recipe.name.toUpperCase()}</span>
+          <span className="k-label">{id ? 'WATCH IT MADE' : 'FINDING A VIDEO'}: {recipe.name.toUpperCase()}</span>
           <button className="text-btn" onClick={onClose}>
             CLOSE <X size={12} />
           </button>

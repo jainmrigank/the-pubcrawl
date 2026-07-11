@@ -32,7 +32,7 @@ export function createApp() {
   app.get('/api/recipes', (req, res) => {
     const vibe = String(req.query.vibe || '');
     const q = norm(String(req.query.q || ''));
-    const limit = Math.min(Number(req.query.limit) || 12, 60);
+    const limit = Math.min(Number(req.query.limit) || 12, 120);
     let list = cocktails.filter((c) => c.thumb);
     if (vibe) list = list.filter((c) => c.vibe === vibe);
     if (q) list = list.filter((c) => norm(c.name).includes(q) || c.ingredients.some((i) => norm(i.name).includes(q)));
@@ -59,7 +59,7 @@ export function createApp() {
     const { imageBase64, mimeType } = req.body || {};
     if (!imageBase64) return res.status(400).json({ error: 'imageBase64 required' });
     if (!llmAvailable())
-      return res.status(503).json({ error: 'Photo recognition isn\'t set up yet — add an API key to .env to switch it on.' });
+      return res.status(503).json({ error: 'Photo recognition isn\'t set up yet. Add an API key to .env to switch it on.' });
     try {
       const reply = await chat(
         [
@@ -88,7 +88,7 @@ export function createApp() {
       res.json({ detected });
     } catch (err) {
       console.error('[identify]', err.message);
-      res.status(502).json({ error: `Couldn't read that photo — ${err.message}` });
+      res.status(502).json({ error: `Couldn't read that photo. ${err.message}` });
     }
   });
 
