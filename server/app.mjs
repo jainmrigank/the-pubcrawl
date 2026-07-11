@@ -79,25 +79,44 @@ export function createApp() {
     const q = norm(String(req.query.q || ''));
     const limit = Math.min(Number(req.query.limit) || 12, 120);
     let list = cocktails.filter((c) => c.thumb);
-    if (vibe) list = list.filter((c) => c.vibe === vibe);
-    if (q)
-      list = list.filter(
-        (c) =>
-          norm(c.name).includes(q) ||
-          norm(c.category).includes(q) ||
-          norm(c.iba || '').includes(q) ||
-          (c.tags || []).some((t) => norm(t).includes(q)) ||
-          c.ingredients.some((i) => norm(i.name).includes(q))
-      );
+    if (vibe === 'zeroproof') list = list.filter((c) => (c.alcoholic || '').toLowerCase().includes('non'));
+    else if (vibe) list = list.filter((c) => c.vibe === vibe);
+
+    // Ranked search: name beats ingredients beats metadata, and metadata only
+    // matches whole words — "lassi" must never surface every IBA cLASSIc.
+    let rank = null;
+    if (q) {
+      const scoreOf = (c) => {
+        const n = norm(c.name);
+        if (n === q) return 0;
+        if (n.startsWith(q)) return 1;
+        if (` ${n} `.includes(` ${q} `)) return 2;
+        if (n.includes(q)) return 3;
+        if (c.ingredients.some((i) => norm(i.name).includes(q))) return 4;
+        const meta = ` ${norm(c.category)} ${norm(c.iba || '')} ${(c.tags || []).map((t) => norm(t)).join(' ')} `;
+        if (meta.includes(` ${q} `)) return 5;
+        return -1;
+      };
+      rank = new Map();
+      list = list.filter((c) => {
+        const s = scoreOf(c);
+        if (s < 0) return false;
+        rank.set(c.id, s);
+        return true;
+      });
+    }
+
     const seedStr = String(req.query.seed || 'x');
     let seed = 0;
     for (const ch of seedStr) seed = (seed * 31 + ch.charCodeAt(0)) >>> 0;
     const hash = (c) => (Number(c.id) * 2654435761 + seed) >>> 0;
-    const shuffled =
+    const ordered =
       String(req.query.sort || '') === 'likes'
         ? [...list].sort((a, b) => (likes[b.id] || 0) - (likes[a.id] || 0) || hash(a) - hash(b))
-        : [...list].sort((a, b) => hash(a) - hash(b));
-    res.json(shuffled.slice(0, limit));
+        : rank
+          ? [...list].sort((a, b) => rank.get(a.id) - rank.get(b.id) || hash(a) - hash(b))
+          : [...list].sort((a, b) => hash(a) - hash(b));
+    res.json(ordered.slice(0, limit));
   });
 
   /* ---- match pantry -> recipes ---- */

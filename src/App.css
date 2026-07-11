@@ -356,6 +356,8 @@ main { flex: 1; width: 100%; max-width: 1440px; margin: 0 auto; padding: 0 clamp
 }
 .sec-note { margin-left: auto; text-align: right; }
 
+.menu-search { max-width: 640px; margin-bottom: 20px; }
+
 /* ---------- shelf ---------- */
 .shelf-grid {
   display: grid;
@@ -555,8 +557,7 @@ main { flex: 1; width: 100%; max-width: 1440px; margin: 0 auto; padding: 0 clamp
 .grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(290px, 1fr));
-  border-top: 1px solid var(--line-strong);
-  border-left: 1px solid var(--line-strong);
+  gap: clamp(16px, 2.2vw, 26px);
 }
 
 .fc {
@@ -564,8 +565,10 @@ main { flex: 1; width: 100%; max-width: 1440px; margin: 0 auto; padding: 0 clamp
   height: 540px;
   cursor: pointer;
   background: var(--paper);
-  border-right: 1px solid var(--line-strong);
-  border-bottom: 1px solid var(--line-strong);
+  border: 1px solid var(--line-strong);
+  /* hard offset shadow: a quiet 3d lift that keeps corners sharp */
+  box-shadow: 6px 6px 0 rgba(22, 21, 18, 0.08);
+  transition: box-shadow var(--t-med) var(--ease);
 }
 .fc-inner {
   position: relative;
@@ -598,6 +601,7 @@ main { flex: 1; width: 100%; max-width: 1440px; margin: 0 auto; padding: 0 clamp
   transition: transform 0.6s var(--ease);
 }
 .fc:hover .fc-img img { transform: scale(1.045); }
+.fc:hover { box-shadow: 9px 9px 0 rgba(22, 21, 18, 0.12); }
 
 .fc-img-ai {
   display: flex;
@@ -1030,6 +1034,7 @@ button, a, .fc {
 
 @media (hover: none) {
   .fc:hover .fc-img img { transform: scale(1.001); }
+  .fc:hover { box-shadow: 6px 6px 0 rgba(22, 21, 18, 0.08); }
   .btn:hover { background: transparent; color: var(--ink); }
   .btn:hover svg { transform: none; }
   .btn-solid:hover:not(:disabled) { background: var(--ink); color: var(--paper); border-color: var(--ink); }

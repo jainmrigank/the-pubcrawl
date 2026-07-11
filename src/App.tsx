@@ -209,7 +209,12 @@ export default function App() {
   }
 
   const byVibe = useCallback(
-    (list: Recipe[]) => (vibeFilter ? list.filter((r) => r.vibe === vibeFilter) : list),
+    (list: Recipe[]) => {
+      if (!vibeFilter) return list;
+      if (vibeFilter === 'zeroproof')
+        return list.filter((r) => (r.alcoholic || '').toLowerCase().includes('non'));
+      return list.filter((r) => r.vibe === vibeFilter);
+    },
     [vibeFilter]
   );
 
@@ -258,6 +263,14 @@ export default function App() {
           {v.label.toUpperCase()}
         </button>
       ))}
+      <button
+        className={`vibe-chip ${vibeFilter === 'zeroproof' ? 'on' : ''}`}
+        style={{ ['--vc' as string]: '#6B7A6E' }}
+        onClick={() => setVibeFilter(vibeFilter === 'zeroproof' ? '' : 'zeroproof')}
+      >
+        <i className="swatch" />
+        ZERO-PROOF
+      </button>
     </div>
   );
 
@@ -348,18 +361,10 @@ export default function App() {
                   <div className="hero-lower">
                     <Reveal delay={0.35} className="hero-copy">
                       <p>
-                        Hop from drink to drink without leaving the kitchen. Search the menu below,
+                        Hop from drink to drink without leaving the kitchen. Browse the menu below,
                         or head to The Bar with what’s on your shelf and we’ll find the drinks you
                         can pour tonight, plus a few nobody’s ever tasted.
                       </p>
-                      <div className="field hero-search">
-                        <input
-                          value={browseQ}
-                          onChange={(e) => setBrowseQ(e.target.value)}
-                          placeholder="SEARCH ANY DRINK… MOJITO, NEGRONI, RUM"
-                          aria-label="Search drinks"
-                        />
-                      </div>
                       <a className="btn" href="#/bar">
                         WHAT CAN I MAKE? <ArrowRight size={14} />
                       </a>
@@ -396,6 +401,14 @@ export default function App() {
                     }
                     loading={browseLoading}
                   />
+                  <div className="field menu-search">
+                    <input
+                      value={browseQ}
+                      onChange={(e) => setBrowseQ(e.target.value)}
+                      placeholder="SEARCH ANY DRINK… MOJITO, NEGRONI, RUM"
+                      aria-label="Search drinks"
+                    />
+                  </div>
                   <div className="bar-controls">
                     {moodBar}
                     <div className="menu-actions">
