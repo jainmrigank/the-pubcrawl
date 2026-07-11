@@ -5,7 +5,9 @@
   "type": "module",
   "scripts": {
     "scrape": "node scripts/scrape.mjs",
+    "videos": "node scripts/fetch_videos.mjs",
     "dev": "vite",
+    "serve": "node server/index.mjs",
     "build": "tsc -b && vite build",
     "preview": "vite preview"
   },

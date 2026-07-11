@@ -1,19 +1,64 @@
 /**
  * Cocktail API — mounted as Vite middleware in dev (see vite.config.ts),
- * or run standalone via `node server/index.mjs`.
+ * or run standalone via `node server/index.mjs` (e.g. behind an ngrok tunnel
+ * feeding the Vercel-hosted frontend).
  */
 import express from 'express';
+import { existsSync, readFileSync, writeFileSync } from 'node:fs';
+import { dirname, join } from 'node:path';
+import { fileURLToPath } from 'node:url';
 import { loadCatalog, searchIngredients, matchRecipes, categorise, norm } from './catalog.mjs';
 import { VIBES, withVibe } from './vibes.mjs';
 import { chat, extractJson, llmAvailable, llmConfig } from './llm.mjs';
 import { generateFallback } from './generator.mjs';
 
+const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
+
 export function createApp() {
   const app = express();
   app.use(express.json({ limit: '15mb' }));
 
+  // CORS: the frontend may be served from another origin (Vercel) while the
+  // API runs here. Wide-open is fine for a public read-mostly menu API.
+  app.use((req, res, next) => {
+    res.setHeader('Access-Control-Allow-Origin', req.headers.origin || '*');
+    res.setHeader('Vary', 'Origin');
+    res.setHeader('Access-Control-Allow-Methods', 'GET,POST,OPTIONS');
+    res.setHeader('Access-Control-Allow-Headers', 'content-type, ngrok-skip-browser-warning');
+    if (req.method === 'OPTIONS') return res.sendStatus(204);
+    next();
+  });
+
   const { cocktails, ingredients } = loadCatalog();
   console.log(`[cocktail-api] ${cocktails.length} cocktails, ${ingredients.length} ingredients, LLM: ${llmAvailable() ? llmConfig.model : 'offline fallback'}`);
+
+  /* ---- public likes (shared across every visitor of this server) ---- */
+  const likesPath = join(ROOT, 'data', 'likes.json');
+  let likes = {};
+  try {
+    if (existsSync(likesPath)) likes = JSON.parse(readFileSync(likesPath, 'utf8'));
+  } catch {}
+  const saveLikes = () => {
+    try {
+      writeFileSync(likesPath, JSON.stringify(likes, null, 1));
+    } catch (err) {
+      console.error('[likes] could not persist:', err.message);
+    }
+  };
+  const validIds = new Set(cocktails.map((c) => c.id));
+
+  app.get('/api/likes', (_req, res) => res.json(likes));
+
+  app.post('/api/likes/:id', (req, res) => {
+    const { id } = req.params;
+    if (!validIds.has(id)) return res.status(404).json({ error: 'Unknown drink' });
+    const delta = req.body?.action === 'unlike' ? -1 : 1;
+    const next = Math.max(0, (likes[id] || 0) + delta);
+    if (next === 0) delete likes[id];
+    else likes[id] = next;
+    saveLikes();
+    res.json({ id, likes: next });
+  });
 
   app.get('/api/health', (_req, res) =>
     res.json({ ok: true, cocktails: cocktails.length, ingredients: ingredients.length, llm: llmAvailable() ? llmConfig.model : null })
@@ -47,11 +92,11 @@ export function createApp() {
     const seedStr = String(req.query.seed || 'x');
     let seed = 0;
     for (const ch of seedStr) seed = (seed * 31 + ch.charCodeAt(0)) >>> 0;
-    const shuffled = [...list].sort((a, b) => {
-      const ha = (Number(a.id) * 2654435761 + seed) >>> 0;
-      const hb = (Number(b.id) * 2654435761 + seed) >>> 0;
-      return ha - hb;
-    });
+    const hash = (c) => (Number(c.id) * 2654435761 + seed) >>> 0;
+    const shuffled =
+      String(req.query.sort || '') === 'likes'
+        ? [...list].sort((a, b) => (likes[b.id] || 0) - (likes[a.id] || 0) || hash(a) - hash(b))
+        : [...list].sort((a, b) => hash(a) - hash(b));
     res.json(shuffled.slice(0, limit));
   });
 

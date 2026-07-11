@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import type { Recipe, Vibe } from '../types';
-import { Check, GlassIcon, Play, Plus, Share, X } from '../icons';
+import { Check, GlassIcon, Heart, Play, Plus, Share, X } from '../icons';
 import { recipeShareText, shareContent } from '../share';
 
 interface Props {
@@ -12,6 +12,10 @@ interface Props {
   inTab?: boolean;
   /** On The Tab page the toggle reads as "remove": cross icon, matching tip. */
   removeMode?: boolean;
+  /** Public like count + whether this browser has liked it. */
+  likes?: number;
+  liked?: boolean;
+  onToggleLike?: (recipe: Recipe) => void;
 }
 
 /** Tab + share buttons, shown on both faces of the card. */
@@ -58,7 +62,7 @@ function CardActions({ recipe, vibe, onToggleTab, inTab, removeMode }: Pick<Prop
 }
 
 /** Flip flash card. Photo and vibe on the front, the full recipe on the back. */
-export function RecipeCard({ recipe, vibe, index, onVideo, onToggleTab, inTab = false, removeMode = false }: Props) {
+export function RecipeCard({ recipe, vibe, index, onVideo, onToggleTab, inTab = false, removeMode = false, likes = 0, liked = false, onToggleLike }: Props) {
   const [flipped, setFlipped] = useState(false);
   const isAI = recipe.source === 'ai' || recipe.source === 'fallback';
   const missing = recipe.missing ?? [];
@@ -109,6 +113,21 @@ export function RecipeCard({ recipe, vibe, index, onVideo, onToggleTab, inTab = 
               </span>
               {recipe.iba && <span className="k-label dim">CLASSIC</span>}
               {(recipe.alcoholic || '').toLowerCase().includes('non') && <span className="k-label dim">ZERO-PROOF</span>}
+              {!isAI && onToggleLike && (
+                <button
+                  className={`like-btn ${liked ? 'on' : ''}`}
+                  data-tip={liked ? 'LOVED. TAP TO TAKE IT BACK' : 'GIVE IT SOME LOVE'}
+                  aria-label={liked ? `Unlike ${recipe.name}` : `Like ${recipe.name}`}
+                  aria-pressed={liked}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    onToggleLike(recipe);
+                  }}
+                >
+                  <Heart size={13} />
+                  {likes > 0 && <span>{likes}</span>}
+                </button>
+              )}
             </div>
             {recipe.total != null && (
               <div className={`fc-status ${ready ? 'ready' : ''}`}>

@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { AnimatePresence, motion, MotionConfig } from 'framer-motion';
-import { fetchHealth, fetchRecipes, fetchVibes, generateRecipe, matchRecipes } from './api';
+import { fetchHealth, fetchLikes, fetchRecipes, fetchVibes, generateRecipe, matchRecipes, postLike } from './api';
 import type { Health, Ingredient, MatchResult, Recipe, Vibe } from './types';
 import { Typeahead } from './components/Typeahead';
 import { UploadZone } from './components/UploadZone';
@@ -8,7 +8,7 @@ import { RecipeCard } from './components/RecipeCard';
 import { IngredientIcon } from './components/IngredientIcon';
 import { Knowledge } from './components/Knowledge';
 import { Counter, EASE, Lines, LOADED_HIDDEN, Reveal } from './motion';
-import { ArrowDown, ArrowRight, Check, PubGlyph, Share, Shuffle, SketchDefs, X } from './icons';
+import { ArrowDown, ArrowRight, Check, Heart, PubGlyph, Share, Shuffle, SketchDefs, X } from './icons';
 import { shareContent, tabShareText } from './share';
 import './App.css';
 
@@ -31,9 +31,18 @@ function parseRoute(): Route {
 function useRoute(): Route {
   const [route, setRoute] = useState<Route>(parseRoute);
   useEffect(() => {
+    // every page keeps its scroll position, so hopping to The Tab and back
+    // drops you exactly where you left the list
+    const positions: Partial<Record<Route, number>> = {};
+    let current = parseRoute();
     const onChange = () => {
-      setRoute(parseRoute());
-      window.scrollTo(0, 0);
+      positions[current] = window.scrollY;
+      current = parseRoute();
+      setRoute(current);
+      const target = positions[current] ?? 0;
+      requestAnimationFrame(() =>
+        requestAnimationFrame(() => window.scrollTo({ top: target, behavior: 'instant' as ScrollBehavior }))
+      );
     };
     window.addEventListener('hashchange', onChange);
     return () => window.removeEventListener('hashchange', onChange);
@@ -69,6 +78,15 @@ export default function App() {
   });
   const [tabShared, setTabShared] = useState(false);
   const [browseSeed, setBrowseSeed] = useState(() => String(Math.random()));
+  const [likes, setLikes] = useState<Record<string, number>>({});
+  const [likedIds, setLikedIds] = useState<Set<string>>(() => {
+    try {
+      return new Set<string>(JSON.parse(localStorage.getItem('pubcrawl.liked') || '[]'));
+    } catch {
+      return new Set();
+    }
+  });
+  const [loved, setLoved] = useState(false);
 
   const vibeOf = useCallback(
     (id: string) => vibes.find((v) => v.id === id) ?? FALLBACK_VIBE,
@@ -78,29 +96,56 @@ export default function App() {
   useEffect(() => {
     fetchVibes().then(setVibes).catch(() => {});
     fetchHealth().then(setHealth).catch(() => {});
+    fetchLikes().then(setLikes).catch(() => {});
   }, []);
 
   useEffect(() => {
-    localStorage.setItem('pubcrawl.tab', JSON.stringify(tab));
+    try {
+      localStorage.setItem('pubcrawl.tab', JSON.stringify(tab));
+    } catch {}
   }, [tab]);
+
+  useEffect(() => {
+    try {
+      localStorage.setItem('pubcrawl.liked', JSON.stringify([...likedIds]));
+    } catch {}
+  }, [likedIds]);
+
+  const toggleLike = useCallback(
+    (recipe: Recipe) => {
+      const wasLiked = likedIds.has(recipe.id);
+      setLikedIds((prev) => {
+        const next = new Set(prev);
+        if (wasLiked) next.delete(recipe.id);
+        else next.add(recipe.id);
+        return next;
+      });
+      setLikes((prev) => ({ ...prev, [recipe.id]: Math.max(0, (prev[recipe.id] || 0) + (wasLiked ? -1 : 1)) }));
+      postLike(recipe.id, wasLiked ? 'unlike' : 'like')
+        .then((r) => setLikes((prev) => ({ ...prev, [r.id]: r.likes })))
+        .catch(() => {});
+    },
+    [likedIds]
+  );
 
   /* menu search / browse. Mood + search both apply server-side over all 441,
      so a mood is never silently filtering a search down to nothing. */
   useEffect(() => {
     setBrowseLoading(true);
     const t = setTimeout(() => {
-      fetchRecipes({ q: browseQ, vibe: vibeFilter, limit: browseLimit, seed: browseSeed })
+      fetchRecipes({ q: browseQ, vibe: vibeFilter, limit: browseLimit, seed: browseSeed, sort: loved ? 'likes' : undefined })
         .then(setBrowse)
         .catch(() => {})
         .finally(() => setBrowseLoading(false));
     }, browseQ ? 220 : 0);
     return () => clearTimeout(t);
-  }, [browseQ, browseLimit, browseSeed, vibeFilter]);
+  }, [browseQ, browseLimit, browseSeed, vibeFilter, loved]);
 
   /* fresh random dozen */
   const surpriseMe = () => {
     setBrowseQ('');
     setBrowseLimit(12);
+    setLoved(false);
     setBrowseSeed(String(Math.random()));
   };
 
@@ -175,6 +220,9 @@ export default function App() {
       onToggleTab={toggleTab}
       inTab={tabIds.has(r.id)}
       removeMode={removeMode}
+      likes={likes[r.id] || 0}
+      liked={likedIds.has(r.id)}
+      onToggleLike={toggleLike}
     />
   );
 
@@ -271,13 +319,9 @@ export default function App() {
         </AnimatePresence>
 
         <main>
-          <motion.div
-            key={route}
-            initial={LOADED_HIDDEN ? false : { opacity: 0, y: 14 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.35, ease: EASE }}
-          >
-            {route === 'menu' && (
+          {/* every page stays mounted (hidden when inactive) so lists, search,
+              flipped cards and accordion state survive switching between them */}
+            <div hidden={route !== 'menu'}>
               <>
                 {/* ================= the menu (landing) ================= */}
                 <section className="hero">
@@ -329,17 +373,28 @@ export default function App() {
                     note={
                       browseQ
                         ? `${featured.length} FOR “${browseQ.toUpperCase()}”`
-                        : vibeFilter
-                          ? `SHOWING ${featured.length} IN THIS MOOD`
-                          : `SHOWING ${featured.length} OF ${health?.cocktails ?? 441}`
+                        : loved
+                          ? 'THE CROWD’S FAVOURITES FIRST'
+                          : vibeFilter
+                            ? `SHOWING ${featured.length} IN THIS MOOD`
+                            : `SHOWING ${featured.length} OF ${health?.cocktails ?? 441}`
                     }
                     loading={browseLoading}
                   />
                   <div className="bar-controls">
                     {moodBar}
-                    <button className="text-btn" onClick={surpriseMe}>
-                      SURPRISE ME <Shuffle size={13} />
-                    </button>
+                    <div className="menu-actions">
+                      <button
+                        className={`text-btn ${loved ? 'loved-on' : ''}`}
+                        onClick={() => setLoved((v) => !v)}
+                        aria-pressed={loved}
+                      >
+                        MOST LOVED <Heart size={12} />
+                      </button>
+                      <button className="text-btn" onClick={surpriseMe}>
+                        SURPRISE ME <Shuffle size={13} />
+                      </button>
+                    </div>
                   </div>
                   {featured.length === 0 && !browseLoading ? (
                     <div className="empty">
@@ -366,9 +421,9 @@ export default function App() {
                   )}
                 </section>
               </>
-            )}
+            </div>
 
-            {route === 'bar' && (
+            <div hidden={route !== 'bar'}>
               <>
                 {/* ================= the bar: shelf + pour ================= */}
                 <section className="sec page-top" id="shelf">
@@ -461,18 +516,18 @@ export default function App() {
                   )}
                 </section>
               </>
-            )}
+            </div>
 
-            {route === 'basics' && (
+            <div hidden={route !== 'basics'}>
               <section className="sec page-top" id="basics">
                 <SectionHead index="01" title="BAR BASICS" note="EVERYTHING WORTH KNOWING, NO SNOBBERY" />
                 <Reveal>
                   <Knowledge />
                 </Reveal>
               </section>
-            )}
+            </div>
 
-            {route === 'tab' && (
+            <div hidden={route !== 'tab'}>
               <section className="sec page-top" id="tab-page">
                 <SectionHead
                   index="01"
@@ -517,8 +572,7 @@ export default function App() {
                   </>
                 )}
               </section>
-            )}
-          </motion.div>
+            </div>
         </main>
 
         {/* ================= footer ================= */}

@@ -652,6 +652,27 @@ main { flex: 1; width: 100%; max-width: 1440px; margin: 0 auto; padding: 0 clamp
   text-transform: uppercase;
   color: var(--ink-60);
 }
+.like-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-left: auto;
+  background: none;
+  border: 1px solid var(--line);
+  border-radius: 0;
+  padding: 5px 9px;
+  font-family: var(--mono);
+  font-size: 10.5px;
+  color: var(--ink-60);
+  cursor: pointer;
+  transition: border-color var(--t-fast) var(--ease), color var(--t-fast) var(--ease);
+}
+.like-btn:hover { border-color: var(--ink); color: var(--ink); }
+.like-btn.on { border-color: var(--accent); color: var(--accent); }
+
+.menu-actions { display: flex; align-items: center; gap: 22px; }
+.text-btn.loved-on { color: var(--accent); border-bottom-color: var(--accent); }
+
 .fc-status {
   font-family: var(--mono);
   font-size: 10.5px;
@@ -734,7 +755,8 @@ main { flex: 1; width: 100%; max-width: 1440px; margin: 0 auto; padding: 0 clamp
   transition: background var(--t-fast) var(--ease), color var(--t-fast) var(--ease), transform var(--t-fast) var(--ease);
 }
 .act-btn { position: relative; }
-.act-btn::after {
+[data-tip] { position: relative; }
+[data-tip]::after {
   content: attr(data-tip);
   position: absolute;
   right: calc(100% + 10px);
@@ -752,8 +774,8 @@ main { flex: 1; width: 100%; max-width: 1440px; margin: 0 auto; padding: 0 clamp
   z-index: 6;
   transition: opacity var(--t-fast) var(--ease), transform var(--t-fast) var(--ease);
 }
-.act-btn:hover::after,
-.act-btn:focus-visible::after { opacity: 1; transform: translateY(-50%) translateX(0); }
+[data-tip]:hover::after,
+[data-tip]:focus-visible::after { opacity: 1; transform: translateY(-50%) translateX(0); }
 .act-btn:hover { background: var(--ink); color: var(--paper); transform: scale(1.06); }
 .act-btn.on { background: var(--accent); border-color: var(--accent); color: var(--paper); }
 .act-btn.on:hover { background: var(--ink); border-color: var(--ink); }

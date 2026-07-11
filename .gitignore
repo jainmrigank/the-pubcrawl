@@ -4,3 +4,4 @@ dist
 *.local
 .DS_Store
 tsconfig.tsbuildinfo
+data/likes.json
