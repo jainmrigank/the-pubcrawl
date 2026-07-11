@@ -143,15 +143,17 @@ export function RecipeCard({ recipe, vibe, index, onVideo, onToggleTab, inTab = 
               <GlassIcon glass={recipe.glass} size={16} />
               {recipe.glass || 'Any glass'}
             </span>
-            <button
-              className="text-btn"
-              onClick={(e) => {
-                e.stopPropagation();
-                onVideo(recipe);
-              }}
-            >
-              WATCH IT MADE <Play size={11} />
-            </button>
+            {recipe.video && (
+              <button
+                className="text-btn"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onVideo(recipe);
+                }}
+              >
+                WATCH IT MADE <Play size={11} />
+              </button>
+            )}
           </div>
         </div>
       </div>

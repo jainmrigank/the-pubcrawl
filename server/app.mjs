@@ -35,7 +35,15 @@ export function createApp() {
     const limit = Math.min(Number(req.query.limit) || 12, 120);
     let list = cocktails.filter((c) => c.thumb);
     if (vibe) list = list.filter((c) => c.vibe === vibe);
-    if (q) list = list.filter((c) => norm(c.name).includes(q) || c.ingredients.some((i) => norm(i.name).includes(q)));
+    if (q)
+      list = list.filter(
+        (c) =>
+          norm(c.name).includes(q) ||
+          norm(c.category).includes(q) ||
+          norm(c.iba || '').includes(q) ||
+          (c.tags || []).some((t) => norm(t).includes(q)) ||
+          c.ingredients.some((i) => norm(i.name).includes(q))
+      );
     const seedStr = String(req.query.seed || 'x');
     let seed = 0;
     for (const ch of seedStr) seed = (seed * 31 + ch.charCodeAt(0)) >>> 0;

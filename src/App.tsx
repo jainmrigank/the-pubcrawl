@@ -84,17 +84,18 @@ export default function App() {
     localStorage.setItem('pubcrawl.tab', JSON.stringify(tab));
   }, [tab]);
 
-  /* menu search / browse */
+  /* menu search / browse. Mood + search both apply server-side over all 441,
+     so a mood is never silently filtering a search down to nothing. */
   useEffect(() => {
     setBrowseLoading(true);
     const t = setTimeout(() => {
-      fetchRecipes({ q: browseQ, limit: browseLimit, seed: browseSeed })
+      fetchRecipes({ q: browseQ, vibe: vibeFilter, limit: browseLimit, seed: browseSeed })
         .then(setBrowse)
         .catch(() => {})
         .finally(() => setBrowseLoading(false));
     }, browseQ ? 220 : 0);
     return () => clearTimeout(t);
-  }, [browseQ, browseLimit, browseSeed]);
+  }, [browseQ, browseLimit, browseSeed, vibeFilter]);
 
   /* fresh random dozen */
   const surpriseMe = () => {
@@ -159,7 +160,7 @@ export default function App() {
 
   const canMake = useMemo(() => byVibe(match?.canMake ?? []), [match, byVibe]);
   const almost = useMemo(() => byVibe(match?.almost ?? []), [match, byVibe]);
-  const featured = useMemo(() => byVibe(browse), [browse, byVibe]);
+  const featured = browse; // already mood- and search-filtered by the server
   const inventions = useMemo(() => byVibe(aiDrinks), [aiDrinks, byVibe]);
   const hasPantry = pantry.length > 0;
   const moreLeft = browse.length >= browseLimit && browseLimit < MENU_MAX;
@@ -325,7 +326,13 @@ export default function App() {
                   <SectionHead
                     index="01"
                     title="THE MENU"
-                    note={browseQ ? `${featured.length} FOR “${browseQ.toUpperCase()}”` : `SHOWING ${featured.length} OF ${health?.cocktails ?? 441}`}
+                    note={
+                      browseQ
+                        ? `${featured.length} FOR “${browseQ.toUpperCase()}”`
+                        : vibeFilter
+                          ? `SHOWING ${featured.length} IN THIS MOOD`
+                          : `SHOWING ${featured.length} OF ${health?.cocktails ?? 441}`
+                    }
                     loading={browseLoading}
                   />
                   <div className="bar-controls">

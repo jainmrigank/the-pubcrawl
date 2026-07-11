@@ -468,6 +468,8 @@ main { flex: 1; width: 100%; max-width: 1440px; margin: 0 auto; padding: 0 clamp
 }
 .chip-add { cursor: pointer; border-style: dashed; transition: background var(--t-fast) var(--ease), color var(--t-fast) var(--ease); }
 .chip-add:hover { background: var(--ink); color: var(--paper); border-style: solid; }
+.chip-added { border-color: var(--accent); color: var(--ink); }
+.chip-added svg:last-child { color: var(--accent); }
 .chip-x {
   display: inline-flex;
   background: none;
@@ -804,9 +806,21 @@ main { flex: 1; width: 100%; max-width: 1440px; margin: 0 auto; padding: 0 clamp
   display: flex;
   align-items: baseline;
   gap: 22px;
-  padding-bottom: 14px;
+  width: 100%;
+  background: none;
+  border: none;
   border-bottom: 1px solid var(--line-strong);
+  padding: 0 0 14px;
+  cursor: pointer;
+  text-align: left;
+  color: var(--ink);
+  transition: padding-left var(--t-fast) var(--ease);
 }
+.manual-group-head:hover { padding-left: 10px; }
+.manual-group-head .manual-plus { font-size: 22px; align-self: center; }
+.manual-group-head.open .manual-plus { color: var(--accent); }
+.manual-group-title { display: flex; flex-direction: column; gap: 4px; }
+.manual-group .manual-list { padding-top: 6px; }
 .manual-index {
   font-stretch: 70%;
   font-weight: 800;

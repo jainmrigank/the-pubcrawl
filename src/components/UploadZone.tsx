@@ -2,7 +2,7 @@ import { useRef, useState } from 'react';
 import { identifyImage } from '../api';
 import type { Ingredient } from '../types';
 import { IngredientIcon } from './IngredientIcon';
-import { Camera, Plus } from '../icons';
+import { Camera, Check } from '../icons';
 
 interface Props {
   onAdd: (ing: Ingredient) => void;
@@ -29,36 +29,36 @@ function fileToBase64(file: File): Promise<{ b64: string; mime: string; preview:
   });
 }
 
-/** Photo dropzone → LLM vision → suggested ingredient rows. */
-export function UploadZone({ onAdd, onAddAll, pantry }: Props) {
+/** Photo dropzone. Whatever the photo shows goes straight onto the shelf. */
+export function UploadZone({ onAddAll }: Props) {
   const [drag, setDrag] = useState(false);
   const [busy, setBusy] = useState(false);
   const [preview, setPreview] = useState('');
-  const [detected, setDetected] = useState<Ingredient[]>([]);
+  const [added, setAdded] = useState<Ingredient[]>([]);
   const [error, setError] = useState('');
   const fileRef = useRef<HTMLInputElement>(null);
-
-  const inPantry = (name: string) => pantry.some((p) => p.name.toLowerCase() === name.toLowerCase());
 
   async function handleFile(file?: File | null) {
     if (!file || !file.type.startsWith('image/')) return;
     setError('');
-    setDetected([]);
+    setAdded([]);
     setBusy(true);
     try {
       const { b64, mime, preview } = await fileToBase64(file);
       setPreview(preview);
       const res = await identifyImage(b64, mime);
-      setDetected(res.detected);
-      if (!res.detected.length) setError('Couldn\'t make anything out. Try a closer, brighter shot.');
+      if (!res.detected.length) {
+        setError('Couldn\'t make anything out. Try a closer, brighter shot.');
+      } else {
+        onAddAll(res.detected);
+        setAdded(res.detected);
+      }
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Identification failed');
     } finally {
       setBusy(false);
     }
   }
-
-  const fresh = detected.filter((d) => !inPantry(d.name));
 
   return (
     <div className="upload-wrap">
@@ -95,28 +95,25 @@ export function UploadZone({ onAdd, onAddAll, pantry }: Props) {
         {preview ? <img className="dz-preview" src={preview} alt="your shelf" /> : <Camera size={26} />}
         <div className="dz-text">
           <strong>{busy ? 'HAVING A LOOK…' : 'SNAP YOUR SHELF'}</strong>
-          <span>{busy ? 'Checking your bottles and bits.' : 'Bottles, fruit, whatever\'s lying around. We\'ll spot it.'}</span>
+          <span>{busy ? 'Checking your bottles and bits.' : 'Bottles, fruit, whatever\'s lying around. It goes straight onto your shelf.'}</span>
         </div>
         {busy && <span className="scanline" aria-hidden />}
       </div>
 
       {error && <p className="err" role="alert">{error}</p>}
 
-      {fresh.length > 0 && (
-        <div className="detected">
+      {added.length > 0 && (
+        <div className="detected" role="status">
           <div className="detected-head">
-            <span className="k-label">SPOTTED IN YOUR PHOTO: {fresh.length}</span>
-            <button className="text-btn" onClick={() => onAddAll(fresh)}>
-              ADD ALL <Plus size={12} />
-            </button>
+            <span className="k-label">SPOTTED AND SHELVED: {added.length}</span>
           </div>
           <div className="chip-row">
-            {fresh.map((d) => (
-              <button key={d.name} className="chip chip-add" onClick={() => onAdd(d)} title={`Spotted as “${d.detectedAs}”`}>
+            {added.map((d) => (
+              <span key={d.name} className="chip chip-added" title={`Spotted as “${d.detectedAs}”`}>
                 <IngredientIcon category={d.category} size={18} />
                 {d.name}
-                <Plus size={11} />
-              </button>
+                <Check size={11} />
+              </span>
             ))}
           </div>
         </div>
