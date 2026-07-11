@@ -731,6 +731,27 @@ main { flex: 1; width: 100%; max-width: 1440px; margin: 0 auto; padding: 0 clamp
   cursor: pointer;
   transition: background var(--t-fast) var(--ease), color var(--t-fast) var(--ease), transform var(--t-fast) var(--ease);
 }
+.act-btn { position: relative; }
+.act-btn::after {
+  content: attr(data-tip);
+  position: absolute;
+  right: calc(100% + 10px);
+  top: 50%;
+  transform: translateY(-50%) translateX(4px);
+  background: var(--ink);
+  color: var(--paper);
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.06em;
+  padding: 7px 10px;
+  white-space: nowrap;
+  opacity: 0;
+  pointer-events: none;
+  z-index: 6;
+  transition: opacity var(--t-fast) var(--ease), transform var(--t-fast) var(--ease);
+}
+.act-btn:hover::after,
+.act-btn:focus-visible::after { opacity: 1; transform: translateY(-50%) translateX(0); }
 .act-btn:hover { background: var(--ink); color: var(--paper); transform: scale(1.06); }
 .act-btn.on { background: var(--accent); border-color: var(--accent); color: var(--paper); }
 .act-btn.on:hover { background: var(--ink); border-color: var(--ink); }

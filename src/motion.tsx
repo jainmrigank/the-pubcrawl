@@ -136,5 +136,14 @@ export function Counter({ to, duration = 1.4 }: { to: number; duration?: number 
       setVal(to);
     };
   }, [inView, to, duration, reduced]);
+
+  // Last-resort net, independent of the observer: if nothing has moved the
+  // value off 0 shortly after mount (observer never fired, animation dead),
+  // show the real number rather than a stuck zero.
+  useEffect(() => {
+    const t = setTimeout(() => setVal((v) => (v === 0 && to !== 0 ? to : v)), 2500);
+    return () => clearTimeout(t);
+  }, [to]);
+
   return <span ref={ref}>{val}</span>;
 }

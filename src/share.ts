@@ -18,15 +18,17 @@ export function recipeShareText(r: Recipe, vibeLabel: string): string {
 
 /** Plain-text menu of the whole tab. */
 export function tabShareText(list: Recipe[]): string {
-  const lines = [`TONIGHT'S TAB · The PubCrawl`, `${list.length} drink${list.length > 1 ? 's' : ''} on the list`, ''];
+  const lines = [`TONIGHT'S TAB · The PubCrawl`, `${list.length} drink${list.length > 1 ? 's' : ''} on the list`];
   list.forEach((r, i) => {
+    // keep multi-step instructions aligned under their label
+    const make = r.instructions.trim().replace(/\s*\n+\s*/g, '\n        ');
+    lines.push('');
     lines.push(`${i + 1}. ${r.name.toUpperCase()} (${r.glass || 'any glass'})`);
     lines.push(`   Need: ${r.ingredients.map((x) => x.name).join(', ')}`);
-    lines.push(`   Make: ${r.instructions}`);
+    lines.push(`   Make: ${make}`);
     if (r.video) lines.push(`   Watch: ${r.video}`);
-    lines.push('');
   });
-  return lines.join('\n').trimEnd();
+  return lines.join('\n');
 }
 
 export type ShareOutcome = 'shared' | 'copied' | 'cancelled' | 'failed';

@@ -223,6 +223,12 @@ export const Share = (p: P) => (
     <path d="M7 10H5v11 Q12 20.3 19 21V10h-2" />
   </S>
 );
+export const Shuffle = (p: P) => (
+  <S {...p}>
+    <path d="M3 7 Q8 6.6 10 8.5 Q14 12 16 15.5 Q17.5 17.4 21 17M3 17 Q8 17.4 10 15.5 Q14 12 16 8.5 Q17.5 6.6 21 7" />
+    <path d="M18 4.5 21 7l-3 2.5M18 14.5 21 17l-3 2.5" />
+  </S>
+);
 
 /* ---------- bar-basics + ingredient glyphs ---------- */
 export const TOOL_ICONS: Record<string, (p: P) => JSX.Element> = {

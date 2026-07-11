@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { AnimatePresence, motion, MotionConfig } from 'framer-motion';
 import { fetchHealth, fetchRecipes, fetchVibes, generateRecipe, matchRecipes } from './api';
 import type { Health, Ingredient, MatchResult, Recipe, Vibe } from './types';
@@ -8,7 +8,7 @@ import { RecipeCard } from './components/RecipeCard';
 import { IngredientIcon } from './components/IngredientIcon';
 import { Knowledge } from './components/Knowledge';
 import { Counter, EASE, Lines, LOADED_HIDDEN, Reveal } from './motion';
-import { ArrowDown, ArrowRight, Check, PubGlyph, Share, SketchDefs, X } from './icons';
+import { ArrowDown, ArrowRight, Check, PubGlyph, Share, Shuffle, SketchDefs, X } from './icons';
 import { shareContent, tabShareText } from './share';
 import './App.css';
 
@@ -68,7 +68,7 @@ export default function App() {
     }
   });
   const [tabShared, setTabShared] = useState(false);
-  const browseSeed = useRef(String(Math.random()));
+  const [browseSeed, setBrowseSeed] = useState(() => String(Math.random()));
 
   const vibeOf = useCallback(
     (id: string) => vibes.find((v) => v.id === id) ?? FALLBACK_VIBE,
@@ -88,13 +88,20 @@ export default function App() {
   useEffect(() => {
     setBrowseLoading(true);
     const t = setTimeout(() => {
-      fetchRecipes({ q: browseQ, limit: browseLimit, seed: browseSeed.current })
+      fetchRecipes({ q: browseQ, limit: browseLimit, seed: browseSeed })
         .then(setBrowse)
         .catch(() => {})
         .finally(() => setBrowseLoading(false));
     }, browseQ ? 220 : 0);
     return () => clearTimeout(t);
-  }, [browseQ, browseLimit]);
+  }, [browseQ, browseLimit, browseSeed]);
+
+  /* fresh random dozen */
+  const surpriseMe = () => {
+    setBrowseQ('');
+    setBrowseLimit(12);
+    setBrowseSeed(String(Math.random()));
+  };
 
   /* shelf matching */
   useEffect(() => {
@@ -157,7 +164,7 @@ export default function App() {
   const hasPantry = pantry.length > 0;
   const moreLeft = browse.length >= browseLimit && browseLimit < MENU_MAX;
 
-  const card = (r: Recipe, i: number) => (
+  const card = (r: Recipe, i: number, removeMode = false) => (
     <RecipeCard
       key={r.id}
       recipe={r}
@@ -166,6 +173,7 @@ export default function App() {
       onVideo={setVideo}
       onToggleTab={toggleTab}
       inTab={tabIds.has(r.id)}
+      removeMode={removeMode}
     />
   );
 
@@ -320,7 +328,12 @@ export default function App() {
                     note={browseQ ? `${featured.length} FOR “${browseQ.toUpperCase()}”` : `SHOWING ${featured.length} OF ${health?.cocktails ?? 441}`}
                     loading={browseLoading}
                   />
-                  <div className="bar-controls">{moodBar}</div>
+                  <div className="bar-controls">
+                    {moodBar}
+                    <button className="text-btn" onClick={surpriseMe}>
+                      SURPRISE ME <Shuffle size={13} />
+                    </button>
+                  </div>
                   {featured.length === 0 && !browseLoading ? (
                     <div className="empty">
                       <p className="empty-big">NOTHING BY THAT NAME.</p>
@@ -328,7 +341,7 @@ export default function App() {
                     </div>
                   ) : (
                     <>
-                      <div className="grid">{featured.map(card)}</div>
+                      <div className="grid">{featured.map((r, i) => card(r, i))}</div>
                       {moreLeft && !browseLoading && (
                         <div className="more-row">
                           <button className="btn" onClick={() => setBrowseLimit((l) => l + 12)}>
@@ -337,6 +350,9 @@ export default function App() {
                           <span className="k-label dim">
                             {browse.length} OF {health?.cocktails ?? 441} ON SHOW
                           </span>
+                          <button className="text-btn" onClick={surpriseMe}>
+                            OR SURPRISE ME <Shuffle size={12} />
+                          </button>
                         </div>
                       )}
                     </>
@@ -416,8 +432,8 @@ export default function App() {
 
                       {(inventions.length > 0 || canMake.length > 0) ? (
                         <div className="grid">
-                          {inventions.map(card)}
-                          {canMake.map(card)}
+                          {inventions.map((r, i) => card(r, i))}
+                          {canMake.map((r, i) => card(r, i))}
                         </div>
                       ) : (
                         !matching && (
@@ -431,7 +447,7 @@ export default function App() {
                       {almost.length > 0 && (
                         <>
                           <SectionHead index="03" title="SO CLOSE" note="ONE BOTTLE SHORT" sub />
-                          <div className="grid">{almost.map(card)}</div>
+                          <div className="grid">{almost.map((r, i) => card(r, i))}</div>
                         </>
                       )}
                     </>
@@ -490,7 +506,7 @@ export default function App() {
                         </button>
                       </div>
                     </div>
-                    <div className="grid">{tab.map(card)}</div>
+                    <div className="grid">{tab.map((r, i) => card(r, i, true))}</div>
                   </>
                 )}
               </section>

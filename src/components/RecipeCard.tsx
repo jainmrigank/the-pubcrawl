@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import type { Recipe, Vibe } from '../types';
-import { Check, GlassIcon, Play, Plus, Share } from '../icons';
+import { Check, GlassIcon, Play, Plus, Share, X } from '../icons';
 import { recipeShareText, shareContent } from '../share';
 
 interface Props {
@@ -10,10 +10,12 @@ interface Props {
   onVideo: (recipe: Recipe) => void;
   onToggleTab?: (recipe: Recipe) => void;
   inTab?: boolean;
+  /** On The Tab page the toggle reads as "remove": cross icon, matching tip. */
+  removeMode?: boolean;
 }
 
 /** Tab + share buttons, shown on both faces of the card. */
-function CardActions({ recipe, vibe, onToggleTab, inTab }: Pick<Props, 'recipe' | 'vibe' | 'onToggleTab' | 'inTab'>) {
+function CardActions({ recipe, vibe, onToggleTab, inTab, removeMode }: Pick<Props, 'recipe' | 'vibe' | 'onToggleTab' | 'inTab' | 'removeMode'>) {
   const [shareState, setShareState] = useState<'idle' | 'copied' | 'failed'>('idle');
 
   async function doShare(e: React.MouseEvent) {
@@ -25,26 +27,29 @@ function CardActions({ recipe, vibe, onToggleTab, inTab }: Pick<Props, 'recipe' 
     }
   }
 
+  const tabTip = removeMode ? 'TAKE IT OFF MY TAB' : inTab ? 'ON MY TAB. TAP TO REMOVE' : 'PUT IT ON MY TAB';
+  const shareTip = shareState === 'copied' ? 'COPIED!' : shareState === 'failed' ? 'SHARING BLOCKED HERE' : 'SHARE THIS DRINK';
+
   return (
     <div className="card-actions">
       {onToggleTab && (
         <button
-          className={`act-btn ${inTab ? 'on' : ''}`}
+          className={`act-btn ${inTab && !removeMode ? 'on' : ''}`}
+          data-tip={tabTip}
           onClick={(e) => {
             e.stopPropagation();
             onToggleTab(recipe);
           }}
-          aria-label={inTab ? `Take ${recipe.name} off your tab` : `Put ${recipe.name} on your tab`}
-          title={inTab ? 'On your tab. Tap to remove' : 'Put it on your tab'}
+          aria-label={tabTip}
         >
-          {inTab ? <Check size={15} /> : <Plus size={15} />}
+          {removeMode ? <X size={15} /> : inTab ? <Check size={15} /> : <Plus size={15} />}
         </button>
       )}
       <button
         className={`act-btn ${shareState === 'copied' ? 'done' : ''}`}
+        data-tip={shareTip}
         onClick={doShare}
         aria-label={`Share ${recipe.name}`}
-        title={shareState === 'copied' ? 'Copied to clipboard' : shareState === 'failed' ? 'Sharing not available here' : 'Share this drink'}
       >
         {shareState === 'copied' ? <Check size={15} /> : <Share size={15} />}
       </button>
@@ -53,7 +58,7 @@ function CardActions({ recipe, vibe, onToggleTab, inTab }: Pick<Props, 'recipe' 
 }
 
 /** Flip flash card. Photo and vibe on the front, the full recipe on the back. */
-export function RecipeCard({ recipe, vibe, index, onVideo, onToggleTab, inTab = false }: Props) {
+export function RecipeCard({ recipe, vibe, index, onVideo, onToggleTab, inTab = false, removeMode = false }: Props) {
   const [flipped, setFlipped] = useState(false);
   const isAI = recipe.source === 'ai' || recipe.source === 'fallback';
   const missing = recipe.missing ?? [];
@@ -77,7 +82,7 @@ export function RecipeCard({ recipe, vibe, index, onVideo, onToggleTab, inTab = 
       <div className="fc-inner">
         {/* ---------- front ---------- */}
         <div className="ff front">
-          <CardActions recipe={recipe} vibe={vibe} onToggleTab={onToggleTab} inTab={inTab} />
+          <CardActions recipe={recipe} vibe={vibe} onToggleTab={onToggleTab} inTab={inTab} removeMode={removeMode} />
           {recipe.thumb ? (
             <div className="fc-img">
               <img src={recipe.thumb} alt={recipe.name} loading="lazy" />
@@ -115,7 +120,7 @@ export function RecipeCard({ recipe, vibe, index, onVideo, onToggleTab, inTab = 
 
         {/* ---------- back ---------- */}
         <div className="ff back">
-          <CardActions recipe={recipe} vibe={vibe} onToggleTab={onToggleTab} inTab={inTab} />
+          <CardActions recipe={recipe} vibe={vibe} onToggleTab={onToggleTab} inTab={inTab} removeMode={removeMode} />
           <div className="fb-head">
             <span className="k-label">{isAI ? 'HOUSE SPECIAL' : `Nº ${String(index + 1).padStart(3, '0')}`}</span>
             <h3>{recipe.name}</h3>
