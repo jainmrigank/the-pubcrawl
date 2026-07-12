@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import { AnimatePresence, motion, MotionConfig } from 'framer-motion';
 import { fetchHealth, fetchLikes, fetchRecipes, fetchVibes, generateRecipe, matchRecipes, postLike } from './api';
 import type { Health, Ingredient, MatchResult, Recipe, Vibe } from './types';
@@ -7,8 +7,9 @@ import { UploadZone } from './components/UploadZone';
 import { RecipeCard } from './components/RecipeCard';
 import { IngredientIcon } from './components/IngredientIcon';
 import { Knowledge } from './components/Knowledge';
+import { BarTalk } from './components/BarTalk';
 import { Counter, EASE, Lines, LOADED_HIDDEN, Reveal } from './motion';
-import { ArrowDown, ArrowRight, Check, Heart, PubGlyph, Share, Shuffle, SketchDefs, X } from './icons';
+import { ArrowDown, ArrowRight, Burger, Check, Heart, PubGlyph, Share, Shuffle, SketchDefs, X } from './icons';
 import { shareContent, tabShareText } from './share';
 import './App.css';
 
@@ -30,23 +31,24 @@ function parseRoute(): Route {
 
 function useRoute(): Route {
   const [route, setRoute] = useState<Route>(parseRoute);
+  const positions = useRef<Partial<Record<Route, number>>>({});
   useEffect(() => {
-    // every page keeps its scroll position, so hopping to The Tab and back
-    // drops you exactly where you left the list
-    const positions: Partial<Record<Route, number>> = {};
+    // remember where the user left each page
     let current = parseRoute();
     const onChange = () => {
-      positions[current] = window.scrollY;
+      positions.current[current] = window.scrollY;
       current = parseRoute();
       setRoute(current);
-      const target = positions[current] ?? 0;
-      requestAnimationFrame(() =>
-        requestAnimationFrame(() => window.scrollTo({ top: target, behavior: 'instant' as ScrollBehavior }))
-      );
     };
     window.addEventListener('hashchange', onChange);
     return () => window.removeEventListener('hashchange', onChange);
   }, []);
+  // restore synchronously after the new page has rendered and before paint —
+  // racing this with rAF left phones stranded in the overscrolled void below
+  // the footer when a long page swapped to a short one
+  useLayoutEffect(() => {
+    window.scrollTo({ top: positions.current[route] ?? 0, behavior: 'instant' as ScrollBehavior });
+  }, [route]);
   return route;
 }
 
@@ -88,6 +90,7 @@ export default function App() {
     }
   });
   const [loved, setLoved] = useState(false);
+  const [inventMood, setInventMood] = useState('');
 
   const vibeOf = useCallback(
     (id: string) => vibes.find((v) => v.id === id) ?? FALLBACK_VIBE,
@@ -197,8 +200,9 @@ export default function App() {
     try {
       const drink = await generateRecipe(
         pantry.map((p) => p.name),
-        vibeFilter || undefined,
-        aiDrinks.map((d) => d.name)
+        inventMood || undefined,
+        aiDrinks.map((d) => `${d.name} (${d.ingredients.slice(0, 3).map((i) => i.name).join(', ')})`),
+        tab.slice(-6).map((r) => `${r.name}: ${r.ingredients.slice(0, 4).map((i) => i.name).join(', ')}`)
       );
       setAiDrinks((prev) => [drink, ...prev].slice(0, 6));
     } catch (err) {
@@ -301,8 +305,8 @@ export default function App() {
           <span className="nav-status k-label dim">
             {health ? `${health.cocktails} DRINKS ON TAP` : '…'}
           </span>
-          <button className="nav-menu-btn k-label" onClick={() => setMenuOpen(true)} aria-label="Open menu">
-            MENU
+          <button className="nav-menu-btn" onClick={() => setMenuOpen(true)} aria-label="Open menu">
+            <Burger size={22} />
           </button>
         </header>
 
@@ -365,9 +369,17 @@ export default function App() {
                         or head to The Bar with what’s on your shelf and we’ll find the drinks you
                         can pour tonight, plus a few nobody’s ever tasted.
                       </p>
-                      <a className="btn" href="#/bar">
-                        WHAT CAN I MAKE? <ArrowRight size={14} />
-                      </a>
+                      <div className="hero-cta">
+                        <button
+                          className="btn"
+                          onClick={() => document.querySelector('#menu-list')?.scrollIntoView({ behavior: 'smooth', block: 'start' })}
+                        >
+                          SEE THE MENU <ArrowDown size={14} />
+                        </button>
+                        <a className="btn btn-solid" href="#/bar">
+                          WHAT CAN I POUR? <ArrowRight size={14} />
+                        </a>
+                      </div>
                     </Reveal>
                     <div className="hero-stats">
                       <div className="stat">
@@ -447,11 +459,11 @@ export default function App() {
                     </div>
                   ) : (
                     <>
-                      <div className="grid">{featured.map((r, i) => card(r, i))}</div>
+                      <div className={`grid ${browseLoading ? 'is-loading' : ''}`}>{featured.map((r, i) => card(r, i))}</div>
                       {moreLeft && !browseLoading && (
                         <div className="more-row">
                           <button className="btn" onClick={() => setBrowseLimit((l) => l + 12)}>
-                            SHOW 12 MORE DRINKS <ArrowDown size={14} />
+                            SHOW MORE <ArrowDown size={14} />
                           </button>
                           <span className="k-label dim">
                             {browse.length} OF {health?.cocktails ?? 611} ON SHOW
@@ -463,6 +475,7 @@ export default function App() {
                       )}
                     </>
                   )}
+                  <BarTalk />
                 </section>
               </>
             </div>
@@ -523,12 +536,39 @@ export default function App() {
                     <>
                       <div className="bar-controls">{moodBar}</div>
                       <div className="invent-row">
-                        <div>
+                        <div className="invent-lead">
                           <span className="k-label">HOUSE SPECIALS</span>
                           <p className="invent-note">
-                            A brand-new drink, dreamed up from exactly what you’ve got
-                            {vibeFilter ? ' in your chosen mood' : ''}. Every press pours something different.
+                            A brand-new drink, dreamed up from exactly what you’ve got. Pick a mood,
+                            or leave it to the house. Drinks on your tab tune the bartender’s taste.
                           </p>
+                          <div className="invent-moods" role="group" aria-label="Mood for the special">
+                            <button
+                              className={`vibe-chip ${inventMood === '' ? 'on' : ''}`}
+                              onClick={() => setInventMood('')}
+                            >
+                              BARTENDER’S CHOICE
+                            </button>
+                            {vibes.map((v) => (
+                              <button
+                                key={v.id}
+                                className={`vibe-chip ${inventMood === v.id ? 'on' : ''}`}
+                                style={{ ['--vc' as string]: v.color }}
+                                onClick={() => setInventMood(inventMood === v.id ? '' : v.id)}
+                              >
+                                <i className="swatch" />
+                                {v.label.toUpperCase()}
+                              </button>
+                            ))}
+                            <button
+                              className={`vibe-chip ${inventMood === 'zeroproof' ? 'on' : ''}`}
+                              style={{ ['--vc' as string]: '#6B7A6E' }}
+                              onClick={() => setInventMood(inventMood === 'zeroproof' ? '' : 'zeroproof')}
+                            >
+                              <i className="swatch" />
+                              ZERO-PROOF
+                            </button>
+                          </div>
                         </div>
                         <button className="btn btn-solid" onClick={invent} disabled={generating}>
                           {generating ? 'MIXING…' : 'MIX ME SOMETHING NEW'} <ArrowRight size={14} />
@@ -558,6 +598,7 @@ export default function App() {
                       )}
                     </>
                   )}
+                  <BarTalk />
                 </section>
               </>
             </div>
@@ -565,6 +606,7 @@ export default function App() {
             <div hidden={route !== 'basics'}>
               <section className="sec page-top" id="basics">
                 <SectionHead index="01" title="BAR BASICS" note="EVERYTHING WORTH KNOWING, NO SNOBBERY" />
+                <BarTalk />
                 <Reveal>
                   <Knowledge />
                 </Reveal>
@@ -615,6 +657,7 @@ export default function App() {
                     <div className="grid">{tab.map((r, i) => card(r, i, true))}</div>
                   </>
                 )}
+                <BarTalk />
               </section>
             </div>
         </main>

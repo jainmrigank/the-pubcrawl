@@ -78,7 +78,7 @@ export function createApp() {
     const vibe = String(req.query.vibe || '');
     const q = norm(String(req.query.q || ''));
     const limit = Math.min(Number(req.query.limit) || 12, 120);
-    let list = cocktails.filter((c) => c.thumb);
+    let list = cocktails.filter((c) => c.thumb || c.house);
     if (vibe === 'zeroproof') list = list.filter((c) => (c.alcoholic || '').toLowerCase().includes('non'));
     else if (vibe) list = list.filter((c) => c.vibe === vibe);
 
@@ -109,7 +109,13 @@ export function createApp() {
     const seedStr = String(req.query.seed || 'x');
     let seed = 0;
     for (const ch of seedStr) seed = (seed * 31 + ch.charCodeAt(0)) >>> 0;
-    const hash = (c) => (Number(c.id) * 2654435761 + seed) >>> 0;
+    // id-string hash (house extras have non-numeric ids)
+    const idNum = (c) => {
+      let h = 7;
+      for (const ch of String(c.id)) h = (h * 33 + ch.charCodeAt(0)) >>> 0;
+      return h;
+    };
+    const hash = (c) => ((idNum(c) + seed) * 2654435761) >>> 0;
     const ordered =
       String(req.query.sort || '') === 'likes'
         ? [...list].sort((a, b) => (likes[b.id] || 0) - (likes[a.id] || 0) || hash(a) - hash(b))
@@ -168,8 +174,19 @@ export function createApp() {
   app.post('/api/generate', async (req, res) => {
     const pantry = Array.isArray(req.body?.ingredients) ? req.body.ingredients.map(String).filter(Boolean) : [];
     const vibe = String(req.body?.vibe || '');
-    const avoid = Array.isArray(req.body?.avoid) ? req.body.avoid.map(String).slice(0, 12) : [];
+    const avoid = Array.isArray(req.body?.avoid) ? req.body.avoid.map(String).slice(0, 10) : [];
+    const taste = Array.isArray(req.body?.taste) ? req.body.taste.map(String).slice(0, 8) : [];
     if (!pantry.length) return res.status(400).json({ error: 'ingredients required' });
+
+    const MOODS = {
+      tropical: 'tropical and sunny',
+      refreshing: 'fresh, citrusy and light',
+      boozy: 'spirit-forward and stiff',
+      sweet: 'dessert-like and indulgent',
+      cozy: 'warm and comforting',
+      party: 'a fun, punchy party serve',
+      zeroproof: 'strictly zero-proof: no alcohol in any ingredient, not even a dash',
+    };
 
     if (llmAvailable()) {
       try {
@@ -179,12 +196,27 @@ export function createApp() {
             {
               role: 'system',
               content:
-                'You are a world-class mixologist who invents original, balanced cocktails. Always respond with a single JSON object, no prose.',
+                'You are a world-class mixologist who invents original, balanced, practical cocktails for a home bar. Always respond with a single JSON object, no prose.',
             },
             {
               role: 'user',
-              content: `Invent ONE original cocktail using ONLY these available ingredients (plus ice/water/sugar/salt): ${pantry.join(', ')}.${vibe ? ` The vibe must be "${vibe}".` : ''} Lean ${cue}.
-Rules: use 3-7 ingredients from the list, real-world sensible measures in ml/dashes, balanced (base : sour : sweet), a creative evocative name that is NOT an existing cocktail, and clear step-by-step instructions.${avoid.length ? ` Do NOT reuse any of these names or make trivially similar drinks: ${avoid.join(', ')}.` : ''}
+              content: `Invent ONE original cocktail for a guest at a home bar.
+
+THE SHELF (build the drink around these): ${pantry.join(', ')}
+THE MOOD: ${MOODS[vibe] ? `make it ${MOODS[vibe]}` : 'bartender’s choice: read the shelf and surprise the guest'}.
+${
+  taste.length
+    ? `THE GUEST’S TAB TONIGHT (drinks they saved; read their palate from these and lean toward it):\n${taste.map((t) => `- ${t}`).join('\n')}`
+    : 'The guest has no saved drinks yet: assume a curious drinker who enjoys balanced, crowd-pleasing serves with one memorable twist.'
+}
+
+RULES:
+- Use shelf items as the backbone of the drink. You may add at most 2 ingredients that are not on the shelf, and only if they are cheap, common bar staples (fresh citrus, an everyday syrup, a soda, common bitters). Nothing obscure or laboratory-like: never saline solution, never burnt sugar syrup.
+- 3 to 7 ingredients, realistic measures in ml and dashes, balanced base : sour : sweet.
+- Be clearly different from these earlier drafts tonight; change the base spirit, the technique or the serve: ${avoid.length ? avoid.join('; ') : 'none yet'}.
+- Lean ${cue}.
+- Give it a creative, evocative name that is not an existing cocktail, and clear step-by-step instructions.
+
 Respond with JSON exactly like:
 {"name": "...", "tagline": "one poetic sentence", "vibe": "tropical|refreshing|boozy|sweet|cozy|party", "glass": "...", "ingredients": [{"name": "...", "measure": "..."}], "instructions": "...", "garnish": "..."}`,
             },
@@ -197,7 +229,7 @@ Respond with JSON exactly like:
           name: String(r.name || 'The Unnamed'),
           tagline: String(r.tagline || ''),
           category: 'AI Original',
-          alcoholic: 'Alcoholic',
+          alcoholic: vibe === 'zeroproof' ? 'Non alcoholic' : 'Alcoholic',
           glass: String(r.glass || 'Coupe'),
           instructions: String(r.instructions || '') + (r.garnish ? ` Garnish with ${r.garnish}.` : ''),
           thumb: '',

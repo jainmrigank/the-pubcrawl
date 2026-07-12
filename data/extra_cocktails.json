@@ -1,0 +1,171 @@
+[
+ {
+  "id": "x-jagerbomb",
+  "name": "Jägerbomb",
+  "category": "Punch / Party Drink",
+  "alcoholic": "Alcoholic",
+  "glass": "Pint glass",
+  "instructions": "Pour a cold can of energy drink into a pint glass. Drop the full shot glass of Jägermeister straight in, glass and all, and drink immediately while it fizzes.",
+  "thumb": "",
+  "video": "https://www.youtube.com/watch?v=iT2LycG4YA0",
+  "tags": ["Bomb", "Party"],
+  "iba": "",
+  "ingredients": [
+   { "name": "Jagermeister", "measure": "30 ml" },
+   { "name": "Red Bull", "measure": "120 ml" }
+  ]
+ },
+ {
+  "id": "x-somaek",
+  "name": "Soju Bomb (Somaek)",
+  "category": "Punch / Party Drink",
+  "alcoholic": "Alcoholic",
+  "glass": "Pint glass",
+  "instructions": "Fill a pint glass halfway with very cold lager. Drop in a shot glass of soju and drink while it foams. Korea's somaek is the original soju bomb: the name mashes soju and maekju, the Korean word for beer.",
+  "thumb": "",
+  "video": "https://www.youtube.com/watch?v=IeE3k7HA1zU",
+  "tags": ["Bomb", "Party", "Korea"],
+  "iba": "",
+  "ingredients": [
+   { "name": "Soju", "measure": "45 ml" },
+   { "name": "Lager", "measure": "200 ml" }
+  ]
+ },
+ {
+  "id": "x-sakebomb",
+  "name": "Sake Bomb",
+  "category": "Punch / Party Drink",
+  "alcoholic": "Alcoholic",
+  "glass": "Pint glass",
+  "instructions": "Balance a shot of warm sake on chopsticks laid across a half-full glass of cold lager. Slam the table so the shot drops in, then drink straight down.",
+  "thumb": "",
+  "video": "https://www.youtube.com/watch?v=J9oMOKwZmY8",
+  "tags": ["Bomb", "Party", "Japan"],
+  "iba": "",
+  "ingredients": [
+   { "name": "Sake", "measure": "45 ml" },
+   { "name": "Lager", "measure": "200 ml" }
+  ]
+ },
+ {
+  "id": "x-pickleback",
+  "name": "Pickleback",
+  "category": "Shot",
+  "alcoholic": "Alcoholic",
+  "glass": "Shot glass",
+  "instructions": "Pour two shots side by side: one of whiskey, one of cold pickle brine. Knock back the whiskey, then chase it immediately with the brine. The salt and vinegar erase the burn.",
+  "thumb": "",
+  "video": "https://www.youtube.com/watch?v=N8WadMRKEfg",
+  "tags": ["Shot", "Party"],
+  "iba": "",
+  "ingredients": [
+   { "name": "Whiskey", "measure": "45 ml" },
+   { "name": "Pickle Brine", "measure": "45 ml" }
+  ]
+ },
+ {
+  "id": "x-irishslammer",
+  "name": "Irish Slammer",
+  "category": "Punch / Party Drink",
+  "alcoholic": "Alcoholic",
+  "glass": "Pint glass",
+  "instructions": "Pour half a glass of stout and let it settle. In a shot glass, layer Irish cream over Irish whiskey. Drop the shot into the stout and drink straight down before it curdles.",
+  "thumb": "",
+  "video": "https://www.youtube.com/watch?v=mY1i7k1C0So",
+  "tags": ["Bomb", "Party"],
+  "iba": "",
+  "ingredients": [
+   { "name": "Stout", "measure": "150 ml" },
+   { "name": "Irish whiskey", "measure": "15 ml" },
+   { "name": "Irish cream", "measure": "15 ml" }
+  ]
+ },
+ {
+  "id": "x-hugospritz",
+  "name": "Hugo Spritz",
+  "category": "Cocktail",
+  "alcoholic": "Alcoholic",
+  "glass": "Wine glass",
+  "instructions": "Fill a large wine glass with ice. Add the elderflower liqueur, gently squeeze in the lime, then top with prosecco and a splash of soda. Stir once and slap the mint before dropping it in.",
+  "thumb": "",
+  "video": "https://www.youtube.com/watch?v=SDJDkqgb9F8",
+  "tags": ["Spritz", "Summer"],
+  "iba": "",
+  "ingredients": [
+   { "name": "Elderflower Liqueur", "measure": "30 ml" },
+   { "name": "Prosecco", "measure": "90 ml" },
+   { "name": "Soda Water", "measure": "30 ml" },
+   { "name": "Lime", "measure": "1 wedge" },
+   { "name": "Mint", "measure": "1 sprig" }
+  ]
+ },
+ {
+  "id": "x-sbagliato",
+  "name": "Negroni Sbagliato",
+  "category": "Cocktail",
+  "alcoholic": "Alcoholic",
+  "glass": "Old-fashioned glass",
+  "instructions": "Build over ice: sweet vermouth, then Campari, then top with prosecco. Stir once and garnish with an orange slice. Sbagliato means 'mistaken': a Milanese bartender reached for sparkling wine instead of gin and kept it.",
+  "thumb": "",
+  "video": "https://www.youtube.com/watch?v=VMSuUyAcO6E",
+  "tags": ["Classic", "Aperitivo"],
+  "iba": "",
+  "ingredients": [
+   { "name": "Sweet Vermouth", "measure": "30 ml" },
+   { "name": "Campari", "measure": "30 ml" },
+   { "name": "Prosecco", "measure": "30 ml" },
+   { "name": "Orange", "measure": "1 slice" }
+  ]
+ },
+ {
+  "id": "x-ranchwater",
+  "name": "Ranch Water",
+  "category": "Cocktail",
+  "alcoholic": "Alcoholic",
+  "glass": "Highball glass",
+  "instructions": "Fill a highball with ice, add the tequila and lime juice, then top with very cold sparkling mineral water. West Texas tradition says to drink some straight from the bottle and mix the rest in it.",
+  "thumb": "",
+  "video": "https://www.youtube.com/watch?v=38GII3AFepQ",
+  "tags": ["Highball", "Summer"],
+  "iba": "",
+  "ingredients": [
+   { "name": "Tequila", "measure": "60 ml" },
+   { "name": "Lime Juice", "measure": "30 ml" },
+   { "name": "Sparkling Water", "measure": "top up" }
+  ]
+ },
+ {
+  "id": "x-paperplane",
+  "name": "Paper Plane",
+  "category": "Cocktail",
+  "alcoholic": "Alcoholic",
+  "glass": "Coupe",
+  "instructions": "Shake equal parts bourbon, Aperol, amaro and lemon juice hard with ice. Double strain into a chilled coupe. A modern classic from 2008, named after the M.I.A. song playing when it was invented.",
+  "thumb": "",
+  "video": "https://www.youtube.com/watch?v=KetESaw8I4U",
+  "tags": ["Modern Classic", "Sour"],
+  "iba": "",
+  "ingredients": [
+   { "name": "Bourbon", "measure": "22.5 ml" },
+   { "name": "Aperol", "measure": "22.5 ml" },
+   { "name": "Amaro Nonino", "measure": "22.5 ml" },
+   { "name": "Lemon Juice", "measure": "22.5 ml" }
+  ]
+ },
+ {
+  "id": "x-uboot",
+  "name": "U-Boot",
+  "category": "Punch / Party Drink",
+  "alcoholic": "Alcoholic",
+  "glass": "Pint glass",
+  "instructions": "Fill a pint glass most of the way with cold lager. Sink a full shot glass of vodka to the bottom like a submarine and drink. A German and Polish party standard.",
+  "thumb": "",
+  "video": "https://www.youtube.com/watch?v=bMxt7wbh8o0",
+  "tags": ["Bomb", "Party"],
+  "iba": "",
+  "ingredients": [
+   { "name": "Vodka", "measure": "40 ml" },
+   { "name": "Lager", "measure": "250 ml" }
+  ]
+ }
+]

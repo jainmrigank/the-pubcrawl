@@ -24,11 +24,17 @@ const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
  * first request of a visit can hit it mid-wake (network error or 5xx).
  * 4xx responses are real answers and are never retried.
  */
+/**
+ * Every request carries a timeout: a hung call would otherwise occupy one of
+ * the browser's six connections per origin, and a few of those (a slow AI
+ * request during an outage, retries piling up) silently starve every later
+ * fetch, freezing the whole app until a refresh.
+ */
 async function get<T>(url: string, tries = 4): Promise<T> {
   let lastErr: unknown;
   for (let i = 0; i < tries; i++) {
     try {
-      const res = await fetch(API_BASE + url, { headers: HEADERS });
+      const res = await fetch(API_BASE + url, { headers: HEADERS, signal: AbortSignal.timeout(12000) });
       if (res.ok) return res.json();
       if (res.status < 500) throw new Error(`${url} → ${res.status}`);
       lastErr = new Error(`${url} → ${res.status}`);
@@ -40,7 +46,7 @@ async function get<T>(url: string, tries = 4): Promise<T> {
   throw lastErr;
 }
 
-async function post<T>(url: string, body: unknown, retryable = false): Promise<T> {
+async function post<T>(url: string, body: unknown, retryable = false, timeoutMs = 20000): Promise<T> {
   let lastErr: unknown;
   for (let i = 0; i < (retryable ? 3 : 1); i++) {
     try {
@@ -48,6 +54,7 @@ async function post<T>(url: string, body: unknown, retryable = false): Promise<T
         method: 'POST',
         headers: { 'content-type': 'application/json', ...HEADERS },
         body: JSON.stringify(body),
+        signal: AbortSignal.timeout(timeoutMs),
       });
       const json = await res.json().catch(() => ({}));
       if (res.ok) return json as T;
@@ -83,10 +90,10 @@ export const matchRecipes = (ingredients: string[]) =>
   post<MatchResult>('/api/recipes/match', { ingredients }, true);
 
 export const identifyImage = (imageBase64: string, mimeType: string) =>
-  post<{ detected: Ingredient[] }>('/api/identify', { imageBase64, mimeType });
+  post<{ detected: Ingredient[] }>('/api/identify', { imageBase64, mimeType }, false, 90000);
 
-export const generateRecipe = (ingredients: string[], vibe?: string, avoid?: string[]) =>
-  post<Recipe>('/api/generate', { ingredients, vibe, avoid });
+export const generateRecipe = (ingredients: string[], vibe?: string, avoid?: string[], taste?: string[]) =>
+  post<Recipe>('/api/generate', { ingredients, vibe, avoid, taste }, false, 90000);
 
 export const fetchLikes = () => get<Record<string, number>>('/api/likes');
 

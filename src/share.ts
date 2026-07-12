@@ -1,5 +1,7 @@
 import type { Recipe } from './types';
 
+const SITE = 'https://the-pubcrawl.vercel.app';
+
 /** Plain-text card for one drink, ready for a chat message. */
 export function recipeShareText(r: Recipe, vibeLabel: string): string {
   const lines = [
@@ -13,6 +15,7 @@ export function recipeShareText(r: Recipe, vibeLabel: string): string {
     r.instructions,
   ];
   if (r.video) lines.push('', `WATCH: ${r.video}`);
+  lines.push('', `What's your poison? Find it at ${SITE}`);
   return lines.join('\n');
 }
 
@@ -28,6 +31,7 @@ export function tabShareText(list: Recipe[]): string {
     lines.push(`   Make: ${make}`);
     if (r.video) lines.push(`   Watch: ${r.video}`);
   });
+  lines.push('', `Build your own menu for the night at ${SITE}`);
   return lines.join('\n');
 }
 

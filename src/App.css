@@ -45,7 +45,7 @@ button { font-family: inherit; }
   outline-offset: 2px;
 }
 
-.site { min-height: 100vh; display: flex; flex-direction: column; }
+.site { min-height: 100vh; min-height: 100dvh; display: flex; flex-direction: column; }
 
 main { flex: 1; width: 100%; max-width: 1440px; margin: 0 auto; padding: 0 clamp(20px, 4vw, 64px); }
 
@@ -133,6 +133,12 @@ main { flex: 1; width: 100%; max-width: 1440px; margin: 0 auto; padding: 0 clamp
 
 .nav-menu-btn {
   display: none;
+  align-items: center;
+  justify-content: center;
+  width: 42px;
+  height: 42px;
+  padding: 0;
+  line-height: 0;
   margin-left: auto;
   background: none;
   border: 1px solid var(--ink);
@@ -208,7 +214,7 @@ main { flex: 1; width: 100%; max-width: 1440px; margin: 0 auto; padding: 0 clamp
 }
 
 .hero-copy p { margin: 0 0 22px; font-size: 17px; max-width: 44ch; }
-.hero-search { margin: 0 0 22px; max-width: 520px; }
+.hero-cta { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
 
 .hero-stats {
   display: grid;
@@ -537,7 +543,21 @@ main { flex: 1; width: 100%; max-width: 1440px; margin: 0 auto; padding: 0 clamp
   padding: 18px 22px;
   margin-bottom: 28px;
 }
+.invent-lead { flex: 1; }
 .invent-note { margin: 4px 0 0; font-size: 14px; color: var(--ink-60); max-width: 52ch; }
+.invent-moods { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 14px; }
+
+/* bar talk coaster */
+.bartalk {
+  border: 1px solid var(--ink);
+  background: var(--paper);
+  box-shadow: 6px 6px 0 rgba(22, 21, 18, 0.08);
+  padding: 16px 20px 18px;
+  margin: clamp(32px, 5vh, 48px) 0 4px;
+  max-width: 860px;
+}
+.bartalk-head { display: flex; justify-content: space-between; align-items: center; gap: 16px; margin-bottom: 10px; }
+.bartalk p { margin: 0; font-size: 16px; line-height: 1.6; }
 
 /* ---------- empty states ---------- */
 .empty { padding: clamp(30px, 6vh, 64px) 0; border-bottom: 1px solid var(--line); }
@@ -558,7 +578,9 @@ main { flex: 1; width: 100%; max-width: 1440px; margin: 0 auto; padding: 0 clamp
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(290px, 1fr));
   gap: clamp(16px, 2.2vw, 26px);
+  transition: opacity 0.25s var(--ease);
 }
+.grid.is-loading { opacity: 0.35; pointer-events: none; }
 
 .fc {
   perspective: 1600px;

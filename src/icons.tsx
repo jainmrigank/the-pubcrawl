@@ -202,6 +202,11 @@ export const Search = (p: P) => (
     <path d="M15.5 15.5 Q18 18.5 21 21" />
   </S>
 );
+export const Burger = (p: P) => (
+  <S {...p}>
+    <path d="M4 6.5 Q12 6 20 6.5M4 12 Q12 11.6 20 12M4 17.5 Q12 17.2 20 17.5" />
+  </S>
+);
 export const Camera = (p: P) => (
   <S {...p}>
     <path d="M3 7h4l2-2.5h6L17 7h4v13 Q12 19.2 3 20zM12 9.5a3.5 3.5 0 1 0 0 7 3.5 3.5 0 0 0 0-7z" />

@@ -79,7 +79,13 @@ export const isBoozeCategory = (cat) =>
 
 /* ---------- normalisation + matching ---------- */
 export const norm = (s) =>
-  s.toLowerCase().replace(/[^a-z0-9 ]/g, ' ').replace(/\s+/g, ' ').trim();
+  s
+    .normalize('NFD')
+    .replace(/[̀-ͯ]/g, '') // ä→a, ñ→n, é→e: Jägerbomb and Piña stay searchable
+    .toLowerCase()
+    .replace(/[^a-z0-9 ]/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim();
 
 // interchangeable families — pantry item matches recipe item if both hit the same group
 const ALIAS_GROUPS = [
@@ -136,6 +142,15 @@ export const isStaple = (name) => STAPLES.has(norm(name));
 export function loadCatalog() {
   const cocktails = JSON.parse(readFileSync(join(ROOT, 'data', 'cocktails.json'), 'utf8')).map(withVibe);
   const scraped = JSON.parse(readFileSync(join(ROOT, 'data', 'ingredients.json'), 'utf8'));
+
+  // hand-curated house additions (bombs, somaek, modern classics the source lacks)
+  const extrasPath = join(ROOT, 'data', 'extra_cocktails.json');
+  if (existsSync(extrasPath)) {
+    for (const d of JSON.parse(readFileSync(extrasPath, 'utf8'))) {
+      d.house = true;
+      cocktails.push(withVibe(d));
+    }
+  }
 
   // merge scraped YouTube videos (scripts/fetch_videos.mjs) into drinks that lack one
   const videosPath = join(ROOT, 'data', 'videos.json');
