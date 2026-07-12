@@ -7,7 +7,9 @@
 import { readFileSync, existsSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { withVibe } from './vibes.mjs';
+import { withVibe, VIBES } from './vibes.mjs';
+
+const VIBES_SET = VIBES;
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
 
@@ -41,6 +43,13 @@ const CURATED = [
   'Tajin', 'Smoked Paprika', 'Pink Peppercorn', 'Butterfly Pea Flower', 'Matcha',
   'Rose Water', 'Orange Blossom Water', 'Aloe Vera Juice', 'Jaggery Syrup',
   'Egg White', 'Aquafaba', 'Heavy Cream', 'Condensed Milk', 'Espresso',
+  // Indian bar pantry (used by data/indian_cocktails.json + extra_cocktails.json)
+  'Feni', 'Gondhoraj Lime', 'Kokum Syrup', 'Tamarind Syrup', 'Khus Syrup',
+  'Jamun Syrup', 'Gulkand Syrup', 'Thandai Syrup', 'Kala Khatta Syrup',
+  'Bael Syrup', 'Saffron Syrup', 'Cardamom Syrup', 'Jaggery Syrup',
+  'Masala Chai', 'Custard Apple Pulp', 'Coconut Cream', 'Guava Puree',
+  'Mango Puree', 'Sea Buckthorn Juice', 'Pomegranate Juice', 'Raw Mango',
+  'Curry Leaves', 'Tulsi', 'Cumin', 'Black Salt',
 ];
 
 /* ---------- ingredient categorisation ---------- */
@@ -52,7 +61,7 @@ const CATEGORY_RULES = [
   ['Juice', ['juice', 'nectar', 'puree']],
   ['Soda & Mixer', ['soda', 'tonic', 'cola', 'coke', 'sprite', '7 up', 'ginger ale', 'ginger beer', 'lemonade', 'water', 'red bull', 'iced tea', 'coffee', 'espresso', 'tea', 'chai', 'coconut water']],
   ['Beer & Cider', ['beer', 'lager', 'ale', 'stout', 'cider']],
-  ['Syrup & Sweetener', ['syrup', 'honey', 'sugar', 'agave', 'grenadine', 'orgeat', 'molasses', 'jaggery', 'sweetener', 'cordial']],
+  ['Syrup & Sweetener', ['syrup', 'honey', 'sugar', 'agave', 'grenadine', 'orgeat', 'molasses', 'jaggery', 'gur', 'gulkand', 'sweetener', 'cordial', 'thandai', 'khus']],
   ['Dairy & Egg', ['cream', 'milk', 'yoghurt', 'yogurt', 'butter', 'egg', 'aquafaba', 'ice cream']],
   ['Fruit', ['lemon', 'lime', 'orange', 'grapefruit', 'pineapple', 'banana', 'berry', 'berries', 'cherry', 'apple', 'peach', 'mango', 'melon', 'kiwi', 'papaya', 'guava', 'lychee', 'passion fruit', 'dragon fruit', 'pomegranate', 'watermelon', 'olive', 'fruit', 'yuzu', 'calamansi', 'kumquat', 'grapes', 'fig', 'apricot', 'coconut', 'kokum']],
   ['Herb & Spice', ['mint', 'basil', 'rosemary', 'sage', 'dill', 'thyme', 'lemongrass', 'shiso', 'curry leaf', 'curry leaves', 'kaffir', 'cinnamon', 'nutmeg', 'clove', 'cloves', 'cardamom', 'anise', 'saffron', 'pepper', 'peppercorn', 'ginger', 'chilli', 'jalapeno', 'salt', 'masala', 'tajin', 'paprika', 'vanilla', 'matcha', 'hibiscus', 'butterfly pea', 'rose water', 'orange blossom', 'celery', 'cucumber', 'wormwood', 'lavender', 'cumin']],
@@ -143,12 +152,17 @@ export function loadCatalog() {
   const cocktails = JSON.parse(readFileSync(join(ROOT, 'data', 'cocktails.json'), 'utf8')).map(withVibe);
   const scraped = JSON.parse(readFileSync(join(ROOT, 'data', 'ingredients.json'), 'utf8'));
 
-  // hand-curated house additions (bombs, somaek, modern classics the source lacks)
-  const extrasPath = join(ROOT, 'data', 'extra_cocktails.json');
-  if (existsSync(extrasPath)) {
-    for (const d of JSON.parse(readFileSync(extrasPath, 'utf8'))) {
+  // hand-curated house additions the source database lacks: bombs and modern
+  // classics (extra_cocktails.json) plus 100 regional Indian drinks
+  // (indian_cocktails.json). A vibeHint pins the intended mood.
+  for (const file of ['extra_cocktails.json', 'indian_cocktails.json']) {
+    const p = join(ROOT, 'data', file);
+    if (!existsSync(p)) continue;
+    for (const d of JSON.parse(readFileSync(p, 'utf8'))) {
       d.house = true;
-      cocktails.push(withVibe(d));
+      withVibe(d);
+      if (d.vibeHint && Object.keys(VIBES_SET).includes(d.vibeHint)) d.vibe = d.vibeHint;
+      cocktails.push(d);
     }
   }
 

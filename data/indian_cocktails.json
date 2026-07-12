@@ -1,0 +1,3422 @@
+[
+ {
+  "id": "x-in-001",
+  "name": "Kokum Sour",
+  "category": "Cocktail",
+  "alcoholic": "Alcoholic",
+  "glass": "Coupe",
+  "instructions": "Dry shake gin, kokum syrup, sugar syrup and egg white without ice to build the foam, then shake again hard with ice. Double strain into a chilled coupe and finish with a few drops of bitters drawn through the foam. A Konkan riff built on the sour magenta fruit of the Konkan coast.",
+  "thumb": "",
+  "video": "",
+  "tags": [
+   "India",
+   "Konkan",
+   "Kokum"
+  ],
+  "iba": "",
+  "ingredients": [
+   {
+    "name": "Gin",
+    "measure": "60 ml"
+   },
+   {
+    "name": "Kokum Syrup",
+    "measure": "25 ml"
+   },
+   {
+    "name": "Sugar Syrup",
+    "measure": "20 ml"
+   },
+   {
+    "name": "Egg White",
+    "measure": "1"
+   }
+  ],
+  "vibeHint": "refreshing"
+ },
+ {
+  "id": "x-in-002",
+  "name": "Kokum Highball",
+  "category": "Cocktail",
+  "alcoholic": "Alcoholic",
+  "glass": "Highball glass",
+  "instructions": "Build over plenty of ice: gin and kokum syrup, then top with cold soda and stir once. A Konkan riff built on the sour magenta fruit of the Konkan coast.",
+  "thumb": "",
+  "video": "",
+  "tags": [
+   "India",
+   "Konkan",
+   "Kokum"
+  ],
+  "iba": "",
+  "ingredients": [
+   {
+    "name": "Gin",
+    "measure": "45 ml"
+   },
+   {
+    "name": "Kokum Syrup",
+    "measure": "20 ml"
+   },
+   {
+    "name": "Soda Water",
+    "measure": "top up"
+   }
+  ],
+  "vibeHint": "refreshing"
+ },
+ {
+  "id": "x-in-003",
+  "name": "Bazaar Kokum",
+  "category": "Cocktail",
+  "alcoholic": "Alcoholic",
+  "glass": "Mug",
+  "instructions": "Fill a copper mug with ice. Add gin, lime juice and sugar syrup, top with cold ginger beer and give it one stir. A Konkan riff built on the sour magenta fruit of the Konkan coast.",
+  "thumb": "",
+  "video": "",
+  "tags": [
+   "India",
+   "Konkan",
+   "Kokum"
+  ],
+  "iba": "",
+  "ingredients": [
+   {
+    "name": "Gin",
+    "measure": "50 ml"
+   },
+   {
+    "name": "Lime Juice",
+    "measure": "15 ml"
+   },
+   {
+    "name": "Sugar Syrup",
+    "measure": "10 ml"
+   },
+   {
+    "name": "Ginger Beer",
+    "measure": "top up"
+   }
+  ],
+  "vibeHint": "refreshing"
+ },
+ {
+  "id": "x-in-004",
+  "name": "Kokum Old Fashioned",
+  "category": "Cocktail",
+  "alcoholic": "Alcoholic",
+  "glass": "Old-fashioned glass",
+  "instructions": "Stir gin, jaggery syrup and the bitters over a large ice cube until cold and silky. Express an orange peel over the top. A Konkan riff built on the sour magenta fruit of the Konkan coast.",
+  "thumb": "",
+  "video": "",
+  "tags": [
+   "India",
+   "Konkan",
+   "Kokum"
+  ],
+  "iba": "",
+  "ingredients": [
+   {
+    "name": "Gin",
+    "measure": "60 ml"
+   },
+   {
+    "name": "Jaggery Syrup",
+    "measure": "10 ml"
+   },
+   {
+    "name": "Angostura Bitters",
+    "measure": "2 dashes"
+   }
+  ],
+  "vibeHint": "refreshing"
+ },
+ {
+  "id": "x-in-005",
+  "name": "Kokum Collins",
+  "category": "Cocktail",
+  "alcoholic": "Alcoholic",
+  "glass": "Collins glass",
+  "instructions": "Shake gin, kokum syrup and sugar syrup with ice, strain into an ice-filled collins glass and top with soda. A Konkan riff built on the sour magenta fruit of the Konkan coast.",
+  "thumb": "",
+  "video": "",
+  "tags": [
+   "India",
+   "Konkan",
+   "Kokum"
+  ],
+  "iba": "",
+  "ingredients": [
+   {
+    "name": "Gin",
+    "measure": "45 ml"
+   },
+   {
+    "name": "Kokum Syrup",
+    "measure": "25 ml"
+   },
+   {
+    "name": "Sugar Syrup",
+    "measure": "15 ml"
+   },
+   {
+    "name": "Soda Water",
+    "measure": "top up"
+   }
+  ],
+  "vibeHint": "refreshing"
+ },
+ {
+  "id": "x-in-006",
+  "name": "Midnight Kokum",
+  "category": "Cocktail",
+  "alcoholic": "Alcoholic",
+  "glass": "Wine glass",
+  "instructions": "Fill a wine glass with ice. Add kokum syrup and gin, top with prosecco and a splash of soda, and stir gently. A Konkan riff built on the sour magenta fruit of the Konkan coast.",
+  "thumb": "",
+  "video": "",
+  "tags": [
+   "India",
+   "Konkan",
+   "Kokum"
+  ],
+  "iba": "",
+  "ingredients": [
+   {
+    "name": "Kokum Syrup",
+    "measure": "30 ml"
+   },
+   {
+    "name": "Gin",
+    "measure": "20 ml"
+   },
+   {
+    "name": "Prosecco",
+    "measure": "90 ml"
+   },
+   {
+    "name": "Soda Water",
+    "measure": "splash"
+   }
+  ],
+  "vibeHint": "refreshing"
+ },
+ {
+  "id": "x-in-007",
+  "name": "Kokum Sling",
+  "category": "Cocktail",
+  "alcoholic": "Alcoholic",
+  "glass": "Hurricane glass",
+  "instructions": "Shake gin, kokum syrup and mango puree with ice, pour unstrained into a tall glass and lengthen with soda. A Konkan riff built on the sour magenta fruit of the Konkan coast.",
+  "thumb": "",
+  "video": "",
+  "tags": [
+   "India",
+   "Konkan",
+   "Kokum"
+  ],
+  "iba": "",
+  "ingredients": [
+   {
+    "name": "Gin",
+    "measure": "45 ml"
+   },
+   {
+    "name": "Kokum Syrup",
+    "measure": "20 ml"
+   },
+   {
+    "name": "Mango Puree",
+    "measure": "20 ml"
+   },
+   {
+    "name": "Soda Water",
+    "measure": "top up"
+   }
+  ],
+  "vibeHint": "refreshing"
+ },
+ {
+  "id": "x-in-008",
+  "name": "Kokum Fizz",
+  "category": "Cocktail",
+  "alcoholic": "Alcoholic",
+  "glass": "Highball glass",
+  "instructions": "Dry shake everything but the soda, then shake with ice. Strain into a chilled glass and top with a splash of soda to lift the foam. A Konkan riff built on the sour magenta fruit of the Konkan coast.",
+  "thumb": "",
+  "video": "",
+  "tags": [
+   "India",
+   "Konkan",
+   "Kokum"
+  ],
+  "iba": "",
+  "ingredients": [
+   {
+    "name": "Gin",
+    "measure": "45 ml"
+   },
+   {
+    "name": "Kokum Syrup",
+    "measure": "20 ml"
+   },
+   {
+    "name": "Sugar Syrup",
+    "measure": "15 ml"
+   },
+   {
+    "name": "Egg White",
+    "measure": "1"
+   },
+   {
+    "name": "Soda Water",
+    "measure": "splash"
+   }
+  ],
+  "vibeHint": "refreshing"
+ },
+ {
+  "id": "x-in-009",
+  "name": "Marigold Kokum",
+  "category": "Cocktail",
+  "alcoholic": "Alcoholic",
+  "glass": "Old-fashioned glass",
+  "instructions": "Stir gin, Campari, sweet vermouth and a barspoon of kokum syrup over ice, strain over a fresh cube and garnish with an orange slice. A Konkan riff built on the sour magenta fruit of the Konkan coast.",
+  "thumb": "",
+  "video": "",
+  "tags": [
+   "India",
+   "Konkan",
+   "Kokum"
+  ],
+  "iba": "",
+  "ingredients": [
+   {
+    "name": "Gin",
+    "measure": "30 ml"
+   },
+   {
+    "name": "Campari",
+    "measure": "30 ml"
+   },
+   {
+    "name": "Sweet Vermouth",
+    "measure": "30 ml"
+   },
+   {
+    "name": "Kokum Syrup",
+    "measure": "5 ml"
+   }
+  ],
+  "vibeHint": "refreshing"
+ },
+ {
+  "id": "x-in-010",
+  "name": "Kokum Martini",
+  "category": "Cocktail",
+  "alcoholic": "Alcoholic",
+  "glass": "Martini glass",
+  "instructions": "Stir gin, dry vermouth and a barspoon of kokum syrup over ice until very cold, then strain into a chilled martini glass. A Konkan riff built on the sour magenta fruit of the Konkan coast.",
+  "thumb": "",
+  "video": "",
+  "tags": [
+   "India",
+   "Konkan",
+   "Kokum"
+  ],
+  "iba": "",
+  "ingredients": [
+   {
+    "name": "Gin",
+    "measure": "60 ml"
+   },
+   {
+    "name": "Dry Vermouth",
+    "measure": "10 ml"
+   },
+   {
+    "name": "Kokum Syrup",
+    "measure": "5 ml"
+   }
+  ],
+  "vibeHint": "refreshing"
+ },
+ {
+  "id": "x-in-011",
+  "name": "Gondhoraj Sour",
+  "category": "Cocktail",
+  "alcoholic": "Alcoholic",
+  "glass": "Coupe",
+  "instructions": "Dry shake gin, gondhoraj lime, sugar syrup and egg white without ice to build the foam, then shake again hard with ice. Double strain into a chilled coupe and finish with a few drops of bitters drawn through the foam. A Kolkata riff built on Bengal's intensely fragrant lime.",
+  "thumb": "",
+  "video": "",
+  "tags": [
+   "India",
+   "Kolkata",
+   "Gondhoraj"
+  ],
+  "iba": "",
+  "ingredients": [
+   {
+    "name": "Gin",
+    "measure": "60 ml"
+   },
+   {
+    "name": "Gondhoraj Lime",
+    "measure": "25 ml"
+   },
+   {
+    "name": "Sugar Syrup",
+    "measure": "20 ml"
+   },
+   {
+    "name": "Egg White",
+    "measure": "1"
+   }
+  ],
+  "vibeHint": "refreshing"
+ },
+ {
+  "id": "x-in-012",
+  "name": "Deccan Gondhoraj",
+  "category": "Cocktail",
+  "alcoholic": "Alcoholic",
+  "glass": "Highball glass",
+  "instructions": "Build over plenty of ice: gin and gondhoraj lime, then top with cold soda and stir once. A Kolkata riff built on Bengal's intensely fragrant lime.",
+  "thumb": "",
+  "video": "",
+  "tags": [
+   "India",
+   "Kolkata",
+   "Gondhoraj"
+  ],
+  "iba": "",
+  "ingredients": [
+   {
+    "name": "Gin",
+    "measure": "45 ml"
+   },
+   {
+    "name": "Gondhoraj Lime",
+    "measure": "20 ml"
+   },
+   {
+    "name": "Soda Water",
+    "measure": "top up"
+   }
+  ],
+  "vibeHint": "refreshing"
+ },
+ {
+  "id": "x-in-013",
+  "name": "Gondhoraj Mule",
+  "category": "Cocktail",
+  "alcoholic": "Alcoholic",
+  "glass": "Mug",
+  "instructions": "Fill a copper mug with ice. Add gin, lime juice and sugar syrup, top with cold ginger beer and give it one stir. A Kolkata riff built on Bengal's intensely fragrant lime.",
+  "thumb": "",
+  "video": "",
+  "tags": [
+   "India",
+   "Kolkata",
+   "Gondhoraj"
+  ],
+  "iba": "",
+  "ingredients": [
+   {
+    "name": "Gin",
+    "measure": "50 ml"
+   },
+   {
+    "name": "Lime Juice",
+    "measure": "15 ml"
+   },
+   {
+    "name": "Sugar Syrup",
+    "measure": "10 ml"
+   },
+   {
+    "name": "Ginger Beer",
+    "measure": "top up"
+   }
+  ],
+  "vibeHint": "refreshing"
+ },
+ {
+  "id": "x-in-014",
+  "name": "Gondhoraj Old Fashioned",
+  "category": "Cocktail",
+  "alcoholic": "Alcoholic",
+  "glass": "Old-fashioned glass",
+  "instructions": "Stir gin, jaggery syrup and the bitters over a large ice cube until cold and silky. Express an orange peel over the top. A Kolkata riff built on Bengal's intensely fragrant lime.",
+  "thumb": "",
+  "video": "",
+  "tags": [
+   "India",
+   "Kolkata",
+   "Gondhoraj"
+  ],
+  "iba": "",
+  "ingredients": [
+   {
+    "name": "Gin",
+    "measure": "60 ml"
+   },
+   {
+    "name": "Jaggery Syrup",
+    "measure": "10 ml"
+   },
+   {
+    "name": "Angostura Bitters",
+    "measure": "2 dashes"
+   }
+  ],
+  "vibeHint": "refreshing"
+ },
+ {
+  "id": "x-in-015",
+  "name": "Coastal Gondhoraj",
+  "category": "Cocktail",
+  "alcoholic": "Alcoholic",
+  "glass": "Collins glass",
+  "instructions": "Shake gin, gondhoraj lime and sugar syrup with ice, strain into an ice-filled collins glass and top with soda. A Kolkata riff built on Bengal's intensely fragrant lime.",
+  "thumb": "",
+  "video": "",
+  "tags": [
+   "India",
+   "Kolkata",
+   "Gondhoraj"
+  ],
+  "iba": "",
+  "ingredients": [
+   {
+    "name": "Gin",
+    "measure": "45 ml"
+   },
+   {
+    "name": "Gondhoraj Lime",
+    "measure": "25 ml"
+   },
+   {
+    "name": "Sugar Syrup",
+    "measure": "15 ml"
+   },
+   {
+    "name": "Soda Water",
+    "measure": "top up"
+   }
+  ],
+  "vibeHint": "refreshing"
+ },
+ {
+  "id": "x-in-016",
+  "name": "Gondhoraj Spritz",
+  "category": "Cocktail",
+  "alcoholic": "Alcoholic",
+  "glass": "Wine glass",
+  "instructions": "Fill a wine glass with ice. Add gondhoraj lime and gin, top with prosecco and a splash of soda, and stir gently. A Kolkata riff built on Bengal's intensely fragrant lime.",
+  "thumb": "",
+  "video": "",
+  "tags": [
+   "India",
+   "Kolkata",
+   "Gondhoraj"
+  ],
+  "iba": "",
+  "ingredients": [
+   {
+    "name": "Gondhoraj Lime",
+    "measure": "30 ml"
+   },
+   {
+    "name": "Gin",
+    "measure": "20 ml"
+   },
+   {
+    "name": "Prosecco",
+    "measure": "90 ml"
+   },
+   {
+    "name": "Soda Water",
+    "measure": "splash"
+   }
+  ],
+  "vibeHint": "refreshing"
+ },
+ {
+  "id": "x-in-017",
+  "name": "Gondhoraj Sling",
+  "category": "Cocktail",
+  "alcoholic": "Alcoholic",
+  "glass": "Hurricane glass",
+  "instructions": "Shake gin, gondhoraj lime and mango puree with ice, pour unstrained into a tall glass and lengthen with soda. A Kolkata riff built on Bengal's intensely fragrant lime.",
+  "thumb": "",
+  "video": "",
+  "tags": [
+   "India",
+   "Kolkata",
+   "Gondhoraj"
+  ],
+  "iba": "",
+  "ingredients": [
+   {
+    "name": "Gin",
+    "measure": "45 ml"
+   },
+   {
+    "name": "Gondhoraj Lime",
+    "measure": "20 ml"
+   },
+   {
+    "name": "Mango Puree",
+    "measure": "20 ml"
+   },
+   {
+    "name": "Soda Water",
+    "measure": "top up"
+   }
+  ],
+  "vibeHint": "refreshing"
+ },
+ {
+  "id": "x-in-018",
+  "name": "Royal Gondhoraj",
+  "category": "Cocktail",
+  "alcoholic": "Alcoholic",
+  "glass": "Highball glass",
+  "instructions": "Dry shake everything but the soda, then shake with ice. Strain into a chilled glass and top with a splash of soda to lift the foam. A Kolkata riff built on Bengal's intensely fragrant lime.",
+  "thumb": "",
+  "video": "",
+  "tags": [
+   "India",
+   "Kolkata",
+   "Gondhoraj"
+  ],
+  "iba": "",
+  "ingredients": [
+   {
+    "name": "Gin",
+    "measure": "45 ml"
+   },
+   {
+    "name": "Gondhoraj Lime",
+    "measure": "20 ml"
+   },
+   {
+    "name": "Sugar Syrup",
+    "measure": "15 ml"
+   },
+   {
+    "name": "Egg White",
+    "measure": "1"
+   },
+   {
+    "name": "Soda Water",
+    "measure": "splash"
+   }
+  ],
+  "vibeHint": "refreshing"
+ },
+ {
+  "id": "x-in-019",
+  "name": "Gondhoraj Negroni",
+  "category": "Cocktail",
+  "alcoholic": "Alcoholic",
+  "glass": "Old-fashioned glass",
+  "instructions": "Stir gin, Campari, sweet vermouth and a barspoon of gondhoraj lime over ice, strain over a fresh cube and garnish with an orange slice. A Kolkata riff built on Bengal's intensely fragrant lime.",
+  "thumb": "",
+  "video": "",
+  "tags": [
+   "India",
+   "Kolkata",
+   "Gondhoraj"
+  ],
+  "iba": "",
+  "ingredients": [
+   {
+    "name": "Gin",
+    "measure": "30 ml"
+   },
+   {
+    "name": "Campari",
+    "measure": "30 ml"
+   },
+   {
+    "name": "Sweet Vermouth",
+    "measure": "30 ml"
+   },
+   {
+    "name": "Gondhoraj Lime",
+    "measure": "5 ml"
+   }
+  ],
+  "vibeHint": "refreshing"
+ },
+ {
+  "id": "x-in-020",
+  "name": "Gondhoraj Martini",
+  "category": "Cocktail",
+  "alcoholic": "Alcoholic",
+  "glass": "Martini glass",
+  "instructions": "Stir gin, dry vermouth and a barspoon of gondhoraj lime over ice until very cold, then strain into a chilled martini glass. A Kolkata riff built on Bengal's intensely fragrant lime.",
+  "thumb": "",
+  "video": "",
+  "tags": [
+   "India",
+   "Kolkata",
+   "Gondhoraj"
+  ],
+  "iba": "",
+  "ingredients": [
+   {
+    "name": "Gin",
+    "measure": "60 ml"
+   },
+   {
+    "name": "Dry Vermouth",
+    "measure": "10 ml"
+   },
+   {
+    "name": "Gondhoraj Lime",
+    "measure": "5 ml"
+   }
+  ],
+  "vibeHint": "refreshing"
+ },
+ {
+  "id": "x-in-021",
+  "name": "Smoke Imli",
+  "category": "Cocktail",
+  "alcoholic": "Alcoholic",
+  "glass": "Coupe",
+  "instructions": "Dry shake dark rum, tamarind syrup, sugar syrup and egg white without ice to build the foam, then shake again hard with ice. Double strain into a chilled coupe and finish with a few drops of bitters drawn through the foam. A North India riff built on sweet-sour tamarind.",
+  "thumb": "",
+  "video": "",
+  "tags": [
+   "India",
+   "North India",
+   "Imli"
+  ],
+  "iba": "",
+  "ingredients": [
+   {
+    "name": "Dark Rum",
+    "measure": "60 ml"
+   },
+   {
+    "name": "Tamarind Syrup",
+    "measure": "25 ml"
+   },
+   {
+    "name": "Sugar Syrup",
+    "measure": "20 ml"
+   },
+   {
+    "name": "Egg White",
+    "measure": "1"
+   }
+  ],
+  "vibeHint": "boozy"
+ },
+ {
+  "id": "x-in-022",
+  "name": "Imli Highball",
+  "category": "Cocktail",
+  "alcoholic": "Alcoholic",
+  "glass": "Highball glass",
+  "instructions": "Build over plenty of ice: dark rum and tamarind syrup, then top with cold soda and stir once. A North India riff built on sweet-sour tamarind.",
+  "thumb": "",
+  "video": "",
+  "tags": [
+   "India",
+   "North India",
+   "Imli"
+  ],
+  "iba": "",
+  "ingredients": [
+   {
+    "name": "Dark Rum",
+    "measure": "45 ml"
+   },
+   {
+    "name": "Tamarind Syrup",
+    "measure": "20 ml"
+   },
+   {
+    "name": "Soda Water",
+    "measure": "top up"
+   }
+  ],
+  "vibeHint": "boozy"
+ },
+ {
+  "id": "x-in-023",
+  "name": "Imli Mule",
+  "category": "Cocktail",
+  "alcoholic": "Alcoholic",
+  "glass": "Mug",
+  "instructions": "Fill a copper mug with ice. Add dark rum, lime juice and sugar syrup, top with cold ginger beer and give it one stir. A North India riff built on sweet-sour tamarind.",
+  "thumb": "",
+  "video": "",
+  "tags": [
+   "India",
+   "North India",
+   "Imli"
+  ],
+  "iba": "",
+  "ingredients": [
+   {
+    "name": "Dark Rum",
+    "measure": "50 ml"
+   },
+   {
+    "name": "Lime Juice",
+    "measure": "15 ml"
+   },
+   {
+    "name": "Sugar Syrup",
+    "measure": "10 ml"
+   },
+   {
+    "name": "Ginger Beer",
+    "measure": "top up"
+   }
+  ],
+  "vibeHint": "boozy"
+ },
+ {
+  "id": "x-in-024",
+  "name": "Velvet Imli",
+  "category": "Cocktail",
+  "alcoholic": "Alcoholic",
+  "glass": "Old-fashioned glass",
+  "instructions": "Stir dark rum, jaggery syrup and the bitters over a large ice cube until cold and silky. Express an orange peel over the top. A North India riff built on sweet-sour tamarind.",
+  "thumb": "",
+  "video": "",
+  "tags": [
+   "India",
+   "North India",
+   "Imli"
+  ],
+  "iba": "",
+  "ingredients": [
+   {
+    "name": "Dark Rum",
+    "measure": "60 ml"
+   },
+   {
+    "name": "Jaggery Syrup",
+    "measure": "10 ml"
+   },
+   {
+    "name": "Angostura Bitters",
+    "measure": "2 dashes"
+   }
+  ],
+  "vibeHint": "boozy"
+ },
+ {
+  "id": "x-in-025",
+  "name": "Imli Collins",
+  "category": "Cocktail",
+  "alcoholic": "Alcoholic",
+  "glass": "Collins glass",
+  "instructions": "Shake dark rum, tamarind syrup and sugar syrup with ice, strain into an ice-filled collins glass and top with soda. A North India riff built on sweet-sour tamarind.",
+  "thumb": "",
+  "video": "",
+  "tags": [
+   "India",
+   "North India",
+   "Imli"
+  ],
+  "iba": "",
+  "ingredients": [
+   {
+    "name": "Dark Rum",
+    "measure": "45 ml"
+   },
+   {
+    "name": "Tamarind Syrup",
+    "measure": "25 ml"
+   },
+   {
+    "name": "Sugar Syrup",
+    "measure": "15 ml"
+   },
+   {
+    "name": "Soda Water",
+    "measure": "top up"
+   }
+  ],
+  "vibeHint": "boozy"
+ },
+ {
+  "id": "x-in-026",
+  "name": "Imli Spritz",
+  "category": "Cocktail",
+  "alcoholic": "Alcoholic",
+  "glass": "Wine glass",
+  "instructions": "Fill a wine glass with ice. Add tamarind syrup and dark rum, top with prosecco and a splash of soda, and stir gently. A North India riff built on sweet-sour tamarind.",
+  "thumb": "",
+  "video": "",
+  "tags": [
+   "India",
+   "North India",
+   "Imli"
+  ],
+  "iba": "",
+  "ingredients": [
+   {
+    "name": "Tamarind Syrup",
+    "measure": "30 ml"
+   },
+   {
+    "name": "Dark Rum",
+    "measure": "20 ml"
+   },
+   {
+    "name": "Prosecco",
+    "measure": "90 ml"
+   },
+   {
+    "name": "Soda Water",
+    "measure": "splash"
+   }
+  ],
+  "vibeHint": "boozy"
+ },
+ {
+  "id": "x-in-027",
+  "name": "Spice Route Imli",
+  "category": "Cocktail",
+  "alcoholic": "Alcoholic",
+  "glass": "Hurricane glass",
+  "instructions": "Shake dark rum, tamarind syrup and mango puree with ice, pour unstrained into a tall glass and lengthen with soda. A North India riff built on sweet-sour tamarind.",
+  "thumb": "",
+  "video": "",
+  "tags": [
+   "India",
+   "North India",
+   "Imli"
+  ],
+  "iba": "",
+  "ingredients": [
+   {
+    "name": "Dark Rum",
+    "measure": "45 ml"
+   },
+   {
+    "name": "Tamarind Syrup",
+    "measure": "20 ml"
+   },
+   {
+    "name": "Mango Puree",
+    "measure": "20 ml"
+   },
+   {
+    "name": "Soda Water",
+    "measure": "top up"
+   }
+  ],
+  "vibeHint": "boozy"
+ },
+ {
+  "id": "x-in-028",
+  "name": "Imli Fizz",
+  "category": "Cocktail",
+  "alcoholic": "Alcoholic",
+  "glass": "Highball glass",
+  "instructions": "Dry shake everything but the soda, then shake with ice. Strain into a chilled glass and top with a splash of soda to lift the foam. A North India riff built on sweet-sour tamarind.",
+  "thumb": "",
+  "video": "",
+  "tags": [
+   "India",
+   "North India",
+   "Imli"
+  ],
+  "iba": "",
+  "ingredients": [
+   {
+    "name": "Dark Rum",
+    "measure": "45 ml"
+   },
+   {
+    "name": "Tamarind Syrup",
+    "measure": "20 ml"
+   },
+   {
+    "name": "Sugar Syrup",
+    "measure": "15 ml"
+   },
+   {
+    "name": "Egg White",
+    "measure": "1"
+   },
+   {
+    "name": "Soda Water",
+    "measure": "splash"
+   }
+  ],
+  "vibeHint": "boozy"
+ },
+ {
+  "id": "x-in-029",
+  "name": "Imli Negroni",
+  "category": "Cocktail",
+  "alcoholic": "Alcoholic",
+  "glass": "Old-fashioned glass",
+  "instructions": "Stir dark rum, Campari, sweet vermouth and a barspoon of tamarind syrup over ice, strain over a fresh cube and garnish with an orange slice. A North India riff built on sweet-sour tamarind.",
+  "thumb": "",
+  "video": "",
+  "tags": [
+   "India",
+   "North India",
+   "Imli"
+  ],
+  "iba": "",
+  "ingredients": [
+   {
+    "name": "Dark Rum",
+    "measure": "30 ml"
+   },
+   {
+    "name": "Campari",
+    "measure": "30 ml"
+   },
+   {
+    "name": "Sweet Vermouth",
+    "measure": "30 ml"
+   },
+   {
+    "name": "Tamarind Syrup",
+    "measure": "5 ml"
+   }
+  ],
+  "vibeHint": "boozy"
+ },
+ {
+  "id": "x-in-030",
+  "name": "Verandah Imli",
+  "category": "Cocktail",
+  "alcoholic": "Alcoholic",
+  "glass": "Martini glass",
+  "instructions": "Stir dark rum, dry vermouth and a barspoon of tamarind syrup over ice until very cold, then strain into a chilled martini glass. A North India riff built on sweet-sour tamarind.",
+  "thumb": "",
+  "video": "",
+  "tags": [
+   "India",
+   "North India",
+   "Imli"
+  ],
+  "iba": "",
+  "ingredients": [
+   {
+    "name": "Dark Rum",
+    "measure": "60 ml"
+   },
+   {
+    "name": "Dry Vermouth",
+    "measure": "10 ml"
+   },
+   {
+    "name": "Tamarind Syrup",
+    "measure": "5 ml"
+   }
+  ],
+  "vibeHint": "boozy"
+ },
+ {
+  "id": "x-in-031",
+  "name": "Khus Sour",
+  "category": "Cocktail",
+  "alcoholic": "Alcoholic",
+  "glass": "Coupe",
+  "instructions": "Dry shake vodka, lime juice, khus syrup and egg white without ice to build the foam, then shake again hard with ice. Double strain into a chilled coupe and finish with a few drops of bitters drawn through the foam. A North India riff built on cooling vetiver-root syrup.",
+  "thumb": "",
+  "video": "",
+  "tags": [
+   "India",
+   "North India",
+   "Khus"
+  ],
+  "iba": "",
+  "ingredients": [
+   {
+    "name": "Vodka",
+    "measure": "60 ml"
+   },
+   {
+    "name": "Lime Juice",
+    "measure": "25 ml"
+   },
+   {
+    "name": "Khus Syrup",
+    "measure": "20 ml"
+   },
+   {
+    "name": "Egg White",
+    "measure": "1"
+   }
+  ],
+  "vibeHint": "refreshing"
+ },
+ {
+  "id": "x-in-032",
+  "name": "Khus Highball",
+  "category": "Cocktail",
+  "alcoholic": "Alcoholic",
+  "glass": "Highball glass",
+  "instructions": "Build over plenty of ice: vodka and khus syrup, then top with cold soda and stir once. A North India riff built on cooling vetiver-root syrup.",
+  "thumb": "",
+  "video": "",
+  "tags": [
+   "India",
+   "North India",
+   "Khus"
+  ],
+  "iba": "",
+  "ingredients": [
+   {
+    "name": "Vodka",
+    "measure": "45 ml"
+   },
+   {
+    "name": "Khus Syrup",
+    "measure": "20 ml"
+   },
+   {
+    "name": "Soda Water",
+    "measure": "top up"
+   }
+  ],
+  "vibeHint": "refreshing"
+ },
+ {
+  "id": "x-in-033",
+  "name": "Backwater Khus",
+  "category": "Cocktail",
+  "alcoholic": "Alcoholic",
+  "glass": "Mug",
+  "instructions": "Fill a copper mug with ice. Add vodka, lime juice and khus syrup, top with cold ginger beer and give it one stir. A North India riff built on cooling vetiver-root syrup.",
+  "thumb": "",
+  "video": "",
+  "tags": [
+   "India",
+   "North India",
+   "Khus"
+  ],
+  "iba": "",
+  "ingredients": [
+   {
+    "name": "Vodka",
+    "measure": "50 ml"
+   },
+   {
+    "name": "Lime Juice",
+    "measure": "15 ml"
+   },
+   {
+    "name": "Khus Syrup",
+    "measure": "10 ml"
+   },
+   {
+    "name": "Ginger Beer",
+    "measure": "top up"
+   }
+  ],
+  "vibeHint": "refreshing"
+ },
+ {
+  "id": "x-in-034",
+  "name": "Khus Old Fashioned",
+  "category": "Cocktail",
+  "alcoholic": "Alcoholic",
+  "glass": "Old-fashioned glass",
+  "instructions": "Stir vodka, khus syrup and the bitters over a large ice cube until cold and silky. Express an orange peel over the top. A North India riff built on cooling vetiver-root syrup.",
+  "thumb": "",
+  "video": "",
+  "tags": [
+   "India",
+   "North India",
+   "Khus"
+  ],
+  "iba": "",
+  "ingredients": [
+   {
+    "name": "Vodka",
+    "measure": "60 ml"
+   },
+   {
+    "name": "Khus Syrup",
+    "measure": "10 ml"
+   },
+   {
+    "name": "Angostura Bitters",
+    "measure": "2 dashes"
+   }
+  ],
+  "vibeHint": "refreshing"
+ },
+ {
+  "id": "x-in-035",
+  "name": "Khus Collins",
+  "category": "Cocktail",
+  "alcoholic": "Alcoholic",
+  "glass": "Collins glass",
+  "instructions": "Shake vodka, lime juice and khus syrup with ice, strain into an ice-filled collins glass and top with soda. A North India riff built on cooling vetiver-root syrup.",
+  "thumb": "",
+  "video": "",
+  "tags": [
+   "India",
+   "North India",
+   "Khus"
+  ],
+  "iba": "",
+  "ingredients": [
+   {
+    "name": "Vodka",
+    "measure": "45 ml"
+   },
+   {
+    "name": "Lime Juice",
+    "measure": "25 ml"
+   },
+   {
+    "name": "Khus Syrup",
+    "measure": "15 ml"
+   },
+   {
+    "name": "Soda Water",
+    "measure": "top up"
+   }
+  ],
+  "vibeHint": "refreshing"
+ },
+ {
+  "id": "x-in-036",
+  "name": "Havelock Khus",
+  "category": "Cocktail",
+  "alcoholic": "Alcoholic",
+  "glass": "Wine glass",
+  "instructions": "Fill a wine glass with ice. Add khus syrup and vodka, top with prosecco and a splash of soda, and stir gently. A North India riff built on cooling vetiver-root syrup.",
+  "thumb": "",
+  "video": "",
+  "tags": [
+   "India",
+   "North India",
+   "Khus"
+  ],
+  "iba": "",
+  "ingredients": [
+   {
+    "name": "Khus Syrup",
+    "measure": "30 ml"
+   },
+   {
+    "name": "Vodka",
+    "measure": "20 ml"
+   },
+   {
+    "name": "Prosecco",
+    "measure": "90 ml"
+   },
+   {
+    "name": "Soda Water",
+    "measure": "splash"
+   }
+  ],
+  "vibeHint": "refreshing"
+ },
+ {
+  "id": "x-in-037",
+  "name": "Khus Sling",
+  "category": "Cocktail",
+  "alcoholic": "Alcoholic",
+  "glass": "Hurricane glass",
+  "instructions": "Shake vodka, lime juice and khus syrup with ice, pour unstrained into a tall glass and lengthen with soda. A North India riff built on cooling vetiver-root syrup.",
+  "thumb": "",
+  "video": "",
+  "tags": [
+   "India",
+   "North India",
+   "Khus"
+  ],
+  "iba": "",
+  "ingredients": [
+   {
+    "name": "Vodka",
+    "measure": "45 ml"
+   },
+   {
+    "name": "Lime Juice",
+    "measure": "20 ml"
+   },
+   {
+    "name": "Khus Syrup",
+    "measure": "20 ml"
+   },
+   {
+    "name": "Soda Water",
+    "measure": "top up"
+   }
+  ],
+  "vibeHint": "refreshing"
+ },
+ {
+  "id": "x-in-038",
+  "name": "Khus Fizz",
+  "category": "Cocktail",
+  "alcoholic": "Alcoholic",
+  "glass": "Highball glass",
+  "instructions": "Dry shake everything but the soda, then shake with ice. Strain into a chilled glass and top with a splash of soda to lift the foam. A North India riff built on cooling vetiver-root syrup.",
+  "thumb": "",
+  "video": "",
+  "tags": [
+   "India",
+   "North India",
+   "Khus"
+  ],
+  "iba": "",
+  "ingredients": [
+   {
+    "name": "Vodka",
+    "measure": "45 ml"
+   },
+   {
+    "name": "Lime Juice",
+    "measure": "20 ml"
+   },
+   {
+    "name": "Khus Syrup",
+    "measure": "15 ml"
+   },
+   {
+    "name": "Egg White",
+    "measure": "1"
+   },
+   {
+    "name": "Soda Water",
+    "measure": "splash"
+   }
+  ],
+  "vibeHint": "refreshing"
+ },
+ {
+  "id": "x-in-039",
+  "name": "Old City Khus",
+  "category": "Cocktail",
+  "alcoholic": "Alcoholic",
+  "glass": "Old-fashioned glass",
+  "instructions": "Stir vodka, Campari, sweet vermouth and a barspoon of khus syrup over ice, strain over a fresh cube and garnish with an orange slice. A North India riff built on cooling vetiver-root syrup.",
+  "thumb": "",
+  "video": "",
+  "tags": [
+   "India",
+   "North India",
+   "Khus"
+  ],
+  "iba": "",
+  "ingredients": [
+   {
+    "name": "Vodka",
+    "measure": "30 ml"
+   },
+   {
+    "name": "Campari",
+    "measure": "30 ml"
+   },
+   {
+    "name": "Sweet Vermouth",
+    "measure": "30 ml"
+   },
+   {
+    "name": "Khus Syrup",
+    "measure": "5 ml"
+   }
+  ],
+  "vibeHint": "refreshing"
+ },
+ {
+  "id": "x-in-040",
+  "name": "Khus Martini",
+  "category": "Cocktail",
+  "alcoholic": "Alcoholic",
+  "glass": "Martini glass",
+  "instructions": "Stir vodka, dry vermouth and a barspoon of khus syrup over ice until very cold, then strain into a chilled martini glass. A North India riff built on cooling vetiver-root syrup.",
+  "thumb": "",
+  "video": "",
+  "tags": [
+   "India",
+   "North India",
+   "Khus"
+  ],
+  "iba": "",
+  "ingredients": [
+   {
+    "name": "Vodka",
+    "measure": "60 ml"
+   },
+   {
+    "name": "Dry Vermouth",
+    "measure": "10 ml"
+   },
+   {
+    "name": "Khus Syrup",
+    "measure": "5 ml"
+   }
+  ],
+  "vibeHint": "refreshing"
+ },
+ {
+  "id": "x-in-041",
+  "name": "Rose Thandai Sour",
+  "category": "Cocktail",
+  "alcoholic": "Alcoholic",
+  "glass": "Coupe",
+  "instructions": "Dry shake brandy, lemon juice, thandai syrup and egg white without ice to build the foam, then shake again hard with ice. Double strain into a chilled coupe and finish with a few drops of bitters drawn through the foam. A North India riff built on the almond-saffron-rose festival milk.",
+  "thumb": "",
+  "video": "",
+  "tags": [
+   "India",
+   "North India",
+   "Rose Thandai"
+  ],
+  "iba": "",
+  "ingredients": [
+   {
+    "name": "Brandy",
+    "measure": "60 ml"
+   },
+   {
+    "name": "Lemon Juice",
+    "measure": "25 ml"
+   },
+   {
+    "name": "Thandai Syrup",
+    "measure": "20 ml"
+   },
+   {
+    "name": "Egg White",
+    "measure": "1"
+   }
+  ],
+  "vibeHint": "sweet"
+ },
+ {
+  "id": "x-in-042",
+  "name": "Rooftop Rose",
+  "category": "Cocktail",
+  "alcoholic": "Alcoholic",
+  "glass": "Highball glass",
+  "instructions": "Build over plenty of ice: brandy and thandai syrup, then top with cold soda and stir once. A North India riff built on the almond-saffron-rose festival milk.",
+  "thumb": "",
+  "video": "",
+  "tags": [
+   "India",
+   "North India",
+   "Rose Thandai"
+  ],
+  "iba": "",
+  "ingredients": [
+   {
+    "name": "Brandy",
+    "measure": "45 ml"
+   },
+   {
+    "name": "Thandai Syrup",
+    "measure": "20 ml"
+   },
+   {
+    "name": "Soda Water",
+    "measure": "top up"
+   }
+  ],
+  "vibeHint": "sweet"
+ },
+ {
+  "id": "x-in-043",
+  "name": "Rose Thandai Mule",
+  "category": "Cocktail",
+  "alcoholic": "Alcoholic",
+  "glass": "Mug",
+  "instructions": "Fill a copper mug with ice. Add brandy, lime juice and thandai syrup, top with cold ginger beer and give it one stir. A North India riff built on the almond-saffron-rose festival milk.",
+  "thumb": "",
+  "video": "",
+  "tags": [
+   "India",
+   "North India",
+   "Rose Thandai"
+  ],
+  "iba": "",
+  "ingredients": [
+   {
+    "name": "Brandy",
+    "measure": "50 ml"
+   },
+   {
+    "name": "Lime Juice",
+    "measure": "15 ml"
+   },
+   {
+    "name": "Thandai Syrup",
+    "measure": "10 ml"
+   },
+   {
+    "name": "Ginger Beer",
+    "measure": "top up"
+   }
+  ],
+  "vibeHint": "sweet"
+ },
+ {
+  "id": "x-in-044",
+  "name": "Rose Thandai Old Fashioned",
+  "category": "Cocktail",
+  "alcoholic": "Alcoholic",
+  "glass": "Old-fashioned glass",
+  "instructions": "Stir brandy, thandai syrup and the bitters over a large ice cube until cold and silky. Express an orange peel over the top. A North India riff built on the almond-saffron-rose festival milk.",
+  "thumb": "",
+  "video": "",
+  "tags": [
+   "India",
+   "North India",
+   "Rose Thandai"
+  ],
+  "iba": "",
+  "ingredients": [
+   {
+    "name": "Brandy",
+    "measure": "60 ml"
+   },
+   {
+    "name": "Thandai Syrup",
+    "measure": "10 ml"
+   },
+   {
+    "name": "Angostura Bitters",
+    "measure": "2 dashes"
+   }
+  ],
+  "vibeHint": "sweet"
+ },
+ {
+  "id": "x-in-045",
+  "name": "Ghat Rose",
+  "category": "Cocktail",
+  "alcoholic": "Alcoholic",
+  "glass": "Collins glass",
+  "instructions": "Shake brandy, lemon juice and thandai syrup with ice, strain into an ice-filled collins glass and top with soda. A North India riff built on the almond-saffron-rose festival milk.",
+  "thumb": "",
+  "video": "",
+  "tags": [
+   "India",
+   "North India",
+   "Rose Thandai"
+  ],
+  "iba": "",
+  "ingredients": [
+   {
+    "name": "Brandy",
+    "measure": "45 ml"
+   },
+   {
+    "name": "Lemon Juice",
+    "measure": "25 ml"
+   },
+   {
+    "name": "Thandai Syrup",
+    "measure": "15 ml"
+   },
+   {
+    "name": "Soda Water",
+    "measure": "top up"
+   }
+  ],
+  "vibeHint": "sweet"
+ },
+ {
+  "id": "x-in-046",
+  "name": "Rose Thandai Spritz",
+  "category": "Cocktail",
+  "alcoholic": "Alcoholic",
+  "glass": "Wine glass",
+  "instructions": "Fill a wine glass with ice. Add thandai syrup and brandy, top with prosecco and a splash of soda, and stir gently. A North India riff built on the almond-saffron-rose festival milk.",
+  "thumb": "",
+  "video": "",
+  "tags": [
+   "India",
+   "North India",
+   "Rose Thandai"
+  ],
+  "iba": "",
+  "ingredients": [
+   {
+    "name": "Thandai Syrup",
+    "measure": "30 ml"
+   },
+   {
+    "name": "Brandy",
+    "measure": "20 ml"
+   },
+   {
+    "name": "Prosecco",
+    "measure": "90 ml"
+   },
+   {
+    "name": "Soda Water",
+    "measure": "splash"
+   }
+  ],
+  "vibeHint": "sweet"
+ },
+ {
+  "id": "x-in-047",
+  "name": "Rose Thandai Sling",
+  "category": "Cocktail",
+  "alcoholic": "Alcoholic",
+  "glass": "Hurricane glass",
+  "instructions": "Shake brandy, lime juice and thandai syrup with ice, pour unstrained into a tall glass and lengthen with soda. A North India riff built on the almond-saffron-rose festival milk.",
+  "thumb": "",
+  "video": "",
+  "tags": [
+   "India",
+   "North India",
+   "Rose Thandai"
+  ],
+  "iba": "",
+  "ingredients": [
+   {
+    "name": "Brandy",
+    "measure": "45 ml"
+   },
+   {
+    "name": "Lime Juice",
+    "measure": "20 ml"
+   },
+   {
+    "name": "Thandai Syrup",
+    "measure": "20 ml"
+   },
+   {
+    "name": "Soda Water",
+    "measure": "top up"
+   }
+  ],
+  "vibeHint": "sweet"
+ },
+ {
+  "id": "x-in-048",
+  "name": "Chowk Rose",
+  "category": "Cocktail",
+  "alcoholic": "Alcoholic",
+  "glass": "Highball glass",
+  "instructions": "Dry shake everything but the soda, then shake with ice. Strain into a chilled glass and top with a splash of soda to lift the foam. A North India riff built on the almond-saffron-rose festival milk.",
+  "thumb": "",
+  "video": "",
+  "tags": [
+   "India",
+   "North India",
+   "Rose Thandai"
+  ],
+  "iba": "",
+  "ingredients": [
+   {
+    "name": "Brandy",
+    "measure": "45 ml"
+   },
+   {
+    "name": "Lemon Juice",
+    "measure": "20 ml"
+   },
+   {
+    "name": "Thandai Syrup",
+    "measure": "15 ml"
+   },
+   {
+    "name": "Egg White",
+    "measure": "1"
+   },
+   {
+    "name": "Soda Water",
+    "measure": "splash"
+   }
+  ],
+  "vibeHint": "sweet"
+ },
+ {
+  "id": "x-in-049",
+  "name": "Rose Thandai Negroni",
+  "category": "Cocktail",
+  "alcoholic": "Alcoholic",
+  "glass": "Old-fashioned glass",
+  "instructions": "Stir brandy, Campari, sweet vermouth and a barspoon of thandai syrup over ice, strain over a fresh cube and garnish with an orange slice. A North India riff built on the almond-saffron-rose festival milk.",
+  "thumb": "",
+  "video": "",
+  "tags": [
+   "India",
+   "North India",
+   "Rose Thandai"
+  ],
+  "iba": "",
+  "ingredients": [
+   {
+    "name": "Brandy",
+    "measure": "30 ml"
+   },
+   {
+    "name": "Campari",
+    "measure": "30 ml"
+   },
+   {
+    "name": "Sweet Vermouth",
+    "measure": "30 ml"
+   },
+   {
+    "name": "Thandai Syrup",
+    "measure": "5 ml"
+   }
+  ],
+  "vibeHint": "sweet"
+ },
+ {
+  "id": "x-in-050",
+  "name": "Rose Thandai Martini",
+  "category": "Cocktail",
+  "alcoholic": "Alcoholic",
+  "glass": "Martini glass",
+  "instructions": "Stir brandy, dry vermouth and a barspoon of thandai syrup over ice until very cold, then strain into a chilled martini glass. A North India riff built on the almond-saffron-rose festival milk.",
+  "thumb": "",
+  "video": "",
+  "tags": [
+   "India",
+   "North India",
+   "Rose Thandai"
+  ],
+  "iba": "",
+  "ingredients": [
+   {
+    "name": "Brandy",
+    "measure": "60 ml"
+   },
+   {
+    "name": "Dry Vermouth",
+    "measure": "10 ml"
+   },
+   {
+    "name": "Thandai Syrup",
+    "measure": "5 ml"
+   }
+  ],
+  "vibeHint": "sweet"
+ },
+ {
+  "id": "x-in-051",
+  "name": "Sundown Filter",
+  "category": "Cocktail",
+  "alcoholic": "Alcoholic",
+  "glass": "Coupe",
+  "instructions": "Dry shake dark rum, lemon juice, coffee liqueur and egg white without ice to build the foam, then shake again hard with ice. Double strain into a chilled coupe and finish with a few drops of bitters drawn through the foam. A South India riff built on South Indian filter kaapi.",
+  "thumb": "",
+  "video": "",
+  "tags": [
+   "India",
+   "South India",
+   "Filter Coffee"
+  ],
+  "iba": "",
+  "ingredients": [
+   {
+    "name": "Dark Rum",
+    "measure": "60 ml"
+   },
+   {
+    "name": "Lemon Juice",
+    "measure": "25 ml"
+   },
+   {
+    "name": "Coffee Liqueur",
+    "measure": "20 ml"
+   },
+   {
+    "name": "Egg White",
+    "measure": "1"
+   }
+  ],
+  "vibeHint": "sweet"
+ },
+ {
+  "id": "x-in-052",
+  "name": "Filter Coffee Highball",
+  "category": "Cocktail",
+  "alcoholic": "Alcoholic",
+  "glass": "Highball glass",
+  "instructions": "Build over plenty of ice: dark rum and coffee liqueur, then top with cold soda and stir once. A South India riff built on South Indian filter kaapi.",
+  "thumb": "",
+  "video": "",
+  "tags": [
+   "India",
+   "South India",
+   "Filter Coffee"
+  ],
+  "iba": "",
+  "ingredients": [
+   {
+    "name": "Dark Rum",
+    "measure": "45 ml"
+   },
+   {
+    "name": "Coffee Liqueur",
+    "measure": "20 ml"
+   },
+   {
+    "name": "Soda Water",
+    "measure": "top up"
+   }
+  ],
+  "vibeHint": "sweet"
+ },
+ {
+  "id": "x-in-053",
+  "name": "Filter Coffee Mule",
+  "category": "Cocktail",
+  "alcoholic": "Alcoholic",
+  "glass": "Mug",
+  "instructions": "Fill a copper mug with ice. Add dark rum, lime juice and coffee liqueur, top with cold ginger beer and give it one stir. A South India riff built on South Indian filter kaapi.",
+  "thumb": "",
+  "video": "",
+  "tags": [
+   "India",
+   "South India",
+   "Filter Coffee"
+  ],
+  "iba": "",
+  "ingredients": [
+   {
+    "name": "Dark Rum",
+    "measure": "50 ml"
+   },
+   {
+    "name": "Lime Juice",
+    "measure": "15 ml"
+   },
+   {
+    "name": "Coffee Liqueur",
+    "measure": "10 ml"
+   },
+   {
+    "name": "Ginger Beer",
+    "measure": "top up"
+   }
+  ],
+  "vibeHint": "sweet"
+ },
+ {
+  "id": "x-in-054",
+  "name": "Palace Filter",
+  "category": "Cocktail",
+  "alcoholic": "Alcoholic",
+  "glass": "Old-fashioned glass",
+  "instructions": "Stir dark rum, coffee liqueur and the bitters over a large ice cube until cold and silky. Express an orange peel over the top. A South India riff built on South Indian filter kaapi.",
+  "thumb": "",
+  "video": "",
+  "tags": [
+   "India",
+   "South India",
+   "Filter Coffee"
+  ],
+  "iba": "",
+  "ingredients": [
+   {
+    "name": "Dark Rum",
+    "measure": "60 ml"
+   },
+   {
+    "name": "Coffee Liqueur",
+    "measure": "10 ml"
+   },
+   {
+    "name": "Angostura Bitters",
+    "measure": "2 dashes"
+   }
+  ],
+  "vibeHint": "sweet"
+ },
+ {
+  "id": "x-in-055",
+  "name": "Filter Coffee Collins",
+  "category": "Cocktail",
+  "alcoholic": "Alcoholic",
+  "glass": "Collins glass",
+  "instructions": "Shake dark rum, lemon juice and coffee liqueur with ice, strain into an ice-filled collins glass and top with soda. A South India riff built on South Indian filter kaapi.",
+  "thumb": "",
+  "video": "",
+  "tags": [
+   "India",
+   "South India",
+   "Filter Coffee"
+  ],
+  "iba": "",
+  "ingredients": [
+   {
+    "name": "Dark Rum",
+    "measure": "45 ml"
+   },
+   {
+    "name": "Lemon Juice",
+    "measure": "25 ml"
+   },
+   {
+    "name": "Coffee Liqueur",
+    "measure": "15 ml"
+   },
+   {
+    "name": "Soda Water",
+    "measure": "top up"
+   }
+  ],
+  "vibeHint": "sweet"
+ },
+ {
+  "id": "x-in-056",
+  "name": "Filter Coffee Spritz",
+  "category": "Cocktail",
+  "alcoholic": "Alcoholic",
+  "glass": "Wine glass",
+  "instructions": "Fill a wine glass with ice. Add coffee liqueur and dark rum, top with prosecco and a splash of soda, and stir gently. A South India riff built on South Indian filter kaapi.",
+  "thumb": "",
+  "video": "",
+  "tags": [
+   "India",
+   "South India",
+   "Filter Coffee"
+  ],
+  "iba": "",
+  "ingredients": [
+   {
+    "name": "Coffee Liqueur",
+    "measure": "30 ml"
+   },
+   {
+    "name": "Dark Rum",
+    "measure": "20 ml"
+   },
+   {
+    "name": "Prosecco",
+    "measure": "90 ml"
+   },
+   {
+    "name": "Soda Water",
+    "measure": "splash"
+   }
+  ],
+  "vibeHint": "sweet"
+ },
+ {
+  "id": "x-in-057",
+  "name": "Bandra Filter",
+  "category": "Cocktail",
+  "alcoholic": "Alcoholic",
+  "glass": "Hurricane glass",
+  "instructions": "Shake dark rum, lime juice and coffee liqueur with ice, pour unstrained into a tall glass and lengthen with soda. A South India riff built on South Indian filter kaapi.",
+  "thumb": "",
+  "video": "",
+  "tags": [
+   "India",
+   "South India",
+   "Filter Coffee"
+  ],
+  "iba": "",
+  "ingredients": [
+   {
+    "name": "Dark Rum",
+    "measure": "45 ml"
+   },
+   {
+    "name": "Lime Juice",
+    "measure": "20 ml"
+   },
+   {
+    "name": "Coffee Liqueur",
+    "measure": "20 ml"
+   },
+   {
+    "name": "Soda Water",
+    "measure": "top up"
+   }
+  ],
+  "vibeHint": "sweet"
+ },
+ {
+  "id": "x-in-058",
+  "name": "Filter Coffee Fizz",
+  "category": "Cocktail",
+  "alcoholic": "Alcoholic",
+  "glass": "Highball glass",
+  "instructions": "Dry shake everything but the soda, then shake with ice. Strain into a chilled glass and top with a splash of soda to lift the foam. A South India riff built on South Indian filter kaapi.",
+  "thumb": "",
+  "video": "",
+  "tags": [
+   "India",
+   "South India",
+   "Filter Coffee"
+  ],
+  "iba": "",
+  "ingredients": [
+   {
+    "name": "Dark Rum",
+    "measure": "45 ml"
+   },
+   {
+    "name": "Lemon Juice",
+    "measure": "20 ml"
+   },
+   {
+    "name": "Coffee Liqueur",
+    "measure": "15 ml"
+   },
+   {
+    "name": "Egg White",
+    "measure": "1"
+   },
+   {
+    "name": "Soda Water",
+    "measure": "splash"
+   }
+  ],
+  "vibeHint": "sweet"
+ },
+ {
+  "id": "x-in-059",
+  "name": "Filter Coffee Negroni",
+  "category": "Cocktail",
+  "alcoholic": "Alcoholic",
+  "glass": "Old-fashioned glass",
+  "instructions": "Stir dark rum, Campari, sweet vermouth and a barspoon of coffee liqueur over ice, strain over a fresh cube and garnish with an orange slice. A South India riff built on South Indian filter kaapi.",
+  "thumb": "",
+  "video": "",
+  "tags": [
+   "India",
+   "South India",
+   "Filter Coffee"
+  ],
+  "iba": "",
+  "ingredients": [
+   {
+    "name": "Dark Rum",
+    "measure": "30 ml"
+   },
+   {
+    "name": "Campari",
+    "measure": "30 ml"
+   },
+   {
+    "name": "Sweet Vermouth",
+    "measure": "30 ml"
+   },
+   {
+    "name": "Coffee Liqueur",
+    "measure": "5 ml"
+   }
+  ],
+  "vibeHint": "sweet"
+ },
+ {
+  "id": "x-in-060",
+  "name": "Monsoon Filter",
+  "category": "Cocktail",
+  "alcoholic": "Alcoholic",
+  "glass": "Martini glass",
+  "instructions": "Stir dark rum, dry vermouth and a barspoon of coffee liqueur over ice until very cold, then strain into a chilled martini glass. A South India riff built on South Indian filter kaapi.",
+  "thumb": "",
+  "video": "",
+  "tags": [
+   "India",
+   "South India",
+   "Filter Coffee"
+  ],
+  "iba": "",
+  "ingredients": [
+   {
+    "name": "Dark Rum",
+    "measure": "60 ml"
+   },
+   {
+    "name": "Dry Vermouth",
+    "measure": "10 ml"
+   },
+   {
+    "name": "Coffee Liqueur",
+    "measure": "5 ml"
+   }
+  ],
+  "vibeHint": "sweet"
+ },
+ {
+  "id": "x-in-061",
+  "name": "Jamun Sour",
+  "category": "Cocktail",
+  "alcoholic": "Alcoholic",
+  "glass": "Coupe",
+  "instructions": "Dry shake gin, lime juice, jamun syrup and egg white without ice to build the foam, then shake again hard with ice. Double strain into a chilled coupe and finish with a few drops of bitters drawn through the foam. A North India riff built on the astringent purple monsoon berry.",
+  "thumb": "",
+  "video": "",
+  "tags": [
+   "India",
+   "North India",
+   "Jamun"
+  ],
+  "iba": "",
+  "ingredients": [
+   {
+    "name": "Gin",
+    "measure": "60 ml"
+   },
+   {
+    "name": "Lime Juice",
+    "measure": "25 ml"
+   },
+   {
+    "name": "Jamun Syrup",
+    "measure": "20 ml"
+   },
+   {
+    "name": "Egg White",
+    "measure": "1"
+   }
+  ],
+  "vibeHint": "refreshing"
+ },
+ {
+  "id": "x-in-062",
+  "name": "Jamun Highball",
+  "category": "Cocktail",
+  "alcoholic": "Alcoholic",
+  "glass": "Highball glass",
+  "instructions": "Build over plenty of ice: gin and jamun syrup, then top with cold soda and stir once. A North India riff built on the astringent purple monsoon berry.",
+  "thumb": "",
+  "video": "",
+  "tags": [
+   "India",
+   "North India",
+   "Jamun"
+  ],
+  "iba": "",
+  "ingredients": [
+   {
+    "name": "Gin",
+    "measure": "45 ml"
+   },
+   {
+    "name": "Jamun Syrup",
+    "measure": "20 ml"
+   },
+   {
+    "name": "Soda Water",
+    "measure": "top up"
+   }
+  ],
+  "vibeHint": "refreshing"
+ },
+ {
+  "id": "x-in-063",
+  "name": "Bazaar Jamun",
+  "category": "Cocktail",
+  "alcoholic": "Alcoholic",
+  "glass": "Mug",
+  "instructions": "Fill a copper mug with ice. Add gin, lime juice and jamun syrup, top with cold ginger beer and give it one stir. A North India riff built on the astringent purple monsoon berry.",
+  "thumb": "",
+  "video": "",
+  "tags": [
+   "India",
+   "North India",
+   "Jamun"
+  ],
+  "iba": "",
+  "ingredients": [
+   {
+    "name": "Gin",
+    "measure": "50 ml"
+   },
+   {
+    "name": "Lime Juice",
+    "measure": "15 ml"
+   },
+   {
+    "name": "Jamun Syrup",
+    "measure": "10 ml"
+   },
+   {
+    "name": "Ginger Beer",
+    "measure": "top up"
+   }
+  ],
+  "vibeHint": "refreshing"
+ },
+ {
+  "id": "x-in-064",
+  "name": "Jamun Old Fashioned",
+  "category": "Cocktail",
+  "alcoholic": "Alcoholic",
+  "glass": "Old-fashioned glass",
+  "instructions": "Stir gin, jamun syrup and the bitters over a large ice cube until cold and silky. Express an orange peel over the top. A North India riff built on the astringent purple monsoon berry.",
+  "thumb": "",
+  "video": "",
+  "tags": [
+   "India",
+   "North India",
+   "Jamun"
+  ],
+  "iba": "",
+  "ingredients": [
+   {
+    "name": "Gin",
+    "measure": "60 ml"
+   },
+   {
+    "name": "Jamun Syrup",
+    "measure": "10 ml"
+   },
+   {
+    "name": "Angostura Bitters",
+    "measure": "2 dashes"
+   }
+  ],
+  "vibeHint": "refreshing"
+ },
+ {
+  "id": "x-in-065",
+  "name": "Jamun Collins",
+  "category": "Cocktail",
+  "alcoholic": "Alcoholic",
+  "glass": "Collins glass",
+  "instructions": "Shake gin, lime juice and jamun syrup with ice, strain into an ice-filled collins glass and top with soda. A North India riff built on the astringent purple monsoon berry.",
+  "thumb": "",
+  "video": "",
+  "tags": [
+   "India",
+   "North India",
+   "Jamun"
+  ],
+  "iba": "",
+  "ingredients": [
+   {
+    "name": "Gin",
+    "measure": "45 ml"
+   },
+   {
+    "name": "Lime Juice",
+    "measure": "25 ml"
+   },
+   {
+    "name": "Jamun Syrup",
+    "measure": "15 ml"
+   },
+   {
+    "name": "Soda Water",
+    "measure": "top up"
+   }
+  ],
+  "vibeHint": "refreshing"
+ },
+ {
+  "id": "x-in-066",
+  "name": "Midnight Jamun",
+  "category": "Cocktail",
+  "alcoholic": "Alcoholic",
+  "glass": "Wine glass",
+  "instructions": "Fill a wine glass with ice. Add jamun syrup and gin, top with prosecco and a splash of soda, and stir gently. A North India riff built on the astringent purple monsoon berry.",
+  "thumb": "",
+  "video": "",
+  "tags": [
+   "India",
+   "North India",
+   "Jamun"
+  ],
+  "iba": "",
+  "ingredients": [
+   {
+    "name": "Jamun Syrup",
+    "measure": "30 ml"
+   },
+   {
+    "name": "Gin",
+    "measure": "20 ml"
+   },
+   {
+    "name": "Prosecco",
+    "measure": "90 ml"
+   },
+   {
+    "name": "Soda Water",
+    "measure": "splash"
+   }
+  ],
+  "vibeHint": "refreshing"
+ },
+ {
+  "id": "x-in-067",
+  "name": "Jamun Sling",
+  "category": "Cocktail",
+  "alcoholic": "Alcoholic",
+  "glass": "Hurricane glass",
+  "instructions": "Shake gin, lime juice and jamun syrup with ice, pour unstrained into a tall glass and lengthen with soda. A North India riff built on the astringent purple monsoon berry.",
+  "thumb": "",
+  "video": "",
+  "tags": [
+   "India",
+   "North India",
+   "Jamun"
+  ],
+  "iba": "",
+  "ingredients": [
+   {
+    "name": "Gin",
+    "measure": "45 ml"
+   },
+   {
+    "name": "Lime Juice",
+    "measure": "20 ml"
+   },
+   {
+    "name": "Jamun Syrup",
+    "measure": "20 ml"
+   },
+   {
+    "name": "Soda Water",
+    "measure": "top up"
+   }
+  ],
+  "vibeHint": "refreshing"
+ },
+ {
+  "id": "x-in-068",
+  "name": "Jamun Fizz",
+  "category": "Cocktail",
+  "alcoholic": "Alcoholic",
+  "glass": "Highball glass",
+  "instructions": "Dry shake everything but the soda, then shake with ice. Strain into a chilled glass and top with a splash of soda to lift the foam. A North India riff built on the astringent purple monsoon berry.",
+  "thumb": "",
+  "video": "",
+  "tags": [
+   "India",
+   "North India",
+   "Jamun"
+  ],
+  "iba": "",
+  "ingredients": [
+   {
+    "name": "Gin",
+    "measure": "45 ml"
+   },
+   {
+    "name": "Lime Juice",
+    "measure": "20 ml"
+   },
+   {
+    "name": "Jamun Syrup",
+    "measure": "15 ml"
+   },
+   {
+    "name": "Egg White",
+    "measure": "1"
+   },
+   {
+    "name": "Soda Water",
+    "measure": "splash"
+   }
+  ],
+  "vibeHint": "refreshing"
+ },
+ {
+  "id": "x-in-069",
+  "name": "Marigold Jamun",
+  "category": "Cocktail",
+  "alcoholic": "Alcoholic",
+  "glass": "Old-fashioned glass",
+  "instructions": "Stir gin, Campari, sweet vermouth and a barspoon of jamun syrup over ice, strain over a fresh cube and garnish with an orange slice. A North India riff built on the astringent purple monsoon berry.",
+  "thumb": "",
+  "video": "",
+  "tags": [
+   "India",
+   "North India",
+   "Jamun"
+  ],
+  "iba": "",
+  "ingredients": [
+   {
+    "name": "Gin",
+    "measure": "30 ml"
+   },
+   {
+    "name": "Campari",
+    "measure": "30 ml"
+   },
+   {
+    "name": "Sweet Vermouth",
+    "measure": "30 ml"
+   },
+   {
+    "name": "Jamun Syrup",
+    "measure": "5 ml"
+   }
+  ],
+  "vibeHint": "refreshing"
+ },
+ {
+  "id": "x-in-070",
+  "name": "Jamun Martini",
+  "category": "Cocktail",
+  "alcoholic": "Alcoholic",
+  "glass": "Martini glass",
+  "instructions": "Stir gin, dry vermouth and a barspoon of jamun syrup over ice until very cold, then strain into a chilled martini glass. A North India riff built on the astringent purple monsoon berry.",
+  "thumb": "",
+  "video": "",
+  "tags": [
+   "India",
+   "North India",
+   "Jamun"
+  ],
+  "iba": "",
+  "ingredients": [
+   {
+    "name": "Gin",
+    "measure": "60 ml"
+   },
+   {
+    "name": "Dry Vermouth",
+    "measure": "10 ml"
+   },
+   {
+    "name": "Jamun Syrup",
+    "measure": "5 ml"
+   }
+  ],
+  "vibeHint": "refreshing"
+ },
+ {
+  "id": "x-in-071",
+  "name": "Aam Papad Sour",
+  "category": "Cocktail",
+  "alcoholic": "Alcoholic",
+  "glass": "Coupe",
+  "instructions": "Dry shake white rum, lemon juice, mango puree and egg white without ice to build the foam, then shake again hard with ice. Double strain into a chilled coupe and finish with a few drops of bitters drawn through the foam. A North India riff built on sun-dried mango leather.",
+  "thumb": "",
+  "video": "",
+  "tags": [
+   "India",
+   "North India",
+   "Aam Papad"
+  ],
+  "iba": "",
+  "ingredients": [
+   {
+    "name": "White Rum",
+    "measure": "60 ml"
+   },
+   {
+    "name": "Lemon Juice",
+    "measure": "25 ml"
+   },
+   {
+    "name": "Mango Puree",
+    "measure": "20 ml"
+   },
+   {
+    "name": "Egg White",
+    "measure": "1"
+   }
+  ],
+  "vibeHint": "tropical"
+ },
+ {
+  "id": "x-in-072",
+  "name": "Deccan Aam",
+  "category": "Cocktail",
+  "alcoholic": "Alcoholic",
+  "glass": "Highball glass",
+  "instructions": "Build over plenty of ice: white rum and mango puree, then top with cold soda and stir once. A North India riff built on sun-dried mango leather.",
+  "thumb": "",
+  "video": "",
+  "tags": [
+   "India",
+   "North India",
+   "Aam Papad"
+  ],
+  "iba": "",
+  "ingredients": [
+   {
+    "name": "White Rum",
+    "measure": "45 ml"
+   },
+   {
+    "name": "Mango Puree",
+    "measure": "20 ml"
+   },
+   {
+    "name": "Soda Water",
+    "measure": "top up"
+   }
+  ],
+  "vibeHint": "tropical"
+ },
+ {
+  "id": "x-in-073",
+  "name": "Aam Papad Mule",
+  "category": "Cocktail",
+  "alcoholic": "Alcoholic",
+  "glass": "Mug",
+  "instructions": "Fill a copper mug with ice. Add white rum, lime juice and mango puree, top with cold ginger beer and give it one stir. A North India riff built on sun-dried mango leather.",
+  "thumb": "",
+  "video": "",
+  "tags": [
+   "India",
+   "North India",
+   "Aam Papad"
+  ],
+  "iba": "",
+  "ingredients": [
+   {
+    "name": "White Rum",
+    "measure": "50 ml"
+   },
+   {
+    "name": "Lime Juice",
+    "measure": "15 ml"
+   },
+   {
+    "name": "Mango Puree",
+    "measure": "10 ml"
+   },
+   {
+    "name": "Ginger Beer",
+    "measure": "top up"
+   }
+  ],
+  "vibeHint": "tropical"
+ },
+ {
+  "id": "x-in-074",
+  "name": "Aam Papad Old Fashioned",
+  "category": "Cocktail",
+  "alcoholic": "Alcoholic",
+  "glass": "Old-fashioned glass",
+  "instructions": "Stir white rum, mango puree and the bitters over a large ice cube until cold and silky. Express an orange peel over the top. A North India riff built on sun-dried mango leather.",
+  "thumb": "",
+  "video": "",
+  "tags": [
+   "India",
+   "North India",
+   "Aam Papad"
+  ],
+  "iba": "",
+  "ingredients": [
+   {
+    "name": "White Rum",
+    "measure": "60 ml"
+   },
+   {
+    "name": "Mango Puree",
+    "measure": "10 ml"
+   },
+   {
+    "name": "Angostura Bitters",
+    "measure": "2 dashes"
+   }
+  ],
+  "vibeHint": "tropical"
+ },
+ {
+  "id": "x-in-075",
+  "name": "Coastal Aam",
+  "category": "Cocktail",
+  "alcoholic": "Alcoholic",
+  "glass": "Collins glass",
+  "instructions": "Shake white rum, lemon juice and mango puree with ice, strain into an ice-filled collins glass and top with soda. A North India riff built on sun-dried mango leather.",
+  "thumb": "",
+  "video": "",
+  "tags": [
+   "India",
+   "North India",
+   "Aam Papad"
+  ],
+  "iba": "",
+  "ingredients": [
+   {
+    "name": "White Rum",
+    "measure": "45 ml"
+   },
+   {
+    "name": "Lemon Juice",
+    "measure": "25 ml"
+   },
+   {
+    "name": "Mango Puree",
+    "measure": "15 ml"
+   },
+   {
+    "name": "Soda Water",
+    "measure": "top up"
+   }
+  ],
+  "vibeHint": "tropical"
+ },
+ {
+  "id": "x-in-076",
+  "name": "Aam Papad Spritz",
+  "category": "Cocktail",
+  "alcoholic": "Alcoholic",
+  "glass": "Wine glass",
+  "instructions": "Fill a wine glass with ice. Add mango puree and white rum, top with prosecco and a splash of soda, and stir gently. A North India riff built on sun-dried mango leather.",
+  "thumb": "",
+  "video": "",
+  "tags": [
+   "India",
+   "North India",
+   "Aam Papad"
+  ],
+  "iba": "",
+  "ingredients": [
+   {
+    "name": "Mango Puree",
+    "measure": "30 ml"
+   },
+   {
+    "name": "White Rum",
+    "measure": "20 ml"
+   },
+   {
+    "name": "Prosecco",
+    "measure": "90 ml"
+   },
+   {
+    "name": "Soda Water",
+    "measure": "splash"
+   }
+  ],
+  "vibeHint": "tropical"
+ },
+ {
+  "id": "x-in-077",
+  "name": "Aam Papad Sling",
+  "category": "Cocktail",
+  "alcoholic": "Alcoholic",
+  "glass": "Hurricane glass",
+  "instructions": "Shake white rum, lime juice and mango puree with ice, pour unstrained into a tall glass and lengthen with soda. A North India riff built on sun-dried mango leather.",
+  "thumb": "",
+  "video": "",
+  "tags": [
+   "India",
+   "North India",
+   "Aam Papad"
+  ],
+  "iba": "",
+  "ingredients": [
+   {
+    "name": "White Rum",
+    "measure": "45 ml"
+   },
+   {
+    "name": "Lime Juice",
+    "measure": "20 ml"
+   },
+   {
+    "name": "Mango Puree",
+    "measure": "20 ml"
+   },
+   {
+    "name": "Soda Water",
+    "measure": "top up"
+   }
+  ],
+  "vibeHint": "tropical"
+ },
+ {
+  "id": "x-in-078",
+  "name": "Royal Aam",
+  "category": "Cocktail",
+  "alcoholic": "Alcoholic",
+  "glass": "Highball glass",
+  "instructions": "Dry shake everything but the soda, then shake with ice. Strain into a chilled glass and top with a splash of soda to lift the foam. A North India riff built on sun-dried mango leather.",
+  "thumb": "",
+  "video": "",
+  "tags": [
+   "India",
+   "North India",
+   "Aam Papad"
+  ],
+  "iba": "",
+  "ingredients": [
+   {
+    "name": "White Rum",
+    "measure": "45 ml"
+   },
+   {
+    "name": "Lemon Juice",
+    "measure": "20 ml"
+   },
+   {
+    "name": "Mango Puree",
+    "measure": "15 ml"
+   },
+   {
+    "name": "Egg White",
+    "measure": "1"
+   },
+   {
+    "name": "Soda Water",
+    "measure": "splash"
+   }
+  ],
+  "vibeHint": "tropical"
+ },
+ {
+  "id": "x-in-079",
+  "name": "Aam Papad Negroni",
+  "category": "Cocktail",
+  "alcoholic": "Alcoholic",
+  "glass": "Old-fashioned glass",
+  "instructions": "Stir white rum, Campari, sweet vermouth and a barspoon of mango puree over ice, strain over a fresh cube and garnish with an orange slice. A North India riff built on sun-dried mango leather.",
+  "thumb": "",
+  "video": "",
+  "tags": [
+   "India",
+   "North India",
+   "Aam Papad"
+  ],
+  "iba": "",
+  "ingredients": [
+   {
+    "name": "White Rum",
+    "measure": "30 ml"
+   },
+   {
+    "name": "Campari",
+    "measure": "30 ml"
+   },
+   {
+    "name": "Sweet Vermouth",
+    "measure": "30 ml"
+   },
+   {
+    "name": "Mango Puree",
+    "measure": "5 ml"
+   }
+  ],
+  "vibeHint": "tropical"
+ },
+ {
+  "id": "x-in-080",
+  "name": "Aam Papad Martini",
+  "category": "Cocktail",
+  "alcoholic": "Alcoholic",
+  "glass": "Martini glass",
+  "instructions": "Stir white rum, dry vermouth and a barspoon of mango puree over ice until very cold, then strain into a chilled martini glass. A North India riff built on sun-dried mango leather.",
+  "thumb": "",
+  "video": "",
+  "tags": [
+   "India",
+   "North India",
+   "Aam Papad"
+  ],
+  "iba": "",
+  "ingredients": [
+   {
+    "name": "White Rum",
+    "measure": "60 ml"
+   },
+   {
+    "name": "Dry Vermouth",
+    "measure": "10 ml"
+   },
+   {
+    "name": "Mango Puree",
+    "measure": "5 ml"
+   }
+  ],
+  "vibeHint": "tropical"
+ },
+ {
+  "id": "x-in-081",
+  "name": "Smoke Paan",
+  "category": "Cocktail",
+  "alcoholic": "Alcoholic",
+  "glass": "Coupe",
+  "instructions": "Dry shake vodka, lemon juice, gulkand syrup and egg white without ice to build the foam, then shake again hard with ice. Double strain into a chilled coupe and finish with a few drops of bitters drawn through the foam. A North India riff built on the betel-leaf and rose after-dinner sweet.",
+  "thumb": "",
+  "video": "",
+  "tags": [
+   "India",
+   "North India",
+   "Paan"
+  ],
+  "iba": "",
+  "ingredients": [
+   {
+    "name": "Vodka",
+    "measure": "60 ml"
+   },
+   {
+    "name": "Lemon Juice",
+    "measure": "25 ml"
+   },
+   {
+    "name": "Gulkand Syrup",
+    "measure": "20 ml"
+   },
+   {
+    "name": "Egg White",
+    "measure": "1"
+   }
+  ],
+  "vibeHint": "sweet"
+ },
+ {
+  "id": "x-in-082",
+  "name": "Paan Highball",
+  "category": "Cocktail",
+  "alcoholic": "Alcoholic",
+  "glass": "Highball glass",
+  "instructions": "Build over plenty of ice: vodka and gulkand syrup, then top with cold soda and stir once. A North India riff built on the betel-leaf and rose after-dinner sweet.",
+  "thumb": "",
+  "video": "",
+  "tags": [
+   "India",
+   "North India",
+   "Paan"
+  ],
+  "iba": "",
+  "ingredients": [
+   {
+    "name": "Vodka",
+    "measure": "45 ml"
+   },
+   {
+    "name": "Gulkand Syrup",
+    "measure": "20 ml"
+   },
+   {
+    "name": "Soda Water",
+    "measure": "top up"
+   }
+  ],
+  "vibeHint": "sweet"
+ },
+ {
+  "id": "x-in-083",
+  "name": "Paan Mule",
+  "category": "Cocktail",
+  "alcoholic": "Alcoholic",
+  "glass": "Mug",
+  "instructions": "Fill a copper mug with ice. Add vodka, lime juice and gulkand syrup, top with cold ginger beer and give it one stir. A North India riff built on the betel-leaf and rose after-dinner sweet.",
+  "thumb": "",
+  "video": "",
+  "tags": [
+   "India",
+   "North India",
+   "Paan"
+  ],
+  "iba": "",
+  "ingredients": [
+   {
+    "name": "Vodka",
+    "measure": "50 ml"
+   },
+   {
+    "name": "Lime Juice",
+    "measure": "15 ml"
+   },
+   {
+    "name": "Gulkand Syrup",
+    "measure": "10 ml"
+   },
+   {
+    "name": "Ginger Beer",
+    "measure": "top up"
+   }
+  ],
+  "vibeHint": "sweet"
+ },
+ {
+  "id": "x-in-084",
+  "name": "Velvet Paan",
+  "category": "Cocktail",
+  "alcoholic": "Alcoholic",
+  "glass": "Old-fashioned glass",
+  "instructions": "Stir vodka, gulkand syrup and the bitters over a large ice cube until cold and silky. Express an orange peel over the top. A North India riff built on the betel-leaf and rose after-dinner sweet.",
+  "thumb": "",
+  "video": "",
+  "tags": [
+   "India",
+   "North India",
+   "Paan"
+  ],
+  "iba": "",
+  "ingredients": [
+   {
+    "name": "Vodka",
+    "measure": "60 ml"
+   },
+   {
+    "name": "Gulkand Syrup",
+    "measure": "10 ml"
+   },
+   {
+    "name": "Angostura Bitters",
+    "measure": "2 dashes"
+   }
+  ],
+  "vibeHint": "sweet"
+ },
+ {
+  "id": "x-in-085",
+  "name": "Paan Collins",
+  "category": "Cocktail",
+  "alcoholic": "Alcoholic",
+  "glass": "Collins glass",
+  "instructions": "Shake vodka, lemon juice and gulkand syrup with ice, strain into an ice-filled collins glass and top with soda. A North India riff built on the betel-leaf and rose after-dinner sweet.",
+  "thumb": "",
+  "video": "",
+  "tags": [
+   "India",
+   "North India",
+   "Paan"
+  ],
+  "iba": "",
+  "ingredients": [
+   {
+    "name": "Vodka",
+    "measure": "45 ml"
+   },
+   {
+    "name": "Lemon Juice",
+    "measure": "25 ml"
+   },
+   {
+    "name": "Gulkand Syrup",
+    "measure": "15 ml"
+   },
+   {
+    "name": "Soda Water",
+    "measure": "top up"
+   }
+  ],
+  "vibeHint": "sweet"
+ },
+ {
+  "id": "x-in-086",
+  "name": "Paan Spritz",
+  "category": "Cocktail",
+  "alcoholic": "Alcoholic",
+  "glass": "Wine glass",
+  "instructions": "Fill a wine glass with ice. Add gulkand syrup and vodka, top with prosecco and a splash of soda, and stir gently. A North India riff built on the betel-leaf and rose after-dinner sweet.",
+  "thumb": "",
+  "video": "",
+  "tags": [
+   "India",
+   "North India",
+   "Paan"
+  ],
+  "iba": "",
+  "ingredients": [
+   {
+    "name": "Gulkand Syrup",
+    "measure": "30 ml"
+   },
+   {
+    "name": "Vodka",
+    "measure": "20 ml"
+   },
+   {
+    "name": "Prosecco",
+    "measure": "90 ml"
+   },
+   {
+    "name": "Soda Water",
+    "measure": "splash"
+   }
+  ],
+  "vibeHint": "sweet"
+ },
+ {
+  "id": "x-in-087",
+  "name": "Spice Route Paan",
+  "category": "Cocktail",
+  "alcoholic": "Alcoholic",
+  "glass": "Hurricane glass",
+  "instructions": "Shake vodka, lime juice and gulkand syrup with ice, pour unstrained into a tall glass and lengthen with soda. A North India riff built on the betel-leaf and rose after-dinner sweet.",
+  "thumb": "",
+  "video": "",
+  "tags": [
+   "India",
+   "North India",
+   "Paan"
+  ],
+  "iba": "",
+  "ingredients": [
+   {
+    "name": "Vodka",
+    "measure": "45 ml"
+   },
+   {
+    "name": "Lime Juice",
+    "measure": "20 ml"
+   },
+   {
+    "name": "Gulkand Syrup",
+    "measure": "20 ml"
+   },
+   {
+    "name": "Soda Water",
+    "measure": "top up"
+   }
+  ],
+  "vibeHint": "sweet"
+ },
+ {
+  "id": "x-in-088",
+  "name": "Paan Fizz",
+  "category": "Cocktail",
+  "alcoholic": "Alcoholic",
+  "glass": "Highball glass",
+  "instructions": "Dry shake everything but the soda, then shake with ice. Strain into a chilled glass and top with a splash of soda to lift the foam. A North India riff built on the betel-leaf and rose after-dinner sweet.",
+  "thumb": "",
+  "video": "",
+  "tags": [
+   "India",
+   "North India",
+   "Paan"
+  ],
+  "iba": "",
+  "ingredients": [
+   {
+    "name": "Vodka",
+    "measure": "45 ml"
+   },
+   {
+    "name": "Lemon Juice",
+    "measure": "20 ml"
+   },
+   {
+    "name": "Gulkand Syrup",
+    "measure": "15 ml"
+   },
+   {
+    "name": "Egg White",
+    "measure": "1"
+   },
+   {
+    "name": "Soda Water",
+    "measure": "splash"
+   }
+  ],
+  "vibeHint": "sweet"
+ },
+ {
+  "id": "x-in-089",
+  "name": "Paan Negroni",
+  "category": "Cocktail",
+  "alcoholic": "Alcoholic",
+  "glass": "Old-fashioned glass",
+  "instructions": "Stir vodka, Campari, sweet vermouth and a barspoon of gulkand syrup over ice, strain over a fresh cube and garnish with an orange slice. A North India riff built on the betel-leaf and rose after-dinner sweet.",
+  "thumb": "",
+  "video": "",
+  "tags": [
+   "India",
+   "North India",
+   "Paan"
+  ],
+  "iba": "",
+  "ingredients": [
+   {
+    "name": "Vodka",
+    "measure": "30 ml"
+   },
+   {
+    "name": "Campari",
+    "measure": "30 ml"
+   },
+   {
+    "name": "Sweet Vermouth",
+    "measure": "30 ml"
+   },
+   {
+    "name": "Gulkand Syrup",
+    "measure": "5 ml"
+   }
+  ],
+  "vibeHint": "sweet"
+ },
+ {
+  "id": "x-in-090",
+  "name": "Verandah Paan",
+  "category": "Cocktail",
+  "alcoholic": "Alcoholic",
+  "glass": "Martini glass",
+  "instructions": "Stir vodka, dry vermouth and a barspoon of gulkand syrup over ice until very cold, then strain into a chilled martini glass. A North India riff built on the betel-leaf and rose after-dinner sweet.",
+  "thumb": "",
+  "video": "",
+  "tags": [
+   "India",
+   "North India",
+   "Paan"
+  ],
+  "iba": "",
+  "ingredients": [
+   {
+    "name": "Vodka",
+    "measure": "60 ml"
+   },
+   {
+    "name": "Dry Vermouth",
+    "measure": "10 ml"
+   },
+   {
+    "name": "Gulkand Syrup",
+    "measure": "5 ml"
+   }
+  ],
+  "vibeHint": "sweet"
+ },
+ {
+  "id": "x-in-091",
+  "name": "Masala Chai Sour",
+  "category": "Cocktail",
+  "alcoholic": "Alcoholic",
+  "glass": "Coupe",
+  "instructions": "Dry shake whisky, lemon juice, honey and egg white without ice to build the foam, then shake again hard with ice. Double strain into a chilled coupe and finish with a few drops of bitters drawn through the foam. A Pan-India riff built on spiced milk tea.",
+  "thumb": "",
+  "video": "",
+  "tags": [
+   "India",
+   "Pan-India",
+   "Masala Chai"
+  ],
+  "iba": "",
+  "ingredients": [
+   {
+    "name": "Whisky",
+    "measure": "60 ml"
+   },
+   {
+    "name": "Lemon Juice",
+    "measure": "25 ml"
+   },
+   {
+    "name": "Honey",
+    "measure": "20 ml"
+   },
+   {
+    "name": "Egg White",
+    "measure": "1"
+   }
+  ],
+  "vibeHint": "cozy"
+ },
+ {
+  "id": "x-in-092",
+  "name": "Masala Chai Highball",
+  "category": "Cocktail",
+  "alcoholic": "Alcoholic",
+  "glass": "Highball glass",
+  "instructions": "Build over plenty of ice: whisky and honey, then top with cold soda and stir once. A Pan-India riff built on spiced milk tea.",
+  "thumb": "",
+  "video": "",
+  "tags": [
+   "India",
+   "Pan-India",
+   "Masala Chai"
+  ],
+  "iba": "",
+  "ingredients": [
+   {
+    "name": "Whisky",
+    "measure": "45 ml"
+   },
+   {
+    "name": "Honey",
+    "measure": "20 ml"
+   },
+   {
+    "name": "Soda Water",
+    "measure": "top up"
+   }
+  ],
+  "vibeHint": "cozy"
+ },
+ {
+  "id": "x-in-093",
+  "name": "Backwater Masala",
+  "category": "Cocktail",
+  "alcoholic": "Alcoholic",
+  "glass": "Mug",
+  "instructions": "Fill a copper mug with ice. Add whisky, lime juice and honey, top with cold ginger beer and give it one stir. A Pan-India riff built on spiced milk tea.",
+  "thumb": "",
+  "video": "",
+  "tags": [
+   "India",
+   "Pan-India",
+   "Masala Chai"
+  ],
+  "iba": "",
+  "ingredients": [
+   {
+    "name": "Whisky",
+    "measure": "50 ml"
+   },
+   {
+    "name": "Lime Juice",
+    "measure": "15 ml"
+   },
+   {
+    "name": "Honey",
+    "measure": "10 ml"
+   },
+   {
+    "name": "Ginger Beer",
+    "measure": "top up"
+   }
+  ],
+  "vibeHint": "cozy"
+ },
+ {
+  "id": "x-in-094",
+  "name": "Masala Chai Old Fashioned",
+  "category": "Cocktail",
+  "alcoholic": "Alcoholic",
+  "glass": "Old-fashioned glass",
+  "instructions": "Stir whisky, honey and the bitters over a large ice cube until cold and silky. Express an orange peel over the top. A Pan-India riff built on spiced milk tea.",
+  "thumb": "",
+  "video": "",
+  "tags": [
+   "India",
+   "Pan-India",
+   "Masala Chai"
+  ],
+  "iba": "",
+  "ingredients": [
+   {
+    "name": "Whisky",
+    "measure": "60 ml"
+   },
+   {
+    "name": "Honey",
+    "measure": "10 ml"
+   },
+   {
+    "name": "Angostura Bitters",
+    "measure": "2 dashes"
+   }
+  ],
+  "vibeHint": "cozy"
+ },
+ {
+  "id": "x-in-095",
+  "name": "Masala Chai Collins",
+  "category": "Cocktail",
+  "alcoholic": "Alcoholic",
+  "glass": "Collins glass",
+  "instructions": "Shake whisky, lemon juice and honey with ice, strain into an ice-filled collins glass and top with soda. A Pan-India riff built on spiced milk tea.",
+  "thumb": "",
+  "video": "",
+  "tags": [
+   "India",
+   "Pan-India",
+   "Masala Chai"
+  ],
+  "iba": "",
+  "ingredients": [
+   {
+    "name": "Whisky",
+    "measure": "45 ml"
+   },
+   {
+    "name": "Lemon Juice",
+    "measure": "25 ml"
+   },
+   {
+    "name": "Honey",
+    "measure": "15 ml"
+   },
+   {
+    "name": "Soda Water",
+    "measure": "top up"
+   }
+  ],
+  "vibeHint": "cozy"
+ },
+ {
+  "id": "x-in-096",
+  "name": "Havelock Masala",
+  "category": "Cocktail",
+  "alcoholic": "Alcoholic",
+  "glass": "Wine glass",
+  "instructions": "Fill a wine glass with ice. Add honey and whisky, top with prosecco and a splash of soda, and stir gently. A Pan-India riff built on spiced milk tea.",
+  "thumb": "",
+  "video": "",
+  "tags": [
+   "India",
+   "Pan-India",
+   "Masala Chai"
+  ],
+  "iba": "",
+  "ingredients": [
+   {
+    "name": "Honey",
+    "measure": "30 ml"
+   },
+   {
+    "name": "Whisky",
+    "measure": "20 ml"
+   },
+   {
+    "name": "Prosecco",
+    "measure": "90 ml"
+   },
+   {
+    "name": "Soda Water",
+    "measure": "splash"
+   }
+  ],
+  "vibeHint": "cozy"
+ },
+ {
+  "id": "x-in-097",
+  "name": "Masala Chai Sling",
+  "category": "Cocktail",
+  "alcoholic": "Alcoholic",
+  "glass": "Hurricane glass",
+  "instructions": "Shake whisky, lime juice and honey with ice, pour unstrained into a tall glass and lengthen with soda. A Pan-India riff built on spiced milk tea.",
+  "thumb": "",
+  "video": "",
+  "tags": [
+   "India",
+   "Pan-India",
+   "Masala Chai"
+  ],
+  "iba": "",
+  "ingredients": [
+   {
+    "name": "Whisky",
+    "measure": "45 ml"
+   },
+   {
+    "name": "Lime Juice",
+    "measure": "20 ml"
+   },
+   {
+    "name": "Honey",
+    "measure": "20 ml"
+   },
+   {
+    "name": "Soda Water",
+    "measure": "top up"
+   }
+  ],
+  "vibeHint": "cozy"
+ },
+ {
+  "id": "x-in-098",
+  "name": "Masala Chai Fizz",
+  "category": "Cocktail",
+  "alcoholic": "Alcoholic",
+  "glass": "Highball glass",
+  "instructions": "Dry shake everything but the soda, then shake with ice. Strain into a chilled glass and top with a splash of soda to lift the foam. A Pan-India riff built on spiced milk tea.",
+  "thumb": "",
+  "video": "",
+  "tags": [
+   "India",
+   "Pan-India",
+   "Masala Chai"
+  ],
+  "iba": "",
+  "ingredients": [
+   {
+    "name": "Whisky",
+    "measure": "45 ml"
+   },
+   {
+    "name": "Lemon Juice",
+    "measure": "20 ml"
+   },
+   {
+    "name": "Honey",
+    "measure": "15 ml"
+   },
+   {
+    "name": "Egg White",
+    "measure": "1"
+   },
+   {
+    "name": "Soda Water",
+    "measure": "splash"
+   }
+  ],
+  "vibeHint": "cozy"
+ },
+ {
+  "id": "x-in-099",
+  "name": "Old City Masala",
+  "category": "Cocktail",
+  "alcoholic": "Alcoholic",
+  "glass": "Old-fashioned glass",
+  "instructions": "Stir whisky, Campari, sweet vermouth and a barspoon of honey over ice, strain over a fresh cube and garnish with an orange slice. A Pan-India riff built on spiced milk tea.",
+  "thumb": "",
+  "video": "",
+  "tags": [
+   "India",
+   "Pan-India",
+   "Masala Chai"
+  ],
+  "iba": "",
+  "ingredients": [
+   {
+    "name": "Whisky",
+    "measure": "30 ml"
+   },
+   {
+    "name": "Campari",
+    "measure": "30 ml"
+   },
+   {
+    "name": "Sweet Vermouth",
+    "measure": "30 ml"
+   },
+   {
+    "name": "Honey",
+    "measure": "5 ml"
+   }
+  ],
+  "vibeHint": "cozy"
+ },
+ {
+  "id": "x-in-100",
+  "name": "Masala Chai Martini",
+  "category": "Cocktail",
+  "alcoholic": "Alcoholic",
+  "glass": "Martini glass",
+  "instructions": "Stir whisky, dry vermouth and a barspoon of honey over ice until very cold, then strain into a chilled martini glass. A Pan-India riff built on spiced milk tea.",
+  "thumb": "",
+  "video": "",
+  "tags": [
+   "India",
+   "Pan-India",
+   "Masala Chai"
+  ],
+  "iba": "",
+  "ingredients": [
+   {
+    "name": "Whisky",
+    "measure": "60 ml"
+   },
+   {
+    "name": "Dry Vermouth",
+    "measure": "10 ml"
+   },
+   {
+    "name": "Honey",
+    "measure": "5 ml"
+   }
+  ],
+  "vibeHint": "cozy"
+ }
+]
