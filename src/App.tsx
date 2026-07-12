@@ -212,25 +212,16 @@ export default function App() {
     }
   }
 
-  const byVibe = useCallback(
-    (list: Recipe[]) => {
-      if (!vibeFilter) return list;
-      if (vibeFilter === 'zeroproof')
-        return list.filter((r) => (r.alcoholic || '').toLowerCase().includes('non'));
-      return list.filter((r) => r.vibe === vibeFilter);
-    },
-    [vibeFilter]
-  );
-
-  const canMake = useMemo(() => byVibe(match?.canMake ?? []), [match, byVibe]);
-  const almost = useMemo(() => byVibe(match?.almost ?? []), [match, byVibe]);
+  // the mood filter lives on the menu page only; the bar page shows every match
+  const canMake = match?.canMake ?? [];
+  const almost = match?.almost ?? [];
   // mood + search are server-filtered; in the Most Loved view also sort here
   // with the same counts the hearts display, so order always matches them
   const featured = useMemo(
     () => (loved ? [...browse].sort((a, b) => (likes[b.id] || 0) - (likes[a.id] || 0)) : browse),
     [browse, loved, likes]
   );
-  const inventions = useMemo(() => byVibe(aiDrinks), [aiDrinks, byVibe]);
+  const inventions = aiDrinks;
   const hasPantry = pantry.length > 0;
   const moreLeft = browse.length >= browseLimit && browseLimit < MENU_MAX;
 
@@ -396,6 +387,7 @@ export default function App() {
                       </div>
                     </div>
                   </div>
+                  <BarTalk />
                 </section>
 
                 <section className="sec" id="menu-list">
@@ -475,7 +467,6 @@ export default function App() {
                       )}
                     </>
                   )}
-                  <BarTalk />
                 </section>
               </>
             </div>
@@ -518,6 +509,7 @@ export default function App() {
                       </div>
                     </div>
                   )}
+                  <BarTalk />
                 </section>
 
                 <section className="sec" id="pour">
@@ -534,7 +526,6 @@ export default function App() {
                     </div>
                   ) : (
                     <>
-                      <div className="bar-controls">{moodBar}</div>
                       <div className="invent-row">
                         <div className="invent-lead">
                           <span className="k-label">HOUSE SPECIALS</span>
@@ -598,7 +589,6 @@ export default function App() {
                       )}
                     </>
                   )}
-                  <BarTalk />
                 </section>
               </>
             </div>
@@ -620,6 +610,7 @@ export default function App() {
                   title="THE TAB"
                   note={tab.length ? `${tab.length} ON YOUR TAB TONIGHT` : 'YOUR MENU FOR THE NIGHT'}
                 />
+                <BarTalk />
                 {tab.length === 0 ? (
                   <div className="empty">
                     <p className="empty-big">NOTHING ON THE TAB YET.</p>
@@ -657,7 +648,6 @@ export default function App() {
                     <div className="grid">{tab.map((r, i) => card(r, i, true))}</div>
                   </>
                 )}
-                <BarTalk />
               </section>
             </div>
         </main>

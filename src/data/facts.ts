@@ -28,4 +28,12 @@ export const FACTS: string[] = [
   'Sake is not a spirit: it is brewed from rice like beer. Korea\'s soju and Japan\'s shochu are the distilled cousins.',
   'The Old Fashioned is a retronym: 1880s drinkers, tired of newfangled liqueurs and garnishes, ordered their whiskey cocktail made "the old-fashioned way".',
   'The Margarita is Spanish for "daisy", and the tequila Daisy appears in print decades before any of the half-dozen origin legends bartenders still argue about.',
+  '"Toddy" is an Indian word: from the Hindi tari, the sap of the palm tree, tapped and fermented across South India for millennia. British sailors borrowed the name for their hot whisky cure.',
+  'India drinks more whisky than any other country on Earth. Roughly one in every two bottles of whisky sold worldwide is poured there.',
+  'Sura, a fermented drink from the Vedic period, appears in the Rigveda over three thousand years ago, making India home to some of the oldest recorded drinking culture anywhere.',
+  'Old Monk, the cult dark rum from Ghaziabad, built one of the world\'s best-selling rum brands since 1954 with essentially no advertising, only word of mouth.',
+  'Asia\'s oldest surviving distillery sits in the Himalayan town of Kasauli, running since the 1820s, and still uses its original Victorian copper stills.',
+  'Mahua, distilled from sweet mahua blossoms, has been made by India\'s Adivasi communities for centuries. Banned as "country liquor" under colonial rule, it is now being revived as a heritage spirit.',
+  'In the Eastern Himalayas, tongba is millet beer served in a bamboo mug and drunk through a bamboo straw, topped up with hot water as the evening goes on.',
+  'Indian single malts arrived late and conquered fast: Amrut launched in Glasgow in 2004 to prove a point, and Indian malts now regularly beat Scotch in blind tastings and world rankings.',
 ];

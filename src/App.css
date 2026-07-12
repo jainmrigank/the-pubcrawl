@@ -553,7 +553,7 @@ main { flex: 1; width: 100%; max-width: 1440px; margin: 0 auto; padding: 0 clamp
   background: var(--paper);
   box-shadow: 6px 6px 0 rgba(22, 21, 18, 0.08);
   padding: 16px 20px 18px;
-  margin: clamp(32px, 5vh, 48px) 0 4px;
+  margin: clamp(28px, 4vh, 44px) 0;
   max-width: 860px;
 }
 .bartalk-head { display: flex; justify-content: space-between; align-items: center; gap: 16px; margin-bottom: 10px; }
