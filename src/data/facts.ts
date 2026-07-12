@@ -36,4 +36,12 @@ export const FACTS: string[] = [
   'Mahua, distilled from sweet mahua blossoms, has been made by India\'s Adivasi communities for centuries. Banned as "country liquor" under colonial rule, it is now being revived as a heritage spirit.',
   'In the Eastern Himalayas, tongba is millet beer served in a bamboo mug and drunk through a bamboo straw, topped up with hot water as the evening goes on.',
   'Indian single malts arrived late and conquered fast: Amrut launched in Glasgow in 2004 to prove a point, and Indian malts now regularly beat Scotch in blind tastings and world rankings.',
+  'Raj-era clubs measured whisky in pegs, a unit India still uses: a chota peg is a small one, a burra peg a large one, and the word likely marched in with the British army.',
+  'In Kerala, toddy tappers walk rope bridges between palm crowns twice a day. The morning sap drinks sweet as neera; by evening it has fermented into toddy on its own.',
+  'Handia, a rice beer fermented with herbal ranu tablets, has been brewed by Adivasi communities of eastern India for centuries and is offered to guests and gods alike.',
+  'The Indian Army still issues a rum ration: dark XXX rum has warmed high-altitude postings for decades, and Old Monk built its legend in those canteens.',
+  'Bhang, a paste of ground cannabis leaves stirred into thandai milk with almonds and rose, is Holi\'s traditional drink and is sold at government-licensed shops in cities like Varanasi.',
+  'Indian bureaucracy gave whisky made in India its official name: IMFL, short for Indian-Made Foreign Liquor. Foreign, made locally.',
+  'Nashik in Maharashtra is India\'s wine country: vineyards along the Godavari now supply most of the country\'s wine, barely three decades after the first modern winery opened.',
+  'India\'s craft gin wave rose out of Goa in the late 2010s, distilled with local botanicals like gondhoraj lime, Himalayan juniper and curry leaf, and Goan bars pour it with pride.',
 ];

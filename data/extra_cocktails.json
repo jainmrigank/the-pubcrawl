@@ -167,5 +167,194 @@
    { "name": "Vodka", "measure": "40 ml" },
    { "name": "Lager", "measure": "250 ml" }
   ]
+ },
+ {
+  "id": "x-shikanji",
+  "name": "Shikanji (Nimbu Pani)",
+  "category": "Soft Drink",
+  "alcoholic": "Non alcoholic",
+  "glass": "Highball glass",
+  "instructions": "Stir the lemon juice, sugar, black salt and roasted cumin into cold water until dissolved. Pour over ice, top with a splash of soda and slap a mint sprig over the glass. North India's roadside lemonade, sold from carts every summer.",
+  "thumb": "",
+  "video": "",
+  "tags": ["India", "Summer", "Street"],
+  "iba": "",
+  "ingredients": [
+   { "name": "Lemon Juice", "measure": "30 ml" },
+   { "name": "Sugar", "measure": "2 tsp" },
+   { "name": "Black Salt", "measure": "1 pinch" },
+   { "name": "Cumin", "measure": "1 pinch, roasted" },
+   { "name": "Water", "measure": "150 ml" },
+   { "name": "Soda Water", "measure": "splash" },
+   { "name": "Mint", "measure": "1 sprig" }
+  ]
+ },
+ {
+  "id": "x-jaljeera",
+  "name": "Jal-Jeera",
+  "category": "Soft Drink",
+  "alcoholic": "Non alcoholic",
+  "glass": "Highball glass",
+  "instructions": "Blend the mint with cumin, black salt, tamarind and lemon juice, then stir into cold water and strain over ice. Sharp, smoky and savoury: the name means cumin water, and it is drunk across India as both cooler and appetiser.",
+  "thumb": "",
+  "video": "",
+  "tags": ["India", "Summer", "Savoury"],
+  "iba": "",
+  "ingredients": [
+   { "name": "Cumin", "measure": "1 tsp, roasted" },
+   { "name": "Mint", "measure": "10 leaves" },
+   { "name": "Tamarind Syrup", "measure": "10 ml" },
+   { "name": "Black Salt", "measure": "1 pinch" },
+   { "name": "Lemon Juice", "measure": "20 ml" },
+   { "name": "Water", "measure": "180 ml" }
+  ]
+ },
+ {
+  "id": "x-aampanna",
+  "name": "Aam Panna",
+  "category": "Soft Drink",
+  "alcoholic": "Non alcoholic",
+  "glass": "Highball glass",
+  "instructions": "Roast or boil a raw green mango until soft, scoop the pulp and blend with sugar, roasted cumin, black salt and mint. Dilute with cold water over ice. The tart green-mango cooler that gets North India through the loo winds of May.",
+  "thumb": "",
+  "video": "",
+  "tags": ["India", "Summer"],
+  "iba": "",
+  "ingredients": [
+   { "name": "Raw Mango", "measure": "1, roasted" },
+   { "name": "Sugar", "measure": "2 tsp" },
+   { "name": "Cumin", "measure": "1 pinch, roasted" },
+   { "name": "Black Salt", "measure": "1 pinch" },
+   { "name": "Mint", "measure": "6 leaves" },
+   { "name": "Water", "measure": "180 ml" }
+  ]
+ },
+ {
+  "id": "x-chaas",
+  "name": "Masala Chaas",
+  "category": "Soft Drink",
+  "alcoholic": "Non alcoholic",
+  "glass": "Highball glass",
+  "instructions": "Whisk the yogurt with cold water until thin and frothy, then stir in roasted cumin, black salt, grated ginger and chopped mint or coriander. Served after lunch across India: the spiced buttermilk that cools better than anything fizzy.",
+  "thumb": "",
+  "video": "",
+  "tags": ["India", "Savoury"],
+  "iba": "",
+  "ingredients": [
+   { "name": "Yogurt", "measure": "100 ml" },
+   { "name": "Water", "measure": "150 ml" },
+   { "name": "Cumin", "measure": "1 pinch, roasted" },
+   { "name": "Black Salt", "measure": "1 pinch" },
+   { "name": "Ginger", "measure": "1 tsp, grated" },
+   { "name": "Mint", "measure": "6 leaves" }
+  ]
+ },
+ {
+  "id": "x-kokum",
+  "name": "Kokum Cooler",
+  "category": "Soft Drink",
+  "alcoholic": "Non alcoholic",
+  "glass": "Highball glass",
+  "instructions": "Stir the kokum syrup with lime juice and a pinch of black salt, pour over ice and top with soda. Deep magenta and pleasantly sour, made from the kokum fruit of the Konkan coast. A measure of white rum or gin slips in easily.",
+  "thumb": "",
+  "video": "",
+  "tags": ["India", "Konkan", "Summer"],
+  "iba": "",
+  "ingredients": [
+   { "name": "Kokum Syrup", "measure": "45 ml" },
+   { "name": "Lime Juice", "measure": "15 ml" },
+   { "name": "Black Salt", "measure": "1 pinch" },
+   { "name": "Soda Water", "measure": "top up" }
+  ]
+ },
+ {
+  "id": "x-fenifizz",
+  "name": "Feni Ginger Fizz",
+  "category": "Cocktail",
+  "alcoholic": "Alcoholic",
+  "glass": "Highball glass",
+  "instructions": "Build over plenty of ice: cashew feni, fresh lime juice and a small pinch of salt, then top with cold ginger ale and stir once. The way Goa's susegad afternoons take their fierce local spirit.",
+  "thumb": "",
+  "video": "",
+  "tags": ["India", "Goa"],
+  "iba": "",
+  "ingredients": [
+   { "name": "Feni", "measure": "45 ml" },
+   { "name": "Lime Juice", "measure": "15 ml" },
+   { "name": "Salt", "measure": "1 small pinch" },
+   { "name": "Ginger Ale", "measure": "top up" }
+  ]
+ },
+ {
+  "id": "x-monkcola",
+  "name": "Monk & Cola",
+  "category": "Cocktail",
+  "alcoholic": "Alcoholic",
+  "glass": "Highball glass",
+  "instructions": "Fill a highball with ice, pour the dark rum, top with cold cola and squeeze in a lime wedge. India's default order for generations, built on Old Monk: the vanilla-heavy Ghaziabad rum with a cult following and no advertising.",
+  "thumb": "",
+  "video": "",
+  "tags": ["India", "Classic"],
+  "iba": "",
+  "ingredients": [
+   { "name": "Dark Rum", "measure": "60 ml" },
+   { "name": "Coca-Cola", "measure": "top up" },
+   { "name": "Lime", "measure": "1 wedge" }
+  ]
+ },
+ {
+  "id": "x-chaitoddy",
+  "name": "Masala Chai Toddy",
+  "category": "Coffee / Tea",
+  "alcoholic": "Alcoholic",
+  "glass": "Coffee mug",
+  "instructions": "Brew strong masala chai with ginger, cardamom and black pepper. Stir the honey into a warm mug, add the whisky, then pour over the hot chai and finish with a lemon wheel. An Indian winter answer to the hot toddy.",
+  "thumb": "",
+  "video": "",
+  "tags": ["India", "Winter", "Hot"],
+  "iba": "",
+  "ingredients": [
+   { "name": "Whisky", "measure": "45 ml" },
+   { "name": "Masala Chai", "measure": "120 ml, hot" },
+   { "name": "Honey", "measure": "10 ml" },
+   { "name": "Lemon", "measure": "1 wheel" }
+  ]
+ },
+ {
+  "id": "x-nariyal",
+  "name": "Nariyal Mojito",
+  "category": "Cocktail",
+  "alcoholic": "Alcoholic",
+  "glass": "Highball glass",
+  "instructions": "Muddle the mint gently with sugar and lime juice, add the white rum and tender coconut water, fill with ice and top with a splash of soda. The beach-shack mojito of coastal India, softer and rounder on coconut water.",
+  "thumb": "",
+  "video": "",
+  "tags": ["India", "Coastal", "Summer"],
+  "iba": "",
+  "ingredients": [
+   { "name": "White Rum", "measure": "50 ml" },
+   { "name": "Coconut Water", "measure": "90 ml" },
+   { "name": "Lime Juice", "measure": "20 ml" },
+   { "name": "Mint", "measure": "8 leaves" },
+   { "name": "Sugar", "measure": "2 tsp" },
+   { "name": "Soda Water", "measure": "splash" }
+  ]
+ },
+ {
+  "id": "x-gondhoraj",
+  "name": "Gondhoraj Gimlet",
+  "category": "Cocktail",
+  "alcoholic": "Alcoholic",
+  "glass": "Coupe",
+  "instructions": "Shake the gin hard with gondhoraj lime juice and sugar syrup, double strain into a chilled coupe and express a strip of the fragrant peel over the top. Kolkata's beloved gondhoraj lebu turned this gimlet into a modern Indian bar classic.",
+  "thumb": "",
+  "video": "",
+  "tags": ["India", "Kolkata", "Modern Classic"],
+  "iba": "",
+  "ingredients": [
+   { "name": "Gin", "measure": "60 ml" },
+   { "name": "Gondhoraj Lime", "measure": "20 ml, juiced" },
+   { "name": "Sugar Syrup", "measure": "15 ml" }
+  ]
  }
 ]

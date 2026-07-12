@@ -50,12 +50,12 @@ const CATEGORY_RULES = [
   ['Wine & Fortified', ['wine', 'champagne', 'prosecco', 'cava', 'vermouth', 'sherry', 'port', 'lillet', 'cocchi', 'dubonnet', 'sake', 'umeshu', 'makgeolli']],
   ['Bitters', ['bitters', 'angostura', 'peychaud', 'peychauds']],
   ['Juice', ['juice', 'nectar', 'puree']],
-  ['Soda & Mixer', ['soda', 'tonic', 'cola', 'coke', 'sprite', '7 up', 'ginger ale', 'ginger beer', 'lemonade', 'water', 'red bull', 'iced tea', 'coffee', 'espresso', 'tea', 'coconut water']],
+  ['Soda & Mixer', ['soda', 'tonic', 'cola', 'coke', 'sprite', '7 up', 'ginger ale', 'ginger beer', 'lemonade', 'water', 'red bull', 'iced tea', 'coffee', 'espresso', 'tea', 'chai', 'coconut water']],
   ['Beer & Cider', ['beer', 'lager', 'ale', 'stout', 'cider']],
   ['Syrup & Sweetener', ['syrup', 'honey', 'sugar', 'agave', 'grenadine', 'orgeat', 'molasses', 'jaggery', 'sweetener', 'cordial']],
   ['Dairy & Egg', ['cream', 'milk', 'yoghurt', 'yogurt', 'butter', 'egg', 'aquafaba', 'ice cream']],
-  ['Fruit', ['lemon', 'lime', 'orange', 'grapefruit', 'pineapple', 'banana', 'berry', 'berries', 'cherry', 'apple', 'peach', 'mango', 'melon', 'kiwi', 'papaya', 'guava', 'lychee', 'passion fruit', 'dragon fruit', 'pomegranate', 'watermelon', 'olive', 'fruit', 'yuzu', 'calamansi', 'kumquat', 'grapes', 'fig', 'apricot', 'coconut']],
-  ['Herb & Spice', ['mint', 'basil', 'rosemary', 'sage', 'dill', 'thyme', 'lemongrass', 'shiso', 'curry leaf', 'curry leaves', 'kaffir', 'cinnamon', 'nutmeg', 'clove', 'cloves', 'cardamom', 'anise', 'saffron', 'pepper', 'peppercorn', 'ginger', 'chilli', 'jalapeno', 'salt', 'masala', 'tajin', 'paprika', 'vanilla', 'matcha', 'hibiscus', 'butterfly pea', 'rose water', 'orange blossom', 'celery', 'cucumber', 'wormwood', 'lavender']],
+  ['Fruit', ['lemon', 'lime', 'orange', 'grapefruit', 'pineapple', 'banana', 'berry', 'berries', 'cherry', 'apple', 'peach', 'mango', 'melon', 'kiwi', 'papaya', 'guava', 'lychee', 'passion fruit', 'dragon fruit', 'pomegranate', 'watermelon', 'olive', 'fruit', 'yuzu', 'calamansi', 'kumquat', 'grapes', 'fig', 'apricot', 'coconut', 'kokum']],
+  ['Herb & Spice', ['mint', 'basil', 'rosemary', 'sage', 'dill', 'thyme', 'lemongrass', 'shiso', 'curry leaf', 'curry leaves', 'kaffir', 'cinnamon', 'nutmeg', 'clove', 'cloves', 'cardamom', 'anise', 'saffron', 'pepper', 'peppercorn', 'ginger', 'chilli', 'jalapeno', 'salt', 'masala', 'tajin', 'paprika', 'vanilla', 'matcha', 'hibiscus', 'butterfly pea', 'rose water', 'orange blossom', 'celery', 'cucumber', 'wormwood', 'lavender', 'cumin']],
 ];
 
 // Word-boundary keyword match: multi-word keywords match as phrases; single words
@@ -152,11 +152,14 @@ export function loadCatalog() {
     }
   }
 
-  // merge scraped YouTube videos (scripts/fetch_videos.mjs) into drinks that lack one
+  // videos.json is the audited source of truth (scripts/audit_videos.mjs):
+  // an entry there wins over the drink's own link, and an explicit empty
+  // string means "the found videos were wrong, show none"
   const videosPath = join(ROOT, 'data', 'videos.json');
   if (existsSync(videosPath)) {
     const videos = JSON.parse(readFileSync(videosPath, 'utf8'));
-    for (const c of cocktails) if (!c.video && videos[c.id]) c.video = videos[c.id];
+    for (const c of cocktails)
+      if (Object.prototype.hasOwnProperty.call(videos, c.id)) c.video = videos[c.id];
   }
 
   const seen = new Map(); // norm -> entry

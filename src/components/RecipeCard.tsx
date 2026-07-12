@@ -2,6 +2,7 @@ import { useState } from 'react';
 import type { Recipe, Vibe } from '../types';
 import { Check, GlassIcon, Heart, Play, Plus, Share, X } from '../icons';
 import { recipeShareText, shareContent } from '../share';
+import { formatMeasure } from '../measure';
 
 interface Props {
   recipe: Recipe;
@@ -155,7 +156,7 @@ export function RecipeCard({ recipe, vibe, index, onVideo, onToggleTab, inTab = 
                   {i.have === false && <span className="k-label miss-mark">OUT</span>}
                   {i.name}
                 </span>
-                <span className="fb-ing-measure">{i.measure || '—'}</span>
+                <span className="fb-ing-measure">{formatMeasure(i.measure) || '—'}</span>
               </li>
             ))}
           </ul>

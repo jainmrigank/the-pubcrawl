@@ -1,4 +1,5 @@
 import type { Recipe } from './types';
+import { formatMeasure } from './measure';
 
 const SITE = 'https://the-pubcrawl.vercel.app';
 
@@ -9,7 +10,7 @@ export function recipeShareText(r: Recipe, vibeLabel: string): string {
     `${vibeLabel} · ${r.glass || 'Any glass'}`,
     '',
     'WHAT YOU NEED',
-    ...r.ingredients.map((i) => `- ${i.measure && i.measure !== '—' ? `${i.measure} ` : ''}${i.name}`),
+    ...r.ingredients.map((i) => `- ${i.measure && i.measure !== '—' ? `${formatMeasure(i.measure)} ` : ''}${i.name}`),
     '',
     'HOW TO MAKE IT',
     r.instructions,

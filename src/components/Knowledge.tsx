@@ -1,24 +1,60 @@
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { KNOWLEDGE } from '../data/knowledge';
 import { ToolIcon } from '../icons';
 import { EASE } from '../motion';
 
-/** Bar Basics. Collapsible groups (A, B, C…), each term an accordion inside. */
+/**
+ * Bar Basics. Collapsible groups (A, B, C…), each term an accordion inside.
+ * The search field filters terms and definitions and opens matching groups.
+ */
 export function Knowledge() {
   const [openGroup, setOpenGroup] = useState<string | null>(null);
   const [openId, setOpenId] = useState<string | null>(null);
+  const [q, setQ] = useState('');
+  const nq = q.trim().toLowerCase();
+
+  const groups = useMemo(() => {
+    // word-start matching, so "oz" finds the ounce, not "frozen"
+    const re = nq ? new RegExp(`\\b${nq.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}`) : null;
+    return KNOWLEDGE.map((g) => ({
+      ...g,
+      terms: re ? g.terms.filter((t) => re.test(`${t.term} ${t.def}`.toLowerCase())) : g.terms,
+    })).filter((g) => g.terms.length > 0);
+  }, [nq]);
+  const totalHits = useMemo(() => groups.reduce((n, g) => n + g.terms.length, 0), [groups]);
+  // a lone hit opens itself
+  const forcedOpenId = nq && totalHits === 1 ? `${groups[0].id}-${groups[0].terms[0].id}` : null;
 
   return (
     <div className="manual">
-      {KNOWLEDGE.map((group) => {
-        const expanded = openGroup === group.id;
+      <div className="field manual-search">
+        <input
+          value={q}
+          onChange={(e) => setQ(e.target.value)}
+          placeholder="SEARCH THE MANUAL… OZ, SHAKE, VERMOUTH"
+          aria-label="Search the manual"
+        />
+      </div>
+      {nq && (
+        <p className="k-label dim manual-hits">
+          {totalHits ? `${totalHits} ENTR${totalHits === 1 ? 'Y' : 'IES'} FOR “${q.trim().toUpperCase()}”` : ''}
+        </p>
+      )}
+      {groups.length === 0 && (
+        <div className="empty">
+          <p className="empty-big">NOTHING BY THAT NAME IN THE MANUAL.</p>
+          <p className="k-label dim">TRY “OZ”, “SHAKE” OR “VERMOUTH”.</p>
+        </div>
+      )}
+      {groups.map((group) => {
+        const expanded = nq ? true : openGroup === group.id;
         return (
           <div className="manual-group" key={group.id}>
             <button
               className={`manual-group-head ${expanded ? 'open' : ''}`}
               aria-expanded={expanded}
-              onClick={() => setOpenGroup(expanded ? null : group.id)}
+              onClick={() => !nq && setOpenGroup(expanded ? null : group.id)}
             >
               <span className="manual-index">{group.index}</span>
               <span className="manual-group-title">
@@ -42,7 +78,7 @@ export function Knowledge() {
                   <ul className="manual-list">
                     {group.terms.map((t, i) => {
                       const id = `${group.id}-${t.id}`;
-                      const open = openId === id;
+                      const open = openId === id || forcedOpenId === id;
                       return (
                         <li key={id} className={open ? 'open' : ''}>
                           <button

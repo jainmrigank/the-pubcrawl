@@ -212,16 +212,26 @@ export default function App() {
     }
   }
 
-  // the mood filter lives on the menu page only; the bar page shows every match
-  const canMake = match?.canMake ?? [];
-  const almost = match?.almost ?? [];
+  // the bar page's single mood control filters the pour lists AND steers the
+  // house-special prompt (inventMood); the menu keeps its own filter state
+  const byBarMood = useCallback(
+    (list: Recipe[]) => {
+      if (!inventMood) return list;
+      if (inventMood === 'zeroproof')
+        return list.filter((r) => (r.alcoholic || '').toLowerCase().includes('non'));
+      return list.filter((r) => r.vibe === inventMood);
+    },
+    [inventMood]
+  );
+  const canMake = useMemo(() => byBarMood(match?.canMake ?? []), [match, byBarMood]);
+  const almost = useMemo(() => byBarMood(match?.almost ?? []), [match, byBarMood]);
   // mood + search are server-filtered; in the Most Loved view also sort here
   // with the same counts the hearts display, so order always matches them
   const featured = useMemo(
     () => (loved ? [...browse].sort((a, b) => (likes[b.id] || 0) - (likes[a.id] || 0)) : browse),
     [browse, loved, likes]
   );
-  const inventions = aiDrinks;
+  const inventions = useMemo(() => byBarMood(aiDrinks), [aiDrinks, byBarMood]);
   const hasPantry = pantry.length > 0;
   const moreLeft = browse.length >= browseLimit && browseLimit < MENU_MAX;
 
@@ -241,27 +251,29 @@ export default function App() {
     />
   );
 
-  const moodBar = (
+  // one mood row, two homes: the menu (filters the list) and the bar page
+  // (filters the pour lists AND steers the house-special prompt)
+  const moodRow = (value: string, setValue: (v: string) => void) => (
     <div className="vibe-bar" role="group" aria-label="Filter by mood">
       <span className="k-label dim">MOOD</span>
-      <button className={`vibe-chip ${vibeFilter === '' ? 'on' : ''}`} onClick={() => setVibeFilter('')}>
+      <button className={`vibe-chip ${value === '' ? 'on' : ''}`} onClick={() => setValue('')}>
         ALL
       </button>
       {vibes.map((v) => (
         <button
           key={v.id}
-          className={`vibe-chip ${vibeFilter === v.id ? 'on' : ''}`}
+          className={`vibe-chip ${value === v.id ? 'on' : ''}`}
           style={{ ['--vc' as string]: v.color }}
-          onClick={() => setVibeFilter(vibeFilter === v.id ? '' : v.id)}
+          onClick={() => setValue(value === v.id ? '' : v.id)}
         >
           <i className="swatch" />
           {v.label.toUpperCase()}
         </button>
       ))}
       <button
-        className={`vibe-chip ${vibeFilter === 'zeroproof' ? 'on' : ''}`}
+        className={`vibe-chip ${value === 'zeroproof' ? 'on' : ''}`}
         style={{ ['--vc' as string]: '#6B7A6E' }}
-        onClick={() => setVibeFilter(vibeFilter === 'zeroproof' ? '' : 'zeroproof')}
+        onClick={() => setValue(value === 'zeroproof' ? '' : 'zeroproof')}
       >
         <i className="swatch" />
         ZERO-PROOF
@@ -414,7 +426,7 @@ export default function App() {
                     />
                   </div>
                   <div className="bar-controls">
-                    {moodBar}
+                    {moodRow(vibeFilter, setVibeFilter)}
                     <div className="menu-actions">
                       <button
                         className={`text-btn ${loved ? 'loved-on' : ''}`}
@@ -476,6 +488,7 @@ export default function App() {
                 {/* ================= the bar: shelf + pour ================= */}
                 <section className="sec page-top" id="shelf">
                   <SectionHead index="01" title="YOUR SHELF" note="TYPE IT OR SNAP IT" />
+                  <BarTalk />
                   <div className="shelf-grid">
                     <div className="shelf-col">
                       <span className="k-label field-label">WHAT HAVE YOU GOT?</span>
@@ -509,7 +522,6 @@ export default function App() {
                       </div>
                     </div>
                   )}
-                  <BarTalk />
                 </section>
 
                 <section className="sec" id="pour">
@@ -526,40 +538,14 @@ export default function App() {
                     </div>
                   ) : (
                     <>
+                      <div className="bar-controls">{moodRow(inventMood, setInventMood)}</div>
                       <div className="invent-row">
                         <div className="invent-lead">
                           <span className="k-label">HOUSE SPECIALS</span>
                           <p className="invent-note">
-                            A brand-new drink, dreamed up from exactly what you’ve got. Pick a mood,
-                            or leave it to the house. Drinks on your tab tune the bartender’s taste.
+                            A brand-new drink, dreamed up from exactly what you’ve got. The mood above
+                            steers it and the list below; drinks on your tab tune the bartender’s taste.
                           </p>
-                          <div className="invent-moods" role="group" aria-label="Mood for the special">
-                            <button
-                              className={`vibe-chip ${inventMood === '' ? 'on' : ''}`}
-                              onClick={() => setInventMood('')}
-                            >
-                              BARTENDER’S CHOICE
-                            </button>
-                            {vibes.map((v) => (
-                              <button
-                                key={v.id}
-                                className={`vibe-chip ${inventMood === v.id ? 'on' : ''}`}
-                                style={{ ['--vc' as string]: v.color }}
-                                onClick={() => setInventMood(inventMood === v.id ? '' : v.id)}
-                              >
-                                <i className="swatch" />
-                                {v.label.toUpperCase()}
-                              </button>
-                            ))}
-                            <button
-                              className={`vibe-chip ${inventMood === 'zeroproof' ? 'on' : ''}`}
-                              style={{ ['--vc' as string]: '#6B7A6E' }}
-                              onClick={() => setInventMood(inventMood === 'zeroproof' ? '' : 'zeroproof')}
-                            >
-                              <i className="swatch" />
-                              ZERO-PROOF
-                            </button>
-                          </div>
                         </div>
                         <button className="btn btn-solid" onClick={invent} disabled={generating}>
                           {generating ? 'MIXING…' : 'MIX ME SOMETHING NEW'} <ArrowRight size={14} />
@@ -576,7 +562,11 @@ export default function App() {
                         !matching && (
                           <div className="empty">
                             <p className="empty-big">NOTHING POURS CLEAN YET.</p>
-                            <p className="k-label dim">ONE OR TWO MORE BOTTLES AND YOU’RE THERE. SEE “SO CLOSE” BELOW.</p>
+                            <p className="k-label dim">
+                              {inventMood
+                                ? 'NOTHING IN THIS MOOD. TRY ANOTHER, OR SEE “SO CLOSE” BELOW.'
+                                : 'ONE OR TWO MORE BOTTLES AND YOU’RE THERE. SEE “SO CLOSE” BELOW.'}
+                            </p>
                           </div>
                         )
                       )}
