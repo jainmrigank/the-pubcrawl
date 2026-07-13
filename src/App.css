@@ -131,6 +131,17 @@ main { flex: 1; width: 100%; max-width: 1440px; margin: 0 auto; padding: 0 clamp
 
 .nav-status { margin-left: 8px; white-space: nowrap; }
 
+/* mobile-only quick path to the app's core feature, outside the burger */
+.nav-make {
+  display: none;
+  align-items: center;
+  background: var(--ink);
+  color: var(--paper);
+  text-decoration: none;
+  padding: 9px 12px;
+  white-space: nowrap;
+}
+
 .nav-menu-btn {
   display: none;
   align-items: center;
@@ -210,25 +221,49 @@ main { flex: 1; width: 100%; max-width: 1440px; margin: 0 auto; padding: 0 clamp
   grid-template-columns: minmax(280px, 460px) 1fr;
   gap: clamp(28px, 5vw, 80px);
   align-items: end;
-  margin-top: clamp(32px, 6vh, 72px);
+  margin-top: clamp(24px, 4vh, 56px);
 }
 
-.hero-copy p { margin: 0 0 22px; font-size: 17px; max-width: 44ch; }
+.hero-sub {
+  margin: 0 0 22px;
+  font-size: clamp(18px, 2vw, 22px);
+  line-height: 1.35;
+  max-width: 30ch;
+  font-weight: 500;
+}
 .hero-cta { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
 
-.hero-stats {
+/* how-it-works — teaches the app's purpose at a glance */
+.hero-steps {
+  list-style: none;
+  margin: 0;
+  padding: 0;
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  border-left: 1px solid var(--line-strong);
+  gap: 0;
+  border-top: 1px solid var(--line-strong);
 }
-.stat { padding: 4px 20px 0; border-right: 1px solid var(--line); display: flex; flex-direction: column; gap: 4px; }
-.stat-n {
-  font-stretch: 72%;
-  font-weight: 800;
-  font-size: clamp(40px, 4.6vw, 72px);
-  line-height: 1;
-  font-variant-numeric: tabular-nums;
+.hero-steps li {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  column-gap: 14px;
+  align-items: baseline;
+  padding: 16px 0;
+  border-bottom: 1px solid var(--line);
 }
+.hero-steps li strong {
+  font-stretch: 78%;
+  font-weight: 700;
+  font-size: 17px;
+  text-transform: uppercase;
+  letter-spacing: 0.01em;
+}
+.hero-steps li span:last-child {
+  grid-column: 2;
+  font-size: 14.5px;
+  color: var(--ink-60);
+  margin-top: 2px;
+}
+.hero-steps li .k-label { grid-row: span 2; color: var(--accent); }
 
 /* ==========================================================================
    buttons / text links / fields
@@ -361,6 +396,7 @@ main { flex: 1; width: 100%; max-width: 1440px; margin: 0 auto; padding: 0 clamp
   text-transform: uppercase;
 }
 .sec-note { margin-left: auto; text-align: right; }
+.sec-lead { margin: 14px 0 0; font-size: 16px; color: var(--ink-60); max-width: 62ch; }
 
 .menu-search { max-width: 640px; margin-bottom: 20px; }
 
@@ -1010,12 +1046,15 @@ main { flex: 1; width: 100%; max-width: 1440px; margin: 0 auto; padding: 0 clamp
 
 @media (max-width: 860px) {
   .nav-links { display: none; }
-  .nav-menu-btn { display: inline-flex; }
+  .nav-menu-btn { display: inline-flex; margin-left: 8px; }
+  .nav-make { display: inline-flex; margin-left: auto; padding: 8px 10px; font-size: 10px; }
+  .nav { gap: 8px; }
+  .brand { flex: none; }
+  .wordmark { font-size: 22px; white-space: nowrap; }
 
-  .hero-lower { grid-template-columns: 1fr; }
-  .hero-stats { border-left: none; border-top: 1px solid var(--line-strong); }
-  .stat { padding: 14px 0 0 0; border-right: none; }
-  .hero-stats { gap: 16px; }
+  .hero-lower { grid-template-columns: 1fr; gap: 20px; }
+  .hero-steps { border-top: none; }
+  .hero-steps li { padding: 13px 0; }
 
   .shelf-grid { grid-template-columns: 1fr; }
   .shelf-col { padding-right: 0; }

@@ -8,7 +8,7 @@ import { RecipeCard } from './components/RecipeCard';
 import { IngredientIcon } from './components/IngredientIcon';
 import { Knowledge } from './components/Knowledge';
 import { BarTalk } from './components/BarTalk';
-import { Counter, EASE, Lines, LOADED_HIDDEN, Reveal } from './motion';
+import { EASE, Lines, LOADED_HIDDEN, Reveal } from './motion';
 import { ArrowDown, ArrowRight, Burger, Check, Heart, PubGlyph, Share, Shuffle, SketchDefs, X } from './icons';
 import { shareContent, tabShareText } from './share';
 import './App.css';
@@ -317,6 +317,9 @@ export default function App() {
           <span className="nav-status k-label dim">
             {health ? `${health.cocktails} DRINKS ON TAP` : '…'}
           </span>
+          <a className="nav-make k-label" href="#/bar">
+            WHAT CAN I MAKE?
+          </a>
           <button className="nav-menu-btn" onClick={() => setMenuOpen(true)} aria-label="Open menu">
             <Burger size={22} />
           </button>
@@ -376,37 +379,39 @@ export default function App() {
                   <Lines className="hero-h1" lines={['WHAT’S YOUR', 'POISON?']} />
                   <div className="hero-lower">
                     <Reveal delay={0.35} className="hero-copy">
-                      <p>
-                        Hop from drink to drink without leaving the kitchen. Browse the menu below,
-                        or head to The Bar with what’s on your shelf and we’ll find the drinks you
-                        can pour tonight, plus a few nobody’s ever tasted.
+                      <p className="hero-sub">
+                        Snap or type what’s in your kitchen, and see every cocktail you can make
+                        right now.
                       </p>
                       <div className="hero-cta">
+                        <a className="btn btn-solid" href="#/bar">
+                          WHAT CAN I MAKE? <ArrowRight size={14} />
+                        </a>
                         <button
                           className="btn"
                           onClick={() => document.querySelector('#menu-list')?.scrollIntoView({ behavior: 'smooth', block: 'start' })}
                         >
-                          SEE THE MENU <ArrowDown size={14} />
+                          BROWSE ALL DRINKS <ArrowDown size={14} />
                         </button>
-                        <a className="btn btn-solid" href="#/bar">
-                          WHAT CAN I POUR? <ArrowRight size={14} />
-                        </a>
                       </div>
                     </Reveal>
-                    <div className="hero-stats">
-                      <div className="stat">
-                        <span className="stat-n"><Counter to={health?.cocktails ?? 611} /></span>
-                        <span className="k-label dim">DRINKS TO TRY</span>
-                      </div>
-                      <div className="stat">
-                        <span className="stat-n"><Counter to={health?.ingredients ?? 431} /></span>
-                        <span className="k-label dim">INGREDIENTS WE KNOW</span>
-                      </div>
-                      <div className="stat">
-                        <span className="stat-n"><Counter to={6} duration={0.8} /></span>
-                        <span className="k-label dim">MOODS TO MATCH</span>
-                      </div>
-                    </div>
+                    <ol className="hero-steps" aria-label="How it works">
+                      <li>
+                        <span className="k-label dim">01</span>
+                        <strong>Add your ingredients</strong>
+                        <span>Type them, or snap a photo of your shelf.</span>
+                      </li>
+                      <li>
+                        <span className="k-label dim">02</span>
+                        <strong>See what you can pour</strong>
+                        <span>Real drinks you can make tonight.</span>
+                      </li>
+                      <li>
+                        <span className="k-label dim">03</span>
+                        <strong>Save it or invent one</strong>
+                        <span>Keep a menu for the night, or let the bar invent something new.</span>
+                      </li>
+                    </ol>
                   </div>
                   <BarTalk />
                 </section>
@@ -426,6 +431,7 @@ export default function App() {
                               ? `SHOWING ${featured.length} IN THIS MOOD`
                               : `SHOWING ${featured.length} OF ${health?.cocktails ?? 611}`
                     }
+                    lead="Every drink we know. Search by name or ingredient, or filter by mood."
                     loading={browseLoading}
                   />
                   <div className="field menu-search">
@@ -498,7 +504,12 @@ export default function App() {
               <>
                 {/* ================= the bar: shelf + pour ================= */}
                 <section className="sec page-top" id="shelf">
-                  <SectionHead index="01" title="YOUR SHELF" note="TYPE IT OR SNAP IT" />
+                  <SectionHead
+                    index="01"
+                    title="YOUR SHELF"
+                    note="TYPE IT OR SNAP IT"
+                    lead="Tell us what’s on your shelf and we’ll find the drinks you can pour. Type each thing, or snap one photo of your bottles."
+                  />
                   <BarTalk />
                   <div className="shelf-grid">
                     <div className="shelf-col">
@@ -677,12 +688,14 @@ function SectionHead({
   index,
   title,
   note,
+  lead,
   sub = false,
   loading = false,
 }: {
   index: string;
   title: string;
   note: string;
+  lead?: string;
   sub?: boolean;
   loading?: boolean;
 }) {
@@ -701,6 +714,7 @@ function SectionHead({
         <Lines as="h2" className="sec-title" lines={[title]} stagger={0} />
         <span className="k-label dim sec-note">{note}</span>
       </div>
+      {lead && <p className="sec-lead">{lead}</p>}
       {loading && <span className="loadline" aria-label="Loading" />}
     </div>
   );
