@@ -219,6 +219,7 @@ export default function App() {
       if (!inventMood) return list;
       if (inventMood === 'zeroproof')
         return list.filter((r) => (r.alcoholic || '').toLowerCase().includes('non'));
+      if (inventMood === 'indian') return list.filter((r) => (r.tags || []).includes('India'));
       return list.filter((r) => r.vibe === inventMood);
     },
     [inventMood]
@@ -277,6 +278,14 @@ export default function App() {
       >
         <i className="swatch" />
         ZERO-PROOF
+      </button>
+      <button
+        className={`vibe-chip ${value === 'indian' ? 'on' : ''}`}
+        style={{ ['--vc' as string]: '#B0722E' }}
+        onClick={() => setValue(value === 'indian' ? '' : 'indian')}
+      >
+        <i className="swatch" />
+        INDIAN
       </button>
     </div>
   );
@@ -411,9 +420,11 @@ export default function App() {
                         ? `${featured.length} FOR “${browseQ.toUpperCase()}”`
                         : loved
                           ? 'THE CROWD’S FAVOURITES FIRST'
-                          : vibeFilter
-                            ? `SHOWING ${featured.length} IN THIS MOOD`
-                            : `SHOWING ${featured.length} OF ${health?.cocktails ?? 611}`
+                          : vibeFilter === 'indian'
+                            ? `${featured.length} FROM THE INDIAN BAR`
+                            : vibeFilter
+                              ? `SHOWING ${featured.length} IN THIS MOOD`
+                              : `SHOWING ${featured.length} OF ${health?.cocktails ?? 611}`
                     }
                     loading={browseLoading}
                   />

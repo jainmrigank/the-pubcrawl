@@ -80,6 +80,7 @@ export function createApp() {
     const limit = Math.min(Number(req.query.limit) || 12, 120);
     let list = cocktails.filter((c) => c.thumb || c.house);
     if (vibe === 'zeroproof') list = list.filter((c) => (c.alcoholic || '').toLowerCase().includes('non'));
+    else if (vibe === 'indian') list = list.filter((c) => (c.tags || []).includes('India'));
     else if (vibe) list = list.filter((c) => c.vibe === vibe);
 
     // Ranked search: name beats ingredients beats metadata, and metadata only
@@ -186,6 +187,7 @@ export function createApp() {
       cozy: 'warm and comforting',
       party: 'a fun, punchy party serve',
       zeroproof: 'strictly zero-proof: no alcohol in any ingredient, not even a dash',
+      indian: 'distinctly Indian: lean on Indian flavours such as kokum, tamarind, gondhoraj lime, masala spices, jaggery, cardamom, curry leaf, coconut or filter coffee, and give it an evocative Indian name',
     };
 
     if (llmAvailable()) {
