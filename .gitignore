@@ -5,3 +5,4 @@ dist
 .DS_Store
 tsconfig.tsbuildinfo
 data/likes.json
+data/kept_cocktails.json

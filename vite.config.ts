@@ -9,7 +9,7 @@ export default defineConfig({
       name: 'cocktail-api',
       async configureServer(server) {
         const { createApp } = await import('./server/app.mjs');
-        server.middlewares.use(createApp());
+        server.middlewares.use(await createApp());
       },
     },
   ],

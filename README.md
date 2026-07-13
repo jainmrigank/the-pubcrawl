@@ -91,10 +91,24 @@ git). The Express API runs anywhere and is announced to the frontend via
 4. In Vercel → Project → Settings → Environment Variables set
    `VITE_API_BASE` to that URL and redeploy the frontend.
 
-Free-tier notes: the instance sleeps after ~15 idle minutes (first request
-then takes ~half a minute), and the filesystem is ephemeral, so public like
-counts reset on redeploys/restarts. Attach a paid disk or move likes to a
-hosted store when they start mattering.
+Free-tier note: the instance sleeps after ~15 idle minutes (first request
+then takes ~half a minute to wake).
+
+### Durable likes + kept drinks (Upstash Redis)
+
+Public like counts and user-kept house specials are stored via
+`server/store.mjs`. With **no config it writes local JSON files**, which on an
+ephemeral host (Render free) reset on every redeploy — so for production,
+point it at a free Upstash Redis:
+
+1. Create a free database at upstash.com → Redis.
+2. Copy its **REST URL** and **REST token**.
+3. Add them to the API's environment (Render → the service → Environment):
+   `KV_REST_API_URL` and `KV_REST_API_TOKEN` (or the `UPSTASH_REDIS_REST_*`
+   equivalents). No redeploy of code needed — just restart.
+
+Once set, likes and kept drinks survive every redeploy and restart. The
+server logs `store: kv` on boot when it's connected (`store: file` otherwise).
 
 ### Alternative: API on your own machine via ngrok
 

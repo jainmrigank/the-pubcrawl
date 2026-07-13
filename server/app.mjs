@@ -4,17 +4,14 @@
  * feeding the Vercel-hosted frontend).
  */
 import express from 'express';
-import { existsSync, readFileSync, writeFileSync } from 'node:fs';
-import { dirname, join } from 'node:path';
-import { fileURLToPath } from 'node:url';
 import { loadCatalog, searchIngredients, matchRecipes, categorise, norm } from './catalog.mjs';
 import { VIBES, withVibe } from './vibes.mjs';
 import { chat, extractJson, llmAvailable, llmConfig } from './llm.mjs';
 import { generateFallback } from './generator.mjs';
+import { initStore, storeMode, getLikes, saveLikes, getKept, addKept } from './store.mjs';
 
-const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
-
-export function createApp() {
+export async function createApp() {
+  await initStore();
   const app = express();
   app.use(express.json({ limit: '15mb' }));
 
@@ -30,34 +27,73 @@ export function createApp() {
   });
 
   const { cocktails, ingredients } = loadCatalog();
-  console.log(`[cocktail-api] ${cocktails.length} cocktails, ${ingredients.length} ingredients, LLM: ${llmAvailable() ? llmConfig.model : 'offline fallback'}`);
-
-  /* ---- public likes (shared across every visitor of this server) ---- */
-  const likesPath = join(ROOT, 'data', 'likes.json');
-  let likes = {};
-  try {
-    if (existsSync(likesPath)) likes = JSON.parse(readFileSync(likesPath, 'utf8'));
-  } catch {}
-  const saveLikes = () => {
-    try {
-      writeFileSync(likesPath, JSON.stringify(likes, null, 1));
-    } catch (err) {
-      console.error('[likes] could not persist:', err.message);
-    }
-  };
   const validIds = new Set(cocktails.map((c) => c.id));
 
-  app.get('/api/likes', (_req, res) => res.json(likes));
+  // fold in drinks visitors have kept from house specials, so they persist in
+  // the menu across restarts
+  for (const d of getKept()) {
+    if (!validIds.has(d.id)) {
+      d.house = true;
+      cocktails.push(d);
+      validIds.add(d.id);
+    }
+  }
+  console.log(`[cocktail-api] ${cocktails.length} cocktails (${getKept().length} kept), ${ingredients.length} ingredients, LLM: ${llmAvailable() ? llmConfig.model : 'offline fallback'}, store: ${storeMode()}`);
+
+  /* ---- public likes (shared across every visitor, durable via the store) ---- */
+  app.get('/api/likes', (_req, res) => res.json(getLikes()));
 
   app.post('/api/likes/:id', (req, res) => {
     const { id } = req.params;
     if (!validIds.has(id)) return res.status(404).json({ error: 'Unknown drink' });
+    const likes = { ...getLikes() };
     const delta = req.body?.action === 'unlike' ? -1 : 1;
     const next = Math.max(0, (likes[id] || 0) + delta);
     if (next === 0) delete likes[id];
     else likes[id] = next;
-    saveLikes();
+    saveLikes(likes);
     res.json({ id, likes: next });
+  });
+
+  /* ---- keep a house special: give it a stable id and add it to the menu ---- */
+  function keptId(r) {
+    const s = `${r.name}|${(r.ingredients || []).map((i) => i.name).join(',')}`.toLowerCase();
+    let h = 5381;
+    for (const ch of s) h = ((h * 33) ^ ch.charCodeAt(0)) >>> 0;
+    return `kept-${h.toString(36)}`;
+  }
+
+  app.post('/api/keep', (req, res) => {
+    const r = req.body?.recipe || req.body;
+    if (!r?.name || !Array.isArray(r.ingredients) || !r.ingredients.length)
+      return res.status(400).json({ error: 'recipe required' });
+    const id = keptId(r);
+    let drink = cocktails.find((c) => c.id === id);
+    if (!drink) {
+      drink = {
+        id,
+        name: String(r.name),
+        tagline: String(r.tagline || ''),
+        category: 'Kept Special',
+        alcoholic: String(r.alcoholic || 'Alcoholic'),
+        glass: String(r.glass || 'Coupe'),
+        instructions: String(r.instructions || ''),
+        thumb: '',
+        video: '',
+        tags: Array.isArray(r.tags) ? r.tags : [],
+        iba: '',
+        ingredients: r.ingredients.map((i) => ({ name: String(i.name || ''), measure: String(i.measure || '') })),
+        source: r.source === 'fallback' ? 'fallback' : 'ai',
+        house: true,
+        kept: true,
+      };
+      withVibe(drink);
+      if (r.vibe && Object.keys(VIBES).includes(r.vibe)) drink.vibe = r.vibe;
+      cocktails.push(drink);
+      validIds.add(id);
+      addKept(drink);
+    }
+    res.json(drink);
   });
 
   app.get('/api/health', (_req, res) =>

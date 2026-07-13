@@ -2,4 +2,5 @@
 import { createApp } from './app.mjs';
 
 const port = Number(process.env.PORT) || 8790;
-createApp().listen(port, () => console.log(`cocktail api on http://localhost:${port}`));
+const app = await createApp();
+app.listen(port, () => console.log(`cocktail api on http://localhost:${port}`));

@@ -17,10 +17,22 @@ interface Props {
   likes?: number;
   liked?: boolean;
   onToggleLike?: (recipe: Recipe) => void;
+  /** Persist a machine-drafted drink into the menu when it's kept/shared. */
+  onKeep?: (recipe: Recipe) => void;
 }
 
-/** Tab + share buttons, shown on both faces of the card. */
-function CardActions({ recipe, vibe, onToggleTab, inTab, removeMode }: Pick<Props, 'recipe' | 'vibe' | 'onToggleTab' | 'inTab' | 'removeMode'>) {
+/** The three card actions (tab / share / like), used on both faces. */
+function CardButtons({
+  recipe,
+  vibe,
+  onToggleTab,
+  inTab,
+  removeMode,
+  likes = 0,
+  liked = false,
+  onToggleLike,
+  onKeep,
+}: Omit<Props, 'index' | 'onVideo'>) {
   const [shareState, setShareState] = useState<'idle' | 'copied' | 'failed'>('idle');
 
   async function doShare(e: React.MouseEvent) {
@@ -30,13 +42,15 @@ function CardActions({ recipe, vibe, onToggleTab, inTab, removeMode }: Pick<Prop
       setShareState(outcome);
       setTimeout(() => setShareState('idle'), 1600);
     }
+    if (outcome === 'shared' || outcome === 'copied') onKeep?.(recipe);
   }
 
   const tabTip = removeMode ? 'TAKE IT OFF MY TAB' : inTab ? 'ON MY TAB. TAP TO REMOVE' : 'PUT IT ON MY TAB';
   const shareTip = shareState === 'copied' ? 'COPIED!' : shareState === 'failed' ? 'SHARING BLOCKED HERE' : 'SHARE THIS DRINK';
+  const likeTip = liked ? 'LOVED. TAP TO TAKE IT BACK' : 'GIVE IT SOME LOVE';
 
   return (
-    <div className="card-actions">
+    <>
       {onToggleTab && (
         <button
           className={`act-btn ${inTab && !removeMode ? 'on' : ''}`}
@@ -58,16 +72,33 @@ function CardActions({ recipe, vibe, onToggleTab, inTab, removeMode }: Pick<Prop
       >
         {shareState === 'copied' ? <Check size={15} /> : <Share size={15} />}
       </button>
-    </div>
+      {onToggleLike && (
+        <button
+          className={`act-btn like ${liked ? 'on' : ''}`}
+          data-tip={likeTip}
+          aria-pressed={liked}
+          aria-label={liked ? `Unlike ${recipe.name}` : `Like ${recipe.name}`}
+          onClick={(e) => {
+            e.stopPropagation();
+            onToggleLike(recipe);
+          }}
+        >
+          <Heart size={15} />
+          {likes > 0 && <span className="act-count">{likes}</span>}
+        </button>
+      )}
+    </>
   );
 }
 
 /** Flip flash card. Photo and vibe on the front, the full recipe on the back. */
-export function RecipeCard({ recipe, vibe, index, onVideo, onToggleTab, inTab = false, removeMode = false, likes = 0, liked = false, onToggleLike }: Props) {
+export function RecipeCard(props: Props) {
+  const { recipe, vibe, index, onVideo } = props;
   const [flipped, setFlipped] = useState(false);
   const isAI = recipe.source === 'ai' || recipe.source === 'fallback';
   const missing = recipe.missing ?? [];
   const ready = recipe.total != null && missing.length === 0;
+  const buttons = <CardButtons {...props} />;
 
   return (
     <div
@@ -87,10 +118,7 @@ export function RecipeCard({ recipe, vibe, index, onVideo, onToggleTab, inTab = 
       <div className="fc-inner">
         {/* ---------- front ---------- */}
         <div className="ff front">
-          {/* actions render only on the visible face: some mobile browsers let
-              composited children of the hidden face leak through backface-visibility,
-              which showed a mirrored second set of buttons on the left */}
-          {!flipped && <CardActions recipe={recipe} vibe={vibe} onToggleTab={onToggleTab} inTab={inTab} removeMode={removeMode} />}
+          {!flipped && <div className="card-actions">{buttons}</div>}
           {recipe.thumb ? (
             <div className="fc-img">
               <img src={recipe.thumb} alt={recipe.name} loading="lazy" decoding="async" />
@@ -117,21 +145,6 @@ export function RecipeCard({ recipe, vibe, index, onVideo, onToggleTab, inTab = 
               </span>
               {recipe.iba && <span className="k-label dim">CLASSIC</span>}
               {(recipe.alcoholic || '').toLowerCase().includes('non') && <span className="k-label dim">ZERO-PROOF</span>}
-              {!isAI && onToggleLike && (
-                <button
-                  className={`like-btn ${liked ? 'on' : ''}`}
-                  data-tip={liked ? 'LOVED. TAP TO TAKE IT BACK' : 'GIVE IT SOME LOVE'}
-                  aria-label={liked ? `Unlike ${recipe.name}` : `Like ${recipe.name}`}
-                  aria-pressed={liked}
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    onToggleLike(recipe);
-                  }}
-                >
-                  <Heart size={13} />
-                  {likes > 0 && <span>{likes}</span>}
-                </button>
-              )}
             </div>
             {recipe.total != null && (
               <div className={`fc-status ${ready ? 'ready' : ''}`}>
@@ -143,24 +156,28 @@ export function RecipeCard({ recipe, vibe, index, onVideo, onToggleTab, inTab = 
 
         {/* ---------- back ---------- */}
         <div className="ff back">
-          {flipped && <CardActions recipe={recipe} vibe={vibe} onToggleTab={onToggleTab} inTab={inTab} removeMode={removeMode} />}
           <div className="fb-head">
-            <span className="k-label">{isAI ? 'HOUSE SPECIAL' : `Nº ${String(index + 1).padStart(3, '0')}`}</span>
+            <div className="fb-head-top">
+              <span className="k-label">{isAI ? 'HOUSE SPECIAL' : `Nº ${String(index + 1).padStart(3, '0')}`}</span>
+              {flipped && <div className="fb-actions">{buttons}</div>}
+            </div>
             <h3>{recipe.name}</h3>
             {recipe.tagline && <p className="fb-tagline">{recipe.tagline}</p>}
           </div>
-          <ul className="fb-ings">
-            {recipe.ingredients.map((i, idx) => (
-              <li key={`${i.name}-${idx}`} className={i.have === false ? 'need' : ''}>
-                <span className="fb-ing-name">
-                  {i.have === false && <span className="k-label miss-mark">OUT</span>}
-                  {i.name}
-                </span>
-                <span className="fb-ing-measure">{formatMeasure(i.measure) || '—'}</span>
-              </li>
-            ))}
-          </ul>
-          <p className="fb-method">{recipe.instructions}</p>
+          <div className="fb-scroll">
+            <ul className="fb-ings">
+              {recipe.ingredients.map((i, idx) => (
+                <li key={`${i.name}-${idx}`} className={i.have === false ? 'need' : ''}>
+                  <span className="fb-ing-name">
+                    {i.have === false && <span className="k-label miss-mark">OUT</span>}
+                    {i.name}
+                  </span>
+                  <span className="fb-ing-measure">{formatMeasure(i.measure) || '—'}</span>
+                </li>
+              ))}
+            </ul>
+            <p className="fb-method">{recipe.instructions}</p>
+          </div>
           <div className="fb-foot">
             <span className="fc-glass">
               <GlassIcon glass={recipe.glass} size={16} />

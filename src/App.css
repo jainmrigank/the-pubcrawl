@@ -714,24 +714,6 @@ main { flex: 1; width: 100%; max-width: 1440px; margin: 0 auto; padding: 0 clamp
   text-transform: uppercase;
   color: var(--ink-60);
 }
-.like-btn {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  margin-left: auto;
-  background: none;
-  border: 1px solid var(--line);
-  border-radius: 0;
-  padding: 5px 9px;
-  font-family: var(--mono);
-  font-size: 10.5px;
-  color: var(--ink-60);
-  cursor: pointer;
-  transition: border-color var(--t-fast) var(--ease), color var(--t-fast) var(--ease);
-}
-.like-btn:hover { border-color: var(--ink); color: var(--ink); }
-.like-btn.on { border-color: var(--accent); color: var(--accent); }
-
 .menu-actions { display: flex; align-items: center; gap: 22px; }
 .text-btn.loved-on { color: var(--accent); border-bottom-color: var(--accent); }
 
@@ -749,9 +731,12 @@ main { flex: 1; width: 100%; max-width: 1440px; margin: 0 auto; padding: 0 clamp
 }
 .fc-status.ready { color: var(--accent); font-weight: 700; }
 
-/* back */
+/* back — sticky head, a single scroll region for ingredients + method */
+.fb-head { flex: none; }
+.fb-head-top { display: flex; align-items: flex-start; justify-content: space-between; gap: 10px; }
+.fb-actions { display: flex; gap: 6px; flex: none; }
 .fb-head h3 {
-  margin: 4px 0 0;
+  margin: 6px 0 0;
   font-stretch: 74%;
   font-weight: 800;
   font-size: 24px;
@@ -759,13 +744,18 @@ main { flex: 1; width: 100%; max-width: 1440px; margin: 0 auto; padding: 0 clamp
   text-transform: uppercase;
 }
 .fb-tagline { margin: 8px 0 0; font-size: 13px; color: var(--ink-60); font-style: italic; }
+
+.fb-scroll {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  margin: 16px 0 0;
+  border-top: 1px solid var(--line-strong);
+}
 .fb-ings {
   list-style: none;
-  margin: 16px 0;
+  margin: 0;
   padding: 0;
-  overflow-y: auto;
-  max-height: 44%;
-  border-top: 1px solid var(--line-strong);
 }
 .fb-ings li {
   display: flex;
@@ -780,8 +770,9 @@ main { flex: 1; width: 100%; max-width: 1440px; margin: 0 auto; padding: 0 clamp
 .fb-ing-name { display: inline-flex; align-items: baseline; gap: 8px; }
 .miss-mark { color: var(--accent); font-size: 9px; border: 1px solid var(--accent); padding: 1px 4px; }
 .fb-ing-measure { font-family: var(--mono); font-size: 11px; color: var(--grey); white-space: nowrap; }
-.fb-method { font-size: 13.5px; color: var(--ink); margin: 0; overflow-y: auto; flex: 1; padding-right: 12px; }
+.fb-method { font-size: 13.5px; color: var(--ink); margin: 14px 0 0; padding-right: 12px; }
 .fb-foot {
+  flex: none;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -802,20 +793,24 @@ main { flex: 1; width: 100%; max-width: 1440px; margin: 0 auto; padding: 0 clamp
   z-index: 3;
   display: flex;
   flex-direction: column;
+  align-items: flex-end;
   gap: 6px;
 }
 .act-btn {
-  width: 36px;
+  min-width: 36px;
   height: 36px;
+  padding: 0 8px;
   display: inline-flex;
   align-items: center;
   justify-content: center;
+  gap: 5px;
   background: var(--paper);
   border: 1px solid var(--ink);
   color: var(--ink);
   cursor: pointer;
   transition: background var(--t-fast) var(--ease), color var(--t-fast) var(--ease), transform var(--t-fast) var(--ease);
 }
+.act-count { font-family: var(--mono); font-size: 11px; line-height: 1; }
 .act-btn { position: relative; }
 [data-tip] { position: relative; }
 [data-tip]::after {
@@ -842,9 +837,18 @@ main { flex: 1; width: 100%; max-width: 1440px; margin: 0 auto; padding: 0 clamp
 .act-btn.on { background: var(--accent); border-color: var(--accent); color: var(--paper); }
 .act-btn.on:hover { background: var(--ink); border-color: var(--ink); }
 .act-btn.done { background: var(--accent); border-color: var(--accent); color: var(--paper); }
-/* the corner buttons span 88px from the top; keep the head at least that tall
-   so the ingredient list's top rule never collides with them */
-.ff.back .fb-head { padding-right: 52px; min-height: 82px; }
+.act-btn.like.on { background: var(--accent); border-color: var(--accent); color: var(--paper); }
+/* the front stack's tooltips open to the left; the back row's open below so
+   they don't run off the card edge */
+.fb-actions [data-tip]::after {
+  right: auto;
+  left: 50%;
+  top: auto;
+  bottom: calc(100% + 8px);
+  transform: translateX(-50%) translateY(4px);
+}
+.fb-actions [data-tip]:hover::after,
+.fb-actions [data-tip]:focus-visible::after { transform: translateX(-50%) translateY(0); }
 
 /* show-more row under the menu grid */
 .more-row {
@@ -1103,12 +1107,10 @@ button, a, .fc {
   .btn:hover svg { transform: none; }
   .btn-solid:hover:not(:disabled) { background: var(--ink); color: var(--paper); border-color: var(--ink); }
   .act-btn:hover { background: var(--paper); color: var(--ink); transform: none; }
-  .act-btn.on:hover { background: var(--accent); border-color: var(--accent); color: var(--paper); }
+  .act-btn.on:hover, .act-btn.like.on:hover { background: var(--accent); border-color: var(--accent); color: var(--paper); }
   .text-btn:hover { border-bottom-color: transparent; }
   .text-btn:hover svg { transform: none; }
   .text-btn.loved-on:hover { border-bottom-color: var(--accent); }
-  .like-btn:hover { border-color: var(--line); color: var(--ink-60); }
-  .like-btn.on:hover { border-color: var(--accent); color: var(--accent); }
   .chip-add:hover { background: transparent; color: var(--ink); border-style: dashed; }
   .vibe-chip:hover { border-color: var(--line); }
   .vibe-chip.on:hover { border-color: var(--ink); }
@@ -1125,8 +1127,7 @@ button, a, .fc {
   /* iOS zooms the page when focusing inputs under 16px */
   .field input { font-size: 16px; }
   /* roomier tap targets */
-  .act-btn { width: 40px; height: 40px; }
-  .like-btn { padding: 7px 11px; }
+  .act-btn { min-width: 40px; height: 40px; }
   .chip-x { padding: 6px; }
   .manual-row { padding-top: 17px; padding-bottom: 17px; }
 }

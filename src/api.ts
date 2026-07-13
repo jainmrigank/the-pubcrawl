@@ -99,3 +99,5 @@ export const fetchLikes = () => get<Record<string, number>>('/api/likes');
 
 export const postLike = (id: string, action: 'like' | 'unlike') =>
   post<{ id: string; likes: number }>(`/api/likes/${id}`, { action });
+
+export const keepRecipe = (recipe: Recipe) => post<Recipe>('/api/keep', { recipe }, true);

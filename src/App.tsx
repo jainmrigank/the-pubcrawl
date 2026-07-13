@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import { AnimatePresence, motion, MotionConfig } from 'framer-motion';
-import { fetchHealth, fetchLikes, fetchRecipes, fetchVibes, generateRecipe, matchRecipes, postLike } from './api';
+import { fetchHealth, fetchLikes, fetchRecipes, fetchVibes, generateRecipe, keepRecipe, matchRecipes, postLike } from './api';
 import type { Health, Ingredient, MatchResult, Recipe, Vibe } from './types';
 import { Typeahead } from './components/Typeahead';
 import { UploadZone } from './components/UploadZone';
@@ -123,21 +123,42 @@ export default function App() {
     } catch {}
   }, [likedIds]);
 
+  // A machine-drafted drink lives only in memory until the drinker keeps it
+  // (likes / tabs / shares). Keeping persists it to the menu with a stable id
+  // and swaps that id into every place the ephemeral one appears.
+  const keepDrink = useCallback(async (recipe: Recipe): Promise<Recipe> => {
+    const isGen = recipe.source === 'ai' || recipe.source === 'fallback';
+    if (!isGen || recipe.id.startsWith('kept-')) return recipe;
+    try {
+      const kept = await keepRecipe(recipe);
+      setAiDrinks((prev) => prev.map((d) => (d.id === recipe.id ? kept : d)));
+      setTab((prev) => prev.map((d) => (d.id === recipe.id ? kept : d)));
+      setLikedIds((prev) =>
+        prev.has(recipe.id) ? new Set([...prev].map((id) => (id === recipe.id ? kept.id : id))) : prev
+      );
+      setLikes((prev) => (prev[recipe.id] ? { ...prev, [kept.id]: prev[recipe.id] } : prev));
+      return kept;
+    } catch {
+      return recipe;
+    }
+  }, []);
+
   const toggleLike = useCallback(
-    (recipe: Recipe) => {
-      const wasLiked = likedIds.has(recipe.id);
+    async (recipe: Recipe) => {
+      const r = await keepDrink(recipe);
+      const wasLiked = likedIds.has(r.id);
       setLikedIds((prev) => {
         const next = new Set(prev);
-        if (wasLiked) next.delete(recipe.id);
-        else next.add(recipe.id);
+        if (wasLiked) next.delete(r.id);
+        else next.add(r.id);
         return next;
       });
-      setLikes((prev) => ({ ...prev, [recipe.id]: Math.max(0, (prev[recipe.id] || 0) + (wasLiked ? -1 : 1)) }));
-      postLike(recipe.id, wasLiked ? 'unlike' : 'like')
-        .then((r) => setLikes((prev) => ({ ...prev, [r.id]: r.likes })))
+      setLikes((prev) => ({ ...prev, [r.id]: Math.max(0, (prev[r.id] || 0) + (wasLiked ? -1 : 1)) }));
+      postLike(r.id, wasLiked ? 'unlike' : 'like')
+        .then((res) => setLikes((prev) => ({ ...prev, [res.id]: res.likes })))
         .catch(() => {});
     },
-    [likedIds]
+    [likedIds, keepDrink]
   );
 
   /* menu search / browse. Mood + search both apply server-side over the full catalogue,
@@ -186,11 +207,17 @@ export default function App() {
   const addAll = useCallback((ings: Ingredient[]) => ings.forEach(addIngredient), [addIngredient]);
   const removeIngredient = (name: string) => setPantry((prev) => prev.filter((p) => p.name !== name));
 
-  const toggleTab = useCallback((recipe: Recipe) => {
-    setTab((prev) =>
-      prev.some((r) => r.id === recipe.id) ? prev.filter((r) => r.id !== recipe.id) : [...prev, recipe]
-    );
-  }, []);
+  const toggleTab = useCallback(
+    async (recipe: Recipe) => {
+      if (tab.some((r) => r.id === recipe.id)) {
+        setTab((prev) => prev.filter((r) => r.id !== recipe.id));
+        return;
+      }
+      const r = await keepDrink(recipe);
+      setTab((prev) => (prev.some((x) => x.id === r.id) ? prev : [...prev, r]));
+    },
+    [tab, keepDrink]
+  );
   const tabIds = useMemo(() => new Set(tab.map((r) => r.id)), [tab]);
 
   async function invent() {
@@ -232,7 +259,9 @@ export default function App() {
     () => (loved ? [...browse].sort((a, b) => (likes[b.id] || 0) - (likes[a.id] || 0)) : browse),
     [browse, loved, likes]
   );
-  const inventions = useMemo(() => byBarMood(aiDrinks), [aiDrinks, byBarMood]);
+  // freshly drafted specials always show, whatever mood is selected — they were
+  // just made for this drinker, so filtering them out felt like they vanished
+  const inventions = aiDrinks;
   const hasPantry = pantry.length > 0;
   const moreLeft = browse.length >= browseLimit && browseLimit < MENU_MAX;
 
@@ -249,6 +278,7 @@ export default function App() {
       likes={likes[r.id] || 0}
       liked={likedIds.has(r.id)}
       onToggleLike={toggleLike}
+      onKeep={keepDrink}
     />
   );
 
