@@ -1,130 +1,155 @@
-# The PubCrawl — what's your poison?
+# The PubCrawl
 
-Hop from drink to drink without leaving the kitchen. Search a 611-cocktail
-menu, tell the bar what's on your shelf (type it or photograph it), and get
-flash cards for what pours right now, what's one bottle short, and brand-new
-house specials invented from exactly your ingredients.
+AI-assisted cocktail discovery app for searching a cocktail catalogue, matching recipes to a home shelf, identifying ingredients from photos, and generating original house-special recipes.
 
-Live at **https://the-pubcrawl.vercel.app** (frontend) with the API served
-separately — see Deployment below.
+Live app: https://the-pubcrawl.vercel.app
+
+## Recruiter Quick Read
+
+The PubCrawl is a React, TypeScript, Vite, Express, and LLM-backed project focused on API-driven user workflows. It is relevant to agentic engineering because the app turns user context into structured actions: search, ingredient matching, photo-based extraction, generated recipe drafting, fallback handling, persistence, and deployment across separate frontend/API services.
+
+It is not positioned as production AI employment experience. It is a hands-on portfolio project built to practice reliable AI workflows, prompt design, JSON handling, API integration, graceful degradation, and rapid product delivery.
+
+## What It Does
+
+- Searches a 611-cocktail catalogue by drink, ingredient, category, classic designation, or mood.
+- Lets users maintain a home-bar shelf through ingredient typeahead or photo upload.
+- Scores what can be made now and what is one or two ingredients away.
+- Generates original house-special recipes from the exact shelf contents.
+- Saves liked drinks and a personal tab for the night.
+- Supports public like counts and kept house specials through a durable store when Redis is configured.
+- Runs the frontend as a Vite app and the API as a separate Express service.
 
 ## Pages
 
-- **The Menu** (`#/menu`) — the landing page. Hero search over every drink,
-  a browsable grid, mood filter, MOST LOVED ranking and SURPRISE ME shuffle.
-- **The Bar** (`#/bar`) — Your Shelf (ingredient typeahead + photo upload)
-  and Pour Tonight (what you can make, near misses, AI house specials).
-- **Basics** (`#/basics`) — Bar Basics: techniques, tools, glassware, the
-  lingo (measurements included) and The Starter Shelf.
-- **The Tab** (`#/tab`) — your saved shortlist for the night.
+- `#/menu`: Search, browse, mood filters, most-loved ranking, and surprise shuffle.
+- `#/bar`: Ingredient shelf, photo upload, matched recipes, near misses, and house specials.
+- `#/basics`: Techniques, tools, glassware, measurements, and starter-shelf guidance.
+- `#/tab`: Saved shortlist with shareable text output.
 
-Pages stay mounted while you switch, so scroll position, search, flipped
-cards and accordions are all exactly where you left them.
+Pages stay mounted while switching routes, preserving scroll position, search state, flipped cards, and accordions.
 
-## Features
+## Architecture
 
-- **Drink search & browse** — search by name, ingredient, category or classic
-  designation across all 611 drinks. Six colour-coded moods filter every list
-  (applied server-side). SHOW 12 MORE paginates; SURPRISE ME reshuffles.
-- **Most Loved** — a public like system. The heart on any card counts likes
-  across every visitor (stored server-side in `data/likes.json`); the MOST
-  LOVED toggle ranks the menu by them. One like per browser, remembered in
-  localStorage.
-- **Your Shelf** — an ingredient typeahead over ~430 known ingredients
-  (spirits, liqueurs, herbs, bitters, free text allowed), or drop a photo and
-  vision AI identifies bottles/produce and shelves them automatically.
-- **Pour Tonight** — recipes scored against your shelf with alias groups
-  (white ↔ light rum, bourbon ↔ whiskey…); staples like ice and sugar are
-  assumed. Cards read READY TO POUR or list exactly what's missing.
-- **House Specials** — every press of MIX ME SOMETHING NEW is a real LLM call
-  composing an original recipe from your exact shelf (with a model fallback
-  chain if the primary is over quota; an offline template answers only if all
-  models fail, clearly labelled OFF-MENU).
-- **Flash cards** — colour photography, hand-drawn glass icons, flip for the
-  spec sheet. Corner actions on both faces: put it on your tab, and share
-  (native share sheet where available, clipboard copy otherwise). WATCH IT
-  MADE plays the drink's YouTube video (610 of 611 covered).
-- **The Tab** — a curated menu of the night. Saved in localStorage so it
-  survives closing the browser; SHARE THE TAB sends the whole lineup as a
-  formatted text menu.
-- **Bar Basics** — collapsible groups: Technique, Tools, Glassware, The Lingo
-  (what's an oz? dash? ratio?) and The Starter Shelf (the fourteen bottles and
-  staples that open up most of the menu), each entry with a hand-drawn glyph.
+```text
+React + TypeScript + Vite frontend
+  -> src/api.ts client wrapper
+  -> Express API
+       -> cocktail catalogue and matching logic
+       -> public likes and kept drinks store
+       -> LLM client for photo identification and recipe generation
+            -> prompt templates
+            -> OpenAI-compatible chat endpoint
+            -> JSON extraction
+            -> model fallback chain
+            -> offline fallback template
+```
 
-## Design
+Key files:
 
-Minimal brutalist editorial with a handwritten streak: warm paper and
-near-black ink, one burnt-sienna accent, Archivo (condensed grotesk display) +
-Space Mono + a Caveat wordmark, hand-sketched SVG glyphs, hairline grids,
-masked line reveals and inverted hovers (Framer Motion + CSS, reduced-motion
-aware).
+- `src/App.tsx`: route state, menu browsing, shelf workflow, generated drinks, likes, and tab state.
+- `src/api.ts`: frontend API calls and runtime API-base override.
+- `server/app.mjs`: Express API, catalogue search, matching, likes, photo identification, and generation endpoints.
+- `server/llm.mjs`: OpenAI-compatible LLM client, timeout handling, fallback model chain, and JSON extraction.
+- `server/store.mjs`: Upstash Redis REST storage with local JSON fallback for development.
+- `render.yaml`: Render blueprint for the standalone API.
 
-## Run locally
+## AI Workflow
+
+Photo identification:
+
+1. User uploads an image of bottles or ingredients.
+2. The API sends a constrained prompt plus image payload to an OpenAI-compatible model endpoint.
+3. The model is instructed to return only a JSON array of ingredient names.
+4. The server parses the JSON, maps names back to known ingredients where possible, and returns structured shelf items.
+5. If no model key is configured, the API returns a clear unavailable response instead of faking detection.
+
+House-special generation:
+
+1. User submits shelf ingredients, selected mood, saved-drink taste hints, and recently generated names to avoid repetition.
+2. The API asks the model for one original practical recipe as a strict JSON object.
+3. The server extracts JSON from the model response and returns a structured drink card.
+4. If the primary model is over quota or unavailable, the LLM client tries a fallback model chain.
+5. If all model calls fail, the app falls back to an offline template and labels it as off-menu.
+
+## Reliability And Non-Happy Paths
+
+- LLM calls use a timeout via `AbortSignal.timeout`.
+- The API supports a fallback model chain for quota/availability failures.
+- Model output is parsed through `extractJson` instead of displayed as raw prose.
+- The app works without an LLM key: catalogue browsing, matching, likes, and saved tab still function.
+- Public likes and kept specials can use Upstash Redis for durability, with local JSON fallback for development.
+- API health is exposed at `/api/health` and reports catalogue/store readiness.
+- Frontend runtime override supports changing API base URL without rebuilding.
+- Secrets stay on the API service and are not exposed to the Vite frontend.
+
+## Run Locally
 
 ```bash
 npm install
-npm run dev        # http://localhost:5175 — API mounted inside Vite
+npm run dev
 ```
 
-Data is committed; to rebuild it:
+Local dev serves the Vite frontend with the API mounted in development.
+
+Standalone API:
 
 ```bash
-npm run scrape     # TheCocktailDB catalogue (letter pass + category sweep)
-npm run videos     # YouTube link per drink (resumable; re-run to fill gaps)
+npm run serve
 ```
+
+Build check:
+
+```bash
+npm run build
+```
+
+Data rebuilds:
+
+```bash
+npm run scrape
+npm run videos
+```
+
+## Environment
+
+`.env.example` documents the LLM settings:
+
+```text
+LLM_API_KEY=
+LLM_MODEL=gemini-3.5-flash
+LLM_BASE_URL=https://generativelanguage.googleapis.com/v1beta/openai
+LLM_TEMPERATURE=0.2
+LLM_TIMEOUT_SECONDS=45
+```
+
+Without `LLM_API_KEY`, the app still runs. AI photo detection is disabled and recipe generation falls back safely.
 
 ## Deployment
 
-The frontend is a static Vite build (Vercel auto-detects it, deploys from
-git). The Express API runs anywhere and is announced to the frontend via
-`VITE_API_BASE` (build-time env var), with a per-browser runtime override:
-`localStorage.setItem('pubcrawl.api', 'https://…')`.
+- Frontend: static Vite deployment on Vercel.
+- API: Express service deployable on Render through `render.yaml`.
+- Runtime API base: `VITE_API_BASE`, plus browser override with `localStorage.setItem('pubcrawl.api', 'https://...')`.
+- Durable store: set `KV_REST_API_URL` and `KV_REST_API_TOKEN` or the `UPSTASH_REDIS_REST_*` equivalents.
 
-### Recommended: API on Render (permanent free URL)
+## Screenshots To Add
 
-`render.yaml` in this repo is a ready blueprint:
+Add current images before sharing widely:
 
-1. Render dashboard → **New → Blueprint** → select this repo.
-2. Set `LLM_API_KEY` when prompted (the other LLM vars are prefilled).
-3. Wait for deploy, note the URL (e.g. `https://pubcrawl-api.onrender.com`),
-   and check `…/api/health` returns counts.
-4. In Vercel → Project → Settings → Environment Variables set
-   `VITE_API_BASE` to that URL and redeploy the frontend.
+- Menu search and cocktail grid.
+- Bar shelf with matched recipes.
+- Photo ingredient-identification flow.
+- Generated house-special recipe card.
+- Tab/share page.
 
-Free-tier note: the instance sleeps after ~15 idle minutes (first request
-then takes ~half a minute to wake).
+## AI Usage Transparency
 
-### Durable likes + kept drinks (Upstash Redis)
+This was an AI-assisted portfolio project built with modern coding assistants for rapid prototyping and implementation support. The value of the repository is in the product workflow, code structure, integration decisions, prompt constraints, fallback behavior, and the ability to explain and maintain the final system.
 
-Public like counts and user-kept house specials are stored via
-`server/store.mjs`. With **no config it writes local JSON files**, which on an
-ephemeral host (Render free) reset on every redeploy — so for production,
-point it at a free Upstash Redis:
+## Current Limitations
 
-1. Create a free database at upstash.com → Redis.
-2. Copy its **REST URL** and **REST token**.
-3. Add them to the API's environment (Render → the service → Environment):
-   `KV_REST_API_URL` and `KV_REST_API_TOKEN` (or the `UPSTASH_REDIS_REST_*`
-   equivalents). No redeploy of code needed — just restart.
-
-Once set, likes and kept drinks survive every redeploy and restart. The
-server logs `store: kv` on boot when it's connected (`store: file` otherwise).
-
-### Alternative: API on your own machine via ngrok
-
-```bash
-npm run serve            # standalone API on http://localhost:8790
-ngrok start --all        # main-app (reserved domain) + pubcrawl tunnels
-```
-
-One free ngrok agent session carries both tunnels, but the free plan has a
-single reserved domain; the second tunnel's URL rotates each start.
-
-CORS is open on the API, and requests carry `ngrok-skip-browser-warning`
-automatically when the base URL is an ngrok domain.
-
-## AI config
-
-`LLM_API_KEY`, `LLM_BASE_URL` (OpenAI-compatible) and `LLM_MODEL` are read
-from `.env` (see `.env.example`). Without a key the bar still works fully;
-photo ID and house specials degrade gracefully.
+- No formal test suite is included yet.
+- Photo identification requires a configured LLM provider key.
+- Free hosting tiers can sleep, so first API calls may be slower after inactivity.
+- Public likes are browser-limited client-side and should not be treated as abuse-proof analytics.
+- The app is a portfolio/learning project, not a commercial bar-management system.
