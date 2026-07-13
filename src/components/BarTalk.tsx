@@ -5,12 +5,12 @@ import { Shuffle } from '../icons';
 import { EASE, LOADED_HIDDEN } from '../motion';
 
 /** A coaster of bar trivia: one story at a time, another on request. */
-export function BarTalk({ variant = 'ink' }: { variant?: 'ink' | 'accent' }) {
+export function BarTalk() {
   const [i, setI] = useState(() => Math.floor(Math.random() * FACTS.length));
   const another = () => setI((v) => (v + 1 + Math.floor(Math.random() * (FACTS.length - 1))) % FACTS.length);
   return (
     <motion.aside
-      className={`bartalk bartalk--${variant}`}
+      className="bartalk"
       initial={LOADED_HIDDEN ? false : { opacity: 0, y: 20 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: '-60px' }}
