@@ -10,6 +10,7 @@ import { Knowledge } from './components/Knowledge';
 import { BarTalk } from './components/BarTalk';
 import { InstallBanner } from './components/InstallBanner';
 import { NudgeToggle } from './components/NudgeToggle';
+import { NudgeBanner } from './components/NudgeBanner';
 import { EASE, Lines, LOADED_HIDDEN, Reveal } from './motion';
 import { ArrowDown, ArrowRight, Burger, Check, Heart, PubGlyph, Share, Shuffle, SketchDefs, X } from './icons';
 import { shareContent, tabShareText } from './share';
@@ -345,6 +346,7 @@ export default function App() {
       <div className="site">
         <SketchDefs />
         <InstallBanner />
+        <NudgeBanner />
 
         {/* ================= nav ================= */}
         <header className="nav">

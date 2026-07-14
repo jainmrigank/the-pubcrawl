@@ -111,6 +111,12 @@ main { flex: 1; width: 100%; max-width: 1440px; margin: 0 auto; padding: 0 clamp
 }
 .ib-steps b { color: var(--paper); font-weight: 700; }
 
+/* the nudge ask uses the rust accent so it reads as an invitation, not a chore */
+.nudge-banner { background: var(--bartalk-accent, #A5542E); }
+.nudge-banner .ib-btn { background: var(--paper); color: var(--ink); }
+.nudge-banner .ib-btn:hover { background: var(--ink); color: var(--paper); }
+.nudge-banner .ib-btn:disabled { opacity: 0.7; cursor: wait; }
+
 @media (max-width: 640px) {
   .ib-row { flex-wrap: wrap; gap: 8px 12px; }
   .ib-lead { flex: 1 1 100%; order: 1; }
