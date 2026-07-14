@@ -9,6 +9,7 @@
   "scripts": {
     "scrape": "node scripts/scrape.mjs",
     "videos": "node scripts/fetch_videos.mjs",
+    "images": "node scripts/fetch_images.mjs",
     "dev": "vite",
     "serve": "node server/index.mjs",
     "build": "tsc -b && vite build",

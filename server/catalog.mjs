@@ -176,6 +176,14 @@ export function loadCatalog() {
       if (Object.prototype.hasOwnProperty.call(videos, c.id)) c.video = videos[c.id];
   }
 
+  // images.json (scripts/fetch_images.mjs): confident Wikipedia/Commons photos
+  // that override TheCocktailDB's often-inaccurate thumbnails
+  const imagesPath = join(ROOT, 'data', 'images.json');
+  if (existsSync(imagesPath)) {
+    const imgs = JSON.parse(readFileSync(imagesPath, 'utf8'));
+    for (const c of cocktails) if (imgs[c.id]) c.thumb = imgs[c.id];
+  }
+
   const seen = new Map(); // norm -> entry
   const add = (name) => {
     const key = norm(name);
