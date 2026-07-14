@@ -583,17 +583,19 @@ main { flex: 1; width: 100%; max-width: 1440px; margin: 0 auto; padding: 0 clamp
 .invent-note { margin: 4px 0 0; font-size: 14px; color: var(--ink-60); max-width: 52ch; }
 .invent-moods { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 14px; }
 
-/* bar talk — a gently accented callout: warm blush panel, accent edge */
+/* bar talk — framed coaster with a hard offset "3d" outline, in a teal that
+   complements the site's warm sienna accent. swap the hue: --bartalk-accent */
 .bartalk {
+  --bartalk-accent: #A5542E;
   position: relative;
   display: flex;
   gap: clamp(12px, 2vw, 22px);
   padding: clamp(18px, 2.6vw, 26px) clamp(20px, 3vw, 30px);
-  margin: clamp(32px, 5vh, 52px) 0;
+  margin: clamp(32px, 5vh, 52px) 4px clamp(38px, 6vh, 58px);
   max-width: 900px;
-  background: color-mix(in srgb, var(--accent) 7%, var(--paper));
-  border: 1px solid color-mix(in srgb, var(--accent) 22%, var(--line));
-  border-left: 3px solid var(--accent);
+  background: var(--paper);
+  border: 1.5px solid var(--bartalk-accent);
+  box-shadow: 8px 8px 0 var(--bartalk-accent);
 }
 .bartalk-mark {
   font-family: 'Caveat', cursive;
@@ -601,12 +603,11 @@ main { flex: 1; width: 100%; max-width: 1440px; margin: 0 auto; padding: 0 clamp
   font-size: clamp(56px, 8vw, 88px);
   line-height: 0.7;
   flex: none;
-  color: var(--accent);
-  opacity: 0.9;
+  color: var(--bartalk-accent);
 }
 .bartalk-body { flex: 1; min-width: 0; }
-.bartalk-head { display: flex; justify-content: space-between; align-items: center; gap: 16px; margin-bottom: 10px; }
-.bartalk-head .k-label { color: var(--accent); }
+.bartalk-head { display: flex; justify-content: space-between; align-items: center; gap: 16px; margin-bottom: 8px; }
+.bartalk-head .k-label { color: var(--bartalk-accent); }
 .bartalk p {
   margin: 0;
   font-size: clamp(17px, 1.9vw, 20px);
