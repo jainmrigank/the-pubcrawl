@@ -8,6 +8,7 @@ import { RecipeCard } from './components/RecipeCard';
 import { IngredientIcon } from './components/IngredientIcon';
 import { Knowledge } from './components/Knowledge';
 import { BarTalk } from './components/BarTalk';
+import { InstallBanner } from './components/InstallBanner';
 import { EASE, Lines, LOADED_HIDDEN, Reveal } from './motion';
 import { ArrowDown, ArrowRight, Burger, Check, Heart, PubGlyph, Share, Shuffle, SketchDefs, X } from './icons';
 import { shareContent, tabShareText } from './share';
@@ -324,6 +325,7 @@ export default function App() {
     <MotionConfig reducedMotion="user">
       <div className="site">
         <SketchDefs />
+        <InstallBanner />
 
         {/* ================= nav ================= */}
         <header className="nav">

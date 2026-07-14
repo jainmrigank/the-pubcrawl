@@ -69,6 +69,56 @@ main { flex: 1; width: 100%; max-width: 1440px; margin: 0 auto; padding: 0 clamp
 }
 
 /* ==========================================================================
+   "get the app" banner
+   ========================================================================== */
+.install-banner {
+  background: var(--ink);
+  color: var(--paper);
+  padding: 9px clamp(16px, 4vw, 64px);
+}
+.ib-row { display: flex; align-items: center; gap: 14px; }
+.ib-lead { color: var(--paper); flex: 1; min-width: 0; }
+.ib-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  flex: none;
+  background: var(--paper);
+  color: var(--ink);
+  border: none;
+  padding: 7px 12px;
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  cursor: pointer;
+}
+.ib-btn:hover { background: var(--bartalk-accent, #A5542E); color: var(--paper); }
+.ib-tip { font-family: var(--mono); font-size: 11px; letter-spacing: 0.06em; color: var(--paper); flex: none; }
+.ib-x {
+  display: inline-flex;
+  flex: none;
+  background: none;
+  border: none;
+  color: rgba(236, 233, 224, 0.6);
+  cursor: pointer;
+  padding: 4px;
+}
+.ib-x:hover { color: var(--paper); }
+.ib-steps {
+  margin: 8px 0 2px;
+  font-size: 13px;
+  color: rgba(236, 233, 224, 0.8);
+}
+.ib-steps b { color: var(--paper); font-weight: 700; }
+
+@media (max-width: 640px) {
+  .ib-row { flex-wrap: wrap; gap: 8px 12px; }
+  .ib-lead { flex: 1 1 100%; order: 1; }
+  .ib-btn, .ib-tip { order: 2; }
+  .ib-x { order: 3; margin-left: auto; }
+}
+
+/* ==========================================================================
    navigation
    ========================================================================== */
 .nav {
@@ -610,11 +660,11 @@ main { flex: 1; width: 100%; max-width: 1440px; margin: 0 auto; padding: 0 clamp
 .bartalk-head .k-label { color: var(--bartalk-accent); }
 .bartalk p {
   margin: 0;
-  font-size: clamp(17px, 1.9vw, 20px);
-  line-height: 1.5;
-  font-weight: 500;
-  color: var(--ink);
-  max-width: 56ch;
+  font-size: clamp(14.5px, 1.4vw, 16px);
+  line-height: 1.6;
+  font-weight: 400;
+  color: var(--ink-60);
+  max-width: 62ch;
 }
 
 /* ---------- empty states ---------- */
