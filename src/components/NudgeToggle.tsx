@@ -38,9 +38,9 @@ export function NudgeToggle() {
     setBusy(false);
     if (result === 'subscribed') setOn(true);
     else if (result === 'needs-install')
-      setNote('Add the app to your home screen first, then turn nudges on from there.');
+      setNote('Add the app to your home screen first, then turn notifications on from there.');
     else if (result === 'denied') setNote('Notifications are blocked for this site in your browser.');
-    else if (result === 'unavailable') setNote('Nudges are not switched on for this bar yet.');
+    else if (result === 'unavailable') setNote('Notifications are not switched on for this bar yet.');
     else setNote("That didn't take. Try again in a moment.");
   }
 
@@ -56,13 +56,13 @@ export function NudgeToggle() {
     <div className="nudge">
       <button className="text-btn" onClick={on ? disable : enable} disabled={busy}>
         {on ? (
-          <>NUDGES ON <Check size={11} /></>
+          <>NOTIFICATIONS ON <Check size={11} /></>
         ) : (
-          <>NUDGE ME EVERY FEW DAYS <X size={11} style={{ opacity: 0.35 }} /></>
+          <>TURN ON NOTIFICATIONS <X size={11} style={{ opacity: 0.35 }} /></>
         )}
       </button>
       {!on && !canSubscribeHere() && (
-        <span className="nudge-note">Add the app to your home screen to get nudges.</span>
+        <span className="nudge-note">Add the app to your home screen to get notifications.</span>
       )}
       {note && <span className="nudge-note">{note}</span>}
     </div>

@@ -1,11 +1,15 @@
 import { useEffect, useState } from 'react';
-import { canSubscribeHere, currentSubscription, subscribeToNudges } from '../push';
+import { currentSubscription, isStandalone, pushSupported, subscribeToNudges } from '../push';
 import { ArrowRight, Check, X } from '../icons';
 
 /**
- * Installing the app doesn't sign anyone up for nudges — they have to say yes.
- * So once the app is installed (and on desktop/Android, wherever push works),
- * ask once, in the header, instead of hiding the switch in the footer.
+ * Asks for notifications — but only inside the installed app, never in a
+ * browser tab (an Android browser will happily subscribe you before you've
+ * even got the app, which is not what we want).
+ *
+ * It asks again on every launch until they say yes, so nobody misses it.
+ * Dismissing hides it for this session only. Once they're subscribed — or
+ * have blocked notifications outright — it never appears again.
  */
 export function NudgeBanner() {
   const [show, setShow] = useState(false);
@@ -14,9 +18,8 @@ export function NudgeBanner() {
   const [note, setNote] = useState('');
 
   useEffect(() => {
-    if (!canSubscribeHere()) return;
-    if (localStorage.getItem('pubcrawl.nudgeDismissed') === '1') return;
-    if (Notification.permission === 'denied') return;
+    if (!pushSupported() || !isStandalone()) return;
+    if (Notification.permission === 'denied') return; // blocked; a button can't fix that
     currentSubscription()
       .then((sub) => setShow(!sub))
       .catch(() => {});
@@ -24,21 +27,15 @@ export function NudgeBanner() {
 
   if (!show) return null;
 
-  const dismiss = () => {
-    localStorage.setItem('pubcrawl.nudgeDismissed', '1');
-    setShow(false);
-  };
-
   async function turnOn() {
     setBusy(true);
     const result = await subscribeToNudges();
     setBusy(false);
     if (result === 'subscribed') {
       setDone(true);
-      localStorage.setItem('pubcrawl.nudgeDismissed', '1');
       setTimeout(() => setShow(false), 2600);
     } else if (result === 'denied') {
-      setNote('No nudges then. Turn them on any time from the bottom of the page.');
+      setNote('No notifications then. You can turn them on any time from the bottom of the page.');
     } else if (result === 'needs-install') {
       setNote('Add the app to your home screen first.');
     } else {
@@ -50,15 +47,16 @@ export function NudgeBanner() {
     <div className="install-banner nudge-banner">
       <div className="ib-row">
         <span className="k-label ib-lead">
-          {done ? "YOU'RE IN — WE'LL NUDGE YOU EVERY FEW DAYS" : 'A DRINK IDEA EVERY FEW DAYS?'}
+          {done ? "YOU'RE IN — A DRINK IDEA EVERY FEW DAYS" : 'A DRINK IDEA EVERY FEW DAYS?'}
         </span>
         {!done && (
           <button className="ib-btn" onClick={turnOn} disabled={busy}>
-            {busy ? 'ONE MOMENT…' : 'TURN ON NUDGES'} <ArrowRight size={13} />
+            {busy ? 'ONE MOMENT…' : 'TURN ON NOTIFICATIONS'} <ArrowRight size={13} />
           </button>
         )}
         {done && <Check size={14} />}
-        <button className="ib-x" onClick={dismiss} aria-label="Dismiss">
+        {/* hides for this session; it'll ask again next time they open the app */}
+        <button className="ib-x" onClick={() => setShow(false)} aria-label="Not now">
           <X size={13} />
         </button>
       </div>
