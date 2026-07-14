@@ -1,0 +1,24 @@
+name: Bar nudges
+
+# Every other day at 12:00 UTC (5:30pm IST) — the hour people start thinking
+# about a drink. GitHub's scheduler is free and drifts by a few minutes, which
+# suits a "once every couple of days" nudge just fine.
+on:
+  schedule:
+    - cron: '0 12 */2 * *'
+  workflow_dispatch: # lets you fire one by hand to test
+
+jobs:
+  nudge:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Send the nudge
+        run: |
+          code=$(curl -s -o /tmp/out.json -w '%{http_code}' -X POST \
+            -H "x-push-secret: ${{ secrets.PUSH_SECRET }}" \
+            -H 'content-type: application/json' \
+            --max-time 120 \
+            "${{ secrets.API_BASE }}/api/push/send")
+          echo "HTTP $code"
+          cat /tmp/out.json
+          test "$code" = "200"

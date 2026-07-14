@@ -57,16 +57,21 @@ async function writeBlob(key, file, value) {
 /* in-memory copies, loaded once and written through on change */
 let likes = {};
 let kept = [];
+let subs = []; // push subscriptions: { sub, createdAt, lastSeen }
 
 export async function initStore() {
   likes = await readBlob('pubcrawl:likes', 'likes.json', {});
   kept = await readBlob('pubcrawl:kept', 'kept_cocktails.json', []);
-  console.log(`[store] ${useKV ? 'Upstash KV' : 'local file'} — ${Object.keys(likes).length} liked, ${kept.length} kept`);
+  subs = await readBlob('pubcrawl:subs', 'push_subs.json', []);
+  console.log(
+    `[store] ${useKV ? 'Upstash KV' : 'local file'} — ${Object.keys(likes).length} liked, ${kept.length} kept, ${subs.length} subscribed`
+  );
 }
 
 export const storeMode = () => (useKV ? 'kv' : 'file');
 export const getLikes = () => likes;
 export const getKept = () => kept;
+export const getSubs = () => subs;
 
 export function saveLikes(next) {
   likes = next;
@@ -79,4 +84,34 @@ export function addKept(drink) {
     writeBlob('pubcrawl:kept', 'kept_cocktails.json', kept);
   }
   return drink;
+}
+
+const persistSubs = () => writeBlob('pubcrawl:subs', 'push_subs.json', subs);
+
+export function addSub(sub) {
+  const now = Date.now();
+  const existing = subs.find((s) => s.sub.endpoint === sub.endpoint);
+  if (existing) {
+    existing.lastSeen = now;
+    persistSubs();
+    return false; // already had it — no welcome nudge
+  }
+  subs = [...subs, { sub, createdAt: now, lastSeen: now }];
+  persistSubs();
+  return true; // newly subscribed
+}
+
+export function removeSub(endpoint) {
+  const before = subs.length;
+  subs = subs.filter((s) => s.sub.endpoint !== endpoint);
+  if (subs.length !== before) persistSubs();
+}
+
+/** the app pings this on open, so "been away" nudges only reach the away */
+export function touchSub(endpoint) {
+  const s = subs.find((x) => x.sub.endpoint === endpoint);
+  if (s) {
+    s.lastSeen = Date.now();
+    persistSubs();
+  }
 }

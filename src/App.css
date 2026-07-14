@@ -1069,6 +1069,16 @@ main { flex: 1; width: 100%; max-width: 1440px; margin: 0 auto; padding: 0 clamp
   letter-spacing: -0.01em;
   text-transform: uppercase;
 }
+.foot-nudge {
+  border-top: 1px solid rgba(236, 233, 224, 0.25);
+  padding-top: 18px;
+  margin-bottom: 18px;
+}
+.nudge { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; }
+.nudge .text-btn { color: var(--paper); }
+.nudge .text-btn:hover { border-bottom-color: var(--paper); }
+.nudge-note { font-size: 13px; color: rgba(236, 233, 224, 0.7); }
+
 .foot-meta {
   display: flex;
   flex-wrap: wrap;

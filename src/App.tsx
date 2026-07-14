@@ -9,6 +9,7 @@ import { IngredientIcon } from './components/IngredientIcon';
 import { Knowledge } from './components/Knowledge';
 import { BarTalk } from './components/BarTalk';
 import { InstallBanner } from './components/InstallBanner';
+import { NudgeToggle } from './components/NudgeToggle';
 import { EASE, Lines, LOADED_HIDDEN, Reveal } from './motion';
 import { ArrowDown, ArrowRight, Burger, Check, Heart, PubGlyph, Share, Shuffle, SketchDefs, X } from './icons';
 import { shareContent, tabShareText } from './share';
@@ -26,8 +27,15 @@ const NAV: { route: Route; label: string }[] = [
 ];
 
 function parseRoute(): Route {
-  const h = window.location.hash.replace(/^#\/?/, '') as Route;
+  const h = window.location.hash.replace(/^#\/?/, '').split('?')[0] as Route;
   return ROUTES.includes(h) ? h : 'menu';
+}
+
+/** a nudge can deep-link straight to a drink: #/menu?q=<name> */
+function hashQuery(): string {
+  const i = window.location.hash.indexOf('?');
+  if (i === -1) return '';
+  return new URLSearchParams(window.location.hash.slice(i + 1)).get('q') || '';
 }
 
 function useRoute(): Route {
@@ -63,7 +71,7 @@ export default function App() {
   const [match, setMatch] = useState<MatchResult | null>(null);
   const [matching, setMatching] = useState(false);
   const [browse, setBrowse] = useState<Recipe[]>([]);
-  const [browseQ, setBrowseQ] = useState('');
+  const [browseQ, setBrowseQ] = useState(hashQuery);
   const [browseLimit, setBrowseLimit] = useState(12);
   const [browseLoading, setBrowseLoading] = useState(true);
   const [browseError, setBrowseError] = useState(false);
@@ -102,6 +110,17 @@ export default function App() {
     fetchVibes().then(setVibes).catch(() => {});
     fetchHealth().then(setHealth).catch(() => {});
     fetchLikes().then(setLikes).catch(() => {});
+  }, []);
+
+  // a tapped nudge lands on #/menu?q=<drink>; if the app was already open,
+  // pick the drink up from the new hash too
+  useEffect(() => {
+    const onHash = () => {
+      const q = hashQuery();
+      if (q) setBrowseQ(q);
+    };
+    window.addEventListener('hashchange', onHash);
+    return () => window.removeEventListener('hashchange', onHash);
   }, []);
 
   // the page behind the mobile drawer shouldn't scroll while it's open
@@ -699,6 +718,9 @@ export default function App() {
         {/* ================= footer ================= */}
         <footer className="foot">
           <Lines as="p" className="foot-big" lines={['POUR SOMETHING', 'PROPER.']} stagger={0.08} />
+          <div className="foot-nudge">
+            <NudgeToggle />
+          </div>
           <div className="foot-meta">
             <span className="k-label">RECIPES FROM THECOCKTAILDB</span>
             <span className="k-label">HOUSE SPECIALS ARE ROBOT-MADE. TASTE BEFORE SERVING.</span>

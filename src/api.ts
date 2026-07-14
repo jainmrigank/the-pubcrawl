@@ -101,3 +101,14 @@ export const postLike = (id: string, action: 'like' | 'unlike') =>
   post<{ id: string; likes: number }>(`/api/likes/${id}`, { action });
 
 export const keepRecipe = (recipe: Recipe) => post<Recipe>('/api/keep', { recipe }, true);
+
+/* ---- bar nudges (web push) ---- */
+export const fetchPushKey = () => get<{ key: string | null }>('/api/push/key');
+
+export const pushSubscribe = (subscription: PushSubscriptionJSON) =>
+  post<{ ok: boolean }>('/api/push/subscribe', { subscription });
+
+export const pushUnsubscribe = (endpoint: string) =>
+  post<{ ok: boolean }>('/api/push/unsubscribe', { endpoint });
+
+export const pushSeen = (endpoint: string) => post<{ ok: boolean }>('/api/push/seen', { endpoint });

@@ -9,6 +9,14 @@ export default defineConfig({
       // future deploys reach installed apps automatically: the new build is
       // fetched in the background and applied on the next launch/restart
       registerType: 'autoUpdate',
+      // our own worker (src/sw.js) so it can show bar nudges
+      strategies: 'injectManifest',
+      srcDir: 'src',
+      filename: 'sw.js',
+      injectManifest: {
+        globPatterns: ['**/*.{js,css,html,svg,png,woff2}'],
+        maximumFileSizeToCacheInBytes: 4 * 1024 * 1024,
+      },
       includeAssets: ['apple-touch-icon.png'],
       manifest: {
         name: 'The PubCrawl',
@@ -24,23 +32,6 @@ export default defineConfig({
           { src: 'icon-192.png', sizes: '192x192', type: 'image/png' },
           { src: 'icon-512.png', sizes: '512x512', type: 'image/png' },
           { src: 'icon-maskable-512.png', sizes: '512x512', type: 'image/png', purpose: 'maskable' },
-        ],
-      },
-      workbox: {
-        navigateFallback: '/index.html',
-        globPatterns: ['**/*.{js,css,html,svg,png,woff2}'],
-        maximumFileSizeToCacheInBytes: 4 * 1024 * 1024,
-        runtimeCaching: [
-          {
-            // cocktail photos (Wikimedia, TheCocktailDB) — cache once, serve fast
-            urlPattern: ({ url }) => /upload\.wikimedia\.org|thecocktaildb\.com/.test(url.href),
-            handler: 'CacheFirst',
-            options: {
-              cacheName: 'drink-images',
-              expiration: { maxEntries: 400, maxAgeSeconds: 60 * 60 * 24 * 30 },
-              cacheableResponse: { statuses: [0, 200] },
-            },
-          },
         ],
       },
     }),

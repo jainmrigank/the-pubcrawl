@@ -3,12 +3,26 @@
  * or run standalone via `node server/index.mjs` (e.g. behind an ngrok tunnel
  * feeding the Vercel-hosted frontend).
  */
+import './env.mjs'; // must run before store.mjs / push keys read process.env
 import express from 'express';
+import webpush from 'web-push';
 import { loadCatalog, searchIngredients, matchRecipes, categorise, norm } from './catalog.mjs';
 import { VIBES, withVibe } from './vibes.mjs';
 import { chat, extractJson, llmAvailable, llmConfig } from './llm.mjs';
 import { generateFallback } from './generator.mjs';
-import { initStore, storeMode, getLikes, saveLikes, getKept, addKept } from './store.mjs';
+import { buildNudge, WELCOME } from './push.mjs';
+import {
+  initStore,
+  storeMode,
+  getLikes,
+  saveLikes,
+  getKept,
+  addKept,
+  getSubs,
+  addSub,
+  removeSub,
+  touchSub,
+} from './store.mjs';
 
 export async function createApp() {
   await initStore();
@@ -288,6 +302,70 @@ Respond with JSON exactly like:
       }
     }
     res.json(generateFallback(pantry, avoid));
+  });
+
+  /* ================= bar nudges (web push) ================= */
+  const VAPID_PUBLIC = process.env.VAPID_PUBLIC_KEY || '';
+  const VAPID_PRIVATE = process.env.VAPID_PRIVATE_KEY || '';
+  const PUSH_SECRET = process.env.PUSH_SECRET || '';
+  const pushReady = Boolean(VAPID_PUBLIC && VAPID_PRIVATE);
+  if (pushReady) {
+    webpush.setVapidDetails(process.env.VAPID_SUBJECT || 'mailto:hello@the-pubcrawl.app', VAPID_PUBLIC, VAPID_PRIVATE);
+  }
+  console.log(`[push] ${pushReady ? `ready — ${getSubs().length} subscribed` : 'disabled (no VAPID keys)'}`);
+
+  /** send one notification; drop the subscription if the browser says it's dead */
+  async function deliver(record, payload) {
+    try {
+      await webpush.sendNotification(record.sub, JSON.stringify(payload));
+      return true;
+    } catch (err) {
+      if (err.statusCode === 404 || err.statusCode === 410) removeSub(record.sub.endpoint);
+      return false;
+    }
+  }
+
+  app.get('/api/push/key', (_req, res) =>
+    res.json({ key: pushReady ? VAPID_PUBLIC : null })
+  );
+
+  app.post('/api/push/subscribe', async (req, res) => {
+    const sub = req.body?.subscription;
+    if (!pushReady) return res.status(503).json({ error: 'Nudges are not set up on this server.' });
+    if (!sub?.endpoint) return res.status(400).json({ error: 'subscription required' });
+    const isNew = addSub(sub);
+    if (isNew) deliver({ sub }, WELCOME).catch(() => {}); // "You're in."
+    res.json({ ok: true });
+  });
+
+  app.post('/api/push/unsubscribe', (req, res) => {
+    const endpoint = req.body?.endpoint;
+    if (endpoint) removeSub(endpoint);
+    res.json({ ok: true });
+  });
+
+  // the app pings this on open, so "been away" nudges only reach the away
+  app.post('/api/push/seen', (req, res) => {
+    const endpoint = req.body?.endpoint;
+    if (endpoint) touchSub(endpoint);
+    res.json({ ok: true });
+  });
+
+  // fired by the scheduler every couple of days (see .github/workflows)
+  app.post('/api/push/send', async (req, res) => {
+    if (!pushReady) return res.status(503).json({ error: 'push disabled' });
+    const token = req.get('x-push-secret') || req.body?.secret || '';
+    if (!PUSH_SECRET || token !== PUSH_SECRET) return res.status(401).json({ error: 'unauthorized' });
+
+    const records = [...getSubs()];
+    let sent = 0;
+    for (const rec of records) {
+      const awayDays = (Date.now() - (rec.lastSeen || rec.createdAt || 0)) / 86400000;
+      const nudge = buildNudge(cocktails, awayDays);
+      if (await deliver(rec, nudge)) sent++;
+    }
+    console.log(`[push] sent ${sent}/${records.length}`);
+    res.json({ sent, total: records.length });
   });
 
   return app;

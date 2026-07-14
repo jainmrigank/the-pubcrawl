@@ -12,9 +12,9 @@ const installed = () =>
   (navigator as unknown as { standalone?: boolean }).standalone === true;
 
 /**
- * "Get the app" bar. Apple only allows installing from Safari, and no browser
- * lets a page force-open Safari — so on Apple we show the right instruction
- * instead of a button. Everywhere else we can trigger the real install prompt.
+ * "Get the app" bar. Android/desktop browsers hand us a real install prompt.
+ * Apple gives us none, so there we show the (identical in Safari and Chrome)
+ * Share → Add to Home Screen steps instead.
  */
 export function InstallBanner() {
   const [prompt, setPrompt] = useState<InstallPromptEvent | null>(null);
@@ -42,7 +42,6 @@ export function InstallBanner() {
   const ua = navigator.userAgent;
   const iOS = /iPad|iPhone|iPod/.test(ua);
   const macSafari = /Macintosh/.test(ua) && /Safari/.test(ua) && !/Chrome|Chromium|Edg/.test(ua);
-  const iosSafari = iOS && !/CriOS|FxiOS|EdgiOS|OPiOS/.test(ua);
 
   const dismiss = () => {
     localStorage.setItem('pubcrawl.installDismissed', '1');
@@ -65,14 +64,12 @@ export function InstallBanner() {
         ADD TO HOME SCREEN <ArrowDown size={13} />
       </button>
     );
-  } else if (iosSafari) {
+  } else if (iOS) {
     action = (
       <button className="ib-btn" onClick={() => setTip((t) => !t)}>
         HOW? <ArrowDown size={13} />
       </button>
     );
-  } else if (iOS) {
-    action = <span className="ib-tip">Open this page in Safari to install it.</span>;
   } else if (macSafari) {
     action = <span className="ib-tip">Safari menu → File → Add to Dock.</span>;
   } else {
@@ -90,7 +87,7 @@ export function InstallBanner() {
       </div>
       {tip && (
         <p className="ib-steps">
-          Tap the <b>Share</b> button in Safari, scroll down, then choose <b>Add to Home Screen</b>.
+          Tap the <b>Share</b> button, scroll down, then choose <b>Add to Home Screen</b>.
         </p>
       )}
     </div>

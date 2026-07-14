@@ -6,3 +6,4 @@ dist
 tsconfig.tsbuildinfo
 data/likes.json
 data/kept_cocktails.json
+data/push_subs.json
