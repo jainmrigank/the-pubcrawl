@@ -144,7 +144,7 @@ export function RecipeCard(props: Props) {
                 {recipe.glass || 'Any glass'}
               </span>
               {recipe.iba && <span className="k-label dim">CLASSIC</span>}
-              {(recipe.alcoholic || '').toLowerCase().includes('non') && <span className="k-label dim">ZERO-PROOF</span>}
+              {(recipe.alcoholic || '').toLowerCase().includes('non') && <span className="k-label dim">ZERO-ALCOHOL</span>}
             </div>
             {recipe.total != null && (
               <div className={`fc-status ${ready ? 'ready' : ''}`}>

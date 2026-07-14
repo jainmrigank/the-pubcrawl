@@ -328,7 +328,7 @@ export default function App() {
         onClick={() => setValue(value === 'zeroproof' ? '' : 'zeroproof')}
       >
         <i className="swatch" />
-        ZERO-PROOF
+        ZERO-ALCOHOL
       </button>
       <button
         className={`vibe-chip ${value === 'indian' ? 'on' : ''}`}

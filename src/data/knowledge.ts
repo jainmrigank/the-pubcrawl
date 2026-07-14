@@ -100,7 +100,7 @@ A "splash" is a short, casual pour (5–10 ml). "Top up" means fill the rest of 
       { id: 'drywet', term: 'Dry / Wet / Dirty / Perfect', icon: 'martini', def: 'Martini dialect. Dry means less vermouth, wet means more. Dirty adds olive brine. Perfect splits the vermouth half dry, half sweet.' },
       { id: 'sour', term: 'The Sour Template', icon: 'ratio', def: '2 parts spirit, 1 part citrus, 1 part sweet: the skeleton of the Daiquiri, Whiskey Sour, Margarita and Gimlet. Master one and you have learned fifty drinks.' },
       { id: 'highball-ratio', term: 'The Highball Ratio', icon: 'highball', def: '1 part spirit to 2–3 parts cold carbonated mixer, built over plenty of ice, stirred once. Precision matters more than it looks: flat, warm or over-poured highballs fail.' },
-      { id: 'zeroproof', term: 'Zero-Proof', icon: 'leaf', def: 'Cocktails without alcohol, built on tea, verjus, bitters-and-soda or distilled non-alcoholic spirits. Balance still rules: acid, sweetness and dilution all behave the same.' },
+      { id: 'zeroproof', term: 'Zero-Alcohol', icon: 'leaf', def: 'Cocktails without alcohol, built on tea, verjus, bitters-and-soda or distilled non-alcoholic spirits. Bartenders call them zero-proof or mocktails. Balance still rules: acid, sweetness and dilution all behave the same.' },
     ],
   },
   {
