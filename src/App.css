@@ -253,6 +253,12 @@ main { flex: 1; width: 100%; max-width: 1440px; margin: 0 auto; padding: 0 clamp
    ========================================================================== */
 .hero { padding: clamp(40px, 7vh, 88px) 0 clamp(48px, 8vh, 110px); }
 
+/* on the landing page the coaster sits well clear of the hero buttons and
+   close to the rule above THE MENU, so it reads as a lead-in to the list */
+.hero .bartalk { margin: clamp(64px, 11vh, 120px) 4px 0; }
+.hero:has(.bartalk) { padding-bottom: clamp(10px, 1.4vh, 16px); }
+.hero:has(.bartalk) + .sec { padding-top: clamp(14px, 1.8vh, 22px); }
+
 .hero-kicker {
   display: flex;
   justify-content: space-between;
