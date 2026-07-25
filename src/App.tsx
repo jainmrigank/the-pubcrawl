@@ -358,6 +358,7 @@ export default function App() {
     <MotionConfig reducedMotion="user">
       <div className="site">
         <SketchDefs />
+        <DailyQuestion force={dailyForced} />
         <InstallBanner />
         <NudgeBanner />
 
@@ -479,7 +480,6 @@ export default function App() {
                       </li>
                     </ol>
                   </div>
-                  <DailyQuestion />
                   <BarTalk />
                 </section>
 
@@ -690,12 +690,7 @@ export default function App() {
                   note="ONE POINT A CORRECT ANSWER"
                   lead="A quiz on cocktails, spirits and the stories behind them. It starts easy and gets meaner."
                 />
-                {route === 'quiz' && (
-                  <>
-                    <DailyQuestion force={dailyForced} />
-                    <Quiz />
-                  </>
-                )}
+                {route === 'quiz' && <Quiz />}
               </section>
             </div>
 

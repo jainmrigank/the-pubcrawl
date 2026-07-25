@@ -11,7 +11,7 @@ import { VIBES, withVibe } from './vibes.mjs';
 import { chat, extractJson, llmAvailable, llmConfig } from './llm.mjs';
 import { generateFallback } from './generator.mjs';
 import { buildNudge, buildDailyQuestionNudge, WELCOME } from './push.mjs';
-import { buildRound, questionOfDay, QUESTIONS } from './quiz.mjs';
+import { playlistSlice, questionOfDay } from './quiz.mjs';
 import {
   initStore,
   storeMode,
@@ -308,9 +308,13 @@ Respond with JSON exactly like:
   });
 
   /* ================= last orders (the quiz) ================= */
-  app.get('/api/quiz/round', (req, res) => {
-    const length = Math.min(Math.max(Number(req.query.length) || 15, 5), 30);
-    res.json({ questions: buildRound(length), high: getHighScore().score });
+  // an endless run, streamed in batches; `seed` keeps one run's order stable
+  app.get('/api/quiz/stream', (req, res) => {
+    const seed = String(req.query.seed || 'x');
+    const from = Math.max(Number(req.query.from) || 0, 0);
+    const count = Math.min(Math.max(Number(req.query.count) || 20, 1), 50);
+    const { questions, total } = playlistSlice(seed, from, count);
+    res.json({ questions, total, high: getHighScore().score });
   });
 
   app.get('/api/quiz/high', (_req, res) => res.json(getHighScore()));

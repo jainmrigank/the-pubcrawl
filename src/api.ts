@@ -103,8 +103,10 @@ export const postLike = (id: string, action: 'like' | 'unlike') =>
 export const keepRecipe = (recipe: Recipe) => post<Recipe>('/api/keep', { recipe }, true);
 
 /* ---- last orders (the quiz) ---- */
-export const fetchRound = (length = 15) =>
-  get<{ questions: Question[]; high: number }>(`/api/quiz/round?length=${length}`);
+export const fetchQuizBatch = (seed: string, from: number, count = 20) =>
+  get<{ questions: Question[]; total: number; high: number }>(
+    `/api/quiz/stream?seed=${encodeURIComponent(seed)}&from=${from}&count=${count}`
+  );
 
 export const fetchHighScore = () => get<{ score: number; at: number }>('/api/quiz/high');
 

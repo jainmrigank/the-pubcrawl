@@ -1069,8 +1069,7 @@ main { flex: 1; width: 100%; max-width: 1440px; margin: 0 auto; padding: 0 clamp
 .quiz { --quiz-accent: #A5542E; max-width: 900px; }
 
 .quiz-intro,
-.quiz-card,
-.daily {
+.quiz-card {
   background: var(--paper);
   border: 1.5px solid var(--quiz-accent, #A5542E);
   box-shadow: 8px 8px 0 var(--quiz-accent, #A5542E);
@@ -1116,6 +1115,7 @@ main { flex: 1; width: 100%; max-width: 1440px; margin: 0 auto; padding: 0 clamp
 }
 
 .quiz-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.daily .quiz-grid { grid-template-columns: 1fr 1fr; }
 .quiz-opt {
   display: flex;
   align-items: flex-start;
@@ -1162,17 +1162,42 @@ main { flex: 1; width: 100%; max-width: 1440px; margin: 0 auto; padding: 0 clamp
 }
 .quiz-card { padding-bottom: clamp(44px, 6vw, 56px); }
 
-/* question of the day */
+/* question of the day — a card over the bar, with the bar blurred behind it */
+.daily-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 120;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: clamp(16px, 4vw, 40px);
+  background: rgba(22, 21, 18, 0.42);
+  backdrop-filter: blur(7px);
+  -webkit-backdrop-filter: blur(7px);
+  overflow-y: auto;
+}
+.daily {
+  --quiz-accent: #A5542E;
+  width: min(720px, 100%);
+  background: var(--paper);
+  border: 1.5px solid var(--quiz-accent);
+  box-shadow: 10px 10px 0 var(--quiz-accent);
+  padding: clamp(20px, 3vw, 30px);
+  margin: auto 4px;
+}
 .daily-head { display: flex; justify-content: space-between; align-items: center; gap: 16px; margin-bottom: 12px; }
 .daily-head .k-label { color: var(--quiz-accent, #A5542E); }
 .daily-why p {
-  margin: 18px 0 14px;
+  margin: 18px 0 16px;
   font-size: 15px;
   line-height: 1.6;
   color: var(--ink-60);
   border-top: 1px solid var(--line);
   padding-top: 16px;
 }
+.daily-actions { display: flex; align-items: center; gap: 20px; flex-wrap: wrap; }
+.daily-skip { margin-top: 18px; display: flex; justify-content: center; }
+.daily-skip .text-btn { color: var(--ink-60); }
 
 @media (max-width: 640px) {
   .quiz-grid { grid-template-columns: 1fr; }

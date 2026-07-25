@@ -1,35 +1,43 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
-import { fetchHighScore, fetchRound, submitHighScore } from '../api';
+import { fetchHighScore, fetchQuizBatch, submitHighScore } from '../api';
 import type { Question } from '../types';
-import { ArrowRight, Check, Shuffle, X } from '../icons';
+import { ArrowRight, Check, X } from '../icons';
 import { EASE, LOADED_HIDDEN } from '../motion';
 
-const ROUND = 15;
+const BATCH = 20;
+const REFILL_AT = 5; // fetch more once the queue runs this low
 
 const tierLabel = (d: number) => (d <= 5 ? 'EASY' : d <= 8 ? 'TRICKY' : 'EXPERT');
 
-/** How the bar rates you at the end. */
-function verdict(score: number, total: number) {
-  const pct = score / total;
-  if (pct === 1) return { title: 'The bar bows.', line: 'A clean sheet. Someone get this one a job.' };
-  if (pct >= 0.8) return { title: 'Steady hands.', line: 'You have clearly spent time on the right side of a bar.' };
-  if (pct >= 0.6) return { title: 'Respectable.', line: 'You know your pours. A few gaps to top up.' };
-  if (pct >= 0.4) return { title: 'Still finding the ice.', line: 'Promising. Read the Basics and come back.' };
-  return { title: 'First round on you.', line: 'Everyone starts somewhere. Basics is that way.' };
+/** How the bar rates the run that just ended. */
+function verdict(score: number) {
+  if (score === 0) return { title: 'First round on you.', line: 'Out on the first question. Read the Basics and come back.' };
+  if (score < 5) return { title: 'Still finding the ice.', line: 'A start. The easy ones are meant to be free.' };
+  if (score < 10) return { title: 'Respectable.', line: 'You know your pours. The tricky tier is where it bites.' };
+  if (score < 20) return { title: 'Steady hands.', line: 'You have clearly spent time on the right side of a bar.' };
+  if (score < 35) return { title: 'The bar is impressed.', line: 'That is deep into expert territory.' };
+  return { title: 'Are you a bartender?', line: 'Genuinely remarkable. Someone get this one a job.' };
 }
 
-/** Last Orders — the quiz. */
+/**
+ * Last Orders — endless, sudden death. Every correct answer is a point and the
+ * questions keep getting harder. One wrong answer ends the run and the score
+ * goes back to zero, which is what makes the house record worth chasing.
+ */
 export function Quiz() {
-  const [stage, setStage] = useState<'intro' | 'playing' | 'done'>('intro');
-  const [questions, setQuestions] = useState<Question[]>([]);
-  const [index, setIndex] = useState(0);
+  const [stage, setStage] = useState<'intro' | 'playing' | 'over'>('intro');
+  const [queue, setQueue] = useState<Question[]>([]);
+  const [current, setCurrent] = useState<Question | null>(null);
   const [score, setScore] = useState(0);
   const [picked, setPicked] = useState<number | null>(null);
   const [high, setHigh] = useState(0);
   const [beatIt, setBeatIt] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const [exhausted, setExhausted] = useState(false);
+  const seed = useRef('');
+  const served = useRef(0);
 
   useEffect(() => {
     fetchHighScore()
@@ -37,43 +45,47 @@ export function Quiz() {
       .catch(() => {});
   }, []);
 
+  /** top the queue up in the background so play never stalls */
+  const refill = useCallback(async () => {
+    try {
+      const { questions, total } = await fetchQuizBatch(seed.current, served.current, BATCH);
+      served.current += questions.length;
+      if (served.current >= total || questions.length === 0) setExhausted(true);
+      setQueue((q) => [...q, ...questions]);
+    } catch {
+      /* the queue still holds enough to keep going */
+    }
+  }, []);
+
   const start = useCallback(async () => {
     setLoading(true);
     setError('');
+    seed.current = `${Date.now()}-${Math.random()}`;
+    served.current = 0;
+    setExhausted(false);
     try {
-      const { questions, high } = await fetchRound(ROUND);
+      const { questions, total, high } = await fetchQuizBatch(seed.current, 0, BATCH);
       if (!questions.length) throw new Error('empty');
-      setQuestions(questions);
+      served.current = questions.length;
+      if (served.current >= total) setExhausted(true);
       setHigh((h) => Math.max(h, high));
-      setIndex(0);
+      setCurrent(questions[0]);
+      setQueue(questions.slice(1));
       setScore(0);
       setPicked(null);
       setBeatIt(false);
       setStage('playing');
     } catch {
-      setError("The quizmaster is not in yet. Try again in a moment.");
+      setError('The quizmaster is not in yet. Try again in a moment.');
     } finally {
       setLoading(false);
     }
   }, []);
 
-  const current = questions[index];
-
-  function choose(i: number) {
-    if (picked !== null) return;
-    setPicked(i);
-    if (i === current.a) setScore((s) => s + 1);
-  }
-
-  async function next() {
-    if (index + 1 < questions.length) {
-      setIndex((n) => n + 1);
-      setPicked(null);
-      return;
-    }
-    setStage('done');
+  async function endRun(finalScore: number) {
+    setStage('over');
     try {
-      const res = await submitHighScore(score);
+      const res = await submitHighScore(finalScore);
       setHigh(res.score);
       setBeatIt(res.beaten);
     } catch {
@@ -81,26 +93,61 @@ export function Quiz() {
     }
   }
 
+  function choose(i: number) {
+    if (picked !== null || !current) return;
+    setPicked(i);
+    if (i === current.a) {
+      setScore((s) => s + 1);
+      if (queue.length <= REFILL_AT && !exhausted) refill();
+    }
+  }
+
+  function next() {
+    if (!current) return;
+    // a wrong answer ends the run: score resets and we head back to the intro
+    if (picked !== current.a) {
+      endRun(score);
+      return;
+    }
+    if (!queue.length) {
+      // cleared the entire bank — a run worth ending on
+      endRun(score);
+      return;
+    }
+    setCurrent(queue[0]);
+    setQueue((q) => q.slice(1));
+    setPicked(null);
+  }
+
   /* ---------- intro ---------- */
-  if (stage === 'intro') {
+  if (stage === 'intro' || stage === 'over') {
+    const over = stage === 'over';
+    const v = verdict(score);
     return (
       <div className="quiz">
         <div className="quiz-intro">
-          <p className="k-label quiz-eyebrow">LAST ORDERS</p>
-          <h3 className="quiz-title">Think you know your drinks?</h3>
-          <p className="quiz-copy">
-            Fifteen questions on cocktails, spirits and the history behind them, from the easy stuff
-            to the sort of thing only a bartender would know. One point a correct answer. It gets
-            harder as you go.
-          </p>
+          <p className="k-label quiz-eyebrow">{over ? 'TIME AT THE BAR' : 'LAST ORDERS'}</p>
+          <h3 className="quiz-title">{over ? v.title : 'Think you know your drinks?'}</h3>
+          {over ? (
+            <>
+              <p className="quiz-score-big">{score}</p>
+              <p className="quiz-copy">{v.line}</p>
+              {beatIt && <p className="quiz-record">A new house record. It stands until someone beats it.</p>}
+            </>
+          ) : (
+            <p className="quiz-copy">
+              Questions on cocktails, spirits and the history behind them. A point for every correct
+              answer and no finish line, but one wrong answer and you are back to zero. It gets
+              harder the longer you last.
+            </p>
+          )}
           <div className="quiz-start-row">
             <button className="btn btn-solid" onClick={start} disabled={loading}>
-              {loading ? 'POURING…' : 'START THE ROUND'} <ArrowRight size={14} />
+              {loading ? 'POURING…' : over ? 'GO AGAIN' : 'START THE ROUND'} <ArrowRight size={14} />
             </button>
             <span className="quiz-high">
               <span className="k-label dim">HOUSE RECORD</span>
               <b>{high}</b>
-              <span className="k-label dim">/ {ROUND}</span>
             </span>
           </div>
           {error && <p className="err" role="alert">{error}</p>}
@@ -109,43 +156,15 @@ export function Quiz() {
     );
   }
 
-  /* ---------- results ---------- */
-  if (stage === 'done') {
-    const v = verdict(score, questions.length);
-    return (
-      <div className="quiz">
-        <div className="quiz-intro">
-          <p className="k-label quiz-eyebrow">TAB SETTLED</p>
-          <h3 className="quiz-title">{v.title}</h3>
-          <p className="quiz-score-big">
-            {score}
-            <span> / {questions.length}</span>
-          </p>
-          <p className="quiz-copy">{v.line}</p>
-          {beatIt && <p className="quiz-record">A new house record. It stands until someone beats it.</p>}
-          <div className="quiz-start-row">
-            <button className="btn btn-solid" onClick={start} disabled={loading}>
-              {loading ? 'POURING…' : 'ANOTHER ROUND'} <Shuffle size={14} />
-            </button>
-            <span className="quiz-high">
-              <span className="k-label dim">HOUSE RECORD</span>
-              <b>{high}</b>
-              <span className="k-label dim">/ {questions.length}</span>
-            </span>
-          </div>
-        </div>
-      </div>
-    );
-  }
-
   /* ---------- playing ---------- */
+  if (!current) return null;
   const answered = picked !== null;
+  const gotIt = picked === current.a;
+
   return (
     <div className="quiz">
       <div className="quiz-meta">
-        <span className="k-label dim">
-          QUESTION {index + 1} OF {questions.length}
-        </span>
+        <span className="k-label dim">HOUSE RECORD {high}</span>
         <span className="quiz-score">
           <span className="k-label dim">SCORE</span> <b>{score}</b>
         </span>
@@ -190,13 +209,14 @@ export function Quiz() {
             >
               <p>{current.r}</p>
               <button className="btn btn-solid quiz-next" onClick={next}>
-                {index + 1 < questions.length ? 'NEXT' : 'SEE THE DAMAGE'} <ArrowRight size={14} />
+                {gotIt ? (queue.length ? 'KEEP GOING' : 'THAT IS THE WHOLE BANK') : 'THAT IS LAST ORDERS'}{' '}
+                <ArrowRight size={14} />
               </button>
             </motion.div>
           )}
         </AnimatePresence>
 
-        <span className="quiz-diff k-label">{tierLabel(current.d)} · {current.d}/10</span>
+        <span className="quiz-diff k-label">{tierLabel(current.d)}</span>
       </motion.div>
     </div>
   );
