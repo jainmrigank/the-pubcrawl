@@ -11,6 +11,8 @@ import { BarTalk } from './components/BarTalk';
 import { InstallBanner } from './components/InstallBanner';
 import { NudgeToggle } from './components/NudgeToggle';
 import { NudgeBanner } from './components/NudgeBanner';
+import { Quiz } from './components/Quiz';
+import { DailyQuestion } from './components/DailyQuestion';
 import { EASE, Lines, LOADED_HIDDEN, Reveal } from './motion';
 import { ArrowDown, ArrowRight, Burger, Check, Heart, PubGlyph, Share, Shuffle, SketchDefs, X } from './icons';
 import { shareContent, tabShareText } from './share';
@@ -18,12 +20,13 @@ import './App.css';
 
 const FALLBACK_VIBE: Vibe = { id: 'boozy', label: 'Spirit-Forward', color: '#8A5A24' };
 
-type Route = 'menu' | 'bar' | 'basics' | 'tab';
-const ROUTES: Route[] = ['menu', 'bar', 'basics', 'tab'];
+type Route = 'menu' | 'bar' | 'basics' | 'tab' | 'quiz';
+const ROUTES: Route[] = ['menu', 'bar', 'basics', 'tab', 'quiz'];
 const NAV: { route: Route; label: string }[] = [
   { route: 'menu', label: 'THE MENU' },
   { route: 'bar', label: 'THE BAR' },
   { route: 'basics', label: 'BASICS' },
+  { route: 'quiz', label: 'QUIZ' },
   { route: 'tab', label: 'THE TAB' },
 ];
 
@@ -32,11 +35,19 @@ function parseRoute(): Route {
   return ROUTES.includes(h) ? h : 'menu';
 }
 
+function hashParams(): URLSearchParams {
+  const i = window.location.hash.indexOf('?');
+  return new URLSearchParams(i === -1 ? '' : window.location.hash.slice(i + 1));
+}
+
 /** a nudge can deep-link straight to a drink: #/menu?q=<name> */
 function hashQuery(): string {
-  const i = window.location.hash.indexOf('?');
-  if (i === -1) return '';
-  return new URLSearchParams(window.location.hash.slice(i + 1)).get('q') || '';
+  return hashParams().get('q') || '';
+}
+
+/** the 5pm nudge lands on #/quiz?daily=1, which always opens today's question */
+function wantsDaily(): boolean {
+  return hashParams().get('daily') === '1';
 }
 
 function useRoute(): Route {
@@ -101,6 +112,7 @@ export default function App() {
   });
   const [loved, setLoved] = useState(false);
   const [inventMood, setInventMood] = useState('');
+  const [dailyForced, setDailyForced] = useState(wantsDaily);
 
   const vibeOf = useCallback(
     (id: string) => vibes.find((v) => v.id === id) ?? FALLBACK_VIBE,
@@ -119,6 +131,7 @@ export default function App() {
     const onHash = () => {
       const q = hashQuery();
       if (q) setBrowseQ(q);
+      if (wantsDaily()) setDailyForced(true);
     };
     window.addEventListener('hashchange', onHash);
     return () => window.removeEventListener('hashchange', onHash);
@@ -466,6 +479,7 @@ export default function App() {
                       </li>
                     </ol>
                   </div>
+                  <DailyQuestion />
                   <BarTalk />
                 </section>
 
@@ -665,6 +679,23 @@ export default function App() {
                 <Reveal>
                   <Knowledge />
                 </Reveal>
+              </section>
+            </div>
+
+            <div hidden={route !== 'quiz'}>
+              <section className="sec page-top" id="quiz-page">
+                <SectionHead
+                  index="01"
+                  title="LAST ORDERS"
+                  note="ONE POINT A CORRECT ANSWER"
+                  lead="A quiz on cocktails, spirits and the stories behind them. It starts easy and gets meaner."
+                />
+                {route === 'quiz' && (
+                  <>
+                    <DailyQuestion force={dailyForced} />
+                    <Quiz />
+                  </>
+                )}
               </section>
             </div>
 

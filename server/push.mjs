@@ -53,6 +53,19 @@ export const WELCOME = {
   tag: 'welcome',
 };
 
+/* daily 5pm nudge toward the question of the day */
+const DAILY_LINES = [
+  { title: 'One for the road?', body: "Today's question is waiting at the bar." },
+  { title: 'Care to place a bet?', body: "One question, four answers. Only one pours right." },
+  { title: 'Quick round?', body: "Today's question takes ten seconds." },
+  { title: 'Settle an argument.', body: "Today's question is the kind people get wrong confidently." },
+  { title: 'Know your poison?', body: "Prove it. Today's question is up." },
+];
+
+export function buildDailyQuestionNudge() {
+  return { ...pick(DAILY_LINES), url: '/#/quiz?daily=1', tag: 'daily-question' };
+}
+
 /**
  * Build one nudge.
  * @param drinks  catalogue, to name a real cocktail

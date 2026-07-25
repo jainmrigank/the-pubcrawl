@@ -10,7 +10,8 @@ import { loadCatalog, searchIngredients, matchRecipes, categorise, norm } from '
 import { VIBES, withVibe } from './vibes.mjs';
 import { chat, extractJson, llmAvailable, llmConfig } from './llm.mjs';
 import { generateFallback } from './generator.mjs';
-import { buildNudge, WELCOME } from './push.mjs';
+import { buildNudge, buildDailyQuestionNudge, WELCOME } from './push.mjs';
+import { buildRound, questionOfDay, QUESTIONS } from './quiz.mjs';
 import {
   initStore,
   storeMode,
@@ -22,6 +23,8 @@ import {
   addSub,
   removeSub,
   touchSub,
+  getHighScore,
+  submitScore,
 } from './store.mjs';
 
 export async function createApp() {
@@ -304,6 +307,29 @@ Respond with JSON exactly like:
     res.json(generateFallback(pantry, avoid));
   });
 
+  /* ================= last orders (the quiz) ================= */
+  app.get('/api/quiz/round', (req, res) => {
+    const length = Math.min(Math.max(Number(req.query.length) || 15, 5), 30);
+    res.json({ questions: buildRound(length), high: getHighScore().score });
+  });
+
+  app.get('/api/quiz/high', (_req, res) => res.json(getHighScore()));
+
+  app.post('/api/quiz/high', (req, res) => {
+    const score = Number(req.body?.score);
+    if (!Number.isFinite(score) || score < 0 || score > 1000)
+      return res.status(400).json({ error: 'bad score' });
+    const beaten = submitScore(score);
+    res.json({ ...getHighScore(), beaten });
+  });
+
+  // one question a day, the same for everyone
+  app.get('/api/quiz/today', (_req, res) => {
+    const q = questionOfDay();
+    if (!q) return res.status(503).json({ error: 'no questions loaded' });
+    res.json(q);
+  });
+
   /* ================= bar nudges (web push) ================= */
   const VAPID_PUBLIC = process.env.VAPID_PUBLIC_KEY || '';
   const VAPID_PRIVATE = process.env.VAPID_PRIVATE_KEY || '';
@@ -351,21 +377,24 @@ Respond with JSON exactly like:
     res.json({ ok: true });
   });
 
-  // fired by the scheduler every couple of days (see .github/workflows)
+  // fired by the schedulers: kind=nudge every couple of days, kind=daily at 5pm
   app.post('/api/push/send', async (req, res) => {
     if (!pushReady) return res.status(503).json({ error: 'push disabled' });
     const token = req.get('x-push-secret') || req.body?.secret || '';
     if (!PUSH_SECRET || token !== PUSH_SECRET) return res.status(401).json({ error: 'unauthorized' });
 
+    const kind = String(req.query.kind || req.body?.kind || 'nudge');
     const records = [...getSubs()];
     let sent = 0;
     for (const rec of records) {
-      const awayDays = (Date.now() - (rec.lastSeen || rec.createdAt || 0)) / 86400000;
-      const nudge = buildNudge(cocktails, awayDays);
-      if (await deliver(rec, nudge)) sent++;
+      const payload =
+        kind === 'daily'
+          ? buildDailyQuestionNudge()
+          : buildNudge(cocktails, (Date.now() - (rec.lastSeen || rec.createdAt || 0)) / 86400000);
+      if (await deliver(rec, payload)) sent++;
     }
-    console.log(`[push] sent ${sent}/${records.length}`);
-    res.json({ sent, total: records.length });
+    console.log(`[push] ${kind}: sent ${sent}/${records.length}`);
+    res.json({ kind, sent, total: records.length });
   });
 
   return app;

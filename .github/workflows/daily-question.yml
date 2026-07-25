@@ -1,0 +1,22 @@
+name: Question of the day
+
+# 5pm IST daily (11:30 UTC), nudging drinkers toward the day's question.
+on:
+  schedule:
+    - cron: '30 11 * * *'
+  workflow_dispatch:
+
+jobs:
+  daily:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Send the daily question nudge
+        run: |
+          code=$(curl -s -o /tmp/out.json -w '%{http_code}' -X POST \
+            -H "x-push-secret: ${{ secrets.PUSH_SECRET }}" \
+            -H 'content-type: application/json' \
+            --max-time 120 \
+            "${{ secrets.API_BASE }}/api/push/send?kind=daily")
+          echo "HTTP $code"
+          cat /tmp/out.json
+          test "$code" = "200"

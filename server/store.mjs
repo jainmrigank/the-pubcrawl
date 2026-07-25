@@ -58,14 +58,28 @@ async function writeBlob(key, file, value) {
 let likes = {};
 let kept = [];
 let subs = []; // push subscriptions: { sub, createdAt, lastSeen }
+let highScore = { score: 0, at: 0 }; // best run by anyone, ever
 
 export async function initStore() {
   likes = await readBlob('pubcrawl:likes', 'likes.json', {});
   kept = await readBlob('pubcrawl:kept', 'kept_cocktails.json', []);
   subs = await readBlob('pubcrawl:subs', 'push_subs.json', []);
+  highScore = await readBlob('pubcrawl:highscore', 'high_score.json', { score: 0, at: 0 });
   console.log(
-    `[store] ${useKV ? 'Upstash KV' : 'local file'} — ${Object.keys(likes).length} liked, ${kept.length} kept, ${subs.length} subscribed`
+    `[store] ${useKV ? 'Upstash KV' : 'local file'} — ${Object.keys(likes).length} liked, ${kept.length} kept, ${subs.length} subscribed, high score ${highScore.score}`
   );
+}
+
+export const getHighScore = () => highScore;
+
+/** Only a strictly higher score replaces the record. */
+export function submitScore(score) {
+  if (typeof score === 'number' && score > highScore.score) {
+    highScore = { score, at: Date.now() };
+    writeBlob('pubcrawl:highscore', 'high_score.json', highScore);
+    return true;
+  }
+  return false;
 }
 
 export const storeMode = () => (useKV ? 'kv' : 'file');

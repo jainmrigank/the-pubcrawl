@@ -1064,6 +1064,124 @@ main { flex: 1; width: 100%; max-width: 1440px; margin: 0 auto; padding: 0 clamp
 }
 
 /* ==========================================================================
+   last orders — the quiz, and the question of the day
+   ========================================================================== */
+.quiz { --quiz-accent: #A5542E; max-width: 900px; }
+
+.quiz-intro,
+.quiz-card,
+.daily {
+  background: var(--paper);
+  border: 1.5px solid var(--quiz-accent, #A5542E);
+  box-shadow: 8px 8px 0 var(--quiz-accent, #A5542E);
+  padding: clamp(20px, 3vw, 30px);
+  margin: 0 4px clamp(30px, 5vh, 48px);
+  position: relative;
+}
+
+.quiz-eyebrow { color: var(--quiz-accent); margin: 0 0 10px; }
+.quiz-title {
+  margin: 0 0 12px;
+  font-stretch: 74%;
+  font-weight: 800;
+  font-size: clamp(26px, 4vw, 40px);
+  line-height: 1.02;
+  text-transform: uppercase;
+}
+.quiz-copy { margin: 0 0 20px; font-size: 16px; line-height: 1.55; color: var(--ink-60); max-width: 58ch; }
+.quiz-start-row { display: flex; align-items: center; gap: 22px; flex-wrap: wrap; }
+.quiz-high { display: inline-flex; align-items: baseline; gap: 7px; }
+.quiz-high b { font-stretch: 74%; font-weight: 800; font-size: 26px; }
+.quiz-score-big {
+  margin: 0 0 12px;
+  font-stretch: 72%;
+  font-weight: 800;
+  font-size: clamp(52px, 9vw, 88px);
+  line-height: 1;
+}
+.quiz-score-big span { font-size: 0.45em; color: var(--ink-60); }
+.quiz-record { margin: 0 0 18px; color: var(--quiz-accent); font-weight: 500; }
+
+.quiz-meta { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 12px; padding: 0 4px; }
+.quiz-score { display: inline-flex; align-items: baseline; gap: 7px; }
+.quiz-score b { font-stretch: 74%; font-weight: 800; font-size: 22px; }
+
+.quiz-q,
+.daily-q {
+  margin: 0 0 20px;
+  font-size: clamp(18px, 2.2vw, 23px);
+  line-height: 1.35;
+  font-weight: 500;
+  max-width: 54ch;
+}
+
+.quiz-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.quiz-opt {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  text-align: left;
+  background: transparent;
+  border: 1px solid var(--line-strong);
+  padding: 14px 15px;
+  font: inherit;
+  font-size: 15px;
+  color: var(--ink);
+  cursor: pointer;
+  min-height: 62px;
+  transition: background var(--t-fast) var(--ease), border-color var(--t-fast) var(--ease), color var(--t-fast) var(--ease);
+}
+.quiz-opt:hover:not(:disabled) { background: var(--paper-2); border-color: var(--quiz-accent); }
+.quiz-opt:disabled { cursor: default; }
+.quiz-opt-letter { flex: none; color: var(--grey); padding-top: 2px; }
+.quiz-opt-text { flex: 1; }
+/* answered states: green for a correct pour, red for a spill */
+.quiz-opt.right { background: #E8F0E4; border-color: #4A7A3A; color: #24401C; }
+.quiz-opt.right .quiz-opt-letter { color: #4A7A3A; }
+.quiz-opt.wrong { background: #F6E6E4; border-color: #A33A2C; color: #5C1E15; }
+.quiz-opt.wrong .quiz-opt-letter { color: #A33A2C; }
+.quiz-opt.muted { opacity: 0.5; }
+
+.quiz-why { overflow: hidden; }
+.quiz-why p {
+  margin: 18px 0 16px;
+  font-size: 15px;
+  line-height: 1.6;
+  color: var(--ink-60);
+  border-top: 1px solid var(--line);
+  padding-top: 16px;
+  max-width: 62ch;
+}
+.quiz-next { margin-bottom: 4px; }
+
+.quiz-diff {
+  position: absolute;
+  right: clamp(20px, 3vw, 30px);
+  bottom: clamp(14px, 2vw, 18px);
+  color: var(--grey);
+}
+.quiz-card { padding-bottom: clamp(44px, 6vw, 56px); }
+
+/* question of the day */
+.daily-head { display: flex; justify-content: space-between; align-items: center; gap: 16px; margin-bottom: 12px; }
+.daily-head .k-label { color: var(--quiz-accent, #A5542E); }
+.daily-why p {
+  margin: 18px 0 14px;
+  font-size: 15px;
+  line-height: 1.6;
+  color: var(--ink-60);
+  border-top: 1px solid var(--line);
+  padding-top: 16px;
+}
+
+@media (max-width: 640px) {
+  .quiz-grid { grid-template-columns: 1fr; }
+  .quiz-opt { min-height: 54px; }
+  .quiz-diff { position: static; display: block; margin-top: 16px; }
+  .quiz-card { padding-bottom: clamp(20px, 3vw, 30px); }
+}
+
+/* ==========================================================================
    footer
    ========================================================================== */
 .foot {

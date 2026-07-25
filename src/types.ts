@@ -43,6 +43,18 @@ export interface MatchResult {
   almost: Recipe[];
 }
 
+export interface Question {
+  id: string;
+  q: string;
+  o: string[];
+  a: number;
+  d: number;
+  r: string;
+  in?: boolean;
+  fun?: boolean;
+  day?: number;
+}
+
 export interface Health {
   ok: boolean;
   cocktails: number;

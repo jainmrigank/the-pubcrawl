@@ -1,0 +1,4872 @@
+[
+ {
+  "id": "q001",
+  "q": "Old Monk, the cult Indian dark rum, was launched in which year?",
+  "o": [
+   "1935",
+   "1971",
+   "1954",
+   "1962"
+  ],
+  "a": 2,
+  "d": 4,
+  "r": "Old Monk has been made since 1954, and built its following almost entirely by word of mouth.",
+  "in": true,
+  "fun": true
+ },
+ {
+  "id": "q002",
+  "q": "Which spirit is the base of a classic Margarita?",
+  "o": [
+   "Cachaça",
+   "Mezcal",
+   "Pisco",
+   "Tequila"
+  ],
+  "a": 3,
+  "d": 3,
+  "r": "Tequila, triple sec and lime. Mezcal makes it a Mezcal Margarita instead."
+ },
+ {
+  "id": "q003",
+  "q": "Feni, the fierce local spirit with a GI tag, comes from which Indian state?",
+  "o": [
+   "Karnataka",
+   "Maharashtra",
+   "Kerala",
+   "Goa"
+  ],
+  "a": 3,
+  "d": 3,
+  "r": "Goa. Only feni made in Goa may legally use the name.",
+  "in": true,
+  "fun": true
+ },
+ {
+  "id": "q004",
+  "q": "A Mojito is built on which spirit?",
+  "o": [
+   "Dark rum",
+   "Gin",
+   "Cachaça",
+   "White rum"
+  ],
+  "a": 3,
+  "d": 3,
+  "r": "White rum, muddled with mint, lime and sugar, lengthened with soda."
+ },
+ {
+  "id": "q005",
+  "q": "What does IMFL stand for on Indian liquor labels?",
+  "o": [
+   "Indian Ministry of Food and Liquor",
+   "Indian-Made Foreign Liquor",
+   "Imported Malt and Fine Liquor",
+   "Indian Manufactured Fermented Liquor"
+  ],
+  "a": 1,
+  "d": 4,
+  "r": "Indian-Made Foreign Liquor: foreign-style spirits made in India. Foreign, made locally.",
+  "in": true,
+  "fun": true
+ },
+ {
+  "id": "q006",
+  "q": "Which two ingredients join gin in a classic Negroni?",
+  "o": [
+   "Cynar and sweet vermouth",
+   "Campari and dry vermouth",
+   "Campari and sweet vermouth",
+   "Aperol and dry vermouth"
+  ],
+  "a": 2,
+  "d": 4,
+  "r": "Equal parts gin, Campari and sweet vermouth."
+ },
+ {
+  "id": "q007",
+  "q": "Shikanji, the roadside cooler, is essentially which drink?",
+  "o": [
+   "Spiced buttermilk",
+   "Spiced Indian lemonade",
+   "Green mango cooler",
+   "Cumin-water cooler"
+  ],
+  "a": 1,
+  "d": 3,
+  "r": "Lemon, sugar, black salt and roasted cumin in cold water. Chaas is buttermilk, aam panna is raw mango, jal-jeera is cumin water.",
+  "in": true
+ },
+ {
+  "id": "q008",
+  "q": "Which Indian rum is nicknamed for a religious figure?",
+  "o": [
+   "Hercules",
+   "McDowell's",
+   "Contessa",
+   "Old Monk"
+  ],
+  "a": 3,
+  "d": 3,
+  "r": "Old Monk. Hercules, McDowell's and Contessa are all real Indian rums, but only one is a monk.",
+  "in": true
+ },
+ {
+  "id": "q009",
+  "q": "An Espresso Martini contains which of these?",
+  "o": [
+   "Vodka, Irish cream and espresso",
+   "Rum, coffee liqueur and espresso",
+   "Vodka, coffee liqueur and espresso",
+   "Gin, coffee liqueur and espresso"
+  ],
+  "a": 2,
+  "d": 4,
+  "r": "Vodka, coffee liqueur, fresh espresso and sugar. Despite the name, no vermouth and no gin."
+ },
+ {
+  "id": "q010",
+  "q": "Aam panna, the summer cooler, is made from what?",
+  "o": [
+   "Tamarind",
+   "Kokum",
+   "Ripe alphonso mango",
+   "Raw green mango"
+  ],
+  "a": 3,
+  "d": 3,
+  "r": "Raw green mango, roasted and blended with cumin and black salt. Ripe mango makes a lassi or panha-style sweet drink, not panna.",
+  "in": true
+ },
+ {
+  "id": "q011",
+  "q": "Which country drinks the most whisky by volume?",
+  "o": [
+   "Scotland",
+   "India",
+   "United States",
+   "France"
+  ],
+  "a": 1,
+  "d": 4,
+  "r": "India, by a wide margin. Roughly one in two bottles of whisky sold worldwide is poured there.",
+  "in": true,
+  "fun": true
+ },
+ {
+  "id": "q012",
+  "q": "'Neat' means a spirit served how?",
+  "o": [
+   "Over a single large cube",
+   "Straight from the bottle, no ice, no chilling",
+   "Chilled and strained, no ice",
+   "With a splash of water"
+  ],
+  "a": 1,
+  "d": 4,
+  "r": "Neat is room temperature and undiluted. 'Up' is chilled and strained; 'on the rocks' is over ice."
+ },
+ {
+  "id": "q013",
+  "q": "Which of these is NOT an Indian spirit or drink?",
+  "o": [
+   "Arrack",
+   "Mahua",
+   "Feni",
+   "Pisco"
+  ],
+  "a": 3,
+  "d": 4,
+  "r": "Pisco is Peruvian and Chilean. Feni, mahua and arrack are all South Asian.",
+  "in": true
+ },
+ {
+  "id": "q014",
+  "q": "A Piña Colada blends rum with which two?",
+  "o": [
+   "Pineapple and coconut",
+   "Mango and coconut",
+   "Pineapple and lime",
+   "Passionfruit and coconut"
+  ],
+  "a": 0,
+  "d": 3,
+  "r": "Rum, pineapple juice and coconut cream. It's Puerto Rico's national drink."
+ },
+ {
+  "id": "q015",
+  "q": "In Indian bar slang, a 'chota peg' is what?",
+  "o": [
+   "A shared bottle",
+   "A small measure of spirit",
+   "A large measure of spirit",
+   "A beer chaser"
+  ],
+  "a": 1,
+  "d": 4,
+  "r": "Chota is small, burra is large. The vocabulary marched in with the British army.",
+  "in": true,
+  "fun": true
+ },
+ {
+  "id": "q016",
+  "q": "Which glass is traditionally used for an Old Fashioned?",
+  "o": [
+   "Rocks glass",
+   "Highball",
+   "Martini glass",
+   "Coupe"
+  ],
+  "a": 0,
+  "d": 3,
+  "r": "A short, heavy-bottomed rocks glass, built over a large cube."
+ },
+ {
+  "id": "q017",
+  "q": "Toddy, the palm-sap drink, gets its English name from which Indian word?",
+  "o": [
+   "Toda",
+   "Tari",
+   "Tadka",
+   "Tandi"
+  ],
+  "a": 1,
+  "d": 5,
+  "r": "From the Hindi tari, the sap of the palm tree. British sailors borrowed it for their hot whisky cure.",
+  "in": true,
+  "fun": true
+ },
+ {
+  "id": "q018",
+  "q": "What is the primary flavour of gin?",
+  "o": [
+   "Anise",
+   "Angelica",
+   "Coriander",
+   "Juniper"
+  ],
+  "a": 3,
+  "d": 3,
+  "r": "Juniper, by law. Coriander and angelica are common supporting botanicals, but juniper must lead."
+ },
+ {
+  "id": "q019",
+  "q": "Somaek, the Korean bomb shot, mixes soju with what?",
+  "o": [
+   "An energy drink",
+   "Sake",
+   "Whisky",
+   "Beer"
+  ],
+  "a": 3,
+  "d": 4,
+  "r": "Soju plus maekju (beer). The name is a mash-up of both words."
+ },
+ {
+  "id": "q020",
+  "q": "Which Indian city is known as the country's craft-beer and pub capital?",
+  "o": [
+   "Pune",
+   "Bengaluru",
+   "Gurugram",
+   "Mumbai"
+  ],
+  "a": 1,
+  "d": 4,
+  "r": "Bengaluru earned it in the draught-beer boom of the 1980s and now has the most microbreweries.",
+  "in": true,
+  "fun": true
+ },
+ {
+  "id": "q021",
+  "q": "A Daiquiri in its classic form is which three things?",
+  "o": [
+   "Rum, lemon, sugar",
+   "Rum, lime, sugar",
+   "Rum, lime, mint",
+   "Rum, lime, soda"
+  ],
+  "a": 1,
+  "d": 4,
+  "r": "Just rum, lime juice and sugar, shaken hard. Add mint and soda and you're heading toward a Mojito."
+ },
+ {
+  "id": "q022",
+  "q": "Kokum, used in Konkan coolers, is what kind of ingredient?",
+  "o": [
+   "A flower",
+   "A root",
+   "A seed spice",
+   "A sour fruit"
+  ],
+  "a": 3,
+  "d": 5,
+  "r": "A sour, deep-magenta coastal fruit. It also makes solkadhi with coconut milk.",
+  "in": true
+ },
+ {
+  "id": "q023",
+  "q": "Which of these is a fortified wine?",
+  "o": [
+   "Vermouth",
+   "Cava",
+   "Prosecco",
+   "Riesling"
+  ],
+  "a": 0,
+  "d": 4,
+  "r": "Vermouth is wine fortified with spirit and infused with botanicals. The others are still or sparkling wines."
+ },
+ {
+  "id": "q024",
+  "q": "Nashik, in Maharashtra, is India's capital of what?",
+  "o": [
+   "Wine",
+   "Rum",
+   "Whisky",
+   "Beer"
+  ],
+  "a": 0,
+  "d": 4,
+  "r": "Wine. Vineyards along the Godavari supply most of India's wine.",
+  "in": true,
+  "fun": true
+ },
+ {
+  "id": "q025",
+  "q": "What does 'on the rocks' mean?",
+  "o": [
+   "Served in a frozen glass",
+   "Served chilled without ice",
+   "Served over ice",
+   "Served with a water splash"
+  ],
+  "a": 2,
+  "d": 3,
+  "r": "Poured over ice. Simple as that."
+ },
+ {
+  "id": "q026",
+  "q": "Bhang, traditionally drunk at Holi, is stirred into which drink?",
+  "o": [
+   "Lassi only",
+   "Thandai",
+   "Chaas",
+   "Jal-jeera"
+  ],
+  "a": 1,
+  "d": 5,
+  "r": "Thandai, the almond-rose milk. It's sold at government-licensed shops in cities like Varanasi.",
+  "in": true,
+  "fun": true
+ },
+ {
+  "id": "q027",
+  "q": "A Bloody Mary's base spirit is which?",
+  "o": [
+   "Whisky",
+   "Tequila",
+   "Gin",
+   "Vodka"
+  ],
+  "a": 3,
+  "d": 3,
+  "r": "Vodka with tomato juice and spices. Made with gin it becomes a Red Snapper."
+ },
+ {
+  "id": "q028",
+  "q": "Which Indian state has been dry since 1960?",
+  "o": [
+   "Gujarat",
+   "Nagaland",
+   "Bihar",
+   "Mizoram"
+  ],
+  "a": 0,
+  "d": 5,
+  "r": "Gujarat, since 1960. Bihar, Mizoram and Nagaland introduced prohibition much later.",
+  "in": true,
+  "fun": true
+ },
+ {
+  "id": "q029",
+  "q": "What is a 'mocktail'?",
+  "o": [
+   "A cocktail served hot",
+   "A cocktail with no alcohol",
+   "A half-measure cocktail",
+   "A cheap imitation spirit"
+  ],
+  "a": 1,
+  "d": 3,
+  "r": "A cocktail without alcohol. Bartenders also call them zero-proof drinks."
+ },
+ {
+  "id": "q030",
+  "q": "Amrut, India's first single malt whisky, is distilled in which city?",
+  "o": [
+   "Bengaluru",
+   "Kasauli",
+   "Nashik",
+   "Goa"
+  ],
+  "a": 0,
+  "d": 6,
+  "r": "Bengaluru. It launched in Glasgow in 2004 to prove Indian malt could compete.",
+  "in": true,
+  "fun": true
+ },
+ {
+  "id": "q031",
+  "q": "Which of these is the odd one out as a cocktail base?",
+  "o": [
+   "Angostura",
+   "Bourbon",
+   "Genever",
+   "Cachaça"
+  ],
+  "a": 0,
+  "d": 5,
+  "r": "Angostura is bitters, dosed by the dash. The rest are base spirits."
+ },
+ {
+  "id": "q032",
+  "q": "Masala chaas is spiced what?",
+  "o": [
+   "Coconut water",
+   "Buttermilk",
+   "Tea",
+   "Lemonade"
+  ],
+  "a": 1,
+  "d": 3,
+  "r": "Thinned yogurt (buttermilk) with cumin, black salt and mint, drunk after lunch across India.",
+  "in": true
+ },
+ {
+  "id": "q033",
+  "q": "The Mai Tai belongs to which drinking style?",
+  "o": [
+   "Tiki",
+   "Aperitivo",
+   "Highball",
+   "Sour"
+  ],
+  "a": 0,
+  "d": 4,
+  "r": "Tiki, the Polynesian-themed style invented in 1930s California. Trader Vic and Don the Beachcomber both claimed it."
+ },
+ {
+  "id": "q034",
+  "q": "Sula, Grover and Fratelli are Indian producers of what?",
+  "o": [
+   "Gin",
+   "Rum",
+   "Whisky",
+   "Wine"
+  ],
+  "a": 3,
+  "d": 5,
+  "r": "Wine. All three helped build India's modern wine industry.",
+  "in": true
+ },
+ {
+  "id": "q035",
+  "q": "What does 'ABV' measure?",
+  "o": [
+   "Aged barrel vintage",
+   "Aroma balance value",
+   "Alcohol by weight",
+   "Alcohol by volume"
+  ],
+  "a": 3,
+  "d": 3,
+  "r": "Alcohol by volume, as a percentage. Proof, in the US system, is double the ABV."
+ },
+ {
+  "id": "q036",
+  "q": "A Cuba Libre is rum, cola and what?",
+  "o": [
+   "Mint",
+   "Lemon",
+   "Orange",
+   "Lime"
+  ],
+  "a": 3,
+  "d": 4,
+  "r": "A squeeze of lime is what separates a Cuba Libre from a plain rum and coke."
+ },
+ {
+  "id": "q037",
+  "q": "Tongba, drunk through a bamboo straw, is brewed from which grain?",
+  "o": [
+   "Rice",
+   "Barley",
+   "Maize",
+   "Millet"
+  ],
+  "a": 3,
+  "d": 6,
+  "r": "Millet, in the Eastern Himalayas, topped up with hot water as the evening goes on.",
+  "in": true,
+  "fun": true
+ },
+ {
+  "id": "q038",
+  "q": "Which cocktail is traditionally served in a copper mug?",
+  "o": [
+   "Moscow Mule",
+   "Mint Julep",
+   "Paloma",
+   "Dark 'n' Stormy"
+  ],
+  "a": 0,
+  "d": 4,
+  "r": "The Moscow Mule. The Mint Julep uses a silver or pewter cup."
+ },
+ {
+  "id": "q039",
+  "q": "Solkadhi, the pink Konkan digestif, combines kokum with what?",
+  "o": [
+   "Buttermilk",
+   "Tamarind water",
+   "Coconut milk",
+   "Lime soda"
+  ],
+  "a": 2,
+  "d": 6,
+  "r": "Coconut milk, poured after fish curries the way other coasts pour digestifs.",
+  "in": true,
+  "fun": true
+ },
+ {
+  "id": "q040",
+  "q": "Which is a rum-based classic?",
+  "o": [
+   "Boulevardier",
+   "Sidecar",
+   "Vesper",
+   "Dark 'n' Stormy"
+  ],
+  "a": 3,
+  "d": 5,
+  "r": "Dark 'n' Stormy is dark rum with ginger beer. Sidecar is brandy, Vesper gin and vodka, Boulevardier whiskey."
+ },
+ {
+  "id": "q041",
+  "q": "Sake is produced by which process?",
+  "o": [
+   "Fortifying, like port",
+   "Infusing, like gin",
+   "Distilling, like whisky",
+   "Brewing, like beer"
+  ],
+  "a": 3,
+  "d": 5,
+  "r": "Sake is brewed from rice, so it's technically closer to beer. Soju and shochu are the distilled cousins."
+ },
+ {
+  "id": "q042",
+  "q": "Which Indian drink is described as 'cumin water'?",
+  "o": [
+   "Shikanji",
+   "Chaas",
+   "Jal-jeera",
+   "Aam panna"
+  ],
+  "a": 2,
+  "d": 5,
+  "r": "Jal-jeera: jal is water, jeera is cumin. Sharp, smoky and savoury.",
+  "in": true
+ },
+ {
+  "id": "q043",
+  "q": "The Aperol Spritz is topped with which wine?",
+  "o": [
+   "Prosecco",
+   "Cava",
+   "Moscato",
+   "Champagne"
+  ],
+  "a": 0,
+  "d": 4,
+  "r": "Prosecco, with soda and Aperol, over lots of ice in a big glass."
+ },
+ {
+  "id": "q044",
+  "q": "Which is India's largest-selling category of spirits?",
+  "o": [
+   "Brandy",
+   "Rum",
+   "Whisky",
+   "Vodka"
+  ],
+  "a": 2,
+  "d": 5,
+  "r": "Whisky, overwhelmingly. Brandy leads in some southern states, but whisky dominates nationally.",
+  "in": true
+ },
+ {
+  "id": "q045",
+  "q": "Angostura bitters is best known for its oversized what?",
+  "o": [
+   "Cork",
+   "Bottle",
+   "Label",
+   "Dasher cap"
+  ],
+  "a": 2,
+  "d": 5,
+  "r": "Its label, famously too big for the bottle. Legend says one brother ordered bottles and the other labels.",
+  "fun": true
+ },
+ {
+  "id": "q046",
+  "q": "A 'shot' in most bars is closest to which measure?",
+  "o": [
+   "30–60 ml",
+   "75–90 ml",
+   "10–15 ml",
+   "100–120 ml"
+  ],
+  "a": 0,
+  "d": 4,
+  "r": "Roughly 30–60 ml depending on the country. A barspoon is about 5 ml."
+ },
+ {
+  "id": "q047",
+  "q": "Which Indian spirit is distilled from cashew or coconut?",
+  "o": [
+   "Toddy",
+   "Feni",
+   "Mahua",
+   "Arrack"
+  ],
+  "a": 1,
+  "d": 5,
+  "r": "Feni: cashew feni from the fruit, coconut feni from palm sap. Mahua comes from mahua flowers.",
+  "in": true
+ },
+ {
+  "id": "q048",
+  "q": "The Cosmopolitan is built on which spirit?",
+  "o": [
+   "Tequila",
+   "Gin",
+   "White rum",
+   "Vodka"
+  ],
+  "a": 3,
+  "d": 3,
+  "r": "Citrus vodka, triple sec, cranberry and lime."
+ },
+ {
+  "id": "q049",
+  "q": "Mahua liquor is distilled from what part of the plant?",
+  "o": [
+   "Bark",
+   "Seeds",
+   "Flowers",
+   "Roots"
+  ],
+  "a": 2,
+  "d": 6,
+  "r": "The sweet mahua blossoms. Banned as 'country liquor' under colonial rule, it's now being revived as a heritage spirit.",
+  "in": true,
+  "fun": true
+ },
+ {
+  "id": "q050",
+  "q": "Which cocktail family does the Whiskey Sour belong to?",
+  "o": [
+   "Highballs",
+   "Sours",
+   "Flips",
+   "Juleps"
+  ],
+  "a": 1,
+  "d": 4,
+  "r": "Sours: spirit, citrus and sweet. A flip adds a whole egg; a julep is spirit, sugar and mint over crushed ice."
+ },
+ {
+  "id": "q051",
+  "q": "What is India's Kasauli distillery famous for?",
+  "o": [
+   "Being among Asia's oldest working distilleries",
+   "Making the first Indian vodka",
+   "Being India's largest brewery",
+   "Producing only gin"
+  ],
+  "a": 0,
+  "d": 7,
+  "r": "It has been running in the Himalayan foothills since the 1820s, still using Victorian copper stills.",
+  "in": true,
+  "fun": true
+ },
+ {
+  "id": "q052",
+  "q": "The word 'punch' most likely comes from the Hindi 'panch', meaning what?",
+  "o": [
+   "Mix",
+   "Feast",
+   "Fist",
+   "Five"
+  ],
+  "a": 3,
+  "d": 6,
+  "r": "Five, for the drink's five parts: spirit, sugar, lemon, water and spice. It sailed to Europe with East India Company crews.",
+  "in": true,
+  "fun": true
+ },
+ {
+  "id": "q053",
+  "q": "The Gin & Tonic began life as what?",
+  "o": [
+   "Malaria medicine in colonial India",
+   "A naval scurvy ration",
+   "A Victorian digestive tonic",
+   "A London gin-house special"
+  ],
+  "a": 0,
+  "d": 6,
+  "r": "Officers drank bitter quinine tonic against malaria; the gin ration made it bearable.",
+  "in": true,
+  "fun": true
+ },
+ {
+  "id": "q054",
+  "q": "Which of these is NOT a genuine Old Fashioned variation?",
+  "o": [
+   "Oaxaca Old Fashioned made with prosecco",
+   "Benton's Old Fashioned with bacon-fat-washed bourbon",
+   "Rum Old Fashioned",
+   "Oaxaca Old Fashioned made with mezcal and tequila"
+  ],
+  "a": 0,
+  "d": 7,
+  "r": "The Oaxaca Old Fashioned uses reposado tequila and mezcal, never prosecco. The other three are all real, documented drinks."
+ },
+ {
+  "id": "q055",
+  "q": "A Patiala peg is named after a Maharaja of Patiala. What is it?",
+  "o": [
+   "A peg measured against a polo mallet",
+   "An extra-large pour of whisky",
+   "A whisky served with soda in a silver cup",
+   "A double shot chased with lassi"
+  ],
+  "a": 1,
+  "d": 7,
+  "r": "An oversized measure, attributed to Maharaja Bhupinder Singh, whose hospitality left visiting cricket teams unfit for the morning.",
+  "in": true,
+  "fun": true
+ },
+ {
+  "id": "q056",
+  "q": "India Pale Ale got its name from what?",
+  "o": [
+   "Being brewed for Indian royalty",
+   "The long sea voyage to India it had to survive",
+   "Being first brewed in India",
+   "Using Indian hops"
+  ],
+  "a": 1,
+  "d": 6,
+  "r": "Brewers hopped and strengthened the ale so it would survive the months-long sail to India. It was never brewed there.",
+  "in": true,
+  "fun": true
+ },
+ {
+  "id": "q057",
+  "q": "Why does the EU refuse to call most Indian 'whisky' whisky?",
+  "o": [
+   "It is usually distilled from molasses, not grain",
+   "It is aged for under a year",
+   "It is bottled below 40% ABV",
+   "It contains added colouring"
+  ],
+  "a": 0,
+  "d": 8,
+  "r": "Most IMFL whisky is molasses-based, so the EU classes it differently. A billion people call it whisky at the table anyway.",
+  "in": true,
+  "fun": true
+ },
+ {
+  "id": "q058",
+  "q": "The Negroni was reportedly created when Count Camillo Negroni asked for what?",
+  "o": [
+   "His Milano-Torino with more Campari",
+   "His Martini with Campari added",
+   "His Negroni Sbagliato without prosecco",
+   "His Americano made with gin instead of soda"
+  ],
+  "a": 3,
+  "d": 7,
+  "r": "He asked for the Americano stiffened with gin in place of soda water, in Florence around 1919."
+ },
+ {
+  "id": "q059",
+  "q": "What makes a Negroni 'Sbagliato'?",
+  "o": [
+   "Prosecco replaces the gin",
+   "It is served long over ice",
+   "Aperol replaces the Campari",
+   "Dry vermouth replaces the sweet"
+  ],
+  "a": 0,
+  "d": 7,
+  "r": "Sbagliato means 'mistaken': a Milanese bartender reached for sparkling wine instead of gin and kept it."
+ },
+ {
+  "id": "q060",
+  "q": "Urrak, available only for a few months a year, is which stage of feni?",
+  "o": [
+   "The first, lighter distillation",
+   "The unfermented cashew juice",
+   "The final, strongest distillation",
+   "A blend of cashew and coconut feni"
+  ],
+  "a": 0,
+  "d": 8,
+  "r": "Urrak is the light first distillation, available roughly March to May, and almost never leaves Goa.",
+  "in": true,
+  "fun": true
+ },
+ {
+  "id": "q061",
+  "q": "How did the cashew, source of Goan feni, reach India?",
+  "o": [
+   "It is native to the Western Ghats",
+   "Dutch traders brought it from Indonesia",
+   "The Portuguese brought it from Brazil",
+   "The British brought it from Africa"
+  ],
+  "a": 2,
+  "d": 8,
+  "r": "The Portuguese carried it from Brazil to Goa in the 1500s, which makes feni a four-hundred-year-old fusion drink.",
+  "in": true,
+  "fun": true
+ },
+ {
+  "id": "q062",
+  "q": "In a Martini, what does ordering it 'perfect' mean?",
+  "o": [
+   "Exactly measured, no free-pouring",
+   "Stirred exactly fifty times",
+   "Equal parts dry and sweet vermouth",
+   "Extra dry with a twist"
+  ],
+  "a": 2,
+  "d": 7,
+  "r": "Perfect splits the vermouth half dry, half sweet. Dry means less vermouth; dirty adds olive brine."
+ },
+ {
+  "id": "q063",
+  "q": "Which is the correct build for a classic Sazerac?",
+  "o": [
+   "Rye, sugar, Angostura bitters, vermouth rinse",
+   "Rye or cognac, sugar, Peychaud's bitters, absinthe rinse",
+   "Bourbon, sugar, absinthe, orange bitters",
+   "Cognac, lemon, Peychaud's bitters, soda"
+  ],
+  "a": 1,
+  "d": 8,
+  "r": "New Orleans' Sazerac: spirit, sugar, Peychaud's, and an absinthe rinse. Peychaud's is the signature, not Angostura."
+ },
+ {
+  "id": "q064",
+  "q": "Judima, which won a GI tag in 2021, is made by which community?",
+  "o": [
+   "The Lepcha of Sikkim",
+   "The Mising of Assam",
+   "The Dimasa of Assam",
+   "The Naga of Nagaland"
+  ],
+  "a": 2,
+  "d": 8,
+  "r": "The Dimasa people of Assam. It was the first traditional brew of the Northeast to get a GI tag.",
+  "in": true,
+  "fun": true
+ },
+ {
+  "id": "q065",
+  "q": "Why are Mumbai's older bars called 'permit rooms'?",
+  "o": [
+   "A 1949 law technically required drinkers to hold a permit",
+   "They were permitted to serve only IMFL",
+   "Only permit-holding clubs could serve foreigners",
+   "They needed a special licence to serve after midnight"
+  ],
+  "a": 0,
+  "d": 8,
+  "r": "The Bombay Prohibition Act of 1949 required a drinker's permit. The law faded; the name never left.",
+  "in": true,
+  "fun": true
+ },
+ {
+  "id": "q066",
+  "q": "Which statement about dilution in cocktails is correct?",
+  "o": [
+   "Dilution only matters for drinks served over ice",
+   "Dilution should be avoided entirely in quality cocktails",
+   "A properly shaken drink is 20–25% water from melted ice",
+   "Stirring adds more water than shaking"
+  ],
+  "a": 2,
+  "d": 7,
+  "r": "Melted ice is an ingredient. That water softens the alcohol and knits flavours; shaking dilutes more than stirring."
+ },
+ {
+  "id": "q067",
+  "q": "The Moscow Mule's copper mug originated as what?",
+  "o": [
+   "A bar-supply company's patented design",
+   "A traditional Russian drinking vessel",
+   "A 1941 marketing pact between three struggling sellers",
+   "A Prohibition-era way to hide the drink"
+  ],
+  "a": 2,
+  "d": 8,
+  "r": "A vodka importer, a ginger beer maker and a copper mug seller pooled unsold stock in 1941.",
+  "fun": true
+ },
+ {
+  "id": "q068",
+  "q": "Arrack, once southern India's everyday spirit, takes its name from an Arabic word meaning what?",
+  "o": [
+   "Palm",
+   "Sugar",
+   "Fire",
+   "Sweat"
+  ],
+  "a": 3,
+  "d": 8,
+  "r": "From araq, meaning sweat, for the condensation dripping off the still.",
+  "in": true,
+  "fun": true
+ },
+ {
+  "id": "q069",
+  "q": "Which is true of the Aviation cocktail?",
+  "o": [
+   "Its blue-violet tint comes from crème de violette",
+   "Its colour comes from blue curaçao",
+   "It is built, not shaken",
+   "It contains no citrus"
+  ],
+  "a": 0,
+  "d": 7,
+  "r": "Gin, maraschino, lemon and crème de violette, which gives the pale sky tint. It's shaken and strained."
+ },
+ {
+  "id": "q070",
+  "q": "Sharab, the Hindustani word for liquor, shares an Arabic root with which two English words?",
+  "o": [
+   "Sherry and sirocco",
+   "Syrup and sorbet",
+   "Sugar and saffron",
+   "Cider and sack"
+  ],
+  "a": 1,
+  "d": 9,
+  "r": "All from shariba, to drink. One verb, three very different evenings.",
+  "in": true,
+  "fun": true
+ },
+ {
+  "id": "q071",
+  "q": "What distinguishes a Collins from a Fizz?",
+  "o": [
+   "A Fizz is stirred, not shaken",
+   "A Collins contains egg white",
+   "A Fizz uses gin; a Collins uses whiskey",
+   "A Collins is served tall over ice; a Fizz is shaken, often with egg white, and served shorter"
+  ],
+  "a": 3,
+  "d": 8,
+  "r": "Both are sours lengthened with soda, but the Collins is tall over ice while the Fizz is shaken hard, often with egg white, and served without much ice."
+ },
+ {
+  "id": "q072",
+  "q": "Kerala's toddy shops, the kallu shaapus, are also famous for what?",
+  "o": [
+   "Their live music",
+   "Their sea views",
+   "Their imported spirits",
+   "Their fiery food"
+  ],
+  "a": 3,
+  "d": 7,
+  "r": "The kappa, karimeen and duck curries exist to keep pace with the toddy.",
+  "in": true,
+  "fun": true
+ },
+ {
+  "id": "q073",
+  "q": "Which is the correct order of the Sour template?",
+  "o": [
+   "3 parts spirit, 1 part citrus, 2 parts sweet",
+   "1 part spirit, 2 parts citrus, 1 part sweet",
+   "1 part spirit, 1 part citrus, 2 parts sweet",
+   "2 parts spirit, 1 part citrus, 1 part sweet"
+  ],
+  "a": 3,
+  "d": 6,
+  "r": "2:1:1 is the skeleton of the Daiquiri, Whiskey Sour, Margarita and Gimlet."
+ },
+ {
+  "id": "q074",
+  "q": "The Espresso Martini was created in 1980s London by which bartender?",
+  "o": [
+   "Salvatore Calabrese",
+   "Ada Coleman",
+   "Dick Bradsell",
+   "Harry Craddock"
+  ],
+  "a": 2,
+  "d": 8,
+  "r": "Dick Bradsell, reportedly for a model who asked for something to wake her up, then mess her up.",
+  "fun": true
+ },
+ {
+  "id": "q075",
+  "q": "Amrut's name comes from amrit, which in Hindu legend is what?",
+  "o": [
+   "The first offering to Indra",
+   "The river of the gods",
+   "The nectar of immortality",
+   "The sacred fire"
+  ],
+  "a": 2,
+  "d": 7,
+  "r": "The nectar of immortality, churned from the ocean. A drinkable pun with scripture behind it.",
+  "in": true,
+  "fun": true
+ },
+ {
+  "id": "q076",
+  "q": "Which claim about the Bloody Mary is accurate?",
+  "o": [
+   "It was named for Queen Mary I by her own bartender",
+   "It was created in London during the Blitz",
+   "It was invented at New York's St. Regis and renamed in Paris",
+   "It was first mixed in 1920s Paris and renamed Red Snapper at New York's St. Regis"
+  ],
+  "a": 3,
+  "d": 8,
+  "r": "Harry's New York Bar in Paris in the 1920s; the St. Regis later adopted it and politely renamed it."
+ },
+ {
+  "id": "q077",
+  "q": "Sekmai yu, a distilled rice liquor, is named after what?",
+  "o": [
+   "The village that makes it",
+   "The Manipuri word for strong",
+   "The festival it is drunk at",
+   "The clay pot it ferments in"
+  ],
+  "a": 0,
+  "d": 9,
+  "r": "Sekmai, a village in Manipur so associated with the drink that its name became the drink's.",
+  "in": true,
+  "fun": true
+ },
+ {
+  "id": "q078",
+  "q": "What is the correct role of a 'rinse' in cocktail making?",
+  "o": [
+   "Coating the glass with a strong ingredient, then pouring off the excess",
+   "Rinsing the shaker between drinks",
+   "Diluting a spirit with water before serving",
+   "Washing the citrus before peeling"
+  ],
+  "a": 0,
+  "d": 7,
+  "r": "A few millilitres of absinthe or smoky whisky coats the glass for aroma without weight."
+ },
+ {
+  "id": "q079",
+  "q": "Which is India's oldest surviving beer brand, brewed at Solan since the 1850s?",
+  "o": [
+   "Haywards",
+   "Godfather",
+   "Kingfisher",
+   "Lion"
+  ],
+  "a": 3,
+  "d": 9,
+  "r": "Lion, brewed in the Himalayan foothills at Solan, is considered Asia's oldest surviving beer brand.",
+  "in": true,
+  "fun": true
+ },
+ {
+  "id": "q080",
+  "q": "In cocktail terms, what does 'expressing' a citrus twist mean?",
+  "o": [
+   "Snapping the peel to mist its oils over the drink",
+   "Squeezing the juice into the drink",
+   "Rubbing the peel around the rim only",
+   "Twisting the peel into a spiral garnish"
+  ],
+  "a": 0,
+  "d": 7,
+  "r": "Snap the peel skin-side down over the surface to mist aromatic oils. It's seasoning, not decoration."
+ },
+ {
+  "id": "q081",
+  "q": "Kanji, the deep-purple Holi-week drink, is fermented from what?",
+  "o": [
+   "Black carrots and mustard seeds",
+   "Black grapes and jaggery",
+   "Jamun and black salt",
+   "Purple yam and rice"
+  ],
+  "a": 0,
+  "d": 8,
+  "r": "Black carrots and mustard seeds left to ferment in the winter sun: North India's homemade kombucha.",
+  "in": true,
+  "fun": true
+ },
+ {
+  "id": "q082",
+  "q": "What is the difference between shochu and soju?",
+  "o": [
+   "Shochu is stronger by law",
+   "Shochu is rice-only, soju is never rice",
+   "Shochu is Japanese, soju is Korean",
+   "Shochu is brewed, soju is distilled"
+  ],
+  "a": 2,
+  "d": 7,
+  "r": "Both are distilled East Asian spirits: shochu from Japan, soju from Korea."
+ },
+ {
+  "id": "q083",
+  "q": "The Indian Army's rum ration is traditionally which style?",
+  "o": [
+   "Navy-strength rum",
+   "Dark XXX rum",
+   "White overproof rum",
+   "Spiced golden rum"
+  ],
+  "a": 1,
+  "d": 8,
+  "r": "Dark XXX rum has warmed high-altitude postings for decades, and Old Monk built its legend in those canteens.",
+  "in": true,
+  "fun": true
+ },
+ {
+  "id": "q084",
+  "q": "Which is true of the Paper Plane, a modern classic from 2008?",
+  "o": [
+   "It contains no citrus",
+   "It is stirred and served up with no garnish",
+   "It is equal parts bourbon, Aperol, amaro and lemon",
+   "It is equal parts gin, Aperol, amaro and lime"
+  ],
+  "a": 2,
+  "d": 8,
+  "r": "Equal parts bourbon, Aperol, Amaro Nonino and lemon juice. Named after the M.I.A. song."
+ },
+ {
+  "id": "q085",
+  "q": "Why was the sherry cobbler historically important?",
+  "o": [
+   "It introduced sherry to America",
+   "It was the first drink served over crushed ice",
+   "It popularised the drinking straw",
+   "It was the first cocktail sold in bottles"
+  ],
+  "a": 2,
+  "d": 8,
+  "r": "The most fashionable drink of the 1800s, and it single-handedly popularised the straw.",
+  "fun": true
+ },
+ {
+  "id": "q086",
+  "q": "Neera and toddy are the same palm sap at different stages. What separates them?",
+  "o": [
+   "The palm species used",
+   "Distillation: toddy is distilled, neera is not",
+   "The time of year they are tapped",
+   "Fermentation: neera is fresh and sweet, toddy has fermented"
+  ],
+  "a": 3,
+  "d": 8,
+  "r": "Morning sap drinks sweet as neera; by evening it has fermented into toddy on its own.",
+  "in": true,
+  "fun": true
+ },
+ {
+  "id": "q087",
+  "q": "Which spirit is the base of a Pisco Sour?",
+  "o": [
+   "A Bolivian corn spirit",
+   "A Peruvian sugarcane spirit",
+   "Pisco, a South American grape brandy",
+   "A Chilean agave spirit"
+  ],
+  "a": 2,
+  "d": 6,
+  "r": "Pisco is a grape brandy from Peru and Chile, shaken with lime, sugar and egg white."
+ },
+ {
+  "id": "q088",
+  "q": "Handia, brewed by Adivasi communities of eastern India, is what?",
+  "o": [
+   "A fermented palm drink",
+   "A distilled millet spirit",
+   "A rice beer fermented with herbal starter tablets",
+   "A mahua-flower liqueur"
+  ],
+  "a": 2,
+  "d": 9,
+  "r": "Rice beer fermented with herbal ranu tablets, offered to guests and gods alike.",
+  "in": true,
+  "fun": true
+ },
+ {
+  "id": "q089",
+  "q": "What is a 'dry shake' for?",
+  "o": [
+   "Whipping egg white or aquafaba into foam before shaking with ice",
+   "Chilling the shaker before use",
+   "Shaking with only crushed ice",
+   "Shaking without spirits to test balance"
+  ],
+  "a": 0,
+  "d": 7,
+  "r": "Shake once without ice to build foam, then again with ice to chill. That's how sours get their dense white crown."
+ },
+ {
+  "id": "q090",
+  "q": "Which best describes the Highball ratio?",
+  "o": [
+   "1 part spirit to 5 parts mixer, no ice",
+   "2 parts spirit to 1 part mixer, stirred",
+   "1 part spirit to 1 part mixer, shaken",
+   "1 part spirit to 2–3 parts cold mixer, built over plenty of ice"
+  ],
+  "a": 3,
+  "d": 6,
+  "r": "Precision matters more than it looks: flat, warm or over-poured highballs fail."
+ },
+ {
+  "id": "q091",
+  "q": "In the Northeast, zutho and apong are both what?",
+  "o": [
+   "Herbal liqueurs from Sikkim",
+   "Rice brews, Naga and Mising respectively",
+   "Millet spirits, Naga and Mising respectively",
+   "Palm wines from Assam"
+  ],
+  "a": 1,
+  "d": 9,
+  "r": "Rice becomes zutho for the Nagas and apong for the Mising of Assam, each with hereditary starter cakes.",
+  "in": true,
+  "fun": true
+ },
+ {
+  "id": "q092",
+  "q": "Which is true of vermouth once opened?",
+  "o": [
+   "It keeps indefinitely like a spirit",
+   "It should be refrigerated and used within about a month",
+   "It must be frozen to stop oxidation",
+   "It improves with air exposure"
+  ],
+  "a": 1,
+  "d": 6,
+  "r": "It's wine. Refrigerate it and use it up; a dusty room-temperature bottle ruins Martinis."
+ },
+ {
+  "id": "q093",
+  "q": "Rajasthan's royal houses were known for distilling what?",
+  "o": [
+   "Palm toddy for the court",
+   "Fortified desert wines",
+   "Heritage liqueurs of saffron, dates and dry fruits",
+   "India's first single malts"
+  ],
+  "a": 2,
+  "d": 9,
+  "r": "Recipes like kesar kasturi, with saffron, dates, dry fruits and dozens of spices, survived the palaces and are bottled again today.",
+  "in": true,
+  "fun": true
+ },
+ {
+  "id": "q094",
+  "q": "Why is 'Old Fashioned' a retronym?",
+  "o": [
+   "It was the oldest drink in the first cocktail book",
+   "It was renamed after Prohibition ended",
+   "1880s drinkers asked for their whiskey cocktail made 'the old-fashioned way'",
+   "It referred to old-fashioned glassware, not the drink"
+  ],
+  "a": 2,
+  "d": 8,
+  "r": "Tired of newfangled liqueurs and garnishes, drinkers asked for it made the old-fashioned way, and the name stuck.",
+  "fun": true
+ },
+ {
+  "id": "q095",
+  "q": "Irish Coffee was invented where?",
+  "o": [
+   "San Francisco's Buena Vista Cafe",
+   "A Belfast railway hotel",
+   "Foynes flying-boat terminal in Ireland",
+   "A Dublin hotel bar"
+  ],
+  "a": 2,
+  "d": 8,
+  "r": "Invented at Foynes in the 1940s to thaw transatlantic passengers, then perfected at the Buena Vista in San Francisco.",
+  "fun": true
+ },
+ {
+  "id": "q096",
+  "q": "Coorg is known for a distinctive household drinking tradition. What is it?",
+  "o": [
+   "Brewing millet beer",
+   "Distilling rice spirit at home",
+   "Homemade wines from coffee, ginger and gooseberry",
+   "Palm toddy tapping"
+  ],
+  "a": 2,
+  "d": 9,
+  "r": "Homemade wine is a household art there, and weddings are judged partly on the house pour.",
+  "in": true,
+  "fun": true
+ },
+ {
+  "id": "q097",
+  "q": "What does 'GI tag' mean for a drink like feni or Judima?",
+  "o": [
+   "Government Inspected: a quality certification",
+   "Global Index: an export classification",
+   "Grain Identified: a labelling rule for the base ingredient",
+   "Geographical Indication: only producers from that place may use the name"
+  ],
+  "a": 3,
+  "d": 7,
+  "r": "Geographical Indication, the same protection Champagne enjoys.",
+  "in": true
+ },
+ {
+  "id": "q098",
+  "q": "The palm civet's nickname 'toddy cat' comes from what?",
+  "o": [
+   "It raids the sap pots tied under palm blossoms",
+   "It was kept as a pet in toddy shops",
+   "Its call sounds like a tapper's whistle",
+   "It sleeps in toddy shops"
+  ],
+  "a": 0,
+  "d": 9,
+  "r": "It raids the collection pots toddy tappers tie under palm blossoms, and has a taste for the fermented ones.",
+  "in": true,
+  "fun": true
+ },
+ {
+  "id": "q099",
+  "q": "Which is the correct distinction between bitters and amari?",
+  "o": [
+   "Bitters are dosed by the dash; amari are sipped or poured in measures",
+   "Bitters are always Italian; amari are not",
+   "Amari are non-alcoholic; bitters are not",
+   "Bitters are sweeter than amari"
+  ],
+  "a": 0,
+  "d": 7,
+  "r": "Bitters are intense tinctures used as seasoning; amari are bitter liqueurs consumed in real measures."
+ },
+ {
+  "id": "q100",
+  "q": "Goa's port-style fortified wines are a legacy of what?",
+  "o": [
+   "Dutch spice-route settlements",
+   "Roman-era trade with Kerala",
+   "Four and a half centuries of Portuguese rule",
+   "British colonial trade"
+  ],
+  "a": 2,
+  "d": 8,
+  "r": "No Goan susegad lunch is complete without a small glass of it.",
+  "in": true,
+  "fun": true
+ },
+ {
+  "id": "q101",
+  "q": "What is the difference between a strain and a double strain?",
+  "o": [
+   "A double strain adds a fine mesh to catch pulp and ice shards",
+   "A double strain means straining twice into two glasses",
+   "A double strain uses two Hawthorne strainers",
+   "A double strain is straining before and after chilling"
+  ],
+  "a": 0,
+  "d": 7,
+  "r": "Add a fine mesh strainer over the glass when pulp, herb flecks or ice shards would spoil a stemmed drink."
+ },
+ {
+  "id": "q102",
+  "q": "Terracotta stills found in the Gandhara region suggest distillation in South Asia dates back how far?",
+  "o": [
+   "Around two thousand years",
+   "Around three hundred years",
+   "Around five thousand years",
+   "Around five hundred years"
+  ],
+  "a": 0,
+  "d": 9,
+  "r": "Roughly two thousand years, among the earliest evidence of distillation anywhere.",
+  "in": true,
+  "fun": true
+ },
+ {
+  "id": "q103",
+  "q": "The Singapore Sling was created at which hotel?",
+  "o": [
+   "Peninsula",
+   "Fullerton",
+   "Oriental",
+   "Raffles"
+  ],
+  "a": 3,
+  "d": 7,
+  "r": "The Long Bar at Raffles, around 1915, where sweeping peanut shells onto the floor is still encouraged.",
+  "fun": true
+ },
+ {
+  "id": "q104",
+  "q": "India's craft gin wave of the late 2010s rose mainly out of which state?",
+  "o": [
+   "Rajasthan",
+   "Karnataka",
+   "Goa",
+   "Maharashtra"
+  ],
+  "a": 2,
+  "d": 7,
+  "r": "Goa, distilled with local botanicals like gondhoraj lime, Himalayan juniper and curry leaf.",
+  "in": true,
+  "fun": true
+ },
+ {
+  "id": "q105",
+  "q": "What does 'susegad', often linked to Goan drinking culture, mean?",
+  "o": [
+   "A strong measure",
+   "A festive toast",
+   "A shared bottle",
+   "A relaxed, unhurried contentment"
+  ],
+  "a": 3,
+  "d": 8,
+  "r": "From the Portuguese sossegado: a relaxed, unhurried contentment. It's a way of drinking as much as a mood.",
+  "in": true,
+  "fun": true
+ },
+ {
+  "id": "q106",
+  "q": "Gondhoraj lebu, prized in modern Indian cocktails, is associated with which region?",
+  "o": [
+   "Bengal",
+   "Gujarat",
+   "Kerala",
+   "Punjab"
+  ],
+  "a": 0,
+  "d": 8,
+  "r": "Kolkata's beloved gondhoraj lime turned the gimlet into a modern Indian bar classic.",
+  "in": true,
+  "fun": true
+ },
+ {
+  "id": "q107",
+  "q": "Which cocktail is officially recognised as Puerto Rico's national drink?",
+  "o": [
+   "Mojito",
+   "Daiquiri",
+   "Piña Colada",
+   "Cuba Libre"
+  ],
+  "a": 2,
+  "d": 6,
+  "r": "The Piña Colada. Two San Juan bars have argued for decades over which blended the first."
+ },
+ {
+  "id": "q108",
+  "q": "Frederic Tudor, the 'Ice King', made cold drinks fashionable by doing what?",
+  "o": [
+   "Importing Arctic ice to London",
+   "Building the first commercial freezer",
+   "Shipping New England lake ice to the tropics in the 1830s",
+   "Inventing the first ice machine"
+  ],
+  "a": 2,
+  "d": 8,
+  "r": "He shipped Boston lake ice to the tropics, and iced drinks became a flex of empire.",
+  "fun": true
+ },
+ {
+  "id": "q109",
+  "q": "American Prohibition had which lasting effect on cocktails worldwide?",
+  "o": [
+   "It made gin illegal in Britain too",
+   "It ended the cocktail as a category",
+   "It created the first cocktail books",
+   "It exported bartenders and the golden age of mixing to Europe and Havana"
+  ],
+  "a": 3,
+  "d": 7,
+  "r": "Out-of-work bartenders sailed for London, Paris and Havana, taking the craft with them.",
+  "fun": true
+ },
+ {
+  "id": "q110",
+  "q": "Vermouth takes its name from Wermut, the German word for what?",
+  "o": [
+   "Wormwood",
+   "Vine",
+   "Warmth",
+   "Bitterness"
+  ],
+  "a": 0,
+  "d": 7,
+  "r": "Wormwood, the bittering herb in its earliest recipes.",
+  "fun": true
+ },
+ {
+  "id": "q111",
+  "q": "Jägermeister's name translates as what?",
+  "o": [
+   "Forest keeper",
+   "Hunt master",
+   "Master brewer",
+   "Wild spirit"
+  ],
+  "a": 1,
+  "d": 6,
+  "r": "Hunt master. The glowing stag honours the patron saints of hunters; the 56-botanical recipe dates to 1934.",
+  "fun": true
+ },
+ {
+  "id": "q112",
+  "q": "Ernest Hemingway's Daiquiri at El Floridita, the 'Papa Doble', was distinctive how?",
+  "o": [
+   "Doubled and sugar-free",
+   "Served frozen with mint",
+   "Served with three limes",
+   "Made with dark rum only"
+  ],
+  "a": 0,
+  "d": 8,
+  "r": "Double rum, no sugar. The bar still serves it in his honour.",
+  "fun": true
+ },
+ {
+  "id": "q113",
+  "q": "Which is the correct definition of 'proof' in the US system?",
+  "o": [
+   "The same as the ABV percentage",
+   "Half the ABV percentage",
+   "Double the ABV percentage",
+   "ABV plus ten"
+  ],
+  "a": 2,
+  "d": 5,
+  "r": "80 proof equals 40% ABV."
+ },
+ {
+  "id": "q114",
+  "q": "What is the traditional purpose of a 'toast'?",
+  "o": [
+   "Spiced toasted bread was floated in communal wine to season it",
+   "Toasting glasses to check for cracks",
+   "Warming the wine with hot bread",
+   "A bread offering before drinking"
+  ],
+  "a": 0,
+  "d": 8,
+  "r": "The guest honoured by the custom 'got the toast'. The word outlived the bread.",
+  "fun": true
+ },
+ {
+  "id": "q115",
+  "q": "'Happy hour' began as slang in which context?",
+  "o": [
+   "Speakeasy discount pricing",
+   "Hotel bar promotions in the 1950s",
+   "London pub closing time",
+   "The US Navy's scheduled entertainment period"
+  ],
+  "a": 3,
+  "d": 8,
+  "r": "US Navy slang from the 1910s for a ship's entertainment period. The drinking sense came ashore during Prohibition.",
+  "fun": true
+ },
+ {
+  "id": "q116",
+  "q": "How did the Martini change over the last century?",
+  "o": [
+   "It got drier: Victorian versions used equal parts gin and sweet vermouth",
+   "It gained bitters that were never there originally",
+   "It got sweeter over time",
+   "It switched from vodka to gin"
+  ],
+  "a": 0,
+  "d": 7,
+  "r": "Victorian recipes used equal parts gin and sweet vermouth, plus bitters. It dried out over a century.",
+  "fun": true
+ },
+ {
+  "id": "q117",
+  "q": "Cachaça differs from rum how?",
+  "o": [
+   "It must be aged in oak for three years",
+   "It is distilled from fresh sugarcane juice, not molasses",
+   "It is distilled from corn",
+   "It is a fortified wine"
+  ],
+  "a": 1,
+  "d": 7,
+  "r": "Fresh-pressed cane juice, and Brazil was distilling it decades before the Caribbean got its first stills."
+ },
+ {
+  "id": "q118",
+  "q": "The Margarita's name means 'daisy' in Spanish. Why does that matter?",
+  "o": [
+   "The tequila Daisy appears in print decades before the Margarita origin legends",
+   "It was named after a flower farm",
+   "The glass was called a daisy glass",
+   "Daisies were used as the original garnish"
+  ],
+  "a": 0,
+  "d": 9,
+  "r": "The Daisy was an established drink family, and the tequila Daisy predates the half-dozen Margarita origin stories bartenders still argue about.",
+  "fun": true
+ },
+ {
+  "id": "q119",
+  "q": "Which is true about ice clarity?",
+  "o": [
+   "Cloudiness comes from mineral content only",
+   "Cloudy ice melts more slowly",
+   "Clear ice is colder than cloudy ice",
+   "Cloudiness is trapped air and impurities; directional freezing gives clear ice"
+  ],
+  "a": 3,
+  "d": 7,
+  "r": "Directional freezing pushes air and impurities out, giving clear, slow ice."
+ },
+ {
+  "id": "q120",
+  "q": "Tiki as a bar style was invented where?",
+  "o": [
+   "1930s California",
+   "1940s Cuba",
+   "1920s Tahiti",
+   "1950s Hawaii"
+  ],
+  "a": 0,
+  "d": 7,
+  "r": "Don the Beachcomber opened in 1934 in California; Trader Vic followed, and the two feuded for decades.",
+  "fun": true
+ },
+ {
+  "id": "q121",
+  "q": "Which best describes 'sura' in Indian history?",
+  "o": [
+   "A distilled spirit of the Mughal court",
+   "A fermented drink named in the Rigveda over three thousand years ago",
+   "A colonial-era rum",
+   "A medieval royal wine"
+  ],
+  "a": 1,
+  "d": 9,
+  "r": "Sura appears in the Rigveda, making India home to some of the oldest recorded drinking culture anywhere.",
+  "in": true,
+  "fun": true
+ },
+ {
+  "id": "q122",
+  "q": "The B-52 shot is layered in which order, bottom to top?",
+  "o": [
+   "Coffee liqueur, Irish cream, triple sec",
+   "Triple sec, coffee liqueur, Irish cream",
+   "Irish cream, coffee liqueur, triple sec",
+   "Coffee liqueur, triple sec, Irish cream"
+  ],
+  "a": 0,
+  "d": 8,
+  "r": "Density does the work: coffee liqueur sinks, then Irish cream, then triple sec floats."
+ },
+ {
+  "id": "q123",
+  "q": "Which is the defining technique difference between a Martini and a Daiquiri?",
+  "o": [
+   "The Martini is stirred; the Daiquiri is shaken because it contains citrus",
+   "The Martini is shaken; the Daiquiri is stirred",
+   "Both are stirred, only the glass differs",
+   "Both are shaken, only the spirit differs"
+  ],
+  "a": 0,
+  "d": 6,
+  "r": "Shake anything with citrus, dairy or egg. Stir spirit-only drinks so they stay silky and clear."
+ },
+ {
+  "id": "q124",
+  "q": "What is aquafaba used for in cocktails?",
+  "o": [
+   "A bittering agent",
+   "A clarifying agent for milk punches",
+   "A vegan substitute for egg white foam",
+   "A sweetener replacing simple syrup"
+  ],
+  "a": 2,
+  "d": 7,
+  "r": "Chickpea-tin liquid whips like egg white, giving sours their foam without the egg."
+ },
+ {
+  "id": "q125",
+  "q": "Which pair is correctly matched?",
+  "o": [
+   "Celery bitters — Sazerac",
+   "Peychaud's — Sazerac",
+   "Angostura — Sazerac",
+   "Orange bitters — Sazerac"
+  ],
+  "a": 1,
+  "d": 8,
+  "r": "Peychaud's is the Sazerac's signature bitters, born in New Orleans like the drink."
+ },
+ {
+  "id": "q126",
+  "q": "Why is a coupe often preferred over a V-shaped Martini glass in modern bars?",
+  "o": [
+   "It is cheaper to produce",
+   "It holds more liquid",
+   "It chills faster",
+   "It spills less and drinks better"
+  ],
+  "a": 3,
+  "d": 6,
+  "r": "The shallow stemmed saucer replaced the V behind most serious bars for exactly that reason."
+ },
+ {
+  "id": "q127",
+  "q": "A 'flip' differs from a sour how?",
+  "o": [
+   "A flip is served hot",
+   "A flip contains a whole egg",
+   "A flip contains no sweetener",
+   "A flip contains no spirit"
+  ],
+  "a": 1,
+  "d": 8,
+  "r": "A flip uses a whole egg; a sour with egg white only is a silver sour."
+ },
+ {
+  "id": "q128",
+  "q": "What is orgeat?",
+  "o": [
+   "A citrus cordial",
+   "An almond syrup",
+   "A spiced rum",
+   "A bitter orange liqueur"
+  ],
+  "a": 1,
+  "d": 7,
+  "r": "An almond syrup, essential in the Mai Tai and much of tiki."
+ },
+ {
+  "id": "q129",
+  "q": "Which is true of falernum?",
+  "o": [
+   "A Brazilian cane spirit",
+   "A Jamaican bitters",
+   "A Barbadian spiced syrup or liqueur with lime, almond and clove",
+   "A Cuban rum style"
+  ],
+  "a": 2,
+  "d": 9,
+  "r": "A Barbadian sweetener, spiced with lime, almond, ginger and clove, common in tiki drinks."
+ },
+ {
+  "id": "q130",
+  "q": "The Last Word cocktail is equal parts of which four?",
+  "o": [
+   "Gin, green Chartreuse, maraschino, lime",
+   "Gin, yellow Chartreuse, maraschino, lemon",
+   "Rum, green Chartreuse, maraschino, lime",
+   "Gin, Campari, maraschino, lime"
+  ],
+  "a": 0,
+  "d": 9,
+  "r": "Equal parts gin, green Chartreuse, maraschino liqueur and lime juice, revived from Prohibition-era Detroit."
+ },
+ {
+  "id": "q131",
+  "q": "What does 'building' a drink mean?",
+  "o": [
+   "Layering it by density",
+   "Assembling it in a mixing glass first",
+   "Making it directly in the serving glass",
+   "Pre-batching it for service"
+  ],
+  "a": 2,
+  "d": 5,
+  "r": "Ice first, then each ingredient in order, then a brief stir. The method behind every highball."
+ },
+ {
+  "id": "q132",
+  "q": "Which cocktail traditionally uses a silver or pewter cup?",
+  "o": [
+   "Moscow Mule",
+   "Sazerac",
+   "Mint Julep",
+   "Old Fashioned"
+  ],
+  "a": 2,
+  "d": 7,
+  "r": "The Mint Julep. The Moscow Mule uses copper."
+ },
+ {
+  "id": "q133",
+  "q": "What is verjus?",
+  "o": [
+   "A grape brandy",
+   "The pressed juice of unripe grapes",
+   "A wine vinegar",
+   "A fortified grape must"
+  ],
+  "a": 1,
+  "d": 9,
+  "r": "Unripe grape juice, tart without alcohol, useful in zero-alcohol drinks."
+ },
+ {
+  "id": "q134",
+  "q": "The Corpse Reviver No. 2 contains a rinse or dash of what?",
+  "o": [
+   "Fernet",
+   "Peychaud's",
+   "Absinthe",
+   "Campari"
+  ],
+  "a": 2,
+  "d": 9,
+  "r": "Gin, Cointreau, Lillet Blanc, lemon and a whisper of absinthe. Harry Craddock warned against four in quick succession."
+ },
+ {
+  "id": "q135",
+  "q": "What is 'fat washing'?",
+  "o": [
+   "Adding cream to soften a spirit",
+   "Infusing a spirit with fat, then freezing and removing it to keep flavour without texture",
+   "Washing glassware in fat to coat it",
+   "Skimming fat off a milk punch"
+  ],
+  "a": 1,
+  "d": 9,
+  "r": "Benton's Old Fashioned uses bacon-fat-washed bourbon, made this way."
+ },
+ {
+  "id": "q136",
+  "q": "Which is correct about Chartreuse?",
+  "o": [
+   "It is a Trappist beer liqueur",
+   "It is flavoured primarily with mint",
+   "It is a Spanish herbal brandy",
+   "It is made by Carthusian monks from around 130 botanicals"
+  ],
+  "a": 3,
+  "d": 8,
+  "r": "Carthusian monks have made it in France for centuries; green is stronger, yellow softer and sweeter."
+ },
+ {
+  "id": "q137",
+  "q": "What is a 'milk punch' clarified with?",
+  "o": [
+   "Condensed milk for sweetness",
+   "Cream, which is whipped in",
+   "Milk, which curdles and is strained out, leaving a clear drink",
+   "Buttermilk for tartness"
+  ],
+  "a": 2,
+  "d": 9,
+  "r": "Acid curdles the milk; straining leaves a silky, clear punch that keeps for months."
+ },
+ {
+  "id": "q138",
+  "q": "Which is true of the Jungle Bird?",
+  "o": [
+   "It is a gin and pineapple tiki drink",
+   "It originated in Jamaica",
+   "It contains no bitter element",
+   "It combines dark rum with Campari and pineapple"
+  ],
+  "a": 3,
+  "d": 9,
+  "r": "A Malaysian tiki classic from the 1970s: dark rum, Campari, pineapple and lime."
+ },
+ {
+  "id": "q139",
+  "q": "What separates an aperitif from a digestif?",
+  "o": [
+   "Aperitifs are stronger",
+   "Aperitifs contain no bitters",
+   "Digestifs are always sweet",
+   "Aperitifs are drunk before a meal to open the appetite; digestifs after, to settle"
+  ],
+  "a": 3,
+  "d": 6,
+  "r": "Before versus after the meal. Campari and vermouth aperitifs; amari and brandy digestifs."
+ },
+ {
+  "id": "q140",
+  "q": "Lillet Blanc is best described as what?",
+  "o": [
+   "A French wine-based aperitif",
+   "A sparkling vermouth",
+   "A brandy liqueur",
+   "A gin botanical blend"
+  ],
+  "a": 0,
+  "d": 8,
+  "r": "A Bordeaux wine-based aperitif, used in the Vesper and Corpse Reviver No. 2."
+ },
+ {
+  "id": "q141",
+  "q": "Which best describes mezcal versus tequila?",
+  "o": [
+   "Mezcal cannot legally be aged",
+   "Tequila is always smoky, mezcal never is",
+   "All tequila is mezcal by definition, but only blue agave from set regions makes tequila",
+   "Mezcal must be made from blue agave"
+  ],
+  "a": 2,
+  "d": 9,
+  "r": "Mezcal is the broad category from any agave; tequila is the blue-agave subset from designated regions."
+ },
+ {
+  "id": "q142",
+  "q": "Genever is best described as what?",
+  "o": [
+   "An aged Dutch brandy",
+   "A German juniper schnapps",
+   "The malty Dutch ancestor of gin",
+   "A Belgian herbal liqueur"
+  ],
+  "a": 2,
+  "d": 8,
+  "r": "Malt-wine based and juniper-flavoured, it's the Dutch forerunner of London Dry gin."
+ },
+ {
+  "id": "q143",
+  "q": "Which is the correct description of an Amaretto Sour done well?",
+  "o": [
+   "Amaretto and lemon only",
+   "Amaretto, rum and lime",
+   "Amaretto, bourbon for backbone, lemon and egg white",
+   "Amaretto, gin and grapefruit"
+  ],
+  "a": 2,
+  "d": 8,
+  "r": "The modern spec adds a little bourbon so the almond sweetness has a spine."
+ },
+ {
+  "id": "q144",
+  "q": "What does 'IBA' mean on a cocktail listing?",
+  "o": [
+   "Indian Bartenders Alliance",
+   "Institute of Bar Arts",
+   "International Bartenders Association, which maintains official recipes",
+   "International Beverage Authority"
+  ],
+  "a": 2,
+  "d": 6,
+  "r": "The IBA maintains a list of official cocktails, split into Unforgettables, Contemporary Classics and New Era drinks."
+ },
+ {
+  "id": "q145",
+  "q": "Which is true of the Vesper as written by Ian Fleming?",
+  "o": [
+   "It uses rum and Lillet, shaken",
+   "It uses gin and dry vermouth, stirred",
+   "It uses gin, vodka and Kina Lillet, shaken",
+   "It uses only vodka, stirred"
+  ],
+  "a": 2,
+  "d": 8,
+  "r": "Three of gin, one of vodka, half of Kina Lillet, shaken and served with a lemon peel."
+ },
+ {
+  "id": "q146",
+  "q": "What is the role of saline or a pinch of salt in a cocktail?",
+  "o": [
+   "It clarifies cloudy juices",
+   "It suppresses bitterness and lifts perceived sweetness and aroma",
+   "It preserves the drink",
+   "It increases alcohol perception"
+  ],
+  "a": 1,
+  "d": 8,
+  "r": "A tiny amount rounds off bitterness and makes flavours read brighter, the same as in cooking."
+ },
+ {
+  "id": "q147",
+  "q": "Which of these gins is closest in style to a London Dry?",
+  "o": [
+   "Genever",
+   "Sloe gin",
+   "Old Tom gin",
+   "A juniper-forward dry gin from anywhere in the world"
+  ],
+  "a": 3,
+  "d": 8,
+  "r": "London Dry is a production style, not a place. Old Tom is sweeter, sloe gin is a liqueur, genever is malty."
+ },
+ {
+  "id": "q148",
+  "q": "Why did quinine become associated with tonic water?",
+  "o": [
+   "It was an antimalarial, and soda and sugar made it drinkable",
+   "It was a sweetener substitute",
+   "It was a natural preservative",
+   "It gave the water its fizz"
+  ],
+  "a": 0,
+  "d": 6,
+  "r": "The bitter antimalarial needed soda and sugar to be palatable, and gin finished the job.",
+  "in": true
+ },
+ {
+  "id": "q149",
+  "q": "What is a 'pousse-café'?",
+  "o": [
+   "A layered shot built by density",
+   "A brandy served after coffee",
+   "A coffee cocktail served hot",
+   "A shot chased with espresso"
+  ],
+  "a": 0,
+  "d": 9,
+  "r": "Multiple liqueurs floated in distinct layers, poured slowly over a barspoon."
+ },
+ {
+  "id": "q150",
+  "q": "Which is correct about the Sidecar's proportions in the classic French school?",
+  "o": [
+   "Two cognac, one Cointreau, one lemon",
+   "Three cognac, one Cointreau, one lemon",
+   "Equal parts cognac and lemon, no Cointreau",
+   "Equal parts cognac, Cointreau and lemon"
+  ],
+  "a": 3,
+  "d": 9,
+  "r": "The French school pours equal parts; the English school prefers 2:1:1. Both are considered correct."
+ },
+ {
+  "id": "q151",
+  "q": "What does it mean to 'batch' cocktails?",
+  "o": [
+   "Serving several drinks at once",
+   "Making drinks in a blender",
+   "Bottling and ageing a cocktail",
+   "Pre-mixing multiple servings in advance, often with water for dilution"
+  ],
+  "a": 3,
+  "d": 7,
+  "r": "Pre-mix the recipe scaled up, add the dilution water, chill, and pour on demand."
+ },
+ {
+  "id": "q152",
+  "q": "Which claim about absinthe is true?",
+  "o": [
+   "It is distilled from wormwood alone",
+   "It contains no anise",
+   "Thujone's hallucinogenic reputation was overstated and it is legal in most countries today",
+   "It remains banned worldwide"
+  ],
+  "a": 2,
+  "d": 8,
+  "r": "The wormwood scare was overblown; absinthe is legal in most countries and is anise-forward."
+ },
+ {
+  "id": "q153",
+  "q": "What is the difference between a Gimlet and a Daiquiri?",
+  "o": [
+   "Daiquiri is stirred, Gimlet shaken",
+   "Gimlet contains soda",
+   "Gimlet uses lemon, Daiquiri uses lime",
+   "Gimlet is gin and lime; Daiquiri is rum and lime"
+  ],
+  "a": 3,
+  "d": 5,
+  "r": "Same sour skeleton, different spirit: gin versus rum."
+ },
+ {
+  "id": "q154",
+  "q": "Which is true of the Ranch Water tradition of West Texas?",
+  "o": [
+   "It contains no citrus",
+   "It must be served in a copper mug",
+   "It uses sparkling wine, not water",
+   "Some drink part of the mineral water straight from the bottle and mix the rest in it"
+  ],
+  "a": 3,
+  "d": 9,
+  "r": "Tequila, lime and very cold sparkling mineral water, often built right in the bottle.",
+  "fun": true
+ },
+ {
+  "id": "q155",
+  "q": "What is 'Old Tom' gin?",
+  "o": [
+   "A slightly sweetened historical gin style",
+   "A gin flavoured with tea",
+   "The original name for genever",
+   "A barrel-aged navy gin"
+  ],
+  "a": 0,
+  "d": 8,
+  "r": "A lightly sweetened style bridging genever and London Dry, and the correct gin for a Martinez or Tom Collins."
+ },
+ {
+  "id": "q156",
+  "q": "Which best explains why highball glasses are tall and narrow?",
+  "o": [
+   "They hold more ice",
+   "They are easier to stack",
+   "Less surface area means bubbles escape more slowly",
+   "They keep the drink colder by shape alone"
+  ],
+  "a": 2,
+  "d": 7,
+  "r": "Narrow means less surface for carbonation to escape from, so the drink stays lively."
+ },
+ {
+  "id": "q157",
+  "q": "Which Indian whisky brands are among the world's best-selling by volume?",
+  "o": [
+   "Amrut, Paul John and Rampur",
+   "Antiquity, Signature and Blenders Pride",
+   "Solan No.1, Bagpiper and Director's Special",
+   "McDowell's No.1, Officer's Choice and Imperial Blue"
+  ],
+  "a": 3,
+  "d": 8,
+  "r": "These mass-market IMFL brands each outsell the biggest Scotch labels many times over. The second list is India's premium malts, not the volume leaders.",
+  "in": true,
+  "fun": true
+ },
+ {
+  "id": "q158",
+  "q": "Paul John single malt is distilled in which state?",
+  "o": [
+   "Uttar Pradesh",
+   "Karnataka",
+   "Goa",
+   "Himachal Pradesh"
+  ],
+  "a": 2,
+  "d": 8,
+  "r": "Goa. Amrut is Bengaluru, Rampur is Uttar Pradesh, and Kasauli is Himachal.",
+  "in": true
+ },
+ {
+  "id": "q159",
+  "q": "Rampur single malt comes from a distillery in which state?",
+  "o": [
+   "Uttar Pradesh",
+   "Punjab",
+   "Madhya Pradesh",
+   "Rajasthan"
+  ],
+  "a": 0,
+  "d": 9,
+  "r": "Rampur, Uttar Pradesh, at the Radico Khaitan distillery.",
+  "in": true
+ },
+ {
+  "id": "q160",
+  "q": "Why does Indian whisky mature faster than Scotch?",
+  "o": [
+   "Indian casks are pre-charred twice",
+   "Indian malt is distilled to a lower strength",
+   "Indian barrels are smaller by law",
+   "India's heat causes far greater annual evaporation and faster interaction with the oak"
+  ],
+  "a": 3,
+  "d": 8,
+  "r": "The tropical climate drives an 'angel's share' several times Scotland's, so three Indian years can taste like a decade of Scotch.",
+  "in": true,
+  "fun": true
+ },
+ {
+  "id": "q161",
+  "q": "What is the 'angel's share'?",
+  "o": [
+   "Spirit lost to evaporation during barrel ageing",
+   "The portion left in the cask after bottling",
+   "The barman's complimentary pour",
+   "The first spirit off the still"
+  ],
+  "a": 0,
+  "d": 6,
+  "r": "Evaporation through the cask. In India's heat it can exceed 10% a year."
+ },
+ {
+  "id": "q162",
+  "q": "Which is a traditional drink of Sikkim and Darjeeling?",
+  "o": [
+   "Judima",
+   "Chhaang",
+   "Handia",
+   "Mahua"
+  ],
+  "a": 1,
+  "d": 8,
+  "r": "Chhaang, a Himalayan fermented barley or millet brew. Handia is eastern India, Judima Assam, mahua central India.",
+  "in": true
+ },
+ {
+  "id": "q163",
+  "q": "Thandai, the Holi drink, is built on which base?",
+  "o": [
+   "Milk with almonds, fennel and rose",
+   "Yogurt with cumin",
+   "Tea with spices",
+   "Coconut milk with kokum"
+  ],
+  "a": 0,
+  "d": 6,
+  "r": "A milk base with almonds, fennel, pepper, rose and saffron. Bhang is sometimes added.",
+  "in": true
+ },
+ {
+  "id": "q164",
+  "q": "Which Indian state is the largest consumer of brandy?",
+  "o": [
+   "Maharashtra",
+   "West Bengal",
+   "Punjab",
+   "Kerala and Tamil Nadu lead brandy consumption"
+  ],
+  "a": 3,
+  "d": 9,
+  "r": "Southern states, especially Kerala and Tamil Nadu, are brandy strongholds while whisky leads nationally.",
+  "in": true
+ },
+ {
+  "id": "q165",
+  "q": "What is 'country liquor' in Indian regulatory language?",
+  "o": [
+   "Any spirit made in rural areas",
+   "Imported spirits sold in villages",
+   "Traditional local spirits taxed and licensed separately from IMFL",
+   "Illegally distilled alcohol"
+  ],
+  "a": 2,
+  "d": 8,
+  "r": "Indigenous spirits like mahua and arrack sit in a separate, cheaper regulatory class from IMFL.",
+  "in": true
+ },
+ {
+  "id": "q166",
+  "q": "Which of these is a genuine risk associated with illicit liquor in India?",
+  "o": [
+   "Over-ageing",
+   "Sulphite allergy",
+   "Methanol poisoning",
+   "Excess carbonation"
+  ],
+  "a": 2,
+  "d": 7,
+  "r": "Methanol contamination in hooch has caused mass-casualty tragedies, which is why licensed production matters.",
+  "in": true
+ },
+ {
+  "id": "q167",
+  "q": "Kingfisher, India's best-known beer brand, belongs to which group?",
+  "o": [
+   "Amrut Distilleries",
+   "Mohan Meakin",
+   "Radico Khaitan",
+   "United Breweries"
+  ],
+  "a": 3,
+  "d": 7,
+  "r": "United Breweries. Mohan Meakin makes Old Monk and Solan No.1; Radico makes Rampur.",
+  "in": true
+ },
+ {
+  "id": "q168",
+  "q": "Old Monk is produced by which company?",
+  "o": [
+   "Amrut Distilleries",
+   "United Spirits",
+   "Radico Khaitan",
+   "Mohan Meakin"
+  ],
+  "a": 3,
+  "d": 7,
+  "r": "Mohan Meakin, whose Kasauli and Ghaziabad operations date back to the 19th century.",
+  "in": true
+ },
+ {
+  "id": "q169",
+  "q": "What is 'desi daru'?",
+  "o": [
+   "Colloquial term for country liquor",
+   "A premium Indian single malt",
+   "A spiced rum style",
+   "Homemade wine"
+  ],
+  "a": 0,
+  "d": 6,
+  "r": "Literally 'local liquor', the everyday term for country-made spirits.",
+  "in": true
+ },
+ {
+  "id": "q170",
+  "q": "Which Indian festival is most associated with bhang-laced thandai?",
+  "o": [
+   "Holi",
+   "Diwali",
+   "Onam",
+   "Pongal"
+  ],
+  "a": 0,
+  "d": 5,
+  "r": "Holi. It's a centuries-old tradition, licensed in cities like Varanasi.",
+  "in": true
+ },
+ {
+  "id": "q171",
+  "q": "Which Indian city has the most microbreweries?",
+  "o": [
+   "Pune",
+   "Bengaluru",
+   "Hyderabad",
+   "Gurugram"
+  ],
+  "a": 1,
+  "d": 7,
+  "r": "Bengaluru leads, thanks partly to Karnataka's early microbrewery-friendly rules.",
+  "in": true
+ },
+ {
+  "id": "q172",
+  "q": "What is the legal drinking age in most of India?",
+  "o": [
+   "18 nationwide",
+   "21 nationwide",
+   "25 nationwide",
+   "It varies by state, from 18 to 25"
+  ],
+  "a": 3,
+  "d": 6,
+  "r": "Alcohol is a state subject, so the age ranges from 18 in Goa to 25 in Maharashtra and Delhi.",
+  "in": true
+ },
+ {
+  "id": "q173",
+  "q": "Why does liquor pricing vary so much between Indian states?",
+  "o": [
+   "Alcohol is a state subject, so each state sets its own excise duty",
+   "Central government sets regional quotas",
+   "Transport costs dominate pricing",
+   "Import duties differ by port"
+  ],
+  "a": 0,
+  "d": 8,
+  "r": "Excise is a major state revenue source, so duties and retail models differ sharply across borders.",
+  "in": true
+ },
+ {
+  "id": "q174",
+  "q": "Which drink is traditionally offered to guests in parts of Nagaland?",
+  "o": [
+   "Chhaang, a barley brew",
+   "Judima, a rice wine",
+   "Handia, a rice beer",
+   "Zutho, a rice brew"
+  ],
+  "a": 3,
+  "d": 9,
+  "r": "Zutho is Naga; Judima is Dimasa (Assam), handia is eastern-Indian Adivasi, chhaang Himalayan.",
+  "in": true
+ },
+ {
+  "id": "q175",
+  "q": "Apong is associated with which community?",
+  "o": [
+   "The Mising of Assam",
+   "The Gond of Madhya Pradesh",
+   "The Lepcha of Sikkim",
+   "The Dimasa of Assam"
+  ],
+  "a": 0,
+  "d": 9,
+  "r": "The Mising people of Assam brew apong from rice with hereditary starter cakes.",
+  "in": true
+ },
+ {
+  "id": "q176",
+  "q": "Kesar kasturi is what kind of drink?",
+  "o": [
+   "A Rajasthani heritage liqueur of saffron and spices",
+   "A Punjabi herbal brandy",
+   "A Gujarati fermented milk drink",
+   "A Kashmiri saffron wine"
+  ],
+  "a": 0,
+  "d": 9,
+  "r": "A royal Rajasthani liqueur with saffron, dates, dry fruits and dozens of spices.",
+  "in": true,
+  "fun": true
+ },
+ {
+  "id": "q177",
+  "q": "Which is true of Indian craft gin brands like Greater Than and Stranger & Sons?",
+  "o": [
+   "They use Indian botanicals such as gondhoraj lime and coriander",
+   "They contain no juniper",
+   "They are all made in Kerala",
+   "They are distilled in Scotland and bottled in India"
+  ],
+  "a": 0,
+  "d": 8,
+  "r": "The Indian gin wave is defined by local botanicals: gondhoraj lime, curry leaf, Himalayan juniper and more.",
+  "in": true
+ },
+ {
+  "id": "q178",
+  "q": "What is 'tharra'?",
+  "o": [
+   "A palm toddy from Odisha",
+   "A Himalayan barley beer",
+   "A country liquor distilled from sugarcane or jaggery",
+   "A Kashmiri fruit wine"
+  ],
+  "a": 2,
+  "d": 8,
+  "r": "A north Indian country liquor from fermented sugarcane or jaggery.",
+  "in": true
+ },
+ {
+  "id": "q179",
+  "q": "Which best describes Goa's 'sunburn' of drinking rules compared to other states?",
+  "o": [
+   "Goa prohibits spirits but allows beer",
+   "Goa has the highest excise in India",
+   "Goa restricts sales to hotels only",
+   "Goa has relatively liberal licensing and lower excise, so drinks cost less"
+  ],
+  "a": 3,
+  "d": 7,
+  "r": "Lower excise and liberal licensing are exactly why Goa became a drinking destination.",
+  "in": true
+ },
+ {
+  "id": "q180",
+  "q": "Which Indian drink is famously served in an earthen or bamboo vessel?",
+  "o": [
+   "Chaas, in an earthen pot",
+   "Thandai, in a clay bowl",
+   "Tongba, in a bamboo mug",
+   "Feni, in a bamboo cup"
+  ],
+  "a": 2,
+  "d": 8,
+  "r": "Tongba is served in a bamboo mug with a bamboo straw, topped up with hot water.",
+  "in": true,
+  "fun": true
+ },
+ {
+  "id": "q181",
+  "q": "What does 'sundowner' mean in Indian and colonial drinking usage?",
+  "o": [
+   "A drink taken at sunset",
+   "A drink served with a sunset view charge",
+   "The last drink of the night",
+   "A morning-after remedy"
+  ],
+  "a": 0,
+  "d": 5,
+  "r": "A sunset drink, a habit inherited from colonial club culture.",
+  "in": true
+ },
+ {
+  "id": "q182",
+  "q": "Which is the correct pairing of Indian drink to region?",
+  "o": [
+   "Solkadhi — Rajasthan",
+   "Solkadhi — Punjab",
+   "Solkadhi — Konkan coast",
+   "Solkadhi — Assam"
+  ],
+  "a": 2,
+  "d": 7,
+  "r": "Kokum and coconut milk make solkadhi, poured along the Konkan coast after fish curries.",
+  "in": true
+ },
+ {
+  "id": "q183",
+  "q": "Sula Vineyards is located near which city?",
+  "o": [
+   "Bengaluru",
+   "Pune",
+   "Nashik",
+   "Hyderabad"
+  ],
+  "a": 2,
+  "d": 6,
+  "r": "Nashik, the heart of India's wine country.",
+  "in": true
+ },
+ {
+  "id": "q184",
+  "q": "Which Indian mixer is a common base for local highballs?",
+  "o": [
+   "Soda and Thums Up cola",
+   "Ginger ale only",
+   "Sparkling wine",
+   "Tonic only"
+  ],
+  "a": 0,
+  "d": 5,
+  "r": "Soda and cola dominate; Thums Up in particular has a devoted following with rum and whisky.",
+  "in": true
+ },
+ {
+  "id": "q185",
+  "q": "What is unusual about alcohol advertising in India?",
+  "o": [
+   "It is permitted only in English",
+   "It requires a health warning voiceover",
+   "It is allowed only on television",
+   "Direct advertising is banned, so brands use 'surrogate' products like soda and music CDs"
+  ],
+  "a": 3,
+  "d": 8,
+  "r": "Direct liquor advertising is prohibited, which is why you see brand-named soda, water and music events.",
+  "in": true,
+  "fun": true
+ },
+ {
+  "id": "q186",
+  "q": "Which is true of 'dry days' in India?",
+  "o": [
+   "They are days when only beer may be sold",
+   "They are a Goa-specific rule",
+   "Alcohol sales are banned on certain national holidays and election days",
+   "They apply only to bars, not shops"
+  ],
+  "a": 2,
+  "d": 7,
+  "r": "Republic Day, Independence Day, Gandhi Jayanti and polling days are commonly dry.",
+  "in": true
+ },
+ {
+  "id": "q187",
+  "q": "Which best describes a 'thekha' or 'theka'?",
+  "o": [
+   "A traditional distillery",
+   "A wholesale liquor market",
+   "A government-licensed liquor shop",
+   "A bar attached to a hotel"
+  ],
+  "a": 2,
+  "d": 7,
+  "r": "The licensed retail liquor shop, a fixture of Indian towns.",
+  "in": true
+ },
+ {
+  "id": "q188",
+  "q": "Toddy tapping requires the tapper to do what daily?",
+  "o": [
+   "Boil the sap to stop fermentation",
+   "Climb palms twice a day to collect sap",
+   "Add yeast to each pot",
+   "Bury the pots overnight"
+  ],
+  "a": 1,
+  "d": 7,
+  "r": "In Kerala tappers walk rope bridges between palm crowns twice a day. Fermentation happens on its own.",
+  "in": true,
+  "fun": true
+ },
+ {
+  "id": "q189",
+  "q": "Which is India's oldest continuously operating brewery region?",
+  "o": [
+   "Aurangabad, Maharashtra",
+   "Solan, Himachal Pradesh",
+   "Chennai, Tamil Nadu",
+   "Ludhiana, Punjab"
+  ],
+  "a": 1,
+  "d": 9,
+  "r": "Solan, where Lion beer has been brewed since the 1850s.",
+  "in": true
+ },
+ {
+  "id": "q190",
+  "q": "Which spirit category has grown fastest among young urban Indians in recent years?",
+  "o": [
+   "Brandy",
+   "Country liquor",
+   "Fortified wine",
+   "Craft gin"
+  ],
+  "a": 3,
+  "d": 7,
+  "r": "Craft gin, driven by the Goa-led wave of local-botanical distilleries.",
+  "in": true
+ },
+ {
+  "id": "q191",
+  "q": "What is a 'quarter' in Indian liquor retail?",
+  "o": [
+   "A 90 ml bottle",
+   "A 180 ml bottle",
+   "A quarter-litre, 250 ml",
+   "A 375 ml bottle"
+  ],
+  "a": 1,
+  "d": 7,
+  "r": "A 180 ml bottle, the ubiquitous 'quarter'. 90 ml is a 'nip' and 375 ml a 'half'.",
+  "in": true,
+  "fun": true
+ },
+ {
+  "id": "q192",
+  "q": "In Indian bar usage, what is a 'nip'?",
+  "o": [
+   "A 90 ml bottle",
+   "A 180 ml bottle",
+   "A shared bottle",
+   "A single 30 ml pour"
+  ],
+  "a": 0,
+  "d": 7,
+  "r": "A 90 ml bottle, the smallest common retail size.",
+  "in": true
+ },
+ {
+  "id": "q193",
+  "q": "Which is correct about jamun, used in modern Indian cocktails?",
+  "o": [
+   "A sweet tropical melon",
+   "A flower used for syrup",
+   "A citrus fruit from Assam",
+   "A dark purple monsoon berry with an astringent finish"
+  ],
+  "a": 3,
+  "d": 8,
+  "r": "The Indian blackberry, tart and astringent, excellent in sours and vodka drinks.",
+  "in": true
+ },
+ {
+  "id": "q194",
+  "q": "Which pair of Indian ingredients would you find in a jal-jeera?",
+  "o": [
+   "Saffron and cardamom",
+   "Coconut and kokum",
+   "Rose and fennel",
+   "Roasted cumin and black salt"
+  ],
+  "a": 3,
+  "d": 6,
+  "r": "Roasted cumin, black salt, tamarind and mint make it sharp and savoury.",
+  "in": true
+ },
+ {
+  "id": "q195",
+  "q": "What is khus syrup made from?",
+  "o": [
+   "Vetiver roots",
+   "Rose petals",
+   "Sandalwood",
+   "Green cardamom"
+  ],
+  "a": 0,
+  "d": 8,
+  "r": "Vetiver root, prized as a cooling summer flavour in North India.",
+  "in": true
+ },
+ {
+  "id": "q196",
+  "q": "Kala khatta, the gola syrup, is characterised by which flavour profile?",
+  "o": [
+   "Sweet, sour and salty with black salt",
+   "Purely sweet and floral",
+   "Smoky and spiced",
+   "Bitter and herbal"
+  ],
+  "a": 0,
+  "d": 8,
+  "r": "Sweet-sour-salty with black salt, the Mumbai gola-cart classic.",
+  "in": true
+ },
+ {
+  "id": "q197",
+  "q": "Which is true about 'permit' requirements for visitors to Gujarat?",
+  "o": [
+   "Visitors may not drink at all",
+   "Only foreign passport holders may drink",
+   "Permits are issued only to residents",
+   "Visitors can obtain a liquor permit to drink legally"
+  ],
+  "a": 3,
+  "d": 8,
+  "r": "Gujarat has been dry since 1960, but visitors can get a government-issued permit.",
+  "in": true
+ },
+ {
+  "id": "q198",
+  "q": "Which Indian drink tradition involves a starter cake or tablet passed down through families?",
+  "o": [
+   "Rajasthani liqueurs",
+   "Northeast rice brews like apong and zutho",
+   "Goan feni",
+   "Konkan solkadhi"
+  ],
+  "a": 1,
+  "d": 9,
+  "r": "Hereditary starter cultures, like ranu tablets for handia, are treated as heirlooms.",
+  "in": true,
+  "fun": true
+ },
+ {
+  "id": "q199",
+  "q": "Which is a genuine Indian gin botanical used by local distillers?",
+  "o": [
+   "Curry leaf",
+   "Sichuan peppercorn only",
+   "Juniper berries from Mexico",
+   "Blue agave"
+  ],
+  "a": 0,
+  "d": 7,
+  "r": "Curry leaf, gondhoraj lime, Himalayan juniper and coriander are all used in Indian craft gins.",
+  "in": true
+ },
+ {
+  "id": "q200",
+  "q": "What is 'sharbat' in the Indian drinks vocabulary?",
+  "o": [
+   "A spiced buttermilk",
+   "A sweet fruit or flower syrup diluted with water",
+   "A fermented barley drink",
+   "A distilled rose spirit"
+  ],
+  "a": 1,
+  "d": 6,
+  "r": "A syrup base, diluted to drink. Rooh Afza is the most famous commercial example.",
+  "in": true
+ },
+ {
+  "id": "q201",
+  "q": "Rooh Afza is best described as what?",
+  "o": [
+   "A fermented rice drink",
+   "A citrus cordial",
+   "A spiced tea blend",
+   "A rose-and-herb sharbat concentrate"
+  ],
+  "a": 3,
+  "d": 7,
+  "r": "A rose-forward sharbat concentrate, iconic across South Asia, especially in Ramadan.",
+  "in": true,
+  "fun": true
+ },
+ {
+  "id": "q202",
+  "q": "Which is true of the Indian bar scene's 'Kokum Sour' style drinks?",
+  "o": [
+   "They apply the classic sour template to Indian souring agents",
+   "They are traditional recipes from the 1800s",
+   "They must legally contain feni",
+   "They are always non-alcoholic"
+  ],
+  "a": 0,
+  "d": 8,
+  "r": "Modern Indian bartending swaps citrus for kokum, tamarind or gondhoraj in the 2:1:1 sour skeleton.",
+  "in": true
+ },
+ {
+  "id": "q203",
+  "q": "Which best describes India's position in global whisky production?",
+  "o": [
+   "It produces and consumes more whisky by volume than any other country",
+   "It only bottles imported Scotch",
+   "It is a small niche producer",
+   "It exports more than it consumes"
+  ],
+  "a": 0,
+  "d": 7,
+  "r": "India dominates by volume, though most of it is molasses-based IMFL rather than grain whisky.",
+  "in": true
+ },
+ {
+  "id": "q204",
+  "q": "Which Indian single malt won early international acclaim by launching in Glasgow?",
+  "o": [
+   "Indri",
+   "Paul John",
+   "Rampur",
+   "Amrut"
+  ],
+  "a": 3,
+  "d": 8,
+  "r": "Amrut launched in Glasgow in 2004, deliberately taking on Scotch on home ground.",
+  "in": true,
+  "fun": true
+ },
+ {
+  "id": "q205",
+  "q": "Indri, a recent award-winning Indian single malt, is distilled in which state?",
+  "o": [
+   "Goa",
+   "Karnataka",
+   "Punjab",
+   "Haryana"
+  ],
+  "a": 3,
+  "d": 9,
+  "r": "Indri, Haryana, from Piccadily Distilleries.",
+  "in": true
+ },
+ {
+  "id": "q206",
+  "q": "What does the term 'susu' or 'sulai' refer to in parts of India?",
+  "o": [
+   "A palm sap drink",
+   "A ceremonial rice wine",
+   "A herbal digestive",
+   "Locally brewed illicit liquor"
+  ],
+  "a": 3,
+  "d": 9,
+  "r": "Regional slang for locally brewed, often illicit, liquor.",
+  "in": true
+ },
+ {
+  "id": "q207",
+  "q": "Which is a traditional Ladakhi or Tibetan-influenced brew?",
+  "o": [
+   "Apong",
+   "Handia",
+   "Tharra",
+   "Chhaang"
+  ],
+  "a": 3,
+  "d": 8,
+  "r": "Chhaang, a barley or millet brew of the Himalayas.",
+  "in": true
+ },
+ {
+  "id": "q208",
+  "q": "Sea buckthorn, used in Ladakhi drinks, is prized for what?",
+  "o": [
+   "Its bitterness",
+   "Its sweetness",
+   "Its floral aroma",
+   "Its intense tartness and vitamin content"
+  ],
+  "a": 3,
+  "d": 8,
+  "r": "The tart orange 'leh berry' makes sharp, bright juices and cordials.",
+  "in": true
+ },
+ {
+  "id": "q209",
+  "q": "Which James Bond film popularised the phrase 'shaken, not stirred'?",
+  "o": [
+   "Casino Royale (2006)",
+   "Dr. No",
+   "Thunderball",
+   "It runs through the series, first spoken on screen in Goldfinger"
+  ],
+  "a": 3,
+  "d": 8,
+  "r": "Bond orders it in the novels, and the exact screen phrasing lands in Goldfinger. Purists note shaking a Martini is technically wrong.",
+  "fun": true
+ },
+ {
+  "id": "q210",
+  "q": "In Mad Men, which drink is Don Draper most associated with?",
+  "o": [
+   "Whiskey Sour",
+   "Manhattan",
+   "Martini",
+   "Old Fashioned"
+  ],
+  "a": 3,
+  "d": 6,
+  "r": "The Old Fashioned, which the show helped revive for a new generation.",
+  "fun": true
+ },
+ {
+  "id": "q211",
+  "q": "The Cosmopolitan's 1990s boom is widely credited to which TV show?",
+  "o": [
+   "Frasier",
+   "Friends",
+   "Cheers",
+   "Sex and the City"
+  ],
+  "a": 3,
+  "d": 5,
+  "r": "Sex and the City made it the decade's defining cocktail.",
+  "fun": true
+ },
+ {
+  "id": "q212",
+  "q": "'The Dude' in The Big Lebowski drinks which cocktail?",
+  "o": [
+   "White Russian",
+   "Brandy Alexander",
+   "Black Russian",
+   "Mudslide"
+  ],
+  "a": 0,
+  "d": 5,
+  "r": "The White Russian, which he calls a Caucasian.",
+  "fun": true
+ },
+ {
+  "id": "q213",
+  "q": "Which cocktail features in the title of a famous Jimmy Buffett song?",
+  "o": [
+   "Piña Colada",
+   "Daiquiri",
+   "Mai Tai",
+   "Margarita"
+  ],
+  "a": 3,
+  "d": 5,
+  "r": "Margaritaville. Rupert Holmes handled the Piña Colada.",
+  "fun": true
+ },
+ {
+  "id": "q214",
+  "q": "'Escape (The Piña Colada Song)' was recorded by whom?",
+  "o": [
+   "Christopher Cross",
+   "Rupert Holmes",
+   "Harry Nilsson",
+   "Jimmy Buffett"
+  ],
+  "a": 1,
+  "d": 7,
+  "r": "Rupert Holmes, 1979. The song is actually about a couple answering each other's personal ads.",
+  "fun": true
+ },
+ {
+  "id": "q215",
+  "q": "Which Bollywood song title references a drink measure?",
+  "o": [
+   "Songs about vermouth",
+   "Songs about vermouth and soda",
+   "Songs about absinthe",
+   "Songs referencing 'peg' are common in Punjabi pop"
+  ],
+  "a": 3,
+  "d": 7,
+  "r": "Punjabi and Bollywood pop reference 'peg' frequently, reflecting how deeply the word sits in Indian drinking slang.",
+  "in": true,
+  "fun": true
+ },
+ {
+  "id": "q216",
+  "q": "Which drink is associated with New Orleans' Mardi Gras and its Hurricane glass?",
+  "o": [
+   "Ramos Gin Fizz",
+   "Vieux Carré",
+   "Sazerac",
+   "Hurricane"
+  ],
+  "a": 3,
+  "d": 6,
+  "r": "The Hurricane, though the Sazerac, Ramos Gin Fizz and Vieux Carré are all New Orleans classics too."
+ },
+ {
+  "id": "q217",
+  "q": "The Vieux Carré cocktail is named after what?",
+  "o": [
+   "A Parisian square",
+   "A brand of rye whiskey",
+   "The French Quarter of New Orleans",
+   "A Louisiana sugar estate"
+  ],
+  "a": 2,
+  "d": 8,
+  "r": "Vieux Carré is the French Quarter, where it was created at the Hotel Monteleone."
+ },
+ {
+  "id": "q218",
+  "q": "Which cocktail is traditionally served at the Kentucky Derby?",
+  "o": [
+   "Mint Julep",
+   "Old Fashioned",
+   "Manhattan",
+   "Whiskey Sour"
+  ],
+  "a": 0,
+  "d": 5,
+  "r": "The Mint Julep, by the tens of thousands."
+ },
+ {
+  "id": "q219",
+  "q": "Which drink is the traditional choice at Wimbledon alongside strawberries?",
+  "o": [
+   "Champagne only",
+   "Pimm's Cup",
+   "Gin & Tonic",
+   "Aperol Spritz"
+  ],
+  "a": 1,
+  "d": 6,
+  "r": "Pimm's No. 1 with lemonade, fruit and mint.",
+  "fun": true
+ },
+ {
+  "id": "q220",
+  "q": "Which cocktail shares its name with a Manhattan borough?",
+  "o": [
+   "Queens Park Swizzle",
+   "Bronx",
+   "Brooklyn",
+   "All three exist as cocktails"
+  ],
+  "a": 3,
+  "d": 9,
+  "r": "All three are real cocktails: the Bronx, the Brooklyn and the Queens Park Swizzle. A question where the options aren't mutually exclusive."
+ },
+ {
+  "id": "q221",
+  "q": "The Bee's Knees cocktail dates from which era, and why the name?",
+  "o": [
+   "The 1980s, named after a bar",
+   "Victorian London, named for a beekeeper",
+   "Prohibition, when honey masked rough bathtub gin",
+   "The 1960s, named after a dance"
+  ],
+  "a": 2,
+  "d": 8,
+  "r": "Gin, honey and lemon. The honey helped hide the taste of poor-quality Prohibition gin.",
+  "fun": true
+ },
+ {
+  "id": "q222",
+  "q": "Which spirit does a Sidecar use?",
+  "o": [
+   "Cognac or brandy",
+   "Whiskey",
+   "Gin",
+   "Rum"
+  ],
+  "a": 0,
+  "d": 6,
+  "r": "Cognac with Cointreau and lemon."
+ },
+ {
+  "id": "q223",
+  "q": "What is the 'Death in the Afternoon' cocktail, and who created it?",
+  "o": [
+   "Gin and champagne, by Harry Craddock",
+   "Rum and absinthe, by Trader Vic",
+   "Whiskey and absinthe, by Jerry Thomas",
+   "Absinthe and champagne, attributed to Hemingway"
+  ],
+  "a": 3,
+  "d": 9,
+  "r": "Absinthe topped with champagne, attributed to Hemingway and named after his bullfighting book.",
+  "fun": true
+ },
+ {
+  "id": "q224",
+  "q": "Jerry Thomas is significant to cocktail history because he did what?",
+  "o": [
+   "Invented the Martini",
+   "Founded the IBA",
+   "Published the first bartender's guide in 1862",
+   "Opened the first speakeasy"
+  ],
+  "a": 2,
+  "d": 8,
+  "r": "'How to Mix Drinks; or, The Bon Vivant's Companion' (1862) is the first known cocktail book."
+ },
+ {
+  "id": "q225",
+  "q": "The Savoy Cocktail Book was written by whom?",
+  "o": [
+   "Harry Craddock",
+   "Dick Bradsell",
+   "Ada Coleman",
+   "Jerry Thomas"
+  ],
+  "a": 0,
+  "d": 9,
+  "r": "Harry Craddock of the American Bar at the Savoy, 1930. Ada Coleman preceded him there and created the Hanky Panky."
+ },
+ {
+  "id": "q226",
+  "q": "Ada Coleman, one of history's most famous bartenders, created which drink?",
+  "o": [
+   "Sidecar",
+   "Bramble",
+   "Hanky Panky",
+   "White Lady"
+  ],
+  "a": 2,
+  "d": 9,
+  "r": "The Hanky Panky, at the Savoy's American Bar. Dick Bradsell created the Bramble decades later.",
+  "fun": true
+ },
+ {
+  "id": "q227",
+  "q": "The Bramble was created in 1980s London by which bartender?",
+  "o": [
+   "Peter Dorelli",
+   "Salvatore Calabrese",
+   "Dick Bradsell",
+   "Tony Conigliaro"
+  ],
+  "a": 2,
+  "d": 9,
+  "r": "Dick Bradsell, who also gave us the Espresso Martini."
+ },
+ {
+  "id": "q228",
+  "q": "Which is true of the Ramos Gin Fizz?",
+  "o": [
+   "It contains no dairy",
+   "It uses no citrus",
+   "It is stirred, never shaken",
+   "It is shaken for a famously long time to build its foam"
+  ],
+  "a": 3,
+  "d": 8,
+  "r": "Gin, cream, egg white, citrus and orange flower water, shaken at length for that cloud-like head.",
+  "fun": true
+ },
+ {
+  "id": "q229",
+  "q": "Which trend defined cocktail bars in the 2010s?",
+  "o": [
+   "The craft cocktail revival with house syrups, clarification and low-waste bars",
+   "Pre-bottled alcopops",
+   "Frozen slush machines",
+   "Neon-coloured shooters"
+  ],
+  "a": 0,
+  "d": 6,
+  "r": "House-made everything, historical revivals, and later a sustainability push against waste."
+ },
+ {
+  "id": "q230",
+  "q": "What is the 'low- and no-alcohol' trend driven by?",
+  "o": [
+   "Higher taxes on strong spirits only",
+   "Bans on high-ABV drinks",
+   "Health-conscious drinkers wanting the ritual without the alcohol",
+   "A global shortage of spirits"
+  ],
+  "a": 2,
+  "d": 6,
+  "r": "Sober-curious drinking pushed distilled non-alcoholic spirits and serious zero-alcohol menus into the mainstream."
+ },
+ {
+  "id": "q231",
+  "q": "What does 'sober curious' mean?",
+  "o": [
+   "Drinking only wine",
+   "A medically supervised programme",
+   "Abstaining one month a year only",
+   "Choosing to drink less or not at all without identifying as fully sober"
+  ],
+  "a": 3,
+  "d": 6,
+  "r": "A cultural shift toward moderation, which reshaped bar menus worldwide."
+ },
+ {
+  "id": "q232",
+  "q": "What is a 'low-waste' or 'closed-loop' bar?",
+  "o": [
+   "A bar that uses citrus husks, peels and offcuts instead of binning them",
+   "A bar that never batches drinks",
+   "A bar that serves only local spirits",
+   "A bar with no single-use glassware"
+  ],
+  "a": 0,
+  "d": 8,
+  "r": "Husk cordials, oleo-saccharum from peels, and reusing every part of an ingredient."
+ },
+ {
+  "id": "q233",
+  "q": "What is oleo-saccharum?",
+  "o": [
+   "Sugar-extracted citrus peel oil, used in punches",
+   "A clarified sugar syrup",
+   "A honey-based sweetener",
+   "A citrus vinegar"
+  ],
+  "a": 0,
+  "d": 9,
+  "r": "Sugar draws the oil out of citrus peels, creating an intensely aromatic syrup used in classic punches."
+ },
+ {
+  "id": "q234",
+  "q": "Which is true of the modern 'highball renaissance', especially in Japan?",
+  "o": [
+   "It means highballs made with sparkling wine",
+   "It is a return to pre-mixed cans only",
+   "Whisky highballs are treated with precision on ice, dilution and carbonation",
+   "It refers to taller glassware only"
+  ],
+  "a": 2,
+  "d": 7,
+  "r": "Japanese bars turned the highball into a discipline: hard ice, cold soda, exact ratios, minimal stirring."
+ },
+ {
+  "id": "q235",
+  "q": "What is 'clarified milk punch' prized for?",
+  "o": [
+   "A silky texture and long shelf life with a clear appearance",
+   "Requiring no straining",
+   "Being the strongest punch style",
+   "Its bright white colour"
+  ],
+  "a": 0,
+  "d": 9,
+  "r": "The milk curdles, is strained out, and leaves a clear, velvety drink that keeps for months."
+ },
+ {
+  "id": "q236",
+  "q": "Which is a genuine trend in Indian bars in recent years?",
+  "o": [
+   "Mandatory zero-alcohol menus",
+   "A ban on all imported spirits",
+   "Regional Indian ingredients in classic templates",
+   "A shift away from whisky entirely"
+  ],
+  "a": 2,
+  "d": 6,
+  "r": "Kokum, gondhoraj, jamun, curry leaf and toddy appearing in sours, spritzes and highballs.",
+  "in": true
+ },
+ {
+  "id": "q237",
+  "q": "What does 'terroir' mean when applied to spirits?",
+  "o": [
+   "The influence of place, climate and raw material on flavour",
+   "The distillery's altitude only",
+   "The age of the barrel",
+   "The still's copper content"
+  ],
+  "a": 0,
+  "d": 8,
+  "r": "Borrowed from wine: place shapes flavour, whether in agave, cane or grain."
+ },
+ {
+  "id": "q238",
+  "q": "Which is a rising category globally, especially among younger drinkers?",
+  "o": [
+   "Ready-to-drink canned cocktails",
+   "Cream liqueurs",
+   "Fortified sherry",
+   "Overproof navy rum"
+  ],
+  "a": 0,
+  "d": 6,
+  "r": "RTDs have grown fast for convenience and consistent quality."
+ },
+ {
+  "id": "q239",
+  "q": "What is 'agave spirit' terminology likely to include beyond tequila and mezcal?",
+  "o": [
+   "Raicilla, bacanora and sotol-adjacent spirits",
+   "Arrack and feni",
+   "Cachaça and rum",
+   "Pisco and singani"
+  ],
+  "a": 0,
+  "d": 9,
+  "r": "Raicilla and bacanora are agave spirits with their own regions; sotol comes from a related plant."
+ },
+ {
+  "id": "q240",
+  "q": "What is the significance of the 'Death & Co' and 'PDT' bars?",
+  "o": [
+   "They are London's oldest bars",
+   "They pioneered tiki in the 1930s",
+   "They created the first RTD cocktails",
+   "They shaped the modern New York craft cocktail movement"
+  ],
+  "a": 3,
+  "d": 8,
+  "r": "Both are landmarks of the 2000s New York cocktail renaissance, and their books shaped bars worldwide."
+ },
+ {
+  "id": "q241",
+  "q": "Which best describes the 'World's 50 Best Bars' list?",
+  "o": [
+   "A ranking of bar sales volume",
+   "A list of the oldest bars in the world",
+   "An IBA-certified competition",
+   "An annual global ranking that has included Indian bars in recent years"
+  ],
+  "a": 3,
+  "d": 7,
+  "r": "Indian bars have begun appearing on it, a marker of how fast the scene has matured.",
+  "in": true
+ },
+ {
+  "id": "q242",
+  "q": "What does 'batching for service' solve in a busy bar?",
+  "o": [
+   "Speed and consistency across many drinks",
+   "Longer ageing",
+   "Higher alcohol content",
+   "Reduced dilution"
+  ],
+  "a": 0,
+  "d": 7,
+  "r": "Pre-measured mixes mean every drink tastes the same and lands fast."
+ },
+ {
+  "id": "q243",
+  "q": "Which is true of barrel-aged cocktails?",
+  "o": [
+   "The whole cocktail rests in wood, softening and integrating it",
+   "Only the base spirit is aged",
+   "They must be aged for a year minimum",
+   "They cannot contain vermouth"
+  ],
+  "a": 0,
+  "d": 8,
+  "r": "Ageing a Negroni or Manhattan in wood rounds it out; vermouth-containing drinks are common candidates."
+ },
+ {
+  "id": "q244",
+  "q": "What is the purpose of a 'garnish' in serious bartending?",
+  "o": [
+   "Appearance only",
+   "To sweeten the drink",
+   "To dilute the drink slowly",
+   "Aroma first, appearance second"
+  ],
+  "a": 3,
+  "d": 6,
+  "r": "A mint sprig or citrus twist sits at the nose and changes every sip. If it does neither, leave it off."
+ },
+ {
+  "id": "q245",
+  "q": "Which claim about the Manhattan is correct?",
+  "o": [
+   "Bourbon, Campari and bitters, stirred",
+   "Rye or bourbon, sweet vermouth and bitters, stirred",
+   "Whiskey, sweet vermouth and citrus, shaken",
+   "Rye, dry vermouth and bitters, shaken"
+  ],
+  "a": 1,
+  "d": 6,
+  "r": "2:1 whiskey to sweet vermouth with bitters, stirred and served up or on a cube."
+ },
+ {
+  "id": "q246",
+  "q": "The Boulevardier differs from a Negroni how?",
+  "o": [
+   "Whiskey replaces gin",
+   "Dry vermouth replaces sweet",
+   "It contains soda",
+   "Aperol replaces Campari"
+  ],
+  "a": 0,
+  "d": 7,
+  "r": "Bourbon or rye in place of gin, often with a slightly higher whiskey proportion."
+ },
+ {
+  "id": "q247",
+  "q": "Which is true of the Americano cocktail?",
+  "o": [
+   "Campari, prosecco and soda",
+   "Campari, sweet vermouth and soda",
+   "Espresso, vermouth and soda",
+   "Campari, gin and soda"
+  ],
+  "a": 1,
+  "d": 7,
+  "r": "The Negroni's ancestor: Campari, sweet vermouth and soda water."
+ },
+ {
+  "id": "q248",
+  "q": "What is 'Suze'?",
+  "o": [
+   "A French gentian aperitif",
+   "A German herbal bitters",
+   "An Italian amaro",
+   "A Spanish vermouth"
+  ],
+  "a": 0,
+  "d": 9,
+  "r": "A bitter French gentian-root aperitif, distinctively earthy."
+ },
+ {
+  "id": "q249",
+  "q": "Fernet-Branca is best described as what?",
+  "o": [
+   "An anise-flavoured spirit",
+   "An intensely bitter Italian amaro, popular as a bartender's shot",
+   "A fortified wine",
+   "A sweet Italian liqueur"
+  ],
+  "a": 1,
+  "d": 8,
+  "r": "Fiercely bitter and menthol-driven, famously the 'bartender's handshake'.",
+  "fun": true
+ },
+ {
+  "id": "q250",
+  "q": "Which is true of the Paloma?",
+  "o": [
+   "Tequila with grapefruit soda and lime",
+   "Tequila with orange soda",
+   "Mezcal with tonic",
+   "Tequila with lemonade only"
+  ],
+  "a": 0,
+  "d": 6,
+  "r": "Mexico's everyday tequila drink, far more common there than the Margarita."
+ },
+ {
+  "id": "q251",
+  "q": "What is 'chilli-salt rim' or Tajín used for?",
+  "o": [
+   "A garnish for tiki drinks only",
+   "A savoury-spicy rim on Mexican-style drinks",
+   "A clarifying agent",
+   "A sweetener"
+  ],
+  "a": 1,
+  "d": 6,
+  "r": "Chilli, lime and salt seasoning, used on Micheladas, Palomas and fruit."
+ },
+ {
+  "id": "q252",
+  "q": "A Michelada is built on what?",
+  "o": [
+   "Beer with lime, salt and savoury seasonings",
+   "Mezcal with clamato only",
+   "Tequila with tomato juice",
+   "Beer with cola"
+  ],
+  "a": 0,
+  "d": 6,
+  "r": "Mexican beer cocktail: lime, salt, hot sauce and sometimes clamato."
+ },
+ {
+  "id": "q253",
+  "q": "What distinguishes a Caipirinha from a Daiquiri?",
+  "o": [
+   "Cachaça and muddled lime wheels rather than rum and lime juice",
+   "It is shaken, not built",
+   "It contains mint",
+   "It uses lemon, not lime"
+  ],
+  "a": 0,
+  "d": 6,
+  "r": "Cachaça, muddled lime and sugar, built in the glass over crushed ice."
+ },
+ {
+  "id": "q254",
+  "q": "Singani, a lesser-known grape spirit, comes from which country?",
+  "o": [
+   "Chile",
+   "Bolivia",
+   "Peru",
+   "Argentina"
+  ],
+  "a": 1,
+  "d": 9,
+  "r": "Bolivia, distilled from high-altitude Muscat grapes."
+ },
+ {
+  "id": "q255",
+  "q": "Which is true of aquavit?",
+  "o": [
+   "A Polish honey spirit",
+   "A Dutch juniper spirit",
+   "A Baltic herbal bitters",
+   "A Scandinavian spirit flavoured with caraway or dill"
+  ],
+  "a": 3,
+  "d": 8,
+  "r": "Caraway or dill-forward, traditionally drunk with food in Scandinavia."
+ },
+ {
+  "id": "q256",
+  "q": "What is 'raki' and where is it from?",
+  "o": [
+   "An anise spirit from Turkey",
+   "A grape brandy from Georgia",
+   "A plum spirit from Serbia",
+   "A herbal liqueur from Greece"
+  ],
+  "a": 0,
+  "d": 7,
+  "r": "Turkey's anise spirit, which turns cloudy with water, like ouzo and pastis."
+ },
+ {
+  "id": "q257",
+  "q": "Why do anise spirits like raki, ouzo and pastis turn cloudy with water?",
+  "o": [
+   "The louche effect: anise oils are insoluble in water and form an emulsion",
+   "Chilling causes crystallisation",
+   "Water reacts with the alcohol",
+   "Sugar precipitates out"
+  ],
+  "a": 0,
+  "d": 9,
+  "r": "Called the louche. Essential oils drop out of solution, clouding the glass.",
+  "fun": true
+ },
+ {
+  "id": "q258",
+  "q": "Which best describes 'navy strength' spirits?",
+  "o": [
+   "Bottled at 57% ABV or above, historically so spilled spirit wouldn't ruin gunpowder",
+   "Made only with sea water",
+   "Aged at sea",
+   "Distilled on naval ships"
+  ],
+  "a": 0,
+  "d": 8,
+  "r": "57% was the 'proof' point at which gunpowder soaked in spirit would still ignite.",
+  "fun": true
+ },
+ {
+  "id": "q259",
+  "q": "Which is true of sherry styles?",
+  "o": [
+   "PX is bone dry",
+   "Fino is the sweetest style",
+   "All sherry is medium-sweet",
+   "Fino is dry and pale; Pedro Ximénez is intensely sweet"
+  ],
+  "a": 3,
+  "d": 8,
+  "r": "Fino and manzanilla are dry and delicate; oloroso is richer; PX is dessert-sweet."
+ },
+ {
+  "id": "q260",
+  "q": "Which is true of the Tommy's Margarita?",
+  "o": [
+   "It replaces triple sec with agave syrup",
+   "It replaces tequila with mezcal",
+   "It omits lime",
+   "It adds orange juice"
+  ],
+  "a": 0,
+  "d": 8,
+  "r": "Created at Tommy's in San Francisco: tequila, lime and agave nectar, no orange liqueur."
+ },
+ {
+  "id": "q261",
+  "q": "What is the difference between crème de cacao and chocolate liqueur in practice?",
+  "o": [
+   "Chocolate liqueur is always clear",
+   "Crème de cacao is typically drier and used in classics like the Alexander",
+   "Crème de cacao contains dairy",
+   "They are identical"
+  ],
+  "a": 1,
+  "d": 9,
+  "r": "Crème de cacao (white or dark) is the classic cocktail ingredient; modern chocolate liqueurs are often sweeter and richer."
+ },
+ {
+  "id": "q262",
+  "q": "Which is true of Irish cream liqueurs in cocktails?",
+  "o": [
+   "They cannot be layered",
+   "Acid can curdle them, which is why layered shots are drunk quickly",
+   "They must be heated first",
+   "They never curdle"
+  ],
+  "a": 1,
+  "d": 8,
+  "r": "That's exactly why an Irish Slammer is drunk straight down before it curdles in the stout."
+ },
+ {
+  "id": "q263",
+  "q": "Which is true of Indian rum's flavour reputation?",
+  "o": [
+   "Indian rums are legally required to be spiced",
+   "Indian rum is distilled from grapes",
+   "Indian rums are all unaged and dry",
+   "Old Monk is known for a pronounced vanilla character"
+  ],
+  "a": 3,
+  "d": 7,
+  "r": "Old Monk's distinct vanilla note is its signature, aged in oak and bottled at 42.8% ABV.",
+  "in": true
+ },
+ {
+  "id": "q264",
+  "q": "What is unusual about how Old Monk built its brand?",
+  "o": [
+   "Essentially no advertising, only word of mouth",
+   "A famous cinema campaign",
+   "Sponsoring cricket teams",
+   "Free samples at railway stations"
+  ],
+  "a": 0,
+  "d": 7,
+  "r": "One of the world's best-selling rums with almost no advertising for decades.",
+  "in": true,
+  "fun": true
+ },
+ {
+  "id": "q265",
+  "q": "Which Indian drink would you most likely be served after a heavy fish curry on the Konkan coast?",
+  "o": [
+   "Shikanji",
+   "Jal-jeera",
+   "Solkadhi",
+   "Thandai"
+  ],
+  "a": 2,
+  "d": 7,
+  "r": "Solkadhi, kokum in coconut milk, acts as a digestive.",
+  "in": true
+ },
+ {
+  "id": "q266",
+  "q": "Which souring agent is most associated with Bengali cocktails?",
+  "o": [
+   "Gondhoraj lime",
+   "Tamarind",
+   "Kokum",
+   "Sea buckthorn"
+  ],
+  "a": 0,
+  "d": 8,
+  "r": "Gondhoraj lebu, intensely fragrant, is Kolkata's pride.",
+  "in": true
+ },
+ {
+  "id": "q267",
+  "q": "What is the practical difference between a 'peg' and a 'shot' in Indian usage?",
+  "o": [
+   "A peg is a measured pour of spirit, typically 30 or 60 ml, usually drunk with a mixer",
+   "They are legally defined differently",
+   "A shot is larger than a peg",
+   "A peg is always drunk neat in one go"
+  ],
+  "a": 0,
+  "d": 7,
+  "r": "Pegs are how Indians measure whisky pours: chota 30 ml, burra 60 ml, usually taken long with soda or water.",
+  "in": true
+ },
+ {
+  "id": "q268",
+  "q": "Which is a real risk of 'hooch' tragedies in India?",
+  "o": [
+   "Overly long ageing",
+   "Methanol added or produced during unregulated distillation",
+   "Too much sugar",
+   "Excessive carbonation"
+  ],
+  "a": 1,
+  "d": 8,
+  "r": "Methanol poisoning from illicit distillation has caused repeated mass-casualty incidents.",
+  "in": true
+ },
+ {
+  "id": "q269",
+  "q": "Which cocktail would best showcase mahua's floral character?",
+  "o": [
+   "A hot toddy",
+   "A sour, where its floral notes sit against citrus",
+   "A carbonated highball with cola",
+   "A creamy dessert drink"
+  ],
+  "a": 1,
+  "d": 8,
+  "r": "Mahua's honeyed, floral profile shines with acid, the way a good sour frames any base spirit.",
+  "in": true
+ },
+ {
+  "id": "q270",
+  "q": "Which claim about black salt (kala namak) in drinks is accurate?",
+  "o": [
+   "It sweetens the drink",
+   "It is used only in alcoholic drinks",
+   "It is purely for colour",
+   "It adds a sulphurous, savoury tang used across Indian coolers"
+  ],
+  "a": 3,
+  "d": 7,
+  "r": "Its distinct sulphurous savour defines shikanji, jal-jeera, aam panna and kala khatta.",
+  "in": true
+ },
+ {
+  "id": "q271",
+  "q": "What is the traditional vessel for serving chaas or lassi in much of India?",
+  "o": [
+   "A stemmed glass",
+   "A copper mug",
+   "A ceramic bowl",
+   "A tall steel or brass tumbler"
+  ],
+  "a": 3,
+  "d": 6,
+  "r": "Steel and brass tumblers are the everyday standard.",
+  "in": true
+ },
+ {
+  "id": "q272",
+  "q": "Which best explains why Indian bartenders reach for jaggery?",
+  "o": [
+   "It is less sweet than sugar",
+   "It prevents dilution",
+   "It adds a mineral, molasses-like depth a plain syrup cannot",
+   "It is cheaper than sugar"
+  ],
+  "a": 2,
+  "d": 8,
+  "r": "Unrefined cane gur brings caramel and mineral notes, excellent with dark rum and whisky.",
+  "in": true
+ },
+ {
+  "id": "q273",
+  "q": "Which is India's most widely consumed alcoholic drink category by volume, including country liquor?",
+  "o": [
+   "Beer",
+   "Spirits, led by whisky",
+   "Cider",
+   "Wine"
+  ],
+  "a": 1,
+  "d": 7,
+  "r": "India is a spirits market above all, with whisky far ahead of beer by volume of alcohol consumed.",
+  "in": true
+ },
+ {
+  "id": "q274",
+  "q": "Which Indian state pioneered microbrewery-friendly regulation, fuelling the craft beer boom?",
+  "o": [
+   "Bihar",
+   "Karnataka",
+   "Odisha",
+   "Kerala"
+  ],
+  "a": 1,
+  "d": 8,
+  "r": "Karnataka's rules let Bengaluru's microbrewery scene flourish first.",
+  "in": true
+ },
+ {
+  "id": "q275",
+  "q": "What is the significance of the 1949 Bombay Prohibition Act today?",
+  "o": [
+   "It was repealed in the 1950s",
+   "It applies only to Mumbai city",
+   "It banned only imported liquor",
+   "It still technically underpins Maharashtra's permit system and the name 'permit room'"
+  ],
+  "a": 3,
+  "d": 9,
+  "r": "The Act survives in amended form, which is why permits and 'permit rooms' persist.",
+  "in": true
+ },
+ {
+  "id": "q276",
+  "q": "Which of these Indian drinks is fermented rather than merely mixed?",
+  "o": [
+   "Aam panna",
+   "Shikanji",
+   "Kanji",
+   "Jal-jeera"
+  ],
+  "a": 2,
+  "d": 7,
+  "r": "Kanji ferments black carrots and mustard seeds in the sun. The others are fresh mixes.",
+  "in": true
+ },
+ {
+  "id": "q277",
+  "q": "Which is true of the 'leh berry' or sea buckthorn drinks of Ladakh?",
+  "o": [
+   "They are tart, vitamin-rich cordials made from a hardy high-altitude berry",
+   "They are distilled into a local spirit",
+   "They are fermented into wine only",
+   "They are sweet and low in acid"
+  ],
+  "a": 0,
+  "d": 8,
+  "r": "Sharp and bright, they thrive in Ladakh's extreme climate.",
+  "in": true
+ },
+ {
+  "id": "q278",
+  "q": "Which Indian ingredient would you use to make a drink 'astringent and purple'?",
+  "o": [
+   "Gondhoraj",
+   "Jamun",
+   "Khus",
+   "Kokum"
+  ],
+  "a": 1,
+  "d": 8,
+  "r": "Jamun, the Indian blackberry. Kokum is magenta and sour; khus is green and cooling.",
+  "in": true
+ },
+ {
+  "id": "q279",
+  "q": "What best describes the role of curry leaf in modern Indian gin?",
+  "o": [
+   "An aromatic botanical giving a distinctly South Indian nose",
+   "A souring agent",
+   "A sweetener",
+   "A colouring agent"
+  ],
+  "a": 0,
+  "d": 8,
+  "r": "Distillers use it as a signature aromatic alongside juniper.",
+  "in": true
+ },
+ {
+  "id": "q280",
+  "q": "Which is true of drinking customs in many Indian Adivasi communities?",
+  "o": [
+   "Only distilled spirits are traditional",
+   "Alcohol is universally prohibited",
+   "Home-brewed drinks are offered to both guests and deities",
+   "Drinks are never shared communally"
+  ],
+  "a": 2,
+  "d": 8,
+  "r": "Handia and similar brews carry ritual and hospitality roles alike.",
+  "in": true,
+  "fun": true
+ },
+ {
+  "id": "q281",
+  "q": "Which best describes the Indian 'sundowner' culture inherited from colonial clubs?",
+  "o": [
+   "A morning restorative",
+   "A drink at sunset, often on a verandah or lawn",
+   "A festival-only tradition",
+   "A late-night nightclub ritual"
+  ],
+  "a": 1,
+  "d": 7,
+  "r": "Gymkhana and planters' club culture left the sunset drink firmly in place.",
+  "in": true
+ },
+ {
+  "id": "q282",
+  "q": "Which is true about the availability of urrak outside Goa?",
+  "o": [
+   "It is widely exported",
+   "It is sold only in Mumbai",
+   "It is highly seasonal and rarely leaves the state",
+   "It is bottled year-round"
+  ],
+  "a": 2,
+  "d": 9,
+  "r": "Roughly March to May only, and almost never beyond Goa.",
+  "in": true,
+  "fun": true
+ },
+ {
+  "id": "q283",
+  "q": "Which cocktail template would best suit tamarind syrup?",
+  "o": [
+   "A stirred spirit-only drink",
+   "A sour or a mule, where its tang balances sweetness",
+   "A creamy flip",
+   "A hot toddy"
+  ],
+  "a": 1,
+  "d": 8,
+  "r": "Imli's sweet-sour depth works beautifully with dark rum in a sour or a mule.",
+  "in": true
+ },
+ {
+  "id": "q284",
+  "q": "What does 'Indri' refer to in Indian whisky?",
+  "o": [
+   "A rum from Kerala",
+   "A single malt distillery in Haryana",
+   "A wine estate in Nashik",
+   "A Goan gin brand"
+  ],
+  "a": 1,
+  "d": 9,
+  "r": "Indri, Haryana, whose single malt won major international recognition.",
+  "in": true
+ },
+ {
+  "id": "q285",
+  "q": "Which is a distinctive feature of Goan drinking culture?",
+  "o": [
+   "Whisky-only bars",
+   "Susegad: unhurried, contented drinking, often with port-style wine or feni",
+   "Strict prohibition",
+   "No local spirits"
+  ],
+  "a": 1,
+  "d": 7,
+  "r": "Susegad, feni, urrak and Portuguese-legacy fortified wines together define it.",
+  "in": true
+ },
+ {
+  "id": "q286",
+  "q": "Which drink is most associated with a Kerala toddy shop meal?",
+  "o": [
+   "Wine with seafood",
+   "Fresh toddy with fiery fish and duck curries",
+   "Chilled beer with continental food",
+   "Rum with sweets"
+  ],
+  "a": 1,
+  "d": 7,
+  "r": "Kallu shaapus are destination restaurants as much as drinking spots.",
+  "in": true
+ },
+ {
+  "id": "q287",
+  "q": "What is 'ranu' in the context of handia?",
+  "o": [
+   "The finished drink's local name",
+   "A festival where it is drunk",
+   "An herbal starter tablet used to ferment the rice",
+   "The clay pot used"
+  ],
+  "a": 2,
+  "d": 9,
+  "r": "Ranu tablets are hereditary herbal starters, passed down like heirlooms.",
+  "in": true,
+  "fun": true
+ },
+ {
+  "id": "q288",
+  "q": "Which best describes the trajectory of Indian single malts since 2004?",
+  "o": [
+   "From novelty to regularly beating Scotch in blind tastings and awards",
+   "They have declined in quality",
+   "They remain unavailable outside India",
+   "They are all made by one distillery"
+  ],
+  "a": 0,
+  "d": 7,
+  "r": "Amrut, Paul John, Rampur and Indri have all won serious international recognition.",
+  "in": true,
+  "fun": true
+ },
+ {
+  "id": "q289",
+  "q": "Which is true of vermouth's role in an Indian bar context?",
+  "o": [
+   "Vermouth is exclusively Indian-made",
+   "Vermouth is only used in cooking",
+   "Imported and now some Indian-made vermouths support classic cocktails",
+   "Vermouth is banned in India"
+  ],
+  "a": 2,
+  "d": 7,
+  "r": "Indian craft vermouths have joined imports as the cocktail scene matured.",
+  "in": true
+ },
+ {
+  "id": "q290",
+  "q": "Which pairing is correct?",
+  "o": [
+   "All three come from palm sap",
+   "Mahua — cashew; Feni — palm sap; Toddy — flowers",
+   "Mahua — flowers; Feni — cashew; Toddy — palm sap",
+   "Mahua — palm sap; Feni — flowers; Toddy — cashew"
+  ],
+  "a": 2,
+  "d": 8,
+  "r": "Three different raw materials: mahua blossoms, cashew fruit, and palm sap.",
+  "in": true
+ },
+ {
+  "id": "q291",
+  "q": "Which is the odd one out among Indian traditional brews?",
+  "o": [
+   "Judima",
+   "Zutho",
+   "Apong",
+   "Tharra"
+  ],
+  "a": 3,
+  "d": 9,
+  "r": "Tharra is a distilled country liquor from sugarcane; the other three are fermented rice brews.",
+  "in": true
+ },
+ {
+  "id": "q292",
+  "q": "Which statement about Indian beer is accurate?",
+  "o": [
+   "Strong beer at 8% ABV or more holds a large market share",
+   "Wheat beer dominates the market",
+   "All Indian beer is under 5% ABV",
+   "Indian beer is mostly imported"
+  ],
+  "a": 0,
+  "d": 8,
+  "r": "'Strong' beer is a distinctly large category in India, unlike most western markets.",
+  "in": true,
+  "fun": true
+ },
+ {
+  "id": "q293",
+  "q": "What is the role of 'excise duty' in Indian alcohol?",
+  "o": [
+   "A major state revenue source that shapes prices and availability",
+   "A levy only on beer",
+   "A tax only on imports",
+   "A central tax uniform across states"
+  ],
+  "a": 0,
+  "d": 7,
+  "r": "Excise is often among a state's largest own-revenue streams, which is why policies vary so much.",
+  "in": true
+ },
+ {
+  "id": "q294",
+  "q": "Which is true about tonic water in India today?",
+  "o": [
+   "Tonic is banned with gin",
+   "Tonic is unavailable in India",
+   "Craft Indian tonic brands now cater to the gin boom",
+   "Only imported tonic exists"
+  ],
+  "a": 2,
+  "d": 7,
+  "r": "Indian craft tonic brands grew alongside the local gin wave.",
+  "in": true
+ },
+ {
+  "id": "q295",
+  "q": "Which is the most accurate statement about 'IMFL whisky' and malt content?",
+  "o": [
+   "It contains no alcohol from cane",
+   "It must be 100% malt",
+   "Most contains little or no malt whisky, being largely molasses-based spirit",
+   "It is always blended with Scotch"
+  ],
+  "a": 2,
+  "d": 9,
+  "r": "This is precisely why the EU classifies it differently from grain whisky.",
+  "in": true
+ },
+ {
+  "id": "q296",
+  "q": "What is the significance of Mohan Meakin in Indian drinks history?",
+  "o": [
+   "It founded India's first gin distillery",
+   "It is India's largest wine producer",
+   "It runs one of Asia's oldest breweries and distilleries and makes Old Monk",
+   "It only makes soft drinks"
+  ],
+  "a": 2,
+  "d": 9,
+  "r": "Its Kasauli and Solan operations date to the 19th century, and it makes Old Monk and Solan No.1.",
+  "in": true,
+  "fun": true
+ },
+ {
+  "id": "q297",
+  "q": "Which is true about serving temperature for Indian summer coolers?",
+  "o": [
+   "They are served very cold over ice to counter extreme heat",
+   "They are served warm",
+   "They are frozen solid",
+   "They are served at room temperature only"
+  ],
+  "a": 0,
+  "d": 5,
+  "r": "Shikanji, aam panna, chaas and jal-jeera are all built for heat relief.",
+  "in": true
+ },
+ {
+  "id": "q298",
+  "q": "Which best describes the future direction of Indian bartending, per current trends?",
+  "o": [
+   "Abandoning cocktails for beer",
+   "Standardising on international recipes only",
+   "Regional ingredients, local spirits and low-waste methods gaining global recognition",
+   "A return to imported-only menus"
+  ],
+  "a": 2,
+  "d": 7,
+  "r": "Indian bars increasingly win recognition for regional identity rather than imitating western menus.",
+  "in": true
+ },
+ {
+  "id": "q299",
+  "q": "What is the most accurate statement about coconut feni versus cashew feni?",
+  "o": [
+   "Both are made from cashew",
+   "Coconut feni is distilled from coconut flesh",
+   "Coconut feni is made from palm sap, cashew feni from the cashew fruit",
+   "Cashew feni uses the nut, not the fruit"
+  ],
+  "a": 2,
+  "d": 9,
+  "r": "The cashew apple, not the nut, makes cashew feni. Coconut feni comes from palm sap.",
+  "in": true
+ },
+ {
+  "id": "q300",
+  "q": "Which is the correct order of strength, weakest to strongest, in typical serves?",
+  "o": [
+   "Beer, fortified wine, wine, spirits",
+   "Fortified wine, beer, wine, spirits",
+   "Beer, wine, fortified wine, spirits",
+   "Wine, beer, spirits, fortified wine"
+  ],
+  "a": 2,
+  "d": 5,
+  "r": "Beer around 5%, wine 12–14%, fortified wine 15–20%, spirits 40%+."
+ },
+ {
+  "id": "q301",
+  "q": "Which Indian drink is simply spiced buttermilk?",
+  "o": [
+   "Sharbat",
+   "Thandai",
+   "Chaas",
+   "Lassi"
+  ],
+  "a": 2,
+  "d": 3,
+  "r": "Chaas is thinned, spiced buttermilk. Lassi is thicker and often sweet; thandai is a milk-and-nut drink.",
+  "in": true
+ },
+ {
+  "id": "q302",
+  "q": "Which of these is India's most famous beer brand?",
+  "o": [
+   "Kingfisher",
+   "Haywards",
+   "Lion",
+   "Godfather"
+  ],
+  "a": 0,
+  "d": 3,
+  "r": "Kingfisher. The others are all real Indian beers, but Kingfisher is the household name.",
+  "in": true
+ },
+ {
+  "id": "q303",
+  "q": "Rooh Afza is famous for which flavour?",
+  "o": [
+   "Mango",
+   "Lemon",
+   "Rose",
+   "Cardamom"
+  ],
+  "a": 2,
+  "d": 4,
+  "r": "A rose-forward sharbat concentrate, iconic across South Asia.",
+  "in": true
+ },
+ {
+  "id": "q304",
+  "q": "Which Indian state is most associated with feni and susegad drinking culture?",
+  "o": [
+   "Punjab",
+   "Assam",
+   "Goa",
+   "Kerala"
+  ],
+  "a": 2,
+  "d": 3,
+  "r": "Goa, on both counts.",
+  "in": true
+ },
+ {
+  "id": "q305",
+  "q": "A 'burra peg' is what?",
+  "o": [
+   "A small measure of spirit",
+   "A large measure of spirit",
+   "A whisky with no water",
+   "A beer chaser"
+  ],
+  "a": 1,
+  "d": 4,
+  "r": "Burra means large, chota means small.",
+  "in": true
+ },
+ {
+  "id": "q306",
+  "q": "Which drink would you buy from a Mumbai gola cart?",
+  "o": [
+   "Thandai",
+   "Chhaang",
+   "Solkadhi",
+   "Kala khatta"
+  ],
+  "a": 3,
+  "d": 4,
+  "r": "Kala khatta, the sweet-sour-salty shaved-ice syrup.",
+  "in": true
+ },
+ {
+  "id": "q307",
+  "q": "Nimbu pani is another name for which drink?",
+  "o": [
+   "Jal-jeera",
+   "Aam panna",
+   "Shikanji",
+   "Chaas"
+  ],
+  "a": 2,
+  "d": 3,
+  "r": "Both names describe India's roadside spiced lemonade.",
+  "in": true
+ },
+ {
+  "id": "q308",
+  "q": "Which Indian city is India's wine capital?",
+  "o": [
+   "Jaipur",
+   "Kochi",
+   "Lucknow",
+   "Nashik"
+  ],
+  "a": 3,
+  "d": 4,
+  "r": "Nashik, in Maharashtra, on the banks of the Godavari.",
+  "in": true
+ },
+ {
+  "id": "q309",
+  "q": "Which spirit does India consume the most of?",
+  "o": [
+   "Tequila",
+   "Whisky",
+   "Vodka",
+   "Gin"
+  ],
+  "a": 1,
+  "d": 3,
+  "r": "Whisky, by a very wide margin.",
+  "in": true
+ },
+ {
+  "id": "q310",
+  "q": "Thandai is traditionally drunk at which festival?",
+  "o": [
+   "Diwali",
+   "Baisakhi",
+   "Navratri",
+   "Holi"
+  ],
+  "a": 3,
+  "d": 4,
+  "r": "Holi, sometimes with bhang added.",
+  "in": true
+ },
+ {
+  "id": "q311",
+  "q": "Which is a Goan spirit made from cashew?",
+  "o": [
+   "Tharra",
+   "Chhaang",
+   "Feni",
+   "Toddy"
+  ],
+  "a": 2,
+  "d": 3,
+  "r": "Cashew feni, made from the cashew apple rather than the nut.",
+  "in": true
+ },
+ {
+  "id": "q312",
+  "q": "Old Monk is which type of spirit?",
+  "o": [
+   "Whisky",
+   "Brandy",
+   "Dark rum",
+   "Gin"
+  ],
+  "a": 2,
+  "d": 3,
+  "r": "A vatted Indian dark rum with a distinct vanilla character.",
+  "in": true
+ },
+ {
+  "id": "q313",
+  "q": "What is aam panna made to combat?",
+  "o": [
+   "Altitude sickness",
+   "Winter cold",
+   "Monsoon damp",
+   "Summer heat"
+  ],
+  "a": 3,
+  "d": 4,
+  "r": "The tart raw-mango cooler that gets North India through the loo winds of May.",
+  "in": true
+ },
+ {
+  "id": "q314",
+  "q": "Which is a Himalayan millet brew served in a bamboo mug?",
+  "o": [
+   "Handia",
+   "Tongba",
+   "Judima",
+   "Apong"
+  ],
+  "a": 1,
+  "d": 5,
+  "r": "Tongba, drunk through a bamboo straw and topped up with hot water.",
+  "in": true
+ },
+ {
+  "id": "q315",
+  "q": "Toddy is tapped from which tree?",
+  "o": [
+   "Neem",
+   "Palm",
+   "Banyan",
+   "Mango"
+  ],
+  "a": 1,
+  "d": 4,
+  "r": "Palmyra, date and coconut palms all yield sap for toddy.",
+  "in": true
+ },
+ {
+  "id": "q316",
+  "q": "Which Indian drink uses roasted cumin as a defining flavour?",
+  "o": [
+   "Lassi",
+   "Rooh Afza",
+   "Jal-jeera",
+   "Thandai"
+  ],
+  "a": 2,
+  "d": 4,
+  "r": "Jeera is cumin, and jal-jeera is built on it.",
+  "in": true
+ },
+ {
+  "id": "q317",
+  "q": "Which is a common Indian mixer for whisky?",
+  "o": [
+   "Tonic only",
+   "Coconut water",
+   "Soda water",
+   "Cranberry juice"
+  ],
+  "a": 2,
+  "d": 3,
+  "r": "Soda and water are the standard, alongside cola.",
+  "in": true
+ },
+ {
+  "id": "q318",
+  "q": "Kokum is grown mainly along which Indian coast?",
+  "o": [
+   "Konkan",
+   "Malabar only",
+   "Gujarat coast",
+   "Coromandel"
+  ],
+  "a": 0,
+  "d": 5,
+  "r": "The Konkan coast, where it becomes solkadhi and coolers.",
+  "in": true
+ },
+ {
+  "id": "q319",
+  "q": "Which is India's most common retail liquor bottle size, the 'quarter'?",
+  "o": [
+   "375 ml",
+   "500 ml",
+   "180 ml",
+   "90 ml"
+  ],
+  "a": 2,
+  "d": 5,
+  "r": "180 ml is the quarter; 90 ml is a nip.",
+  "in": true
+ },
+ {
+  "id": "q320",
+  "q": "Amrut is best known as India's first what?",
+  "o": [
+   "Spiced rum",
+   "Single malt whisky",
+   "Craft gin",
+   "Sparkling wine"
+  ],
+  "a": 1,
+  "d": 5,
+  "r": "India's first single malt, launched in Glasgow in 2004.",
+  "in": true
+ },
+ {
+  "id": "q321",
+  "q": "Which cocktail is gin and tonic's closest Indian historical relative?",
+  "o": [
+   "Feni with lime",
+   "Thandai",
+   "The Old Monk and cola",
+   "The colonial quinine tonic taken against malaria"
+  ],
+  "a": 3,
+  "d": 5,
+  "r": "The G&T began as a way of making bitter antimalarial quinine drinkable.",
+  "in": true
+ },
+ {
+  "id": "q322",
+  "q": "Which of these Indian drinks contains no dairy?",
+  "o": [
+   "Chaas",
+   "Lassi",
+   "Thandai",
+   "Shikanji"
+  ],
+  "a": 3,
+  "d": 4,
+  "r": "Shikanji is lemon, sugar, salt and water. The other three are all milk or yogurt based.",
+  "in": true
+ },
+ {
+  "id": "q323",
+  "q": "Which Indian state is famous for its toddy shops serving fiery curries?",
+  "o": [
+   "Gujarat",
+   "Rajasthan",
+   "Kerala",
+   "Punjab"
+  ],
+  "a": 2,
+  "d": 5,
+  "r": "Kerala's kallu shaapus are destination restaurants.",
+  "in": true
+ },
+ {
+  "id": "q324",
+  "q": "What is jaggery, used in Indian drinks?",
+  "o": [
+   "A fermented milk product",
+   "A spice blend",
+   "A citrus fruit",
+   "Unrefined cane sugar"
+  ],
+  "a": 3,
+  "d": 4,
+  "r": "Unrefined cane sugar (gur), with caramel and mineral depth.",
+  "in": true
+ },
+ {
+  "id": "q325",
+  "q": "Which is a distilled spirit rather than a fermented brew?",
+  "o": [
+   "Handia",
+   "Tongba",
+   "Feni",
+   "Judima"
+  ],
+  "a": 2,
+  "d": 5,
+  "r": "Feni is distilled. Tongba, handia and Judima are all fermented.",
+  "in": true
+ },
+ {
+  "id": "q326",
+  "q": "Which Indian city is nicknamed the country's pub capital?",
+  "o": [
+   "Patna",
+   "Chennai",
+   "Ahmedabad",
+   "Bengaluru"
+  ],
+  "a": 3,
+  "d": 4,
+  "r": "Bengaluru, since the draught-beer boom of the 1980s.",
+  "in": true
+ },
+ {
+  "id": "q327",
+  "q": "Which is true of alcohol regulation in India?",
+  "o": [
+   "One national law governs everything",
+   "Only the central government issues licences",
+   "Rules are uniform across all states",
+   "Each state sets its own rules, so laws differ across borders"
+  ],
+  "a": 3,
+  "d": 5,
+  "r": "Alcohol is a state subject, which is why prices, ages and dry days all vary.",
+  "in": true
+ },
+ {
+  "id": "q328",
+  "q": "Which garnish would suit a kokum cooler?",
+  "o": [
+   "A mint sprig",
+   "An olive",
+   "A coffee bean",
+   "A cinnamon stick"
+  ],
+  "a": 0,
+  "d": 4,
+  "r": "Mint lifts the sour magenta fruit; the others fight it.",
+  "in": true
+ },
+ {
+  "id": "q329",
+  "q": "Which is a traditional Assamese rice wine with a GI tag?",
+  "o": [
+   "Judima",
+   "Zutho",
+   "Chhaang",
+   "Tharra"
+  ],
+  "a": 0,
+  "d": 5,
+  "r": "Judima, of the Dimasa people, GI-tagged in 2021.",
+  "in": true
+ },
+ {
+  "id": "q330",
+  "q": "What does 'desi' mean in 'desi daru'?",
+  "o": [
+   "Local or indigenous",
+   "Sweet",
+   "Strong",
+   "Cheap"
+  ],
+  "a": 0,
+  "d": 4,
+  "r": "Desi means local, so desi daru is country liquor.",
+  "in": true
+ },
+ {
+  "id": "q331",
+  "q": "Which is a real Indian craft gin brand?",
+  "o": [
+   "Old Monk Gin",
+   "Amrut Gin",
+   "Greater Than",
+   "Kingfisher Gin"
+  ],
+  "a": 2,
+  "d": 5,
+  "r": "Greater Than was among the first of India's craft gin wave.",
+  "in": true
+ },
+ {
+  "id": "q332",
+  "q": "Which best describes a 'dry day' in India?",
+  "o": [
+   "A day when bars close early",
+   "A day with no ice available",
+   "A day when only beer is sold",
+   "A day when alcohol sales are prohibited"
+  ],
+  "a": 3,
+  "d": 4,
+  "r": "National holidays and polling days are commonly dry.",
+  "in": true
+ },
+ {
+  "id": "q333",
+  "q": "Which fruit gives jamun-based drinks their colour?",
+  "o": [
+   "Black grape",
+   "Blueberry",
+   "Blackcurrant",
+   "Indian blackberry"
+  ],
+  "a": 3,
+  "d": 5,
+  "r": "Jamun, the Indian blackberry, deep purple and astringent.",
+  "in": true
+ },
+ {
+  "id": "q334",
+  "q": "Which of these is served hot?",
+  "o": [
+   "Masala chai toddy",
+   "Aam panna",
+   "Kala khatta",
+   "Shikanji"
+  ],
+  "a": 0,
+  "d": 4,
+  "r": "A whisky-spiked masala chai is India's winter answer to the hot toddy.",
+  "in": true
+ },
+ {
+  "id": "q335",
+  "q": "Solan No.1 is which kind of Indian spirit?",
+  "o": [
+   "Brandy",
+   "Rum",
+   "Whisky",
+   "Gin"
+  ],
+  "a": 2,
+  "d": 6,
+  "r": "A whisky from Mohan Meakin, made in Himachal Pradesh.",
+  "in": true
+ },
+ {
+  "id": "q336",
+  "q": "Which is India's traditional drink offered during Holi in Varanasi's licensed shops?",
+  "o": [
+   "Kanji",
+   "Feni",
+   "Chhaang",
+   "Bhang thandai"
+  ],
+  "a": 3,
+  "d": 5,
+  "r": "Bhang stirred into thandai, sold at government-licensed shops.",
+  "in": true
+ },
+ {
+  "id": "q337",
+  "q": "What would you expect in a 'Monk and Coke'?",
+  "o": [
+   "Old Monk rum with cola",
+   "Whisky with cola",
+   "Feni with cola",
+   "Brandy with cola"
+  ],
+  "a": 0,
+  "d": 3,
+  "r": "India's default order for generations.",
+  "in": true
+ },
+ {
+  "id": "q338",
+  "q": "Which is true of lassi?",
+  "o": [
+   "A fermented rice drink",
+   "A yogurt-based drink that can be sweet or salty",
+   "A palm sap drink",
+   "A distilled milk spirit"
+  ],
+  "a": 1,
+  "d": 3,
+  "r": "Yogurt blended with water, sweet (often mango) or salty (namkeen).",
+  "in": true
+ },
+ {
+  "id": "q339",
+  "q": "Which Indian spirit category has grown fastest with young urban drinkers?",
+  "o": [
+   "Country liquor",
+   "Craft gin",
+   "Fortified wine",
+   "Brandy"
+  ],
+  "a": 1,
+  "d": 5,
+  "r": "The Goa-led craft gin wave.",
+  "in": true
+ },
+ {
+  "id": "q340",
+  "q": "Which is the correct base for a Nariyal Mojito?",
+  "o": [
+   "Gin with coconut cream",
+   "Whisky with coconut milk",
+   "Feni with coconut water",
+   "White rum with coconut water"
+  ],
+  "a": 3,
+  "d": 5,
+  "r": "The beach-shack mojito of coastal India, softened with tender coconut water.",
+  "in": true
+ },
+ {
+  "id": "q341",
+  "q": "Which is a Ladakhi drink ingredient?",
+  "o": [
+   "Mahua flowers",
+   "Kokum",
+   "Sea buckthorn",
+   "Gondhoraj lime"
+  ],
+  "a": 2,
+  "d": 6,
+  "r": "Sea buckthorn, the tart 'leh berry' of the high Himalayas.",
+  "in": true
+ },
+ {
+  "id": "q342",
+  "q": "Which Indian drink is described as 'pink' and served after fish curry?",
+  "o": [
+   "Solkadhi",
+   "Kanji",
+   "Jal-jeera",
+   "Lassi"
+  ],
+  "a": 0,
+  "d": 5,
+  "r": "Kokum in coconut milk gives solkadhi its pale pink colour.",
+  "in": true
+ },
+ {
+  "id": "q343",
+  "q": "Which is the best-known Indian whisky brand by sales volume?",
+  "o": [
+   "Rampur",
+   "Indri",
+   "Amrut",
+   "McDowell's No.1"
+  ],
+  "a": 3,
+  "d": 6,
+  "r": "McDowell's No.1 is a mass-market giant; the others are premium single malts.",
+  "in": true
+ },
+ {
+  "id": "q344",
+  "q": "What is the traditional Indian vessel for lassi at a dhaba?",
+  "o": [
+   "A tall steel or brass tumbler",
+   "A stemmed wine glass",
+   "A porcelain cup",
+   "A copper mug"
+  ],
+  "a": 0,
+  "d": 4,
+  "r": "Steel and brass tumblers are the everyday standard.",
+  "in": true
+ },
+ {
+  "id": "q345",
+  "q": "Which drink would a Goan bar most likely serve with lemonade and a slit chilli?",
+  "o": [
+   "Urrak",
+   "Old Monk",
+   "Kingfisher",
+   "Amrut"
+  ],
+  "a": 0,
+  "d": 7,
+  "r": "Urrak, the seasonal first distillation of feni, is drunk long with lemonade and chilli.",
+  "in": true,
+  "fun": true
+ },
+ {
+  "id": "q346",
+  "q": "Which is a genuine Indian souring agent used in cocktails?",
+  "o": [
+   "Verjus",
+   "Calamansi",
+   "Kokum",
+   "Yuzu"
+  ],
+  "a": 2,
+  "d": 5,
+  "r": "Kokum is Indian; yuzu is Japanese, calamansi Filipino, verjus European.",
+  "in": true
+ },
+ {
+  "id": "q347",
+  "q": "Which is true of Indian bar menus in the last decade?",
+  "o": [
+   "They serve only imported classics",
+   "Regional Indian ingredients have moved from novelty to standard",
+   "They have dropped cocktails entirely",
+   "They have removed all local ingredients"
+  ],
+  "a": 1,
+  "d": 6,
+  "r": "Kokum, jamun, gondhoraj and curry leaf are now expected on serious Indian menus.",
+  "in": true
+ },
+ {
+  "id": "q348",
+  "q": "Which is a Punjabi and North Indian country liquor from sugarcane?",
+  "o": [
+   "Tharra",
+   "Chhaang",
+   "Judima",
+   "Feni"
+  ],
+  "a": 0,
+  "d": 7,
+  "r": "Tharra, distilled from fermented sugarcane or jaggery.",
+  "in": true
+ },
+ {
+  "id": "q349",
+  "q": "Which is true of black salt in Indian drinks?",
+  "o": [
+   "It sweetens",
+   "It carbonates",
+   "It only adds colour",
+   "It adds a savoury, sulphurous tang"
+  ],
+  "a": 3,
+  "d": 5,
+  "r": "Kala namak's distinctive savour defines many Indian coolers.",
+  "in": true
+ },
+ {
+  "id": "q350",
+  "q": "Which best describes khus?",
+  "o": [
+   "A tamarind concentrate",
+   "A rose syrup",
+   "A mint cordial",
+   "A cooling vetiver-root syrup"
+  ],
+  "a": 3,
+  "d": 6,
+  "r": "Vetiver root, prized as a summer cooling flavour.",
+  "in": true
+ },
+ {
+  "id": "q351",
+  "q": "Which is the correct Indian name-to-drink match?",
+  "o": [
+   "Chhaang — Himalayan barley or millet brew",
+   "Chhaang — Punjabi sugarcane liquor",
+   "Chhaang — Goan cashew spirit",
+   "Chhaang — Konkan kokum cooler"
+  ],
+  "a": 0,
+  "d": 7,
+  "r": "Chhaang is the Himalayan fermented barley or millet brew.",
+  "in": true
+ },
+ {
+  "id": "q352",
+  "q": "Which Indian drink is made from fermented black carrots?",
+  "o": [
+   "Handia",
+   "Tongba",
+   "Kanji",
+   "Judima"
+  ],
+  "a": 2,
+  "d": 7,
+  "r": "Kanji, fermented in the winter sun with mustard seeds, drunk around Holi.",
+  "in": true
+ }
+]

@@ -1,4 +1,4 @@
-import type { Health, Ingredient, MatchResult, Recipe, Vibe } from './types';
+import type { Health, Ingredient, MatchResult, Question, Recipe, Vibe } from './types';
 
 /**
  * Where the API lives. Empty (default) means same origin — the dev server
@@ -101,6 +101,17 @@ export const postLike = (id: string, action: 'like' | 'unlike') =>
   post<{ id: string; likes: number }>(`/api/likes/${id}`, { action });
 
 export const keepRecipe = (recipe: Recipe) => post<Recipe>('/api/keep', { recipe }, true);
+
+/* ---- last orders (the quiz) ---- */
+export const fetchRound = (length = 15) =>
+  get<{ questions: Question[]; high: number }>(`/api/quiz/round?length=${length}`);
+
+export const fetchHighScore = () => get<{ score: number; at: number }>('/api/quiz/high');
+
+export const submitHighScore = (score: number) =>
+  post<{ score: number; at: number; beaten: boolean }>('/api/quiz/high', { score }, true);
+
+export const fetchDailyQuestion = () => get<Question>('/api/quiz/today');
 
 /* ---- bar nudges (web push) ---- */
 export const fetchPushKey = () => get<{ key: string | null }>('/api/push/key');
