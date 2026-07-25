@@ -395,6 +395,34 @@ Respond with JSON exactly like:
     res.json({ ok: true });
   });
 
+  /**
+   * Who is signed up, without sending anything. Checking used to mean firing a
+   * real nudge at everyone's phone just to read the count back. Behind the same
+   * secret as /send, and it reports no endpoints or keys — only counts, the
+   * browser each subscription belongs to, and when it was last seen.
+   */
+  app.get('/api/push/status', (req, res) => {
+    const token = req.get('x-push-secret') || '';
+    if (!PUSH_SECRET || token !== PUSH_SECRET) return res.status(401).json({ error: 'unauthorized' });
+    const host = (e) => {
+      try {
+        return new URL(e).host;
+      } catch {
+        return 'unknown';
+      }
+    };
+    res.json({
+      pushReady,
+      store: storeMode(),
+      subscribers: getSubs().length,
+      list: getSubs().map((s) => ({
+        via: host(s.sub.endpoint),
+        createdAt: s.createdAt || null,
+        lastSeen: s.lastSeen || null,
+      })),
+    });
+  });
+
   // fired by the schedulers: kind=nudge every couple of days, kind=daily at 5pm
   app.post('/api/push/send', async (req, res) => {
     if (!pushReady) return res.status(503).json({ error: 'push disabled' });
