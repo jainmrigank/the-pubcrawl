@@ -1,4 +1,4 @@
-import type { Health, Ingredient, MatchResult, Question, Recipe, Vibe } from './types';
+import type { HallMember, Health, Ingredient, MatchResult, Question, Recipe, Vibe } from './types';
 
 /**
  * Where the API lives. Empty (default) means same origin — the dev server
@@ -108,7 +108,12 @@ export const fetchQuizBatch = (seed: string, from: number, count = 20) =>
     `/api/quiz/stream?seed=${encodeURIComponent(seed)}&from=${from}&count=${count}`
   );
 
-export const fetchHighScore = () => get<{ score: number; at: number }>('/api/quiz/high');
+export const fetchHighScore = () =>
+  get<{ score: number; at: number; hall: HallMember[]; bank: number }>('/api/quiz/high');
+
+/** only a run that cleared the whole bank is accepted */
+export const joinHall = (name: string, score: number) =>
+  post<{ hall: HallMember[]; entry: HallMember }>('/api/quiz/hall', { name, score }, true);
 
 export const submitHighScore = (score: number) =>
   post<{ score: number; at: number; beaten: boolean }>('/api/quiz/high', { score }, true);

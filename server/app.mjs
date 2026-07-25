@@ -11,7 +11,7 @@ import { VIBES, withVibe } from './vibes.mjs';
 import { chat, extractJson, llmAvailable, llmConfig } from './llm.mjs';
 import { generateFallback } from './generator.mjs';
 import { buildNudge, buildDailyQuestionNudge, WELCOME } from './push.mjs';
-import { playlistSlice, questionOfDay } from './quiz.mjs';
+import { playlistSlice, questionOfDay, QUESTIONS } from './quiz.mjs';
 import {
   initStore,
   storeMode,
@@ -23,6 +23,8 @@ import {
   addSub,
   removeSub,
   touchSub,
+  getHall,
+  addToHall,
   getHighScore,
   submitScore,
 } from './store.mjs';
@@ -317,7 +319,9 @@ Respond with JSON exactly like:
     res.json({ questions, total, high: getHighScore().score });
   });
 
-  app.get('/api/quiz/high', (_req, res) => res.json(getHighScore()));
+  app.get('/api/quiz/high', (_req, res) =>
+    res.json({ ...getHighScore(), hall: getHall(), bank: QUESTIONS.length })
+  );
 
   app.post('/api/quiz/high', (req, res) => {
     const score = Number(req.body?.score);
@@ -325,6 +329,16 @@ Respond with JSON exactly like:
       return res.status(400).json({ error: 'bad score' });
     const beaten = submitScore(score);
     res.json({ ...getHighScore(), beaten });
+  });
+
+  // the wall: only a run that cleared every question in the bank gets on it
+  app.post('/api/quiz/hall', (req, res) => {
+    const score = Number(req.body?.score);
+    if (score !== QUESTIONS.length)
+      return res.status(400).json({ error: 'not a clean sweep' });
+    const entry = addToHall(req.body?.name, score);
+    if (!entry) return res.status(400).json({ error: 'need a name' });
+    res.json({ hall: getHall(), entry });
   });
 
   // one question a day, the same for everyone

@@ -1095,6 +1095,42 @@ main { flex: 1; width: 100%; max-width: 1440px; margin: 0 auto; padding: 0 clamp
 .quiz-score-big span { font-size: 0.45em; color: var(--ink-60); }
 .quiz-record { margin: 0 0 18px; color: var(--quiz-accent); font-weight: 500; }
 
+/* the wall: everyone who has ever cleared the whole bank */
+.hall-sign { margin: 0 0 22px; }
+.hall-sign .k-label { display: block; margin-bottom: 8px; }
+.hall-sign-row { display: flex; gap: 12px; flex-wrap: wrap; align-items: stretch; }
+.hall-input {
+  flex: 1 1 220px;
+  min-width: 0;
+  background: transparent;
+  border: 1px solid var(--ink);
+  border-radius: 0;
+  padding: 13px 15px;
+  font-family: var(--mono);
+  font-size: 13px;
+  letter-spacing: 0.04em;
+  color: var(--ink);
+  outline: none;
+}
+.hall-input::placeholder { color: var(--grey); }
+.hall-input:focus { border-color: var(--quiz-accent, #A5542E); }
+.hall-sign-row .btn:disabled { opacity: 0.45; cursor: not-allowed; }
+
+.hall {
+  margin-top: clamp(24px, 3vw, 32px);
+  padding-top: 18px;
+  border-top: 1px solid var(--line);
+}
+.hall-label { color: var(--quiz-accent, #A5542E); display: block; margin-bottom: 9px; }
+.hall-names {
+  margin: 0 0 6px;
+  font-stretch: 74%;
+  font-weight: 700;
+  font-size: clamp(17px, 2vw, 21px);
+  line-height: 1.3;
+}
+.hall-note { margin: 0; font-size: 13px; color: var(--ink-60); }
+
 .quiz-meta { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 12px; padding: 0 4px; }
 .quiz-score { display: inline-flex; align-items: baseline; gap: 7px; }
 .quiz-score b { font-stretch: 74%; font-weight: 800; font-size: 22px; }
@@ -1377,7 +1413,8 @@ button, a, .fc {
 
 @media (max-width: 860px) {
   /* iOS zooms the page when focusing inputs under 16px */
-  .field input { font-size: 16px; }
+  .field input,
+  .hall-input { font-size: 16px; }
   /* roomier tap targets */
   .act-btn { min-width: 40px; height: 40px; }
   .chip-x { padding: 6px; }

@@ -61,3 +61,10 @@ export interface Health {
   ingredients: number;
   llm: string | null;
 }
+
+/** someone who answered every question in the bank without a miss */
+export interface HallMember {
+  name: string;
+  score: number;
+  at: number;
+}

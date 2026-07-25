@@ -59,14 +59,16 @@ let likes = {};
 let kept = [];
 let subs = []; // push subscriptions: { sub, createdAt, lastSeen }
 let highScore = { score: 0, at: 0 }; // best run by anyone, ever
+let hall = []; // everyone who has cleared the whole bank: { name, score, at }
 
 export async function initStore() {
   likes = await readBlob('pubcrawl:likes', 'likes.json', {});
   kept = await readBlob('pubcrawl:kept', 'kept_cocktails.json', []);
   subs = await readBlob('pubcrawl:subs', 'push_subs.json', []);
   highScore = await readBlob('pubcrawl:highscore', 'high_score.json', { score: 0, at: 0 });
+  hall = await readBlob('pubcrawl:hall', 'hall_of_fame.json', []);
   console.log(
-    `[store] ${useKV ? 'Upstash KV' : 'local file'} — ${Object.keys(likes).length} liked, ${kept.length} kept, ${subs.length} subscribed, high score ${highScore.score}`
+    `[store] ${useKV ? 'Upstash KV' : 'local file'} — ${Object.keys(likes).length} liked, ${kept.length} kept, ${subs.length} subscribed, high score ${highScore.score}, ${hall.length} in the hall`
   );
 }
 
@@ -80,6 +82,24 @@ export function submitScore(score) {
     return true;
   }
   return false;
+}
+
+export const getHall = () => hall;
+
+/**
+ * Clearing all 352 questions without a wrong answer earns a name on the wall.
+ * Newest first, capped so the intro card can't grow without end.
+ */
+export function addToHall(name, score) {
+  const clean = String(name || '')
+    .replace(/\s+/g, ' ')
+    .trim()
+    .slice(0, 24);
+  if (!clean) return null;
+  const entry = { name: clean, score, at: Date.now() };
+  hall = [entry, ...hall].slice(0, 50);
+  writeBlob('pubcrawl:hall', 'hall_of_fame.json', hall);
+  return entry;
 }
 
 export const storeMode = () => (useKV ? 'kv' : 'file');
