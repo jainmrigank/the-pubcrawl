@@ -30,9 +30,23 @@ const NAV: { route: Route; label: string }[] = [
   { route: 'tab', label: 'THE TAB' },
 ];
 
+/** the path part of the hash, without the query: '' | 'menu' | 'bar' | … */
+function hashPath(): string {
+  return window.location.hash.replace(/^#\/?/, '').split('?')[0];
+}
+
 function parseRoute(): Route {
-  const h = window.location.hash.replace(/^#\/?/, '').split('?')[0] as Route;
+  const h = hashPath() as Route;
   return ROUTES.includes(h) ? h : 'menu';
+}
+
+/**
+ * The landing page and the drinks list live on the same route, so the hash
+ * decides which one you arrive at: a bare URL (or the wordmark) opens the
+ * landing view, while #/menu goes straight to the list.
+ */
+function isLandingView(): boolean {
+  return hashPath() === '';
 }
 
 function hashParams(): URLSearchParams {
@@ -50,33 +64,69 @@ function wantsDaily(): boolean {
   return hashParams().get('daily') === '1';
 }
 
-function useRoute(): Route {
-  const [route, setRoute] = useState<Route>(parseRoute);
-  const positions = useRef<Partial<Record<Route, number>>>({});
+/** top of the drinks list, allowing for the sticky nav */
+function menuListTop(): number {
+  const el = document.getElementById('menu-list');
+  if (!el) return 0;
+  const nav = document.querySelector('.nav')?.getBoundingClientRect().height ?? 58;
+  return Math.max(el.getBoundingClientRect().top + window.scrollY - nav - 8, 0);
+}
+
+/** the landing view and the drinks list are separate places to come back to */
+const viewKey = (route: Route, landing: boolean) => (landing ? 'landing' : route);
+
+function useRoute(): { route: Route; landing: boolean } {
+  const [view, setView] = useState(() => ({ route: parseRoute(), landing: isLandingView() }));
+  const positions = useRef<Record<string, number>>({});
+
   useEffect(() => {
-    // remember where the user left each page
-    let current = parseRoute();
+    let current = viewKey(parseRoute(), isLandingView());
     const onChange = () => {
+      // remember where the user left each view
       positions.current[current] = window.scrollY;
-      current = parseRoute();
-      setRoute(current);
+      const route = parseRoute();
+      const landing = isLandingView();
+      current = viewKey(route, landing);
+      // the wordmark means "take me home", so always open at the top
+      if (landing) delete positions.current.landing;
+      setView({ route, landing });
     };
     window.addEventListener('hashchange', onChange);
     return () => window.removeEventListener('hashchange', onChange);
   }, []);
-  // restore synchronously after the new page has rendered and before paint —
-  // racing this with rAF left phones stranded in the overscrolled void below
-  // the footer when a long page swapped to a short one
+
+  // restore synchronously after the new page renders and before paint — racing
+  // this with rAF left phones stranded in the void below the footer when a long
+  // page swapped to a short one
   useLayoutEffect(() => {
-    window.scrollTo({ top: positions.current[route] ?? 0, behavior: 'instant' as ScrollBehavior });
-  }, [route]);
-  return route;
+    // a deep link to a drink (#/menu?q=…) is an explicit request, so it wins
+    // over wherever this view was last left
+    const deepLink = hashQuery() !== '';
+    const remembered = deepLink ? null : positions.current[viewKey(view.route, view.landing)];
+    if (remembered != null) {
+      window.scrollTo({ top: remembered, behavior: 'instant' as ScrollBehavior });
+      return;
+    }
+    // arriving fresh at #/menu (a notification, a shared link, the nav): open
+    // on the drinks themselves rather than the hero
+    if (view.route === 'menu' && !view.landing) {
+      const jump = () => window.scrollTo({ top: menuListTop(), behavior: 'instant' as ScrollBehavior });
+      jump();
+      // the list is still loading on a cold open, so settle once it has height
+      requestAnimationFrame(jump);
+      const t = setTimeout(jump, 260);
+      return () => clearTimeout(t);
+    }
+    window.scrollTo({ top: 0, behavior: 'instant' as ScrollBehavior });
+  }, [view]);
+
+  return view;
 }
 
 const MENU_MAX = 120;
 
 export default function App() {
-  const route = useRoute();
+  const { route, landing } = useRoute();
   const [vibes, setVibes] = useState<Vibe[]>([]);
   const [health, setHealth] = useState<Health | null>(null);
   const [pantry, setPantry] = useState<Ingredient[]>([]);
@@ -297,6 +347,8 @@ export default function App() {
   // just made for this drinker, so filtering them out felt like they vanished
   const inventions = aiDrinks;
   const hasPantry = pantry.length > 0;
+  // the landing view is 'home', so no nav item is lit until you're in a section
+  const active = landing ? null : route;
   const moreLeft = browse.length >= browseLimit && browseLimit < MENU_MAX;
 
   const card = (r: Recipe, i: number, removeMode = false) => (
@@ -364,7 +416,7 @@ export default function App() {
 
         {/* ================= nav ================= */}
         <header className="nav">
-          <a className="brand" href="#/menu">
+          <a className="brand" href="#/">
             <PubGlyph size={30} />
             <span className="wordmark">The PubCrawl</span>
           </a>
@@ -373,8 +425,8 @@ export default function App() {
               <a
                 key={n.route}
                 href={`#/${n.route}`}
-                className={`nav-link ${route === n.route ? 'active' : ''}`}
-                aria-current={route === n.route ? 'page' : undefined}
+                className={`nav-link ${active === n.route ? 'active' : ''}`}
+                aria-current={active === n.route ? 'page' : undefined}
               >
                 {n.label}
                 {n.route === 'tab' && tab.length > 0 ? ` (${tab.length})` : ''}

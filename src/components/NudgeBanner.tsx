@@ -3,14 +3,20 @@ import { currentSubscription, isStandalone, pushSupported, subscribeToNudges } f
 import { ArrowRight, Check, X } from '../icons';
 
 /**
- * Asks for notifications — but only inside the installed app, never in a
- * browser tab (an Android browser will happily subscribe you before you've
- * even got the app, which is not what we want).
+ * Gets notifications switched on as close to "by default" as a browser allows.
  *
- * It asks again on every launch until they say yes, so nobody misses it.
- * Dismissing hides it for this session only. Once they're subscribed — or
- * have blocked notifications outright — it never appears again.
+ * Permission genuinely cannot be granted for the user: Chrome, Safari and
+ * Firefox all demand a user gesture, and asking without one is auto-denied and
+ * can get the origin permanently blocked. So on the first launch of the
+ * installed app we ask straight away — one tap, part of setup — and only fall
+ * back to the banner if that attempt doesn't land.
+ *
+ * Only ever inside the installed app: an Android browser will happily subscribe
+ * someone who hasn't installed anything yet, which isn't what we want. It asks
+ * again on every launch until answered; dismissing hides it for that session.
  */
+const ASKED_KEY = 'pubcrawl.autoAsked';
+
 export function NudgeBanner() {
   const [show, setShow] = useState(false);
   const [busy, setBusy] = useState(false);
@@ -20,9 +26,30 @@ export function NudgeBanner() {
   useEffect(() => {
     if (!pushSupported() || !isStandalone()) return;
     if (Notification.permission === 'denied') return; // blocked; a button can't fix that
+    let cancelled = false;
     currentSubscription()
-      .then((sub) => setShow(!sub))
+      .then(async (sub) => {
+        if (cancelled || sub) return;
+        // first launch of the installed app: ask immediately, so notifications
+        // are on from the start rather than something to go and find
+        if (Notification.permission === 'granted' || !localStorage.getItem(ASKED_KEY)) {
+          localStorage.setItem(ASKED_KEY, '1');
+          const result = await subscribeToNudges();
+          if (cancelled) return;
+          if (result === 'subscribed') {
+            setDone(true);
+            setShow(true);
+            setTimeout(() => setShow(false), 2600);
+            return;
+          }
+          if (result === 'denied') return; // they said no; respect it
+        }
+        setShow(true);
+      })
       .catch(() => {});
+    return () => {
+      cancelled = true;
+    };
   }, []);
 
   if (!show) return null;
