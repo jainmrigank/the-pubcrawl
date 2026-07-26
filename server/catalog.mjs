@@ -184,6 +184,20 @@ export function loadCatalog() {
     for (const c of cocktails) if (imgs[c.id]) c.thumb = imgs[c.id];
   }
 
+  // recipe_extras.json: optional ingredients TheCocktailDB omits, most of them
+  // the egg white its sours leave off. Appended and flagged rather than merged
+  // silently, so the card can say OPTIONAL instead of overstating the recipe.
+  const extrasPath = join(ROOT, 'data', 'recipe_extras.json');
+  if (existsSync(extrasPath)) {
+    const extras = JSON.parse(readFileSync(extrasPath, 'utf8'));
+    for (const c of cocktails) {
+      const add = extras[c.id];
+      if (!Array.isArray(add)) continue;
+      for (const ing of add)
+        if (!c.ingredients.some((i) => norm(i.name) === norm(ing.name))) c.ingredients.push({ ...ing });
+    }
+  }
+
   const seen = new Map(); // norm -> entry
   const add = (name) => {
     const key = norm(name);

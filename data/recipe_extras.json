@@ -1,0 +1,14 @@
+{
+ "_comment": "Optional ingredients TheCocktailDB leaves off. Its sours follow the old taxonomy where a Whiskey Sour has no egg and the egg version is a Boston Sour, but modern practice and the IBA spec both list egg white as an optional addition. These are merged in by server/catalog.mjs and rendered as OPTIONAL on the card, so nothing silently rewrites a recipe.",
+ "11004": [{ "name": "Egg White", "measure": "1", "optional": true }],
+ "11147": [{ "name": "Egg White", "measure": "1", "optional": true }],
+ "11170": [{ "name": "Egg White", "measure": "1", "optional": true }],
+ "11410": [{ "name": "Egg White", "measure": "1", "optional": true }],
+ "11417": [{ "name": "Egg White", "measure": "1", "optional": true }],
+ "11844": [{ "name": "Egg White", "measure": "1", "optional": true }],
+ "12093": [{ "name": "Egg White", "measure": "1", "optional": true }],
+ "12158": [{ "name": "Egg White", "measure": "1", "optional": true }],
+ "12370": [{ "name": "Egg White", "measure": "1", "optional": true }],
+ "13731": [{ "name": "Egg White", "measure": "1", "optional": true }],
+ "17005": [{ "name": "Egg White", "measure": "1", "optional": true }]
+}

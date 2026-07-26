@@ -16,6 +16,8 @@ export interface RecipeIngredient {
   measure: string;
   have?: boolean;
   staple?: boolean;
+  /** listed by convention but not required, e.g. the egg white in a sour */
+  optional?: boolean;
 }
 
 export interface Recipe {

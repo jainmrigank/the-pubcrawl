@@ -29,7 +29,28 @@ const images = existsSync(OUT) ? JSON.parse(readFileSync(OUT, 'utf8')) : {};
 
 const norm = (s) =>
   s.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/\(.*?\)/g, '').replace(/[^a-z0-9 ]/g, ' ').replace(/\s+/g, ' ').trim();
-const DRINKY = /cocktail|drink|beverage|liqueur|\bshot\b|punch|juice|lassi|sherbet|spirit|\brum\b|\bgin\b|whisk|vodka|tequila|brandy|wine|beer|ale|mocktail|smoothie|soda|fizz|sour|spritz|toddy|feni|mule|highball/i;
+/**
+ * Drink words, anchored. These were unanchored once and it cost us: "spirit"
+ * matched "spirituality" in Bob Marley's article, so the musician's press photo
+ * became the photo for the Bob Marley shot. See scripts/audit_images.mjs.
+ */
+const DRINKY =
+  /\b(cocktails?|drinks?|beverages?|liqueurs?|shots?|punch|juice|lassi|sherbet|sharbat|spirits?|rum|gin|whisky|whiskey|bourbon|vodka|tequila|mezcal|brandy|wine|beer|ale|lager|stout|cider|mocktails?|smoothie|soda|fizz|sour|spritz|toddy|feni|mule|highball|aperitif|ap[e\u00e9]ritif|digestif|bitters|vermouth|sake|schnapps|absinthe)\b/i;
+
+/** and what the article is about when it is not a drink at all */
+const NOT_DRINKY =
+  /\b(musicians?|singers?|songwriters?|rappers?|guitarists?|bands?|albums?|songs?|films?|movies?|actors?|actress|characters?|novels?|novelist|books?|poet|footballers?|cricketers?|athletes?|politicians?|species|insects?|bees?|wasps?|birds?|fish|plants?|genus|flowers?|villages?|towns?|cities|city|county|island|mountains?|loch|lake|river|region|parks?|companies|company|brands?|logos?|paintings?|sculptures?|deity|mythology|mythological|goddess|god|baptism|sacrament)\b/i;
+
+/** the one-line description is short and decisive, so it rules first */
+function looksLikeDrink(s) {
+  if (!s) return false;
+  if (/^(list|index|outline) of/i.test(s.title)) return false;
+  if (/\((cocktail|drink|mixed drink)\)$/i.test(s.title)) return true;
+  if (DRINKY.test(s.description)) return true;
+  if (NOT_DRINKY.test(s.description)) return false;
+  if (NOT_DRINKY.test(s.text)) return false;
+  return DRINKY.test(s.text);
+}
 
 async function getJson(url, tries = 3) {
   for (let i = 0; i < tries; i++) {
@@ -53,7 +74,7 @@ async function summary(title) {
   if (!j || j.type === 'disambiguation') return null;
   const img = j.originalimage?.source || j.thumbnail?.source || null;
   if (!img || /\.svg/i.test(img)) return null;
-  return { title: j.title || title, text: `${j.description || ''} ${j.extract || ''}`, img };
+  return { title: j.title || title, description: j.description || '', text: j.extract || '', img };
 }
 
 /** confident canonical photo for this drink, or null */
@@ -65,7 +86,7 @@ async function findImage(name) {
   for (const t of [`${name} (cocktail)`, `${name} (drink)`, name]) {
     const s = await summary(t);
     await sleep(700);
-    if (s && DRINKY.test(s.text)) return s.img;
+    if (looksLikeDrink(s)) return s.img;
   }
 
   // 2. search, then accept only a close title match that is drink-ish
@@ -82,7 +103,7 @@ async function findImage(name) {
     if (!close) continue;
     const s = await summary(t);
     await sleep(700);
-    if (s && DRINKY.test(s.text)) return s.img;
+    if (looksLikeDrink(s)) return s.img;
   }
   return null;
 }

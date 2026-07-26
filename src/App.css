@@ -847,6 +847,8 @@ main { flex: 1; width: 100%; max-width: 1440px; margin: 0 auto; padding: 0 clamp
 .fb-ings li.need .fb-ing-name { color: var(--accent); }
 .fb-ing-name { display: inline-flex; align-items: baseline; gap: 8px; }
 .miss-mark { color: var(--accent); font-size: 9px; border: 1px solid var(--accent); padding: 1px 4px; }
+/* quieter than OUT: this one is information, not a warning */
+.opt-mark { color: var(--grey); font-size: 9px; border: 1px solid var(--line); padding: 1px 4px; margin-left: 8px; }
 .fb-ing-measure { font-family: var(--mono); font-size: 11px; color: var(--grey); white-space: nowrap; }
 .fb-method { font-size: 13.5px; color: var(--ink); margin: 14px 0 0; padding-right: 12px; }
 .fb-foot {

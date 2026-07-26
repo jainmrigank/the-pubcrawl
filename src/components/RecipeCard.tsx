@@ -171,6 +171,7 @@ export function RecipeCard(props: Props) {
                   <span className="fb-ing-name">
                     {i.have === false && <span className="k-label miss-mark">OUT</span>}
                     {i.name}
+                    {i.optional && <span className="k-label opt-mark">OPTIONAL</span>}
                   </span>
                   <span className="fb-ing-measure">{formatMeasure(i.measure) || '—'}</span>
                 </li>
