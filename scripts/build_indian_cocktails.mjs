@@ -1,13 +1,25 @@
 /**
- * Generates data/indian_cocktails.json: 100 Indian alcoholic cocktails, each
- * a real classic structure (sour, highball, mule, spritz, old fashioned,
- * collins, sling, negroni, fizz, martini) built on an Indian flavour system
- * (kokum, gondhoraj, imli, khus, thandai, filter coffee, jamun, aam papad,
- * paan, chai masala, etc.). Balanced measures come from the structure; the
- * regional ingredient is swapped into the right slot.
+ * Generates data/indian_cocktails.json: Indian cocktails built on real regional
+ * flavours, in classic structures that actually suit them.
  *
- * Ids are x-in-NNN so they merge as house drinks. Videos are attached later
- * by scripts/fetch_videos.mjs / audit_videos.mjs.
+ * The previous version crossed every flavour with every structure and sliced the
+ * result at 100. That produced drinks nobody would order (coffee, lime and ginger
+ * beer), drinks whose flavour was missing from the glass entirely (a "Masala Chai
+ * Sour" that was a plain Whisky Sour), and Martinis made with rum. Three rules
+ * prevent all of that now:
+ *
+ *   1. Every flavour has a signature ingredient, and it is always in the glass.
+ *      Nothing is described as tasting of something it does not contain.
+ *   2. Each flavour lists only the structures that suit it. There is no
+ *      Coffee Spritz, because a Coffee Spritz is not a drink.
+ *   3. Instructions are written from the finished ingredient list, so they
+ *      cannot claim an ingredient that isn't there.
+ *
+ * Ingredients are limited to things you can actually buy in India. Bael, sea
+ * buckthorn and custard apple were dropped for that reason.
+ *
+ * Ids are x-in-NNN so they merge as house drinks. Videos and images are attached
+ * later by scripts/fetch_videos.mjs and scripts/fetch_images.mjs.
  *
  * Run: node scripts/build_indian_cocktails.mjs
  */
@@ -17,227 +29,319 @@ import { fileURLToPath } from 'node:url';
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
 
-/* ---- flavour systems: an Indian ingredient + the base spirit it loves ---- */
+/**
+ * A flavour is an Indian ingredient, the spirit it belongs with, and the short
+ * list of structures it works in. `role` tells a structure which slot the
+ * signature fills: the sour, the sweetener, the base spirit, or an aromatic
+ * that gets muddled.
+ */
 const FLAVOURS = [
-  { key: 'Kokum', spirit: 'Gin', sour: 'Kokum Syrup', note: 'the sour magenta fruit of the Konkan coast', region: 'Konkan', vibe: 'refreshing' },
-  { key: 'Gondhoraj', spirit: 'Gin', sour: 'Gondhoraj Lime', note: 'Bengal\'s intensely fragrant lime', region: 'Kolkata', vibe: 'refreshing' },
-  { key: 'Imli', spirit: 'Dark Rum', sour: 'Tamarind Syrup', note: 'sweet-sour tamarind', region: 'North India', vibe: 'boozy' },
-  { key: 'Khus', spirit: 'Vodka', sour: 'Lime Juice', sweet: 'Khus Syrup', note: 'cooling vetiver-root syrup', region: 'North India', vibe: 'refreshing' },
-  { key: 'Rose Thandai', spirit: 'Brandy', sweet: 'Thandai Syrup', note: 'the almond-saffron-rose festival milk', region: 'North India', vibe: 'sweet' },
-  { key: 'Filter Coffee', spirit: 'Dark Rum', sweet: 'Coffee Liqueur', note: 'South Indian filter kaapi', region: 'South India', vibe: 'sweet' },
-  { key: 'Jamun', spirit: 'Gin', sour: 'Lime Juice', sweet: 'Jamun Syrup', note: 'the astringent purple monsoon berry', region: 'North India', vibe: 'refreshing' },
-  { key: 'Aam Papad', spirit: 'White Rum', sweet: 'Mango Puree', note: 'sun-dried mango leather', region: 'North India', vibe: 'tropical' },
-  { key: 'Paan', spirit: 'Vodka', sweet: 'Gulkand Syrup', note: 'the betel-leaf and rose after-dinner sweet', region: 'North India', vibe: 'sweet' },
-  { key: 'Masala Chai', spirit: 'Whisky', sweet: 'Honey', note: 'spiced milk tea', region: 'Pan-India', vibe: 'cozy' },
-  { key: 'Nimbu', spirit: 'Gin', sour: 'Lime Juice', note: 'the everyday Indian lime of nimbu pani', region: 'Pan-India', vibe: 'refreshing' },
-  { key: 'Guava Chilli', spirit: 'Tequila', sour: 'Lime Juice', sweet: 'Guava Puree', note: 'street guava dusted with chilli and salt', region: 'Pan-India', vibe: 'tropical' },
-  { key: 'Kala Khatta', spirit: 'Vodka', sweet: 'Kala Khatta Syrup', note: 'the black-salt jaljeera-berry gola syrup', region: 'Mumbai', vibe: 'party' },
-  { key: 'Feni', spirit: 'Feni', sour: 'Lime Juice', note: 'Goa\'s fierce cashew spirit', region: 'Goa', vibe: 'boozy' },
-  { key: 'Coconut', spirit: 'White Rum', sweet: 'Coconut Cream', note: 'coastal tender coconut', region: 'Coastal', vibe: 'tropical' },
-  { key: 'Ginger Honey', spirit: 'Whisky', sweet: 'Honey', sour: 'Lemon Juice', note: 'the adrak-shahad cold remedy', region: 'Pan-India', vibe: 'cozy' },
-  { key: 'Saffron', spirit: 'Gin', sweet: 'Saffron Syrup', note: 'Kashmiri kesar', region: 'Kashmir', vibe: 'boozy' },
-  { key: 'Pomegranate Anardana', spirit: 'Vodka', sour: 'Pomegranate Juice', note: 'tart anardana', region: 'North India', vibe: 'refreshing' },
-  { key: 'Sea Buckthorn', spirit: 'Vodka', sour: 'Sea Buckthorn Juice', note: 'Ladakh\'s tart orange leh berry', region: 'Ladakh', vibe: 'refreshing' },
-  { key: 'Curry Leaf', spirit: 'Gin', sour: 'Lime Juice', note: 'the aromatic South Indian leaf', region: 'South India', vibe: 'refreshing' },
-  { key: 'Tulsi', spirit: 'Gin', sour: 'Lime Juice', sweet: 'Honey', note: 'holy basil', region: 'Pan-India', vibe: 'refreshing' },
-  { key: 'Bael', spirit: 'White Rum', sweet: 'Bael Syrup', note: 'the woody wood-apple sherbet fruit', region: 'North India', vibe: 'tropical' },
-  { key: 'Sitaphal', spirit: 'White Rum', sweet: 'Custard Apple Pulp', note: 'creamy custard apple', region: 'Deccan', vibe: 'sweet' },
-  { key: 'Jaggery Rum', spirit: 'Dark Rum', sweet: 'Jaggery Syrup', note: 'unrefined cane gur', region: 'Pan-India', vibe: 'boozy' },
-  { key: 'Cardamom', spirit: 'Gin', sweet: 'Cardamom Syrup', note: 'green elaichi', region: 'Kerala', vibe: 'boozy' },
+  {
+    key: 'Kokum', spirit: 'Gin', region: 'Konkan', vibe: 'refreshing',
+    signature: { name: 'Kokum Syrup', role: 'sour' },
+    note: 'the tart magenta fruit the Konkan coast cools itself with',
+    templates: ['Sour', 'Highball', 'Spritz'],
+  },
+  {
+    key: 'Gondhoraj', spirit: 'Gin', region: 'Kolkata', vibe: 'refreshing',
+    signature: { name: 'Gondhoraj Lime', role: 'sour' },
+    note: "Bengal's wildly fragrant lime, closer to a lime leaf than a lime",
+    templates: ['Collins', 'Highball', 'Sour'],
+  },
+  {
+    key: 'Imli', spirit: 'Dark Rum', region: 'North India', vibe: 'boozy',
+    signature: { name: 'Tamarind Syrup', role: 'sour' },
+    note: 'sweet-sour imli, the backbone of every plate of chaat',
+    templates: ['Sour', 'Old Fashioned', 'Sling'],
+  },
+  {
+    key: 'Khus', spirit: 'Vodka', region: 'North India', vibe: 'refreshing',
+    signature: { name: 'Khus Syrup', role: 'sweet' },
+    note: 'cooling vetiver root, the green sharbat of North Indian summers',
+    templates: ['Highball', 'Collins', 'Spritz'],
+  },
+  {
+    key: 'Rose Thandai', spirit: 'Brandy', region: 'North India', vibe: 'sweet',
+    signature: { name: 'Thandai Syrup', role: 'sweet' },
+    note: 'the almond, saffron and rose milk poured at Holi',
+    templates: ['Flip', 'Old Fashioned'],
+  },
+  {
+    key: 'Filter Coffee', spirit: 'Dark Rum', region: 'South India', vibe: 'sweet',
+    signature: { name: 'Filter Coffee', role: 'sweet' },
+    note: 'South Indian filter kaapi, pulled strong and bitter',
+    templates: ['Old Fashioned', 'Flip'],
+  },
+  {
+    key: 'Jamun', spirit: 'Gin', region: 'North India', vibe: 'refreshing',
+    signature: { name: 'Jamun Syrup', role: 'sweet' },
+    note: 'the astringent purple berry that arrives with the monsoon',
+    templates: ['Sour', 'Collins', 'Spritz'],
+  },
+  {
+    key: 'Aam Papad', spirit: 'White Rum', region: 'North India', vibe: 'tropical',
+    signature: { name: 'Aam Papad', role: 'sweet' },
+    note: 'sun-dried mango leather, melted down into a thick sweet-sour syrup',
+    templates: ['Sour', 'Sling'],
+  },
+  {
+    key: 'Paan', spirit: 'Vodka', region: 'North India', vibe: 'sweet',
+    signature: { name: 'Gulkand Syrup', role: 'sweet' },
+    note: 'gulkand and betel leaf, the after-dinner paan in a glass',
+    templates: ['Martini', 'Fizz'],
+  },
+  {
+    key: 'Masala Chai', spirit: 'Whisky', region: 'Pan-India', vibe: 'cozy',
+    signature: { name: 'Masala Chai', role: 'sweet' },
+    note: 'cutting chai brewed triple strength, ginger and cardamom and all',
+    // no Toddy here: extra_cocktails.json already has a hand-written
+    // Masala Chai Toddy, and it is the better version
+    templates: ['Old Fashioned', 'Flip', 'Sour'],
+  },
+  {
+    key: 'Guava Chilli', spirit: 'Tequila', region: 'Pan-India', vibe: 'tropical',
+    signature: { name: 'Guava Puree', role: 'sweet' },
+    extra: { name: 'Chaat Masala', measure: '1 pinch' },
+    note: 'street guava under a heavy dusting of chilli and black salt',
+    templates: ['Sour', 'Sling', 'Highball'],
+  },
+  {
+    key: 'Kala Khatta', spirit: 'Vodka', region: 'Mumbai', vibe: 'party',
+    signature: { name: 'Kala Khatta Syrup', role: 'sweet' },
+    note: 'the black-salt jamun syrup off a Chowpatty gola cart',
+    templates: ['Highball', 'Sling', 'Spritz'],
+  },
+  {
+    key: 'Feni', spirit: 'Feni', region: 'Goa', vibe: 'boozy',
+    signature: { name: 'Feni', role: 'spirit' },
+    note: "Goa's cashew spirit, funky and unapologetic",
+    templates: ['Sour', 'Highball', 'Collins'],
+  },
+  {
+    key: 'Tender Coconut', spirit: 'White Rum', region: 'Coastal', vibe: 'tropical',
+    signature: { name: 'Coconut Water', role: 'sweet' },
+    note: 'nariyal pani straight off the roadside cart',
+    templates: ['Highball', 'Sling'],
+  },
+  {
+    key: 'Ginger Honey', spirit: 'Whisky', region: 'Pan-India', vibe: 'cozy',
+    signature: { name: 'Ginger', role: 'aromatic', unit: 'slices' },
+    sweetener: 'Honey', // the shahad has to be in every one of them
+    note: 'adrak and shahad, the cold remedy every Indian mother swears by',
+    templates: ['Toddy', 'Mule', 'Sour'],
+  },
+  {
+    key: 'Saffron', spirit: 'Gin', region: 'Kashmir', vibe: 'boozy',
+    signature: { name: 'Saffron Syrup', role: 'sweet' },
+    note: 'Kashmiri kesar, a pinch of which colours the whole glass',
+    templates: ['Martini', 'Sour', 'Fizz'],
+  },
+  {
+    key: 'Anardana', spirit: 'Vodka', region: 'North India', vibe: 'refreshing',
+    signature: { name: 'Pomegranate Juice', role: 'sour' },
+    note: 'tart anar, pressed rather than sweetened',
+    templates: ['Collins', 'Spritz', 'Sour'],
+  },
+  {
+    key: 'Curry Leaf', spirit: 'Gin', region: 'South India', vibe: 'refreshing',
+    signature: { name: 'Curry Leaves', role: 'aromatic' },
+    note: 'kadi patta, slapped once to wake it up before it goes in',
+    templates: ['Martini', 'Sour', 'Highball'],
+  },
+  {
+    key: 'Tulsi', spirit: 'Gin', region: 'Pan-India', vibe: 'refreshing',
+    signature: { name: 'Tulsi', role: 'aromatic' },
+    note: 'holy basil, off the pot outside every front door',
+    templates: ['Collins', 'Sour', 'Highball'],
+  },
+  {
+    key: 'Jaggery', spirit: 'Dark Rum', region: 'Pan-India', vibe: 'boozy',
+    signature: { name: 'Jaggery Syrup', role: 'sweet' },
+    note: 'unrefined gur, all molasses and smoke',
+    templates: ['Old Fashioned', 'Sour', 'Mule'],
+  },
+  {
+    key: 'Cardamom', spirit: 'Gin', region: 'Kerala', vibe: 'boozy',
+    signature: { name: 'Cardamom Syrup', role: 'sweet' },
+    note: 'green elaichi off the Kerala hills',
+    templates: ['Old Fashioned', 'Sour', 'Collins'],
+  },
 ];
 
-/* ---- classic structures: measured skeletons the flavour drops into ---- */
-const STRUCTS = [
-  {
-    name: 'Sour',
+/** the citrus a flavour prefers when the structure needs one and the signature is not itself the sour */
+const citrusOf = (f) => (['Tequila', 'Dark Rum', 'White Rum'].includes(f.spirit) ? 'Lime Juice' : 'Lemon Juice');
+
+const lower = (s) => s.toLowerCase();
+
+/** a flavour can name its own sweetener, so "Ginger Honey" is never just ginger */
+const sweetOf = (f) => f.sweetener || 'Sugar Syrup';
+
+/** leaves are counted in leaves, root is counted in slices */
+const aroma = (f, leaves) => (f.signature.unit === 'slices' ? '3 slices' : `${leaves} leaves`);
+
+/**
+ * Every structure receives the flavour and must place its signature ingredient.
+ * `spirits` restricts a structure to bases it genuinely belongs on: a Martini
+ * made with rum is not a Martini, whatever the menu calls it.
+ */
+const TEMPLATES = {
+  Sour: {
     glass: 'Coupe',
-    vibe: 'refreshing',
-    build: (f) => ({
-      glass: 'Coupe',
-      ings: [
-        [f.spirit, '60 ml'],
-        [f.sour || 'Lemon Juice', '25 ml'],
-        [f.sweet || 'Sugar Syrup', '20 ml'],
-        ['Egg White', '1'],
-      ],
-      how: (n) =>
-        `Dry shake ${f.spirit.toLowerCase()}, ${(f.sour || 'lemon juice').toLowerCase()}, ${(f.sweet || 'sugar syrup').toLowerCase()} and egg white without ice to build the foam, then shake again hard with ice. Double strain into a chilled coupe and finish with a few drops of bitters drawn through the foam. ${n}`,
-    }),
+    build: (f) => {
+      const ings = [[f.spirit, '60 ml']];
+      if (f.signature.role === 'sour') ings.push([f.signature.name, '25 ml'], [sweetOf(f), '15 ml']);
+      else if (f.signature.role === 'aromatic') ings.push([citrusOf(f), '25 ml'], [sweetOf(f), '20 ml'], [f.signature.name, aroma(f, 6)]);
+      else if (f.signature.role === 'spirit') ings.push([citrusOf(f), '25 ml'], [sweetOf(f), '20 ml']);
+      else ings.push([citrusOf(f), '25 ml'], [f.signature.name, '20 ml']);
+      ings.push(['Egg White', '1']);
+      return ings;
+    },
+    how: (f) =>
+      `${f.signature.role === 'aromatic' ? `Muddle the ${lower(f.signature.name)} in the shaker first, then add everything else. ` : ''}Dry shake without ice to build the foam, then shake again hard with ice. Double strain into a chilled coupe.`,
   },
-  {
-    name: 'Highball',
+
+  Highball: {
     glass: 'Highball glass',
-    vibe: 'refreshing',
-    build: (f) => ({
-      glass: 'Highball glass',
-      ings: [
-        [f.spirit, '45 ml'],
-        [f.sweet || f.sour || 'Lime Juice', '20 ml'],
-        ['Soda Water', 'top up'],
-      ],
-      how: (n) =>
-        `Build over plenty of ice: ${f.spirit.toLowerCase()} and ${(f.sweet || f.sour || 'lime juice').toLowerCase()}, then top with cold soda and stir once. ${n}`,
-    }),
+    build: (f) => {
+      const ings = [[f.spirit, '45 ml']];
+      if (f.signature.role === 'aromatic') ings.push([f.signature.name, aroma(f, 8)], ['Lime Juice', '15 ml']);
+      else if (f.signature.role !== 'spirit') ings.push([f.signature.name, '25 ml']);
+      else ings.push(['Lime Juice', '15 ml']);
+      ings.push(['Soda Water', 'top up']);
+      return ings;
+    },
+    how: (f) =>
+      `Fill a tall glass with ice, add ${lower(f.spirit)}${f.signature.role === 'spirit' ? ' and lime' : ` and ${lower(f.signature.name)}`}, top with cold soda and stir once.`,
   },
-  {
-    name: 'Mule',
-    glass: 'Mug',
-    vibe: 'refreshing',
-    build: (f) => ({
-      glass: 'Mug',
-      ings: [
-        [f.spirit, '50 ml'],
-        ['Lime Juice', '15 ml'],
-        [f.sweet || 'Sugar Syrup', '10 ml'],
-        ['Ginger Beer', 'top up'],
-      ],
-      how: (n) =>
-        `Fill a copper mug with ice. Add ${f.spirit.toLowerCase()}, lime juice and ${(f.sweet || 'sugar syrup').toLowerCase()}, top with cold ginger beer and give it one stir. ${n}`,
-    }),
-  },
-  {
-    name: 'Old Fashioned',
-    glass: 'Old-fashioned glass',
-    vibe: 'boozy',
-    build: (f) => ({
-      glass: 'Old-fashioned glass',
-      ings: [
-        [f.spirit, '60 ml'],
-        [f.sweet || 'Jaggery Syrup', '10 ml'],
-        ['Angostura Bitters', '2 dashes'],
-      ],
-      how: (n) =>
-        `Stir ${f.spirit.toLowerCase()}, ${(f.sweet || 'jaggery syrup').toLowerCase()} and the bitters over a large ice cube until cold and silky. Express an orange peel over the top. ${n}`,
-    }),
-  },
-  {
-    name: 'Collins',
+
+  Collins: {
     glass: 'Collins glass',
-    vibe: 'refreshing',
-    build: (f) => ({
-      glass: 'Collins glass',
-      ings: [
-        [f.spirit, '45 ml'],
-        [f.sour || 'Lemon Juice', '25 ml'],
-        [f.sweet || 'Sugar Syrup', '15 ml'],
-        ['Soda Water', 'top up'],
-      ],
-      how: (n) =>
-        `Shake ${f.spirit.toLowerCase()}, ${(f.sour || 'lemon juice').toLowerCase()} and ${(f.sweet || 'sugar syrup').toLowerCase()} with ice, strain into an ice-filled collins glass and top with soda. ${n}`,
-    }),
+    build: (f) => {
+      const ings = [[f.spirit, '45 ml']];
+      if (f.signature.role === 'sour') ings.push([f.signature.name, '25 ml'], [sweetOf(f), '15 ml']);
+      else if (f.signature.role === 'aromatic') ings.push([citrusOf(f), '25 ml'], [sweetOf(f), '15 ml'], [f.signature.name, aroma(f, 8)]);
+      else if (f.signature.role === 'spirit') ings.push([citrusOf(f), '25 ml'], [sweetOf(f), '15 ml']);
+      else ings.push([citrusOf(f), '25 ml'], [f.signature.name, '15 ml']);
+      ings.push(['Soda Water', 'top up']);
+      return ings;
+    },
+    how: () => `Shake everything but the soda with ice, strain into an ice-filled collins glass and lengthen with soda.`,
   },
-  {
-    name: 'Spritz',
-    glass: 'Wine glass',
-    vibe: 'refreshing',
-    build: (f) => ({
-      glass: 'Wine glass',
-      ings: [
-        [f.sweet || f.sour || 'Kokum Syrup', '30 ml'],
-        [f.spirit, '20 ml'],
-        ['Prosecco', '90 ml'],
-        ['Soda Water', 'splash'],
-      ],
-      how: (n) =>
-        `Fill a wine glass with ice. Add ${(f.sweet || f.sour || 'kokum syrup').toLowerCase()} and ${f.spirit.toLowerCase()}, top with prosecco and a splash of soda, and stir gently. ${n}`,
-    }),
-  },
-  {
-    name: 'Sling',
-    glass: 'Hurricane glass',
-    vibe: 'tropical',
-    build: (f) => ({
-      glass: 'Hurricane glass',
-      ings: [
-        [f.spirit, '45 ml'],
-        [f.sour || 'Lime Juice', '20 ml'],
-        [f.sweet || 'Mango Puree', '20 ml'],
-        ['Soda Water', 'top up'],
-      ],
-      how: (n) =>
-        `Shake ${f.spirit.toLowerCase()}, ${(f.sour || 'lime juice').toLowerCase()} and ${(f.sweet || 'mango puree').toLowerCase()} with ice, pour unstrained into a tall glass and lengthen with soda. ${n}`,
-    }),
-  },
-  {
-    name: 'Fizz',
+
+  Fizz: {
     glass: 'Highball glass',
-    vibe: 'refreshing',
-    build: (f) => ({
-      glass: 'Highball glass',
-      ings: [
-        [f.spirit, '45 ml'],
-        [f.sour || 'Lemon Juice', '20 ml'],
-        [f.sweet || 'Sugar Syrup', '15 ml'],
-        ['Egg White', '1'],
-        ['Soda Water', 'splash'],
-      ],
-      how: (n) =>
-        `Dry shake everything but the soda, then shake with ice. Strain into a chilled glass and top with a splash of soda to lift the foam. ${n}`,
-    }),
+    build: (f) => {
+      const ings = [[f.spirit, '45 ml']];
+      if (f.signature.role === 'sour') ings.push([f.signature.name, '25 ml'], [sweetOf(f), '15 ml']);
+      else ings.push([citrusOf(f), '20 ml'], [f.signature.name, '20 ml']);
+      ings.push(['Egg White', '1'], ['Soda Water', 'splash']);
+      return ings;
+    },
+    how: () => `Dry shake everything but the soda, then shake again with ice. Strain into a chilled glass and top with a splash of soda to lift the foam.`,
   },
-  {
-    name: 'Negroni',
+
+  'Old Fashioned': {
     glass: 'Old-fashioned glass',
-    vibe: 'boozy',
-    build: (f) => ({
-      glass: 'Old-fashioned glass',
-      ings: [
-        [f.spirit, '30 ml'],
-        ['Campari', '30 ml'],
-        ['Sweet Vermouth', '30 ml'],
-        [f.sweet || f.sour || 'Kokum Syrup', '5 ml'],
-      ],
-      how: (n) =>
-        `Stir ${f.spirit.toLowerCase()}, Campari, sweet vermouth and a barspoon of ${(f.sweet || f.sour || 'kokum syrup').toLowerCase()} over ice, strain over a fresh cube and garnish with an orange slice. ${n}`,
-    }),
+    build: (f) => [[f.spirit, '60 ml'], [f.signature.name, '15 ml'], ['Angostura Bitters', '2 dashes']],
+    how: (f) => `Stir ${lower(f.spirit)}, ${lower(f.signature.name)} and the bitters over one large cube until cold and silky. Express an orange peel over the top.`,
   },
-  {
-    name: 'Martini',
+
+  Mule: {
+    glass: 'Mug',
+    build: (f) => {
+      const ings = [[f.spirit, '50 ml'], ['Lime Juice', '15 ml']];
+      ings.push([f.signature.name, f.signature.role === 'aromatic' ? aroma(f, 6) : '15 ml']);
+      // an aromatic signature is not a sweetener, so the drink still needs one
+      if (f.signature.role === 'aromatic') ings.push([sweetOf(f), '15 ml']);
+      ings.push(['Ginger Beer', 'top up']);
+      return ings;
+    },
+    how: (f) =>
+      `${f.signature.role === 'aromatic' ? `Muddle the ${lower(f.signature.name)} in the base of a copper mug, then ` : 'In a copper mug, '}add ice, ${lower(f.spirit)} and lime, top with cold ginger beer and give it one stir.`,
+  },
+
+  Spritz: {
+    glass: 'Wine glass',
+    build: (f) => [[f.signature.name, '35 ml'], [f.spirit, '20 ml'], ['Prosecco', '90 ml'], ['Soda Water', 'splash']],
+    how: (f) => `Fill a wine glass with ice, add ${lower(f.signature.name)} and ${lower(f.spirit)}, top with prosecco and a splash of soda, then stir gently once.`,
+  },
+
+  Sling: {
+    glass: 'Hurricane glass',
+    build: (f) => [[f.spirit, '45 ml'], ['Lime Juice', '20 ml'], [f.signature.name, '25 ml'], ['Soda Water', 'top up']],
+    how: () => `Shake everything but the soda with ice, pour unstrained into a tall glass and lengthen with soda.`,
+  },
+
+  Martini: {
     glass: 'Martini glass',
-    vibe: 'boozy',
-    build: (f) => ({
-      glass: 'Martini glass',
-      ings: [
-        [f.spirit, '60 ml'],
-        ['Dry Vermouth', '10 ml'],
-        [f.sweet || f.sour || 'Saffron Syrup', '5 ml'],
-      ],
-      how: (n) =>
-        `Stir ${f.spirit.toLowerCase()}, dry vermouth and a barspoon of ${(f.sweet || f.sour || 'saffron syrup').toLowerCase()} over ice until very cold, then strain into a chilled martini glass. ${n}`,
-    }),
+    spirits: ['Gin', 'Vodka'], // anything else is not a Martini
+    build: (f) => [
+      [f.spirit, '60 ml'],
+      ['Dry Vermouth', '10 ml'],
+      [f.signature.name, f.signature.role === 'aromatic' ? aroma(f, 10) : '10 ml'],
+    ],
+    how: (f) =>
+      f.signature.role === 'aromatic'
+        ? `Muddle the ${lower(f.signature.name)} in the mixing glass, add ${lower(f.spirit)} and dry vermouth, stir hard over ice and double strain into a chilled martini glass.`
+        : `Stir ${lower(f.spirit)}, dry vermouth and ${lower(f.signature.name)} over ice until very cold, then strain into a chilled martini glass.`,
   },
-];
 
-/* evocative name parts, seeded per drink for stability */
-const ADJ = ['Monsoon', 'Bazaar', 'Midnight', 'Marigold', 'Deccan', 'Coastal', 'Royal', 'Smoke', 'Velvet', 'Spice Route', 'Verandah', 'Backwater', 'Havelock', 'Old City', 'Rooftop', 'Ghat', 'Chowk', 'Sundown', 'Palace', 'Bandra'];
+  Toddy: {
+    glass: 'Mug',
+    build: (f) => [
+      [f.spirit, '45 ml'],
+      [f.signature.name, f.signature.role === 'aromatic' ? aroma(f, 6) : '30 ml'],
+      [f.sweetener || 'Honey', '15 ml'],
+      ['Lemon Juice', '10 ml'],
+      ['Hot Water', 'top up'],
+    ],
+    how: (f) => `Warm a mug, add ${lower(f.spirit)}, ${lower(f.signature.name)}, honey and lemon, then top with hot water and stir until the honey dissolves.`,
+  },
 
-const cap = (s) => s.replace(/\b\w/g, (c) => c.toUpperCase());
+  Flip: {
+    glass: 'Coupe',
+    build: (f) => [[f.spirit, '45 ml'], [f.signature.name, '30 ml'], [sweetOf(f), '10 ml'], ['Whole Egg', '1']],
+    how: (f) => `Dry shake ${lower(f.spirit)}, ${lower(f.signature.name)}, sugar syrup and the whole egg until thick, then shake again with ice. Strain into a coupe and grate nutmeg over the top.`,
+  },
+};
+
+/* ---------------------------------------------------------------- build ---- */
 
 const drinks = [];
 let n = 0;
-outer: for (const f of FLAVOURS) {
-  for (const s of STRUCTS) {
-    if (drinks.length >= 100) break outer;
+
+for (const f of FLAVOURS) {
+  for (const tName of f.templates) {
+    const t = TEMPLATES[tName];
+    if (!t) throw new Error(`${f.key}: unknown template ${tName}`);
+    if (t.spirits && !t.spirits.includes(f.spirit))
+      throw new Error(`${f.key}: a ${tName} is not made with ${f.spirit}`);
+
+    const ings = t.build(f);
+    if (f.extra) ings.push([f.extra.name, f.extra.measure]);
+
+    // rule 1, enforced rather than assumed
+    for (const must of [f.signature.name, f.extra?.name, f.sweetener].filter(Boolean))
+      if (!ings.some(([name]) => name === must))
+        throw new Error(`${f.key} ${tName}: ${must} is missing from the glass`);
+
     n++;
-    const b = s.build(f);
-    const name = `${cap(f.key)} ${s.name === 'Old Fashioned' ? 'Old Fashioned' : s.name}`.trim();
-    const alt = `${ADJ[(n * 7) % ADJ.length]} ${f.key.split(' ')[0]}`;
     drinks.push({
       id: `x-in-${String(n).padStart(3, '0')}`,
-      name: n % 3 === 0 ? alt : name,
+      name: `${f.key} ${tName}`, // the name always says what is in the glass
       category: 'Cocktail',
       alcoholic: 'Alcoholic',
-      glass: b.glass,
-      instructions: b.how(`A ${f.region} riff built on ${f.note}.`),
+      glass: t.glass,
+      instructions: `${t.how(f)} ${f.note.charAt(0).toUpperCase()}${f.note.slice(1)}.`,
       thumb: '',
       video: '',
       tags: ['India', f.region, f.key],
       iba: '',
-      ingredients: b.ings.map(([name, measure]) => ({ name, measure })),
-      vibeHint: f.vibe || s.vibe,
+      ingredients: ings.map(([name, measure]) => ({ name, measure })),
+      vibeHint: f.vibe,
     });
   }
 }
 
 writeFileSync(join(ROOT, 'data', 'indian_cocktails.json'), JSON.stringify(drinks, null, 1));
-console.log(`Wrote ${drinks.length} Indian cocktails.`);
+console.log(`Wrote ${drinks.length} Indian cocktails across ${FLAVOURS.length} flavours.`);

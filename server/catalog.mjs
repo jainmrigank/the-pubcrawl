@@ -46,9 +46,9 @@ const CURATED = [
   // Indian bar pantry (used by data/indian_cocktails.json + extra_cocktails.json)
   'Feni', 'Gondhoraj Lime', 'Kokum Syrup', 'Tamarind Syrup', 'Khus Syrup',
   'Jamun Syrup', 'Gulkand Syrup', 'Thandai Syrup', 'Kala Khatta Syrup',
-  'Bael Syrup', 'Saffron Syrup', 'Cardamom Syrup', 'Jaggery Syrup',
-  'Masala Chai', 'Custard Apple Pulp', 'Coconut Cream', 'Guava Puree',
-  'Mango Puree', 'Sea Buckthorn Juice', 'Pomegranate Juice', 'Raw Mango',
+  'Saffron Syrup', 'Cardamom Syrup', 'Jaggery Syrup', 'Aam Papad',
+  'Masala Chai', 'Filter Coffee', 'Coconut Cream', 'Guava Puree',
+  'Mango Puree', 'Pomegranate Juice', 'Raw Mango',
   'Curry Leaves', 'Tulsi', 'Cumin', 'Black Salt',
 ];
 
