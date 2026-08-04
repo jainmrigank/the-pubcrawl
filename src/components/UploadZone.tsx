@@ -13,7 +13,30 @@ interface Props {
 type Shot = { b64: string; mime: string; preview: string };
 
 const MAX_BYTES = 25 * 1024 * 1024;
-const looksHeic = (f: File) => /hei[cf]/i.test(f.type) || /\.hei[cf]$/i.test(f.name);
+
+/**
+ * What the file actually is, read off its first bytes.
+ *
+ * The name and the MIME type are both hearsay. An iOS photo picked inside an
+ * installed app regularly arrives called image.jpg, typed image/jpeg, holding
+ * HEIC, which is why this worked in a browser tab and failed in the PWA: the
+ * old check believed the label, decided it was not HEIC, and skipped the
+ * fallback that would have saved it.
+ */
+async function sniff(file: File): Promise<string> {
+  try {
+    const head = new Uint8Array(await file.slice(0, 16).arrayBuffer());
+    const ascii = (a: number, b: number) => String.fromCharCode(...head.slice(a, b));
+    if (head[0] === 0xff && head[1] === 0xd8 && head[2] === 0xff) return 'image/jpeg';
+    if (ascii(1, 4) === 'PNG') return 'image/png';
+    if (ascii(0, 3) === 'GIF') return 'image/gif';
+    if (ascii(0, 4) === 'RIFF' && ascii(8, 12) === 'WEBP') return 'image/webp';
+    if (ascii(4, 8) === 'ftyp') return /^avi[fs]/.test(ascii(8, 12)) ? 'image/avif' : 'image/heic';
+  } catch {
+    /* unreadable head: fall back to what the file claims */
+  }
+  return file.type || '';
+}
 
 /** the whole file, untouched, for when the browser cannot decode it but the model can */
 function rawBytes(file: File): Promise<Shot> {
@@ -95,12 +118,19 @@ export function UploadZone({ onAddAll }: Props) {
     setError('');
     setAdded([]);
 
-    if (!file.type.startsWith('image/') && !looksHeic(file)) {
-      setError('That is not a photo. Pick a picture of your bottles.');
+    // an installed app on iOS can hand back a zero-byte file rather than fail
+    if (!file.size) {
+      setError('That photo came through empty. Try picking it again.');
       return;
     }
     if (file.size > MAX_BYTES) {
       setError('That photo is enormous. Anything under 25MB is fine.');
+      return;
+    }
+
+    const real = await sniff(file);
+    if (!real.startsWith('image/')) {
+      setError('That is not a photo. Pick a picture of your bottles.');
       return;
     }
 
@@ -110,12 +140,12 @@ export function UploadZone({ onAddAll }: Props) {
       let shot: Shot;
       try {
         shot = await shrink(file);
-      } catch (err) {
-        // HEIC is the common case: an iPhone photo no browser but Safari can
-        // decode. The vision model reads it happily, so send the original bytes
-        // rather than stopping at a decoder we do not control.
-        if (!looksHeic(file)) throw err;
+      } catch {
+        // The browser could not decode it, which says nothing about whether the
+        // model can. It reads HEIC happily, so send the original bytes with the
+        // type the bytes actually are rather than stopping here.
         shot = await rawBytes(file);
+        shot.mime = real;
         sentRaw = true;
       }
 
@@ -133,8 +163,8 @@ export function UploadZone({ onAddAll }: Props) {
       // Once the bytes are away, any failure is the bar's, not the format's.
       // Blaming HEIC there would send people to fix a problem they do not have.
       setError(
-        !sentRaw && looksHeic(file)
-          ? 'This is an iPhone HEIC photo and this browser cannot open it. Take a screenshot and upload that, or set Camera to “Most Compatible” in iPhone settings.'
+        sentRaw
+          ? `The bar could not read that photo. ${msg}`.trim()
           : `Could not read that photo. ${msg}`.trim()
       );
     } finally {

@@ -80,11 +80,18 @@ function worthRetrying(err) {
 }
 
 /** messages: OpenAI-style array. Returns assistant text or throws after trying the model chain. */
-export async function chat(messages, { temperature = 0.7 } = {}) {
+export async function chat(messages, { temperature = 0.7, budgetMs = 70000 } = {}) {
   if (!llmAvailable()) throw new Error('No LLM_API_KEY configured');
   const models = [llmConfig.model, ...FALLBACK_MODELS.filter((m) => m !== llmConfig.model)];
+  const deadline = Date.now() + budgetMs;
   let lastErr;
   for (const model of models) {
+    // Four models at 45s each is three minutes, and every caller gives up long
+    // before that. Walking the chain has to fit inside the wait, not outlast it.
+    if (Date.now() >= deadline) {
+      console.warn('[llm] out of time after trying', models.indexOf(model), 'model(s)');
+      break;
+    }
     try {
       const text = await chatOnce(model, messages, temperature);
       if (model !== llmConfig.model) console.log(`[llm] served by fallback model ${model}`);
