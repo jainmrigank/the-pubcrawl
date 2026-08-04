@@ -1,4 +1,4 @@
-import type { HallMember, Health, Ingredient, MatchResult, Question, Recipe, Vibe } from './types';
+import type { HallMember, Health, Ingredient, MatchResult, Question, Recipe, Vibe, WatchShelves } from './types';
 
 /**
  * Where the API lives. Empty (default) means same origin — the dev server
@@ -119,6 +119,9 @@ export const submitHighScore = (score: number) =>
   post<{ score: number; at: number; beaten: boolean }>('/api/quiz/high', { score }, true);
 
 export const fetchDailyQuestion = () => get<Question>('/api/quiz/today');
+
+/* ---- the watch shelf ---- */
+export const fetchVideos = () => get<WatchShelves>('/api/videos');
 
 /* ---- bar nudges (web push) ---- */
 export const fetchPushKey = () => get<{ key: string | null }>('/api/push/key');

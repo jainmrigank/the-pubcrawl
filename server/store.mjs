@@ -60,6 +60,7 @@ let kept = [];
 let subs = []; // push subscriptions: { sub, createdAt, lastSeen }
 let highScore = { score: 0, at: 0 }; // best run by anyone, ever
 let hall = []; // everyone who has cleared the whole bank: { name, score, at }
+let videoStats = {}; // youtube id -> { views, likes, dead, checkedAt, history: [{at, views}] }
 
 export async function initStore() {
   likes = await readBlob('pubcrawl:likes', 'likes.json', {});
@@ -67,6 +68,7 @@ export async function initStore() {
   subs = await readBlob('pubcrawl:subs', 'push_subs.json', []);
   highScore = await readBlob('pubcrawl:highscore', 'high_score.json', { score: 0, at: 0 });
   hall = await readBlob('pubcrawl:hall', 'hall_of_fame.json', []);
+  videoStats = await readBlob('pubcrawl:videostats', 'video_stats.json', {});
   console.log(
     `[store] ${useKV ? 'Upstash KV' : 'local file'} — ${Object.keys(likes).length} liked, ${kept.length} kept, ${subs.length} subscribed, high score ${highScore.score}, ${hall.length} in the hall`
   );
@@ -100,6 +102,33 @@ export function addToHall(name, score) {
   hall = [entry, ...hall].slice(0, 50);
   writeBlob('pubcrawl:hall', 'hall_of_fame.json', hall);
   return entry;
+}
+
+export const getVideoStats = () => videoStats;
+
+/**
+ * Merge a refresh into the stored statistics, keeping a short view-count
+ * history so "what is climbing" can be computed from our own snapshots.
+ * YouTube will not tell you how many views a video got this month, so the
+ * only way to know is to have been watching.
+ */
+export function saveVideoStats(next) {
+  const now = Date.now();
+  const merged = { ...videoStats };
+  for (const [id, s] of Object.entries(next)) {
+    const prev = merged[id] || {};
+    const history = [...(prev.history || [])];
+    if (typeof s.views === 'number' && s.views !== prev.views) history.push({ at: now, views: s.views });
+    merged[id] = {
+      ...prev,
+      ...s,
+      checkedAt: now,
+      history: history.slice(-12), // ~3 months of weekly snapshots is plenty
+    };
+  }
+  videoStats = merged;
+  writeBlob('pubcrawl:videostats', 'video_stats.json', videoStats);
+  return Object.keys(next).length;
 }
 
 export const storeMode = () => (useKV ? 'kv' : 'file');

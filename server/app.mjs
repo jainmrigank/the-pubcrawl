@@ -12,6 +12,7 @@ import { chat, extractJson, llmAvailable, llmConfig } from './llm.mjs';
 import { generateFallback } from './generator.mjs';
 import { buildNudge, buildDailyQuestionNudge, WELCOME } from './push.mjs';
 import { playlistSlice, questionOfDay, QUESTIONS } from './quiz.mjs';
+import { buildShelves, VIDEOS } from './videos.mjs';
 import {
   initStore,
   storeMode,
@@ -25,6 +26,8 @@ import {
   touchSub,
   getHall,
   addToHall,
+  getVideoStats,
+  saveVideoStats,
   getHighScore,
   submitScore,
 } from './store.mjs';
@@ -346,6 +349,72 @@ Respond with JSON exactly like:
     const q = questionOfDay();
     if (!q) return res.status(503).json({ error: 'no questions loaded' });
     res.json(q);
+  });
+
+
+  /* ================= the watch shelf ================= */
+  app.get('/api/videos', (_req, res) => res.json(buildShelves(getVideoStats())));
+
+  /**
+   * Refreshes view counts and checks every embed still works. Fired weekly by
+   * a scheduled workflow, never by a visitor: it is slow, it is rate-limited
+   * upstream, and nobody should wait on it to see the page.
+   *
+   * Without YOUTUBE_API_KEY it still runs, doing the health check alone. That
+   * is the half that actually protects the page, since a dead embed is worse
+   * than a missing view count.
+   */
+  app.post('/api/videos/refresh', async (req, res) => {
+    const token = req.get('x-push-secret') || '';
+    if (!PUSH_SECRET || token !== PUSH_SECRET) return res.status(401).json({ error: 'unauthorized' });
+
+    const key = process.env.YOUTUBE_API_KEY || '';
+    const ids = VIDEOS.map((v) => v.id);
+    const next = {};
+
+    // 1. is it still watchable and embeddable? oEmbed 200s only when both hold
+    let dead = 0;
+    for (const id of ids) {
+      try {
+        const r = await fetch(`https://www.youtube.com/oembed?format=json&url=https://www.youtube.com/watch?v=${id}`, {
+          signal: AbortSignal.timeout(10000),
+        });
+        next[id] = { dead: !r.ok };
+        if (!r.ok) dead++;
+      } catch {
+        /* a network blip is not evidence a video is gone, so leave it alone */
+      }
+    }
+
+    // 2. numbers, when a key is configured. 50 ids per call, 1 quota unit each
+    let counted = 0;
+    if (key) {
+      for (let i = 0; i < ids.length; i += 50) {
+        const batch = ids.slice(i, i + 50).join(',');
+        try {
+          const r = await fetch(
+            `https://www.googleapis.com/youtube/v3/videos?part=statistics&id=${batch}&key=${key}`,
+            { signal: AbortSignal.timeout(15000) }
+          );
+          if (!r.ok) break;
+          const j = await r.json();
+          for (const item of j.items || []) {
+            next[item.id] = {
+              ...next[item.id],
+              views: Number(item.statistics?.viewCount) || 0,
+              likes: Number(item.statistics?.likeCount) || 0,
+            };
+            counted++;
+          }
+        } catch {
+          break;
+        }
+      }
+    }
+
+    saveVideoStats(next);
+    console.log(`[watch] refreshed ${ids.length} videos, ${counted} counted, ${dead} dead`);
+    res.json({ checked: ids.length, counted, dead, hasKey: Boolean(key) });
   });
 
   /* ================= bar nudges (web push) ================= */

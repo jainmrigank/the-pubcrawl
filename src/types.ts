@@ -70,3 +70,35 @@ export interface HallMember {
   score: number;
   at: number;
 }
+
+/** one entry in the Watch library */
+export interface WatchVideo {
+  id: string;
+  title: string;
+  channel: string;
+  lane: string;
+  rank: number;
+  addedAt: string;
+  views: number | null;
+  likes: number | null;
+  movement: number;
+  /** only set on the Climbing shelf: why it earned its place */
+  why?: string;
+}
+
+export interface WatchLane {
+  id: string;
+  label: string;
+  color: string;
+}
+
+export interface WatchShelves {
+  allTime: WatchVideo[];
+  rising: WatchVideo[];
+  /** 'climbing' once we have real movement, 'fresh' before that */
+  risingMode: 'climbing' | 'fresh';
+  pool: WatchVideo[];
+  lanes: WatchLane[];
+  hasNumbers: boolean;
+  updatedAt: number | null;
+}

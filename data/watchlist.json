@@ -1,0 +1,48 @@
+{
+ "_comment": "Curated video library for the Watch shelf. Every id here was verified alive and embeddable by scripts/find_watchlist.mjs before being added; ids are never written from memory. `rank` is the fallback ordering used until real view counts arrive from the YouTube Data API. `addedAt` drives the This Month shelf. Lanes: craft, education, comedy, people.",
+ "videos": [
+  { "id": "1PoG9ZF9Y9c", "title": "My Drink is on Fire!! Master Bartender in Tokyo", "channel": "Brian D", "lane": "craft", "rank": 1, "addedAt": "2026-07-27" },
+  { "id": "AWnIqpsfyPU", "title": "50 Cocktails you NEED to know", "channel": "The Educated Barfly", "lane": "education", "rank": 2, "addedAt": "2026-07-27" },
+  { "id": "BxuJBZU2hgE", "title": "Seth and Dua Lipa Go Day Drinking", "channel": "Late Night with Seth Meyers", "lane": "comedy", "rank": 3, "addedAt": "2026-07-27" },
+  { "id": "vMyjNBMfopE", "title": "People Try Alcohol For The First Time", "channel": "Facts.", "lane": "people", "rank": 4, "addedAt": "2026-07-27" },
+  { "id": "HdMzpiuA9o4", "title": "21 Year Olds Try Drinks For The First Time", "channel": "People Vs Food", "lane": "people", "rank": 5, "addedAt": "2026-07-27" },
+
+  { "id": "2wcGdI78dIM", "title": "World's Best Samurai Bartender Cuts Ice with a Sword", "channel": "Rob Ilas", "lane": "craft", "rank": 6, "addedAt": "2026-07-27" },
+  { "id": "HFJ2a-3mmWc", "title": "How the World's Best Bar Turns Food Into Cocktails", "channel": "Bon Appétit", "lane": "craft", "rank": 7, "addedAt": "2026-07-27" },
+  { "id": "8nmjAmQOk-8", "title": "Seth and Kevin Hart Go Day Drinking", "channel": "Late Night with Seth Meyers", "lane": "comedy", "rank": 8, "addedAt": "2026-07-27" },
+  { "id": "UckkY0rrsAM", "title": "Bartenders Match the Drink to the Person", "channel": "Cut", "lane": "people", "rank": 9, "addedAt": "2026-07-27" },
+  { "id": "TPQdwotfaQE", "title": "How To Create Craft Cocktails for The Dead Rabbit", "channel": "The Dead Rabbit", "lane": "craft", "rank": 10, "addedAt": "2026-07-27" },
+
+  { "id": "N6j_13-qzDY", "title": "Drunk People", "channel": "Gabriel Iglesias", "lane": "comedy", "rank": 11, "addedAt": "2026-07-27" },
+  { "id": "ml_KwtaTC-A", "title": "A Day at Rockefeller Center's Legendary Cocktail Bar", "channel": "Bon Appétit", "lane": "craft", "rank": 12, "addedAt": "2026-07-27" },
+  { "id": "X3n5Pk8fkLg", "title": "Seth and Rihanna Go Day Drinking", "channel": "Late Night with Seth Meyers", "lane": "comedy", "rank": 13, "addedAt": "2026-07-27" },
+  { "id": "IOd2Wb23mds", "title": "Irish People Try Indian Alcohol", "channel": "The TRY Channel", "lane": "people", "rank": 14, "addedAt": "2026-07-27" },
+  { "id": "640aJL2zmww", "title": "Easy Cocktail Garnishes", "channel": "Steve the Bartender", "lane": "education", "rank": 15, "addedAt": "2026-07-27" },
+
+  { "id": "mnnbDeVC_ro", "title": "Hidetsugu Ueno makes a White Lady", "channel": "BAR TIMES", "lane": "craft", "rank": 16, "addedAt": "2026-07-27" },
+  { "id": "cQZnUeoaEEE", "title": "First Drinking Experience", "channel": "Amit Tandon", "lane": "comedy", "rank": 17, "addedAt": "2026-07-27" },
+  { "id": "0ieRyJeuV-E", "title": "The ONLY 6 Cocktails You Need To Know", "channel": "Lui Fernandes", "lane": "education", "rank": 18, "addedAt": "2026-07-27" },
+  { "id": "_m4EJ6RDuSM", "title": "A Drunk Bartender Tries to Match the Drink to the Person", "channel": "Cut", "lane": "people", "rank": 19, "addedAt": "2026-07-27" },
+  { "id": "QmHJxbGjP2g", "title": "Inside the Cocktail Lab of a 3 Star Michelin Chef", "channel": "S3", "lane": "craft", "rank": 20, "addedAt": "2026-07-27" },
+
+  { "id": "bbeenvk1c8o", "title": "Seth and Lizzo Go Day Drinking", "channel": "Late Night with Seth Meyers", "lane": "comedy", "rank": 21, "addedAt": "2026-07-27" },
+  { "id": "4oFlIu-HxB0", "title": "How to create your own Cocktail", "channel": "Behind the Bar", "lane": "education", "rank": 22, "addedAt": "2026-07-27" },
+  { "id": "xWQMwVktqQA", "title": "Worst Hangover Story", "channel": "Angad Ranyal", "lane": "comedy", "rank": 23, "addedAt": "2026-07-27" },
+  { "id": "hfSoPh1flMc", "title": "Blind taste testing 7 different vodkas", "channel": "Michelle The Bartender", "lane": "people", "rank": 24, "addedAt": "2026-07-27" },
+  { "id": "a-MEfSkiq6w", "title": "Diamond Ice and Service Masterclass at Tokyo's High Five", "channel": "Vlad SlickBartender", "lane": "craft", "rank": 25, "addedAt": "2026-07-27" },
+
+  { "id": "iJYdCAAeilo", "title": "4 Beginner Bartending Mistakes To Avoid", "channel": "European Bartender School", "lane": "education", "rank": 26, "addedAt": "2026-07-27" },
+  { "id": "lDtJtkBOBj0", "title": "Daaru Party", "channel": "Jaspreet Singh", "lane": "comedy", "rank": 27, "addedAt": "2026-07-27" },
+  { "id": "3G-bAz-84nQ", "title": "Level Up Your Cocktail Garnish Game", "channel": "Truffles On The Rocks", "lane": "education", "rank": 28, "addedAt": "2026-07-27" },
+  { "id": "a4jN61TH0fU", "title": "Bar Centifolia's Samurai Bartender Crafts a Dragon Mojito", "channel": "Rob Ilas", "lane": "craft", "rank": 29, "addedAt": "2026-07-27" },
+  { "id": "98hpGU0jrME", "title": "Ranking Every Four Loko", "channel": "Mixed Up with Brewzle", "lane": "people", "rank": 30, "addedAt": "2026-07-27" },
+
+  { "id": "QZo4SDa46YA", "title": "When to build, shake or stir a drink", "channel": "Michelle The Bartender", "lane": "education", "rank": 31, "addedAt": "2026-07-27" },
+  { "id": "N35g2IhG_s8", "title": "Japan's Greatest Bartender", "channel": "Kelpi", "lane": "craft", "rank": 32, "addedAt": "2026-07-27" },
+  { "id": "DmUlJHVXSoo", "title": "10 Cocktails Every Bartender Should Know", "channel": "Rob's Home Bar", "lane": "education", "rank": 33, "addedAt": "2026-07-27" },
+  { "id": "w-z5mbZ-yCI", "title": "Is this the world's best cocktail maker?", "channel": "Got Talent Global", "lane": "craft", "rank": 34, "addedAt": "2026-07-27" },
+  { "id": "sGhgC5F3Oi0", "title": "Easy Cocktail Garnishes and Techniques", "channel": "Common Man Cocktails", "lane": "education", "rank": 35, "addedAt": "2026-07-27" },
+
+  { "id": "GLq-fAxFUfQ", "title": "Seth and Sabrina Carpenter Go Day Drinking", "channel": "Late Night with Seth Meyers", "lane": "comedy", "rank": 36, "addedAt": "2026-07-27" }
+ ]
+}

@@ -1,0 +1,25 @@
+name: Refresh the watch shelf
+
+# Weekly. Two jobs in one call: check every embed still plays, and snapshot
+# view counts so "what is climbing" can be worked out from our own history.
+# YouTube will not tell you a video's views this month, so the only way to
+# know is to have been counting.
+on:
+  schedule:
+    - cron: '0 6 * * 1' # Monday, 06:00 UTC
+  workflow_dispatch:
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Refresh counts and drop dead embeds
+        run: |
+          code=$(curl -s -o /tmp/out.json -w '%{http_code}' -X POST \
+            -H "x-push-secret: ${{ secrets.PUSH_SECRET }}" \
+            -H 'content-type: application/json' \
+            --max-time 300 \
+            "${{ secrets.API_BASE }}/api/videos/refresh")
+          echo "HTTP $code"
+          cat /tmp/out.json
+          test "$code" = "200"

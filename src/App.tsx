@@ -12,6 +12,7 @@ import { InstallBanner } from './components/InstallBanner';
 import { NudgeToggle } from './components/NudgeToggle';
 import { NudgePrompt } from './components/NudgePrompt';
 import { Quiz } from './components/Quiz';
+import { Watch } from './components/Watch';
 import { DailyQuestion } from './components/DailyQuestion';
 import { EASE, Lines, LOADED_HIDDEN, Reveal } from './motion';
 import { ArrowDown, ArrowRight, Burger, Check, Heart, PubGlyph, Share, Shuffle, SketchDefs, X } from './icons';
@@ -20,13 +21,14 @@ import './App.css';
 
 const FALLBACK_VIBE: Vibe = { id: 'boozy', label: 'Spirit-Forward', color: '#8A5A24' };
 
-type Route = 'menu' | 'bar' | 'basics' | 'tab' | 'quiz';
-const ROUTES: Route[] = ['menu', 'bar', 'basics', 'tab', 'quiz'];
+type Route = 'menu' | 'bar' | 'basics' | 'tab' | 'quiz' | 'watch';
+const ROUTES: Route[] = ['menu', 'bar', 'basics', 'tab', 'quiz', 'watch'];
 const NAV: { route: Route; label: string }[] = [
   { route: 'menu', label: 'THE MENU' },
   { route: 'bar', label: 'THE BAR' },
   { route: 'basics', label: 'BASICS' },
   { route: 'quiz', label: 'QUIZ' },
+  { route: 'watch', label: 'WATCH' },
   { route: 'tab', label: 'THE TAB' },
 ];
 
@@ -744,6 +746,10 @@ export default function App() {
                 />
                 {route === 'quiz' && <Quiz />}
               </section>
+            </div>
+
+            <div hidden={route !== 'watch'}>
+              <Watch />
             </div>
 
             <div hidden={route !== 'tab'}>
