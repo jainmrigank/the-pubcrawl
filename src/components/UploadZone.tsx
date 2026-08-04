@@ -105,16 +105,18 @@ export function UploadZone({ onAddAll }: Props) {
     }
 
     setBusy(true);
+    let sentRaw = false;
     try {
       let shot: Shot;
       try {
         shot = await shrink(file);
       } catch (err) {
         // HEIC is the common case: an iPhone photo no browser but Safari can
-        // decode. Send the original bytes and let the model try instead of
-        // stopping at a decoder we do not control.
+        // decode. The vision model reads it happily, so send the original bytes
+        // rather than stopping at a decoder we do not control.
         if (!looksHeic(file)) throw err;
         shot = await rawBytes(file);
+        sentRaw = true;
       }
 
       if (shot.preview) setPreview(shot.preview);
@@ -128,9 +130,11 @@ export function UploadZone({ onAddAll }: Props) {
       }
     } catch (err) {
       const msg = err instanceof Error ? err.message : '';
+      // Once the bytes are away, any failure is the bar's, not the format's.
+      // Blaming HEIC there would send people to fix a problem they do not have.
       setError(
-        looksHeic(file)
-          ? 'This is an iPhone HEIC photo, which most browsers cannot open. Take a screenshot of it and upload that, or set Camera to “Most Compatible” in iPhone settings.'
+        !sentRaw && looksHeic(file)
+          ? 'This is an iPhone HEIC photo and this browser cannot open it. Take a screenshot and upload that, or set Camera to “Most Compatible” in iPhone settings.'
           : `Could not read that photo. ${msg}`.trim()
       );
     } finally {

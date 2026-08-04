@@ -33,8 +33,8 @@ export const llmConfig = {
 
 export const llmAvailable = () => Boolean(llmConfig.apiKey);
 
-// If the configured model is over quota or retired, walk down this chain so a
-// real LLM still answers (verified live against this key's available models).
+// If the configured model is over quota, retired or simply busy, walk down this
+// chain so a real LLM still answers (verified live against this key's models).
 const FALLBACK_MODELS = ['gemini-3-flash-preview', 'gemini-3.1-flash-lite', 'gemini-flash-lite-latest'];
 
 async function chatOnce(model, messages, temperature) {
@@ -47,12 +47,36 @@ async function chatOnce(model, messages, temperature) {
     body: JSON.stringify({ model, temperature, messages }),
     signal: AbortSignal.timeout(llmConfig.timeoutMs),
   });
-  if (res.status === 429) throw new Error(`429 quota exhausted on ${model}`);
-  if (!res.ok) throw new Error(`LLM ${res.status} on ${model}: ${(await res.text()).slice(0, 200)}`);
+  if (res.status === 429) throw Object.assign(new Error(`429 quota exhausted on ${model}`), { status: 429 });
+  if (!res.ok)
+    throw Object.assign(new Error(`LLM ${res.status} on ${model}: ${(await res.text()).slice(0, 200)}`), {
+      status: res.status,
+    });
   const json = await res.json();
   const text = json?.choices?.[0]?.message?.content;
   if (!text) throw new Error(`LLM returned empty response on ${model}`);
   return text;
+}
+
+/**
+ * Is this failure worth asking a different model about?
+ *
+ * Anything the server says about itself is: over quota, retired, overloaded,
+ * timed out. "This model is currently experiencing high demand" is a 503 and
+ * used to fall straight through, which meant the fallback chain sat unused
+ * during exactly the outage it was built for.
+ *
+ * A 400 is not worth retrying. The request is malformed and every model in the
+ * chain will say so, slowly.
+ */
+function worthRetrying(err) {
+  const status = err?.status;
+  if (status === 429 || status === 404 || status === 408) return true;
+  if (typeof status === 'number' && status >= 500) return true;
+  if (typeof status === 'number') return false; // 400/401/403: our fault, not theirs
+  return /quota|not found|no longer available|high demand|overload|timeout|timed out|aborted|network|fetch failed/i.test(
+    err?.message || ''
+  );
 }
 
 /** messages: OpenAI-style array. Returns assistant text or throws after trying the model chain. */
@@ -67,10 +91,11 @@ export async function chat(messages, { temperature = 0.7 } = {}) {
       return text;
     } catch (err) {
       lastErr = err;
-      if (!/429|404|quota|not found|no longer available/i.test(err.message)) throw err;
+      if (!worthRetrying(err)) throw err;
       console.warn(`[llm] ${err.message} — trying next model`);
     }
   }
+  console.error('[llm] every model failed:', lastErr?.message);
   throw new Error('Our bartender is swamped right now. Give it a minute and try again.');
 }
 
