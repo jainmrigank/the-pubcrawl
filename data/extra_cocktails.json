@@ -356,5 +356,22 @@
    { "name": "Gondhoraj Lime", "measure": "20 ml, juiced" },
    { "name": "Sugar Syrup", "measure": "15 ml" }
   ]
+ },
+ {
+  "id": "x-shandy",
+  "name": "Shandy",
+  "category": "Beer",
+  "alcoholic": "Alcoholic",
+  "glass": "Pint glass",
+  "instructions": "Tilt a cold pint glass and pour the lager slowly down the side so it keeps its head, then top with an equal measure of chilled lemonade and drop in a wedge of lemon. Half beer, half lemonade, which is the point: this is what you order when the afternoon is long and you would like to still be standing at the end of it. Germany makes the same drink and calls it a Radler, after the cyclists it was first poured for.",
+  "thumb": "",
+  "video": "",
+  "tags": ["Classic", "Beer", "Low ABV"],
+  "iba": "",
+  "ingredients": [
+   { "name": "Lager", "measure": "150 ml" },
+   { "name": "Lemonade", "measure": "150 ml" },
+   { "name": "Lemon", "measure": "1 wedge" }
+  ]
  }
 ]
