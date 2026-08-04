@@ -26,10 +26,10 @@ const ROUTES: Route[] = ['menu', 'bar', 'basics', 'tab', 'quiz', 'watch'];
 const NAV: { route: Route; label: string }[] = [
   { route: 'menu', label: 'THE MENU' },
   { route: 'bar', label: 'THE BAR' },
-  { route: 'basics', label: 'BASICS' },
+  { route: 'tab', label: 'THE TAB' },
   { route: 'quiz', label: 'QUIZ' },
   { route: 'watch', label: 'WATCH' },
-  { route: 'tab', label: 'THE TAB' },
+  { route: 'basics', label: 'BAR BASICS' },
 ];
 
 /** the path part of the hash, without the query: '' | 'menu' | 'bar' | … */
@@ -740,7 +740,7 @@ export default function App() {
               <section className="sec page-top" id="quiz-page">
                 <SectionHead
                   index="01"
-                  title="LAST ORDERS"
+                  title="THE PUB QUIZ"
                   note="ONE POINT A CORRECT ANSWER"
                   lead="A quiz on cocktails, spirits and the stories behind them. It starts easy and gets meaner."
                 />

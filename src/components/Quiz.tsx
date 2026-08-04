@@ -21,7 +21,7 @@ function verdict(score: number) {
 }
 
 /**
- * Last Orders — endless, sudden death. Every correct answer is a point and the
+ * The pub quiz — endless, sudden death. Every correct answer is a point and the
  * questions keep getting harder. One wrong answer ends the run and the score
  * goes back to zero, which is what makes the house record worth chasing.
  *
@@ -210,7 +210,7 @@ export function Quiz() {
       <div className="quiz">
         <div className="quiz-intro">
           <p className="k-label quiz-eyebrow">
-            {swept ? 'THE WHOLE BANK' : over ? 'TIME AT THE BAR' : 'LAST ORDERS'}
+            {swept ? 'THE WHOLE BANK' : over ? 'THAT IS YOUR ROUND' : 'THE PUB QUIZ'}
           </p>
           <h3 className="quiz-title">
             {swept ? 'You drank the bar dry.' : over ? v.title : 'Think you know your drinks?'}
@@ -355,7 +355,7 @@ export function Quiz() {
                     ? queue.length || !exhausted
                       ? 'KEEP GOING'
                       : 'THAT IS THE WHOLE BANK'
-                    : 'THAT IS LAST ORDERS'}{' '}
+                    : 'AND THAT IS THAT'}{' '}
                 <ArrowRight size={14} />
               </button>
             </motion.div>
