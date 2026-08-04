@@ -1,0 +1,395 @@
+{
+ "_comment": "Channels the library already trusts. Swept weekly for new uploads via their public RSS feeds, which need no API key and no quota. `lane` is the default kind for a new upload when its title does not say otherwise.",
+ "channels": [
+  {
+   "id": "UCbaGn5VkOVlcRgIWAHcrJKA",
+   "name": "Cut",
+   "lane": "people",
+   "videos": 7
+  },
+  {
+   "id": "UCabq3No3wXbs6Ut-Pux6SzA",
+   "name": "The TRY Channel",
+   "lane": "people",
+   "videos": 7
+  },
+  {
+   "id": "UCVTyTA7-g9nopHeHbeuvpRA",
+   "name": "Late Night with Seth Meyers",
+   "lane": "comedy",
+   "videos": 7
+  },
+  {
+   "id": "UCp4nL9M78_HF6JL1MNzh-NQ",
+   "name": "Vlad SlickBartender",
+   "lane": "craft",
+   "videos": 7
+  },
+  {
+   "id": "UCbpMy0Fg74eXXkvxJrtEn3w",
+   "name": "Bon Appétit",
+   "lane": "people",
+   "videos": 7
+  },
+  {
+   "id": "UCe3grVLhUbejPXEaYMHKFbQ",
+   "name": "Behind the Bar",
+   "lane": "education",
+   "videos": 7
+  },
+  {
+   "id": "UCbpv0BMQJ6ZGTZ2hj1meeWA",
+   "name": "Truffles On The Rocks",
+   "lane": "education",
+   "videos": 7
+  },
+  {
+   "id": "UCpko_-a4wgz2u_DgDgd9fqA",
+   "name": "BuzzFeedVideo",
+   "lane": "people",
+   "videos": 6
+  },
+  {
+   "id": "UCcjhYlL1WRBjKaJsMH_h7Lg",
+   "name": "Epicurious",
+   "lane": "craft",
+   "videos": 6
+  },
+  {
+   "id": "UCfbnTUxUech4P1XgYUwYuKA",
+   "name": "Cold Ones",
+   "lane": "people",
+   "videos": 6
+  },
+  {
+   "id": "UCZAb8Vxp21vGvs5kofKtepg",
+   "name": "Bar Rescue",
+   "lane": "craft",
+   "videos": 6
+  },
+  {
+   "id": "UCUsN5ZwHx2kILm84-jPDeXw",
+   "name": "Comedy Central",
+   "lane": "comedy",
+   "videos": 6
+  },
+  {
+   "id": "UCu9ArHUJZadlhwt3Jt0tqgA",
+   "name": "The Educated Barfly",
+   "lane": "education",
+   "videos": 6
+  },
+  {
+   "id": "UCaDY8WjYWy36bnt0RVzSklw",
+   "name": "Tipsy Bartender",
+   "lane": "education",
+   "videos": 6
+  },
+  {
+   "id": "UCfEJUzPnT-HdNqOqdX3A0lA",
+   "name": "Steve the Bartender",
+   "lane": "education",
+   "videos": 6
+  },
+  {
+   "id": "UCEK-PgJHg4Jupi7k7re0qGg",
+   "name": "Anders Erickson",
+   "lane": "education",
+   "videos": 6
+  },
+  {
+   "id": "UC7lmZqhJeTzeQQkqNvfmjqw",
+   "name": "OK Tested",
+   "lane": "people",
+   "videos": 6
+  },
+  {
+   "id": "UCy6A9WMN43DrtBkID7nMXJw",
+   "name": "We Might Be Drunk Podcast",
+   "lane": "comedy",
+   "videos": 6
+  },
+  {
+   "id": "UCioZY1p0bZ4Xt-yodw8_cBQ",
+   "name": "How To Drink",
+   "lane": "education",
+   "videos": 6
+  },
+  {
+   "id": "UCiCfbYJqWmmtV6dUMcdU4gA",
+   "name": "We Might Be Drunk - Clips",
+   "lane": "comedy",
+   "videos": 6
+  },
+  {
+   "id": "UCZZoxczMLOYZQqNY0eyLheQ",
+   "name": "Jeremy Siers",
+   "lane": "education",
+   "videos": 6
+  },
+  {
+   "id": "UC-o0CfpOyFJOfyWKtqS1hZQ",
+   "name": "Cocktail Chemistry",
+   "lane": "craft",
+   "videos": 6
+  },
+  {
+   "id": "UCphIm9gI_JbeI0ByZSRt5Mg",
+   "name": "Whiskey Tribe",
+   "lane": "people",
+   "videos": 6
+  },
+  {
+   "id": "UC7WSB7ZaUTOmGprrBXgITcA",
+   "name": "DokaRyan",
+   "lane": "people",
+   "videos": 6
+  },
+  {
+   "id": "UCSAhkVI9R1U9Z3JQhkJvOYg",
+   "name": "Lui Fernandes",
+   "lane": "education",
+   "videos": 6
+  },
+  {
+   "id": "UChaZDVGw4aN6Ur006Zo_prA",
+   "name": "First Phil Whisky",
+   "lane": "education",
+   "videos": 6
+  },
+  {
+   "id": "UCMB8C1P75M_w4mfdFOjvafw",
+   "name": "David Blake Cocktails",
+   "lane": "craft",
+   "videos": 6
+  },
+  {
+   "id": "UCYCdKbd5R0Nx3s0ZTpxT4OA",
+   "name": "MikeMGTV",
+   "lane": "people",
+   "videos": 6
+  },
+  {
+   "id": "UCV7nTw69_sLzG7Wdd4g0w3Q",
+   "name": "Cheers! By The Urban Guide",
+   "lane": "people",
+   "videos": 6
+  },
+  {
+   "id": "UC7tQxAzdstcn9p1zlxw39nA",
+   "name": "Mix it up with Mendi",
+   "lane": "education",
+   "videos": 6
+  },
+  {
+   "id": "UCsDk00CHqvApblZoPZ8ua9w",
+   "name": "Mixed Up with Brewzle",
+   "lane": "people",
+   "videos": 6
+  },
+  {
+   "id": "UClFDjrx4rfeR4Dsi44ZzZMw",
+   "name": "SLB Drinks",
+   "lane": "education",
+   "videos": 6
+  },
+  {
+   "id": "UCEiui9T4ZYx8K8nuZ5YFSTw",
+   "name": "Cocktail Time with Kevin Kos",
+   "lane": "education",
+   "videos": 6
+  },
+  {
+   "id": "UCByHXQRqzgbygBTOM4mQz5Q",
+   "name": "빠슐랭Barchelin",
+   "lane": "craft",
+   "videos": 5
+  },
+  {
+   "id": "UCCrmxFzA1VMf8K86OM3zfRw",
+   "name": "Cocktails INDIA",
+   "lane": "education",
+   "videos": 5
+  },
+  {
+   "id": "UCNUj-fiaSHjSEDSEyqW27Aw",
+   "name": "BarTalk&Cocktails",
+   "lane": "education",
+   "videos": 5
+  },
+  {
+   "id": "UCTvYEid8tmg0jqGPDkehc_Q",
+   "name": "Preppy Kitchen",
+   "lane": "education",
+   "videos": 4
+  },
+  {
+   "id": "UC5GKTkrYYNHnLjcwTAZYaMw",
+   "name": "nilgiri kashyap",
+   "lane": "education",
+   "videos": 4
+  },
+  {
+   "id": "UC4rh5RVSMT00G29ySkkt1hg",
+   "name": "OSSC",
+   "lane": "people",
+   "videos": 4
+  },
+  {
+   "id": "UCtTgeFbRSuFUq9raLxJLi4g",
+   "name": "Jamie Oliver - Drinks",
+   "lane": "education",
+   "videos": 4
+  },
+  {
+   "id": "UCohoofW2Pu79BUY0Ioy8ROQ",
+   "name": "Michelle The Bartender",
+   "lane": "craft",
+   "videos": 4
+  },
+  {
+   "id": "UC42VsoDtra5hMiXZSsD6eGg",
+   "name": "The Modern Rogue",
+   "lane": "education",
+   "videos": 4
+  },
+  {
+   "id": "UCyju9x83RzP5u9vudPeC4tw",
+   "name": "Bartending Pro",
+   "lane": "education",
+   "videos": 4
+  },
+  {
+   "id": "UCcplnOSfcnOh5paIL2LdaAw",
+   "name": "Curiosity Public",
+   "lane": "people",
+   "videos": 4
+  },
+  {
+   "id": "UCmEnDJfwzlfVZyDdIznoiww",
+   "name": "Facts.",
+   "lane": "people",
+   "videos": 3
+  },
+  {
+   "id": "UCpi8TJfiA4lKGkaXs__YdBA",
+   "name": "The Try Guys",
+   "lane": "people",
+   "videos": 3
+  },
+  {
+   "id": "UCJ901NqoRaXMnIm7aOjLyuA",
+   "name": "Fallow",
+   "lane": "craft",
+   "videos": 3
+  },
+  {
+   "id": "UCNhLt0Z5VL_9dcR27wnbQhA",
+   "name": "jimgaffigan",
+   "lane": "comedy",
+   "videos": 3
+  },
+  {
+   "id": "UCElm866_W5r1eg8VjhFNARw",
+   "name": "Whiskey Vault",
+   "lane": "education",
+   "videos": 3
+  },
+  {
+   "id": "UCS9jbcDEOWbKBWQHsas6jow",
+   "name": "STAY BAR.",
+   "lane": "craft",
+   "videos": 3
+  },
+  {
+   "id": "UCZW5lIUz93q_aZIkJPAC0IQ",
+   "name": "88rising",
+   "lane": "craft",
+   "videos": 3
+  },
+  {
+   "id": "UCd-OeDUDgq76mGnvSsCOfqw",
+   "name": "Johnny Drinks",
+   "lane": "education",
+   "videos": 3
+  },
+  {
+   "id": "UCSiTS5Fg9Cl6T5t_EPDFLFw",
+   "name": "Rated Red",
+   "lane": "people",
+   "videos": 3
+  },
+  {
+   "id": "UCyz2PvvVh7ldYZUzvgfwPZQ",
+   "name": "Jesse’s Bar",
+   "lane": "craft",
+   "videos": 3
+  },
+  {
+   "id": "UCymFBpdPTmSyH13rdzBtu5w",
+   "name": "Rob's Home Bar",
+   "lane": "education",
+   "videos": 3
+  },
+  {
+   "id": "UC1vqGQ6roJF4S5RBWV_P8og",
+   "name": "Tom Dyer Flair Bartender",
+   "lane": "education",
+   "videos": 3
+  },
+  {
+   "id": "UC2sabBFKKPFcz8tg0lZwzvg",
+   "name": "On Tap Studios",
+   "lane": "comedy",
+   "videos": 3
+  },
+  {
+   "id": "UCxAS_aK7sS2x_bqnlJHDSHw",
+   "name": "America's Test Kitchen",
+   "lane": "education",
+   "videos": 3
+  },
+  {
+   "id": "UCXzh_L66sw-Hm5hiQRsxd9g",
+   "name": "Brewzle",
+   "lane": "people",
+   "videos": 3
+  },
+  {
+   "id": "UCJEkQfl9NA18fIqdnwwU5zw",
+   "name": "Liquor Store 352",
+   "lane": "people",
+   "videos": 3
+  },
+  {
+   "id": "UCUdztJDstdVRGZ4C2kSyBGg",
+   "name": "Liber & Co.",
+   "lane": "education",
+   "videos": 3
+  },
+  {
+   "id": "UCimG3EnrjgPzH9L4npkaTxg",
+   "name": "A Bar Above",
+   "lane": "education",
+   "videos": 3
+  },
+  {
+   "id": "UCtbto5PMAcYqlsmpkcvYQ2w",
+   "name": "Make and Drink",
+   "lane": "education",
+   "videos": 3
+  },
+  {
+   "id": "UCm4_NTvhixXU3YFetu8z-aA",
+   "name": "Common Man Cocktails",
+   "lane": "education",
+   "videos": 3
+  },
+  {
+   "id": "UCwF0GGZ_boacScpcgjCSuRg",
+   "name": "Flaviar",
+   "lane": "education",
+   "videos": 3
+  }
+ ]
+}

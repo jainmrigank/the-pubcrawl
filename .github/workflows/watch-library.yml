@@ -1,0 +1,87 @@
+name: Grow the watch library
+
+# Weekly: sweep every trusted channel's RSS feed for new uploads, then prune
+# what died or never found an audience. On the first Monday of a month, also
+# run keyword discovery through the YouTube Data API to find new channels.
+#
+# Nothing here commits to main. Changes land as a pull request so the titles
+# get a human read before they reach anyone's screen, which is the only thing
+# standing between the library and a Hangover clip farm.
+on:
+  schedule:
+    - cron: '0 5 * * 1' # Monday, 05:00 UTC, an hour before the stats refresh
+  workflow_dispatch:
+    inputs:
+      discover:
+        description: 'Also run keyword discovery (uses YouTube API quota)'
+        type: boolean
+        default: false
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  grow:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Sweep trusted channels for new uploads
+        run: node scripts/sweep_channels.mjs --days 14
+
+      # Only on the first Monday of the month, or when asked by hand. search.list
+      # costs 100 quota units a call, so this is not a weekly habit.
+      - name: Decide whether to run discovery
+        id: when
+        run: |
+          day=$(date -u +%d)
+          if [ "${{ github.event.inputs.discover }}" = "true" ] || [ "$day" -le 07 ]; then
+            echo "run=yes" >> "$GITHUB_OUTPUT"
+          else
+            echo "run=no" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Discover new channels
+        if: steps.when.outputs.run == 'yes' && env.YOUTUBE_API_KEY != ''
+        env:
+          YOUTUBE_API_KEY: ${{ secrets.YOUTUBE_API_KEY }}
+        run: node scripts/discover_videos.mjs --queries 40
+
+      - name: Prune the dead and the stagnant
+        env:
+          API_BASE: ${{ secrets.API_BASE }}
+        run: node scripts/prune_watchlist.mjs
+
+      - name: Open a pull request if anything changed
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          if git diff --quiet -- data/watchlist.json; then
+            echo "No change to the library."
+            exit 0
+          fi
+
+          added=$(git diff -- data/watchlist.json | grep -c '^+ *"id"' || true)
+          gone=$(git diff -- data/watchlist.json | grep -c '^- *"id"' || true)
+          total=$(node -e "console.log(require('./data/watchlist.json').videos.length)")
+          branch="watch-library/$(date -u +%Y-%m-%d)"
+
+          git config user.name  'github-actions[bot]'
+          git config user.email 'github-actions[bot]@users.noreply.github.com'
+          git checkout -B "$branch"
+          git add data/watchlist.json
+          git commit -m "Watch library: +${added} / -${gone} (${total} total)"
+          git push -f origin "$branch"
+
+          # reuse the open PR for this branch if there is one
+          if ! gh pr view "$branch" --json number >/dev/null 2>&1; then
+            gh pr create \
+              --base main --head "$branch" \
+              --title "Watch library: +${added} / -${gone}" \
+              --body "$(printf 'Automated sweep of the trusted channels, plus a prune of the dead and the stagnant.\n\n- added: %s\n- removed: %s\n- library: %s videos\n\nSkim the titles before merging. Everything here passed the topic filters and the Shorts check, but no filter has taste.' "$added" "$gone" "$total")"
+          fi
