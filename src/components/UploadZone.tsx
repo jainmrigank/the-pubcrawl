@@ -45,18 +45,30 @@ function toBase64(bytes: Uint8Array): string {
 }
 
 /**
- * Downscale to ≤1024px JPEG so uploads stay small, falling back to the original
- * bytes when the browser cannot decode them but the model can.
+ * Get the bytes, before anything can take them away.
  *
- * The file is read exactly once, up front, and everything after works on that
- * buffer. Going back to the File for a second read is what broke this in the
- * installed app: sniffing sixteen bytes succeeded and FileReader on the whole
- * file then failed, on the same file, in the same handler. Blob.arrayBuffer is
- * the path that works, so it is the only one used.
+ * A picked file is a reference to something the browser is lending us, and an
+ * installed app withdraws it fast. NotReadableError, "permission problems that
+ * have occurred after a reference to a file was acquired", is the browser
+ * saying the loan expired. One retry, because some sandboxes hand it back if
+ * asked again immediately.
  */
-async function read(file: File): Promise<Shot> {
-  const bytes = new Uint8Array(await file.arrayBuffer());
-  if (!bytes.length) throw new Error('the file came through empty');
+async function grab(file: File): Promise<Uint8Array<ArrayBuffer>> {
+  try {
+    return new Uint8Array(await file.arrayBuffer());
+  } catch {
+    await new Promise((r) => setTimeout(r, 80));
+    return new Uint8Array(await file.arrayBuffer());
+  }
+}
+
+/**
+ * Downscale to ≤1024px JPEG so uploads stay small, falling back to the original
+ * bytes when the browser cannot decode them but the model can. Works only on
+ * the buffer, never on the File: going back for a second read is what kept
+ * breaking this in the installed app.
+ */
+async function decode(bytes: Uint8Array<ArrayBuffer>): Promise<Shot> {
   const mime = sniff(bytes);
   if (!mime) throw new Error('That is not a photo. Pick a picture of your bottles.');
 
@@ -115,22 +127,33 @@ export function UploadZone({ onAddAll }: Props) {
 
   async function handleFile(file?: File | null) {
     if (!file || busy) return; // a second photo mid-read would race the first
+
+    // Read first, argue later. Every state update below re-renders, and the
+    // input gets cleared the moment this returns; either can pull the file out
+    // from under us before a byte has been read.
+    let bytes: Uint8Array<ArrayBuffer>;
+    try {
+      bytes = await grab(file);
+    } catch {
+      setError('The app lost hold of that photo. Pick it again, or save it to Files first and choose it from there.');
+      return;
+    }
+
     setError('');
     setAdded([]);
 
-    // an installed app on iOS can hand back a zero-byte file rather than fail
-    if (!file.size) {
+    if (!bytes.length) {
       setError('That photo came through empty. Try picking it again.');
       return;
     }
-    if (file.size > MAX_BYTES) {
+    if (bytes.length > MAX_BYTES) {
       setError('That photo is enormous. Anything under 25MB is fine.');
       return;
     }
 
     setBusy(true);
     try {
-      const shot = await read(file);
+      const shot = await decode(bytes);
       if (shot.preview) setPreview(shot.preview);
       const res = await identifyImage(shot.b64, shot.mime);
 
@@ -176,9 +199,12 @@ export function UploadZone({ onAddAll }: Props) {
           type="file"
           accept="image/*,.heic,.heif"
           hidden
-          onChange={(e) => {
-            handleFile(e.target.files?.[0]);
-            e.target.value = '';
+          onChange={async (e) => {
+            const input = e.target;
+            // clearing the input revokes the file handle, so wait until the
+            // bytes are safely in memory before letting it go
+            await handleFile(input.files?.[0]);
+            input.value = '';
           }}
         />
         {preview ? <img className="dz-preview" src={preview} alt="your shelf" /> : <Camera size={26} />}
