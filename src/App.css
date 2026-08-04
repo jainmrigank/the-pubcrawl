@@ -1510,7 +1510,6 @@ button, a, .fc {
 .wv-thumb:hover .wv-play { background: var(--ink); color: var(--paper); }
 
 .wv-meta { padding: 14px 16px 16px; display: flex; flex-direction: column; gap: 7px; }
-.wv-top { display: flex; justify-content: space-between; align-items: center; gap: 12px; }
 .wv-lane { display: inline-flex; align-items: center; gap: 7px; color: var(--ink-60); }
 .wv-lane i { width: 9px; height: 9px; flex: none; }
 
@@ -1522,17 +1521,75 @@ button, a, .fc {
   line-height: 1.15;
   text-transform: uppercase;
 }
-.wv-by { display: flex; flex-wrap: wrap; gap: 6px 14px; margin: 0; }
-.wv-views::before,
-.wv-why::before { content: '· '; }
-.wv-why { color: var(--accent); }
+.wv-by { display: flex; flex-wrap: wrap; gap: 4px 12px; margin: 0; }
+.wv-stat::before { content: '· '; }
 
-.wv-shuffle {
+/* ---------- search, filters, tabs ---------- */
+.wv-search { margin: clamp(18px, 2.5vh, 26px) 0 16px; }
+.wv-search svg {
+  position: absolute;
+  left: 15px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--grey);
+  pointer-events: none;
+}
+.wv-search input { padding-left: 44px; padding-right: 44px; }
+.wv-clear {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  display: inline-flex;
+  background: none;
+  border: none;
+  color: var(--grey);
+  cursor: pointer;
+  padding: 6px;
+}
+.wv-clear:hover { color: var(--accent); }
+
+.wv-filters { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin-bottom: clamp(20px, 3vh, 28px); }
+.wv-filters-label { margin-right: 6px; }
+
+/* the three views, as tabs rather than three lists stacked down the page */
+.wv-tabs {
+  display: flex;
+  gap: 0;
+  border-bottom: 1px solid var(--line-strong);
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+.wv-tabs::-webkit-scrollbar { display: none; }
+.wv-tab {
+  position: relative;
+  flex: none;
+  background: none;
+  border: none;
+  padding: 12px 20px 13px;
+  margin-bottom: -1px;
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  color: var(--ink-60);
+  cursor: pointer;
+  white-space: nowrap;
+  border-bottom: 2px solid transparent;
+  transition: color var(--t-fast) var(--ease), border-color var(--t-fast) var(--ease);
+}
+.wv-tab:first-child { padding-left: 0; }
+.wv-tab:hover { color: var(--ink); }
+.wv-tab.on { color: var(--ink); border-bottom-color: var(--accent); }
+
+.wv-tabnote { display: flex; align-items: center; gap: 18px; flex-wrap: wrap; margin: 14px 0 0; }
+.wv-shuffle-btn { color: var(--ink); }
+.wv-empty { margin: clamp(28px, 4vh, 44px) 0; font-size: 15px; color: var(--ink-60); }
+.wv-more {
   display: flex;
   align-items: center;
   gap: 20px;
   flex-wrap: wrap;
-  margin-top: clamp(16px, 2vh, 22px);
+  margin-top: clamp(24px, 3.5vh, 36px);
 }
 .wv-foot { margin: clamp(28px, 4vh, 44px) 0 0; max-width: 60ch; }
 

@@ -1,48 +1,5349 @@
 {
  "_comment": "Curated video library for the Watch shelf. Every id here was verified alive and embeddable by scripts/find_watchlist.mjs before being added; ids are never written from memory. `rank` is the fallback ordering used until real view counts arrive from the YouTube Data API. `addedAt` drives the This Month shelf. Lanes: craft, education, comedy, people.",
  "videos": [
-  { "id": "1PoG9ZF9Y9c", "title": "My Drink is on Fire!! Master Bartender in Tokyo", "channel": "Brian D", "lane": "craft", "rank": 1, "addedAt": "2026-07-27" },
-  { "id": "AWnIqpsfyPU", "title": "50 Cocktails you NEED to know", "channel": "The Educated Barfly", "lane": "education", "rank": 2, "addedAt": "2026-07-27" },
-  { "id": "BxuJBZU2hgE", "title": "Seth and Dua Lipa Go Day Drinking", "channel": "Late Night with Seth Meyers", "lane": "comedy", "rank": 3, "addedAt": "2026-07-27" },
-  { "id": "vMyjNBMfopE", "title": "People Try Alcohol For The First Time", "channel": "Facts.", "lane": "people", "rank": 4, "addedAt": "2026-07-27" },
-  { "id": "HdMzpiuA9o4", "title": "21 Year Olds Try Drinks For The First Time", "channel": "People Vs Food", "lane": "people", "rank": 5, "addedAt": "2026-07-27" },
-
-  { "id": "2wcGdI78dIM", "title": "World's Best Samurai Bartender Cuts Ice with a Sword", "channel": "Rob Ilas", "lane": "craft", "rank": 6, "addedAt": "2026-07-27" },
-  { "id": "HFJ2a-3mmWc", "title": "How the World's Best Bar Turns Food Into Cocktails", "channel": "Bon Appétit", "lane": "craft", "rank": 7, "addedAt": "2026-07-27" },
-  { "id": "8nmjAmQOk-8", "title": "Seth and Kevin Hart Go Day Drinking", "channel": "Late Night with Seth Meyers", "lane": "comedy", "rank": 8, "addedAt": "2026-07-27" },
-  { "id": "UckkY0rrsAM", "title": "Bartenders Match the Drink to the Person", "channel": "Cut", "lane": "people", "rank": 9, "addedAt": "2026-07-27" },
-  { "id": "TPQdwotfaQE", "title": "How To Create Craft Cocktails for The Dead Rabbit", "channel": "The Dead Rabbit", "lane": "craft", "rank": 10, "addedAt": "2026-07-27" },
-
-  { "id": "N6j_13-qzDY", "title": "Drunk People", "channel": "Gabriel Iglesias", "lane": "comedy", "rank": 11, "addedAt": "2026-07-27" },
-  { "id": "ml_KwtaTC-A", "title": "A Day at Rockefeller Center's Legendary Cocktail Bar", "channel": "Bon Appétit", "lane": "craft", "rank": 12, "addedAt": "2026-07-27" },
-  { "id": "X3n5Pk8fkLg", "title": "Seth and Rihanna Go Day Drinking", "channel": "Late Night with Seth Meyers", "lane": "comedy", "rank": 13, "addedAt": "2026-07-27" },
-  { "id": "IOd2Wb23mds", "title": "Irish People Try Indian Alcohol", "channel": "The TRY Channel", "lane": "people", "rank": 14, "addedAt": "2026-07-27" },
-  { "id": "640aJL2zmww", "title": "Easy Cocktail Garnishes", "channel": "Steve the Bartender", "lane": "education", "rank": 15, "addedAt": "2026-07-27" },
-
-  { "id": "mnnbDeVC_ro", "title": "Hidetsugu Ueno makes a White Lady", "channel": "BAR TIMES", "lane": "craft", "rank": 16, "addedAt": "2026-07-27" },
-  { "id": "cQZnUeoaEEE", "title": "First Drinking Experience", "channel": "Amit Tandon", "lane": "comedy", "rank": 17, "addedAt": "2026-07-27" },
-  { "id": "0ieRyJeuV-E", "title": "The ONLY 6 Cocktails You Need To Know", "channel": "Lui Fernandes", "lane": "education", "rank": 18, "addedAt": "2026-07-27" },
-  { "id": "_m4EJ6RDuSM", "title": "A Drunk Bartender Tries to Match the Drink to the Person", "channel": "Cut", "lane": "people", "rank": 19, "addedAt": "2026-07-27" },
-  { "id": "QmHJxbGjP2g", "title": "Inside the Cocktail Lab of a 3 Star Michelin Chef", "channel": "S3", "lane": "craft", "rank": 20, "addedAt": "2026-07-27" },
-
-  { "id": "bbeenvk1c8o", "title": "Seth and Lizzo Go Day Drinking", "channel": "Late Night with Seth Meyers", "lane": "comedy", "rank": 21, "addedAt": "2026-07-27" },
-  { "id": "4oFlIu-HxB0", "title": "How to create your own Cocktail", "channel": "Behind the Bar", "lane": "education", "rank": 22, "addedAt": "2026-07-27" },
-  { "id": "xWQMwVktqQA", "title": "Worst Hangover Story", "channel": "Angad Ranyal", "lane": "comedy", "rank": 23, "addedAt": "2026-07-27" },
-  { "id": "hfSoPh1flMc", "title": "Blind taste testing 7 different vodkas", "channel": "Michelle The Bartender", "lane": "people", "rank": 24, "addedAt": "2026-07-27" },
-  { "id": "a-MEfSkiq6w", "title": "Diamond Ice and Service Masterclass at Tokyo's High Five", "channel": "Vlad SlickBartender", "lane": "craft", "rank": 25, "addedAt": "2026-07-27" },
-
-  { "id": "iJYdCAAeilo", "title": "4 Beginner Bartending Mistakes To Avoid", "channel": "European Bartender School", "lane": "education", "rank": 26, "addedAt": "2026-07-27" },
-  { "id": "lDtJtkBOBj0", "title": "Daaru Party", "channel": "Jaspreet Singh", "lane": "comedy", "rank": 27, "addedAt": "2026-07-27" },
-  { "id": "3G-bAz-84nQ", "title": "Level Up Your Cocktail Garnish Game", "channel": "Truffles On The Rocks", "lane": "education", "rank": 28, "addedAt": "2026-07-27" },
-  { "id": "a4jN61TH0fU", "title": "Bar Centifolia's Samurai Bartender Crafts a Dragon Mojito", "channel": "Rob Ilas", "lane": "craft", "rank": 29, "addedAt": "2026-07-27" },
-  { "id": "98hpGU0jrME", "title": "Ranking Every Four Loko", "channel": "Mixed Up with Brewzle", "lane": "people", "rank": 30, "addedAt": "2026-07-27" },
-
-  { "id": "QZo4SDa46YA", "title": "When to build, shake or stir a drink", "channel": "Michelle The Bartender", "lane": "education", "rank": 31, "addedAt": "2026-07-27" },
-  { "id": "N35g2IhG_s8", "title": "Japan's Greatest Bartender", "channel": "Kelpi", "lane": "craft", "rank": 32, "addedAt": "2026-07-27" },
-  { "id": "DmUlJHVXSoo", "title": "10 Cocktails Every Bartender Should Know", "channel": "Rob's Home Bar", "lane": "education", "rank": 33, "addedAt": "2026-07-27" },
-  { "id": "w-z5mbZ-yCI", "title": "Is this the world's best cocktail maker?", "channel": "Got Talent Global", "lane": "craft", "rank": 34, "addedAt": "2026-07-27" },
-  { "id": "sGhgC5F3Oi0", "title": "Easy Cocktail Garnishes and Techniques", "channel": "Common Man Cocktails", "lane": "education", "rank": 35, "addedAt": "2026-07-27" },
-
-  { "id": "GLq-fAxFUfQ", "title": "Seth and Sabrina Carpenter Go Day Drinking", "channel": "Late Night with Seth Meyers", "lane": "comedy", "rank": 36, "addedAt": "2026-07-27" }
+  {
+   "id": "re5TqWQgWd4",
+   "title": "Bartenders Guess Who's Underage 1 | Lineup | Cut",
+   "channel": "Cut",
+   "lane": "people",
+   "rank": 1,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "GE8vyfKyZfQ",
+   "title": "Relationships, Clubbing & Cocktails | Stand-Up Comedy by Aakash Gupta",
+   "channel": "Aakash Gupta",
+   "lane": "comedy",
+   "rank": 2,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "MsUtcrQ7M0c",
+   "title": "Irish People Try America's Strongest Alcohol (95%, 190 Proof)",
+   "channel": "The TRY Channel",
+   "lane": "people",
+   "rank": 3,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "X3n5Pk8fkLg",
+   "title": "Seth and Rihanna Go Day Drinking",
+   "channel": "Late Night with Seth Meyers",
+   "lane": "comedy",
+   "rank": 4,
+   "addedAt": "2026-07-27"
+  },
+  {
+   "id": "QTrqGwj3XpA",
+   "title": "The Try Guys Test The Legal Alcohol Limit",
+   "channel": "BuzzFeedVideo",
+   "lane": "people",
+   "rank": 5,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "m_sq0Wh9eiw",
+   "title": "Stupid Log,Alcohol aur Gaaliyan | Jaspreet Singh Stand Up Comedy",
+   "channel": "Jaspreet Singh",
+   "lane": "comedy",
+   "rank": 6,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "NSu-QVtpvIc",
+   "title": "SIDEMEN $50,000 A-Z DRINKING CHALLENGE (GONE WRONG)",
+   "channel": "Sidemen",
+   "lane": "people",
+   "rank": 7,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "b0IuTL3Z-kk",
+   "title": "How To Mix Every Cocktail | Method Mastery | Epicurious",
+   "channel": "Epicurious",
+   "lane": "education",
+   "rank": 8,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "FgnXJu7jU9Q",
+   "title": "Trying the World's Strongest Alcohol",
+   "channel": "Cold Ones",
+   "lane": "people",
+   "rank": 9,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "ewSA6Sh177A",
+   "title": "Americans Try Absinthe For The First Time",
+   "channel": "BuzzFeedVideo",
+   "lane": "people",
+   "rank": 10,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "yCrKjZrg-eA",
+   "title": "We Made a Vodka Expert Blind Taste Test Bottom-Shelf Vodka",
+   "channel": "Indulgence",
+   "lane": "people",
+   "rank": 11,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "ZFvup0aXRsU",
+   "title": "Throwback Thursday: The Bartender Tried To Warn Me | Gabriel Iglesias",
+   "channel": "Gabriel Iglesias",
+   "lane": "comedy",
+   "rank": 12,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "U9B6MhxLXFA",
+   "title": "TRYING ALCOHOL FOR THE FIRST TIME",
+   "channel": "TBJZL",
+   "lane": "people",
+   "rank": 13,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "MBjGuLwMwlY",
+   "title": "Bartenders Guess Who's Underage #2 | Lineup | Cut",
+   "channel": "Cut",
+   "lane": "people",
+   "rank": 14,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "BcfR8j1c31I",
+   "title": "Mezcal Is The Fastest-Growing Liquor In The US. Why Aren't Mexican Producers Cashing In?",
+   "channel": "Business Insider",
+   "lane": "education",
+   "rank": 15,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "1b6fu0I-dqQ",
+   "title": "Irish People Try Absinthe For The First Time",
+   "channel": "Facts.",
+   "lane": "people",
+   "rank": 16,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "LfffrqD4ap8",
+   "title": "We Drank Every Countries National Alcohol",
+   "channel": "Cold Ones",
+   "lane": "people",
+   "rank": 17,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "w6cBewazRXY",
+   "title": "Drinking Traditions Around The World",
+   "channel": "BuzzFeedVideo",
+   "lane": "people",
+   "rank": 18,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "i1iqVGORUck",
+   "title": "Ice Diamonds and Classic Cocktails at Bar High Five",
+   "channel": "Munchies",
+   "lane": "craft",
+   "rank": 19,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "cQZnUeoaEEE",
+   "title": "First Drinking Experience",
+   "channel": "Amit Tandon",
+   "lane": "comedy",
+   "rank": 20,
+   "addedAt": "2026-07-27"
+  },
+  {
+   "id": "FbmnrDl-dUQ",
+   "title": "Adults Get Drunk For The First Time",
+   "channel": "BuzzFeedVideo",
+   "lane": "people",
+   "rank": 21,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "7g0AJPqKybs",
+   "title": "Jim Breuer - Alcohol",
+   "channel": "folden",
+   "lane": "comedy",
+   "rank": 22,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "RZYQ0tkuPkU",
+   "title": "The WORST Bartenders of Bar Rescue Season 6 🤦‍♂️",
+   "channel": "Bar Rescue",
+   "lane": "craft",
+   "rank": 23,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "XZ_h6pmdzZ8",
+   "title": "English People try Korean Soju and Beer!!",
+   "channel": "영국남자 Korean Englishman",
+   "lane": "people",
+   "rank": 24,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "bVlTXIVCDSY",
+   "title": "The Try Guys Try Professional Bartending",
+   "channel": "The Try Guys",
+   "lane": "people",
+   "rank": 25,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "gfjgISRI5E4",
+   "title": "$50 VS $500 WHISKEY",
+   "channel": "PewDiePie",
+   "lane": "people",
+   "rank": 26,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "qVeWUHa5QhY",
+   "title": "$50 VS $5000 Blindfolded Alcohol Taste Test",
+   "channel": "Cold Ones",
+   "lane": "people",
+   "rank": 27,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "y5XEwTDlriE",
+   "title": "A brief history of alcohol - Rod Phillips",
+   "channel": "TED-Ed",
+   "lane": "education",
+   "rank": 28,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "a5M_FI_BrH4",
+   "title": "Trying the World's Most Famous Alcohol",
+   "channel": "Cold Ones",
+   "lane": "people",
+   "rank": 29,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "UckkY0rrsAM",
+   "title": "Bartenders Match the Drink to the Person",
+   "channel": "Cut",
+   "lane": "people",
+   "rank": 30,
+   "addedAt": "2026-07-27"
+  },
+  {
+   "id": "A6kdEFSFGaU",
+   "title": "Irish People Try The World's Strongest Absinthe (80%, 160 Proof)",
+   "channel": "The TRY Channel",
+   "lane": "people",
+   "rank": 31,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "ET8mqVGDQ1s",
+   "title": "Why All the Best Cocktail Bars in NYC Buy Their Ice From Richard Boccato— Vendors",
+   "channel": "Eater",
+   "lane": "craft",
+   "rank": 32,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "oei8K2TYg9s",
+   "title": "Costco Liquor Vs. Brand-Name Liquor Blind Taste Test",
+   "channel": "BuzzFeedVideo",
+   "lane": "people",
+   "rank": 33,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "5ab4rYDR0yY",
+   "title": "Cleopatra’s Little Sister vs. The World (feat. Aubrey Plaza and David Wain) - Drunk History",
+   "channel": "Comedy Central",
+   "lane": "comedy",
+   "rank": 34,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "B70e-01JBbA",
+   "title": "Irish People Try Bourbon For The First Time",
+   "channel": "Facts.",
+   "lane": "people",
+   "rank": 35,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "Ufn2dxojSF8",
+   "title": "We Tried the CHEAPEST Alcohol in the World",
+   "channel": "Cold Ones",
+   "lane": "people",
+   "rank": 36,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "ZTc_xuDK4zk",
+   "title": "Fan Favorite Bar Rescue Moments SUPER COMPILATION 😤 Part 2",
+   "channel": "Bar Rescue",
+   "lane": "craft",
+   "rank": 37,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "vgk7MXWQOAM",
+   "title": "Jim Jefferies - God is drunk at a party",
+   "channel": "GoldenCat",
+   "lane": "comedy",
+   "rank": 38,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "mD_WPcSGHgs",
+   "title": "jim breuer about alcohol",
+   "channel": "robingeurts",
+   "lane": "comedy",
+   "rank": 39,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "rFH0J29QMKc",
+   "title": "Irish People Try The Most Disgusting Alcohol Shots",
+   "channel": "The TRY Channel",
+   "lane": "people",
+   "rank": 40,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "c6GV_vRlIIA",
+   "title": "10 Easy Cocktails You Can Make At Home",
+   "channel": "The Educated Barfly",
+   "lane": "education",
+   "rank": 41,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "PpBzl5KlafM",
+   "title": "The Best Tools to Make Your Own Creative Cocktail Ice",
+   "channel": "Vlad SlickBartender",
+   "lane": "craft",
+   "rank": 42,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "VpTf1GFjCd8",
+   "title": "Drunk History - Harriet Tubman Leads an Army of Bad Bitches (ft. Octavia Spencer)",
+   "channel": "Comedy Central",
+   "lane": "comedy",
+   "rank": 43,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "mkl07PqIx_k",
+   "title": "2. Introduction to Alcohol - Tipsy Bartender Course",
+   "channel": "Tipsy Bartender",
+   "lane": "education",
+   "rank": 44,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "vH_yuCmH9Hg",
+   "title": "We Tasted 10,000 Years of Alcohol",
+   "channel": "Cold Ones",
+   "lane": "people",
+   "rank": 45,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "csRcw9ekpYU",
+   "title": "Watch Grandmas Try Fireball Whisky For the First Time",
+   "channel": "NerdWire",
+   "lane": "people",
+   "rank": 46,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "XYm9ywkR6Fg",
+   "title": "POV: Bartender Making Cocktails at a Top London Restaurant",
+   "channel": "Fallow",
+   "lane": "craft",
+   "rank": 47,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "miN0yKDll4g",
+   "title": "Irish People Try Jack Daniel's Whiskey",
+   "channel": "The TRY Channel",
+   "lane": "people",
+   "rank": 48,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "N35g2IhG_s8",
+   "title": "Japan's Greatest Bartender",
+   "channel": "Kelpi",
+   "lane": "craft",
+   "rank": 49,
+   "addedAt": "2026-07-27"
+  },
+  {
+   "id": "pHzyxWkHWKM",
+   "title": "Jim Gaffigan: Live from Old Forester — The Bourbon Set (FULL SHOW 2025)",
+   "channel": "jimgaffigan",
+   "lane": "comedy",
+   "rank": 50,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "9D9h53Q1AEA",
+   "title": "POV: Bartender at a Top London Restaurant",
+   "channel": "Fallow",
+   "lane": "craft",
+   "rank": 51,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "IRkM8jsG-hY",
+   "title": "Easy Cocktails for Beginners: 10 Simple Recipes",
+   "channel": "Steve the Bartender",
+   "lane": "education",
+   "rank": 52,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "XPyQt8HyzZM",
+   "title": "The bar with the world best Japanese bartender, バーテンダー世界一がいるバーの日常",
+   "channel": "bites",
+   "lane": "craft",
+   "rank": 53,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "nPg8x6PxWA8",
+   "title": "Irish People Try The World's Strongest Alcohol (95%, 190 Proof)",
+   "channel": "The TRY Channel",
+   "lane": "people",
+   "rank": 54,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "J-flw623kjM",
+   "title": "4. How to make Clear Ice - Tipsy Bartender Course",
+   "channel": "Tipsy Bartender",
+   "lane": "education",
+   "rank": 55,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "TSDjeTgXZlw",
+   "title": "Joan of Arc Leads an Army (feat. Vanessa Hudgens) - Drunk History",
+   "channel": "Comedy Central",
+   "lane": "comedy",
+   "rank": 56,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "2sif5RI8XBU",
+   "title": "How Percy Julian Became One of the World’s Greatest Scientists (feat. Jordan Peele) - Drunk History",
+   "channel": "Comedy Central",
+   "lane": "comedy",
+   "rank": 57,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "obng-x8oAk4",
+   "title": "I Try EVERY Japanese Alcohol  Ft. @AbroadinJapan",
+   "channel": "CDawgVA",
+   "lane": "people",
+   "rank": 58,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "dPWg-A9tiRI",
+   "title": "Rose Valland Takes On the Nazis (feat. Tiffany Haddish) - Drunk History",
+   "channel": "Comedy Central",
+   "lane": "comedy",
+   "rank": 59,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "wn_Ja4bwNBA",
+   "title": "World Class Bartender of the Year 2015 - Full Show",
+   "channel": "Tess Posthumus",
+   "lane": "craft",
+   "rank": 60,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "7X-3DF_CbU0",
+   "title": "How It's Made: Gin",
+   "channel": "Science Channel",
+   "lane": "education",
+   "rank": 61,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "bbeenvk1c8o",
+   "title": "Seth and Lizzo Go Day Drinking",
+   "channel": "Late Night with Seth Meyers",
+   "lane": "comedy",
+   "rank": 62,
+   "addedAt": "2026-07-27"
+  },
+  {
+   "id": "BW1te_miu5I",
+   "title": "How to Drink Whisky with Richard Paterson",
+   "channel": "jamesalcockfilms",
+   "lane": "education",
+   "rank": 63,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "Kv1lSH4hK-w",
+   "title": "Nathan For You - Liquor Store",
+   "channel": "Comedy Central",
+   "lane": "comedy",
+   "rank": 64,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "6UOVXXwqc5I",
+   "title": "Cambridge Students try Soju for the first time!!",
+   "channel": "영국남자 Korean Englishman",
+   "lane": "people",
+   "rank": 65,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "kPLQSxb37Gg",
+   "title": "Trying EVERY Light Alcohol I Could Find.",
+   "channel": "Joe Bartolozzi",
+   "lane": "people",
+   "rank": 66,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "632q44HwQP0",
+   "title": "Bars With ILLEGAL Practices 😵 Bar Rescue",
+   "channel": "Bar Rescue",
+   "lane": "craft",
+   "rank": 67,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "jLSHUyzOzWs",
+   "title": "Sommelier Tries 20 Red Wines Under $15 | World of Wine | Bon Appétit",
+   "channel": "Bon Appétit",
+   "lane": "education",
+   "rank": 68,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "BxuJBZU2hgE",
+   "title": "Seth and Dua Lipa Go Day Drinking",
+   "channel": "Late Night with Seth Meyers",
+   "lane": "comedy",
+   "rank": 69,
+   "addedAt": "2026-07-27"
+  },
+  {
+   "id": "p1cZk1WGbLs",
+   "title": "Seth and the Jonas Brothers Go Day Drinking",
+   "channel": "Late Night with Seth Meyers",
+   "lane": "comedy",
+   "rank": 70,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "tNMZ16h2NXM",
+   "title": "Eugene Ranks Popular Cocktails Around The World",
+   "channel": "The Try Guys",
+   "lane": "people",
+   "rank": 71,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "ml_KwtaTC-A",
+   "title": "A Day at Rockefeller Center's Legendary Cocktail Bar",
+   "channel": "Bon Appétit",
+   "lane": "craft",
+   "rank": 72,
+   "addedAt": "2026-07-27"
+  },
+  {
+   "id": "dhFlS4jVtR4",
+   "title": "The WORST Bartenders Of Bar Rescue Season 3 😳",
+   "channel": "Bar Rescue",
+   "lane": "craft",
+   "rank": 73,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "o1hZvpt0x2M",
+   "title": "POV Bar Tutorial: Ergonomics, Pouring Techniques & 5 Cocktails in Real Service Flow",
+   "channel": "Mr.Tolmach",
+   "lane": "education",
+   "rank": 74,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "v0TiqC_C8wI",
+   "title": "Seth and Kelly Clarkson Go Day Drinking",
+   "channel": "Late Night with Seth Meyers",
+   "lane": "comedy",
+   "rank": 75,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "PoeIPrIXUOw",
+   "title": "Top 10 Whiskeys for Beginners [Crowdsourced From Whiskey Lovers]",
+   "channel": "Whiskey Vault",
+   "lane": "education",
+   "rank": 76,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "KRF9hXFHKW8",
+   "title": "Amazing ice shaving of Japanese bartenders",
+   "channel": "STAY BAR.",
+   "lane": "craft",
+   "rank": 77,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "a9zJFZeLbOo",
+   "title": "Sommelier Tries 10 Tequilas From $20-$175 | Bon Appétit",
+   "channel": "Bon Appétit",
+   "lane": "people",
+   "rank": 78,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "A791abv-CGU",
+   "title": "How to Make a Mojito Cocktail Home | Pro | Expert",
+   "channel": "Vlad SlickBartender",
+   "lane": "education",
+   "rank": 79,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "RGOWPswqRwc",
+   "title": "Pro Chefs Make Their Favorite Cocktails (10 Recipes) | Test Kitchen Talks | Bon Appétit",
+   "channel": "Bon Appétit",
+   "lane": "people",
+   "rank": 80,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "S9gvxiX2a8U",
+   "title": "Best of Expert Bartender Ashley Clark 🍸Bar Rescue",
+   "channel": "Bar Rescue",
+   "lane": "craft",
+   "rank": 81,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "LQLlMi6Wns8",
+   "title": "Irish People Try Celebrity Alcohol",
+   "channel": "The TRY Channel",
+   "lane": "people",
+   "rank": 82,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "uftgXfjs7Cw",
+   "title": "Employees Who Joined The Bar Rescue Team 🤝 Bar Rescue",
+   "channel": "Bar Rescue",
+   "lane": "craft",
+   "rank": 83,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "gIg1gAy4lVg",
+   "title": "Whiskey Expert Guesses Cheap vs Expensive Whiskey | Price Points | Epicurious",
+   "channel": "Epicurious",
+   "lane": "people",
+   "rank": 84,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "pdcrJ5V7YKM",
+   "title": "How I Make an Old Fashioned | the ONE cocktail you must know",
+   "channel": "Anders Erickson",
+   "lane": "education",
+   "rank": 85,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "kUA4wVWn7tk",
+   "title": "My First Time Being Drunk",
+   "channel": "ChainsFR",
+   "lane": "people",
+   "rank": 86,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "u8QX_zdAr1o",
+   "title": "Day Drinking and Smoking Cigarettes in a Public Park at 3pm on a Rainy Day",
+   "channel": "jacobfuckingjones",
+   "lane": "comedy",
+   "rank": 87,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "mW4rESYkYRA",
+   "title": "DRUNK INTERIORS | Gaurav Kapoor | Stand Up Comedy | Audience Interaction",
+   "channel": "Gaurav Kapoor",
+   "lane": "comedy",
+   "rank": 88,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "TtRBmN4D4-Q",
+   "title": "The Final Showdown for America’s Top Bartender | GQ",
+   "channel": "GQ",
+   "lane": "craft",
+   "rank": 89,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "PqW_sMhA5-Y",
+   "title": "Sommelier Tries 16 Celebrity Wines (Jay-Z, Post Malone, Snoop Dogg & More) | Bon Appétit",
+   "channel": "Bon Appétit",
+   "lane": "people",
+   "rank": 90,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "-54p6rs-xoQ",
+   "title": "Difference between Alcoholic Beverages: Wine/Whiskey/Rum/Gin/Vodka/Tequila/Brandy/Alcohol percentage",
+   "channel": "Hospitality Broadcast",
+   "lane": "education",
+   "rank": 91,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "huJT5_VJPLQ",
+   "title": "Who Will Get Drunk First On India's Strongest Beer? | Noobs Vs Pros | Ok Tested",
+   "channel": "OK Tested",
+   "lane": "people",
+   "rank": 92,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "_tc9YGV5HBM",
+   "title": "Japanese People try Foreign Alcohol for the First Time",
+   "channel": "Cantomando",
+   "lane": "people",
+   "rank": 93,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "T6V7VI7lx60",
+   "title": "POV: Bartender At Service Making 50 Cocktails",
+   "channel": "EyeVenture",
+   "lane": "craft",
+   "rank": 94,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "YED_KQwFSXk",
+   "title": "Bartenders Guess Who's Under 21 | Lineup | Cut",
+   "channel": "Cut",
+   "lane": "people",
+   "rank": 95,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "IZ3LAPI-Jf8",
+   "title": "4 Types Of Bartenders",
+   "channel": "Charlie Berens",
+   "lane": "craft",
+   "rank": 96,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "xdsq_d-7W8c",
+   "title": "Mark Ruffalo Set Someone On Fire With A Shot Of Sambuca | The Graham Norton Show",
+   "channel": "The Graham Norton Show",
+   "lane": "comedy",
+   "rank": 97,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "GLq-fAxFUfQ",
+   "title": "Seth and Sabrina Carpenter Go Day Drinking",
+   "channel": "Late Night with Seth Meyers",
+   "lane": "comedy",
+   "rank": 98,
+   "addedAt": "2026-07-27"
+  },
+  {
+   "id": "AWnIqpsfyPU",
+   "title": "50 Cocktails you NEED to know",
+   "channel": "The Educated Barfly",
+   "lane": "education",
+   "rank": 99,
+   "addedAt": "2026-07-27"
+  },
+  {
+   "id": "8nmjAmQOk-8",
+   "title": "Seth and Kevin Hart Go Day Drinking",
+   "channel": "Late Night with Seth Meyers",
+   "lane": "comedy",
+   "rank": 100,
+   "addedAt": "2026-07-27"
+  },
+  {
+   "id": "hoDgydWsG8k",
+   "title": "An Alcoholic’s Guide to Drinking in Tokyo",
+   "channel": "Small Brained American",
+   "lane": "education",
+   "rank": 101,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "-8jKYNHL0TE",
+   "title": "Keith Drinks Every Celebrity Alcohol",
+   "channel": "The Try Guys",
+   "lane": "people",
+   "rank": 102,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "KtTElkdAm-Y",
+   "title": "Whiskey Makes Me Frisky 🥃 ft. Justina Valentine | Basic to Bougie Season 2 | MTV",
+   "channel": "Wild 'N Out",
+   "lane": "comedy",
+   "rank": 103,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "sdqcRvkk2WY",
+   "title": "Ep 88: Bill Burr & Floats",
+   "channel": "We Might Be Drunk Podcast",
+   "lane": "comedy",
+   "rank": 104,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "eTtu-BTNZno",
+   "title": "Kevin Hart Guesses Cheap vs. Expensive Wines - \"Why are we drinking this!?\" | Bon Appétit",
+   "channel": "Bon Appétit",
+   "lane": "people",
+   "rank": 105,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "z9QqEf93sBY",
+   "title": "The 7 Levels of Being Drunk",
+   "channel": "ChainsFR",
+   "lane": "people",
+   "rank": 106,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "7OzUmHPWzjY",
+   "title": "The 7 Levels Of Scotch",
+   "channel": "Bottled Verdict",
+   "lane": "education",
+   "rank": 107,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "_2dVpsnx6a8",
+   "title": "Tales of ice carving for Cocktail",
+   "channel": "STAY BAR.",
+   "lane": "craft",
+   "rank": 108,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "-x9dNOMsM8o",
+   "title": "10 Creative Cocktail Ice Ideas You Can Make at Home",
+   "channel": "Vlad SlickBartender",
+   "lane": "craft",
+   "rank": 109,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "hGvhmXBfqz0",
+   "title": "Hungover People Try Each Others Hangover Cures",
+   "channel": "Pubity Food",
+   "lane": "people",
+   "rank": 110,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "PuR1ZR7dio4",
+   "title": "How to enjoy a British pub | Cheers & Chats Ep. 2",
+   "channel": "DW Food",
+   "lane": "education",
+   "rank": 111,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "ore2GcXFIv4",
+   "title": "The Fresh Rootbeer Bourbon Cocktail | The Greatest Japanese Bartender",
+   "channel": "88rising",
+   "lane": "craft",
+   "rank": 112,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "CcmzN0AOGiU",
+   "title": "Video of making 33 cocktails",
+   "channel": "빠슐랭Barchelin",
+   "lane": "craft",
+   "rank": 113,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "tglfDwObFNU",
+   "title": "How Double Chicken Please Became One of the Country's Most Popular Cocktail Bars — Mise En Place",
+   "channel": "Eater",
+   "lane": "craft",
+   "rank": 114,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "FtTHfOBbYuk",
+   "title": "Alcohol & Cocaine | Robin Williams | An Evening at the MET (1986)",
+   "channel": "Official Robin Williams",
+   "lane": "comedy",
+   "rank": 115,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "zrJ3WN9eK3g",
+   "title": "Trying the World's Weirdest Alcohols… (Naga Chili Vodka!?)",
+   "channel": "JOLLY",
+   "lane": "people",
+   "rank": 116,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "xWQMwVktqQA",
+   "title": "Worst Hangover Story",
+   "channel": "Angad Ranyal",
+   "lane": "comedy",
+   "rank": 117,
+   "addedAt": "2026-07-27"
+  },
+  {
+   "id": "sN2SHBZ7Amk",
+   "title": "Bartenders Reveal Secrets About Bars • Part 2",
+   "channel": "BuzzFeedVideo",
+   "lane": "people",
+   "rank": 118,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "s0iD0Se-aow",
+   "title": "How to properly drink whiskey!",
+   "channel": "Johnny Drinks",
+   "lane": "education",
+   "rank": 119,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "1oTRjVLTlM0",
+   "title": "I DRUNK PRANKED @GamerFleet ON LIVE STREAM😱(Gone Wrong)💀",
+   "channel": "RON9IE",
+   "lane": "comedy",
+   "rank": 120,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "bMEG7O9qZ6s",
+   "title": "Ordering for Your Drunk Friends at the Drive-Through - Nick Swardson",
+   "channel": "Comedy Central Stand-Up",
+   "lane": "comedy",
+   "rank": 121,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "v4BLIoXoEgg",
+   "title": "What is Rum? Science, History, Alchemy, and Tasting 13 Bottles | How to Drink",
+   "channel": "How To Drink",
+   "lane": "education",
+   "rank": 122,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "dnwPigMrVMs",
+   "title": "Guess the $100 vs $1700 Whiskey...",
+   "channel": "The Boys",
+   "lane": "people",
+   "rank": 123,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "oYwec_VXQx4",
+   "title": "OK Tested: People Get Tricked Into Drinking Cheap Whiskey",
+   "channel": "OK Tested",
+   "lane": "people",
+   "rank": 124,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "PuRDMdmdGrI",
+   "title": "Is Expensive Whiskey A Scam",
+   "channel": "penguinz0",
+   "lane": "people",
+   "rank": 125,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "3f1x85wQt9s",
+   "title": "Shane Gillis on Getting Drunk at Sporting Events",
+   "channel": "PowerfulJRE",
+   "lane": "comedy",
+   "rank": 126,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "dG2et958A4w",
+   "title": "I got drunk for the first time..",
+   "channel": "steak & cruz",
+   "lane": "people",
+   "rank": 127,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "QENCJN9Z6vY",
+   "title": "11. How to Layer - Tipsy Bartender Course",
+   "channel": "Tipsy Bartender",
+   "lane": "education",
+   "rank": 128,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "7Z_mZ6wq1Rw",
+   "title": "The ESSENTIAL Spirits | 15 bottles to build your bar!",
+   "channel": "Anders Erickson",
+   "lane": "education",
+   "rank": 129,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "TYIkr7MIfSM",
+   "title": "Whiskey: What you Need to Know, explaining various styles of Whiskey and tasting them | How to Drink",
+   "channel": "How To Drink",
+   "lane": "education",
+   "rank": 130,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "j_gJDaBe11A",
+   "title": "Types of Drunk Friends - | Lalit Shokeen Films |",
+   "channel": "LShokeen Films",
+   "lane": "comedy",
+   "rank": 131,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "DLk67oMq8Og",
+   "title": "What is an Old Fashioned and where does it come from? | How to Drink",
+   "channel": "How To Drink",
+   "lane": "education",
+   "rank": 132,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "OyYlSBOM6eM",
+   "title": "Greg Fitzsimmons on Working for Ellen | We Might Be Drunk",
+   "channel": "We Might Be Drunk - Clips",
+   "lane": "comedy",
+   "rank": 133,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "g2MOUosZmn0",
+   "title": "Bad Friends Drinking Game | Ep 13 | Bad Friends with Andrew Santino and Bobby Lee",
+   "channel": "Bad Friends",
+   "lane": "comedy",
+   "rank": 134,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "Rh9Y1CXmBbg",
+   "title": "Patton Oswalt Saw One Drunk Fight That Gave Him Hope | Netflix Is A Joke",
+   "channel": "Netflix Is A Joke",
+   "lane": "comedy",
+   "rank": 135,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "-o4iQenHrFw",
+   "title": "That’s Why They Warn You NOT to Drink Absinthe Neat",
+   "channel": "Rated Red",
+   "lane": "people",
+   "rank": 136,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "JECiLF0Xbf8",
+   "title": "Chinese Tries Foreign Alcohol For The First Time",
+   "channel": "KlulessChinese",
+   "lane": "people",
+   "rank": 137,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "JTd8UO9HId0",
+   "title": "Alcohol Taste Test: Spot The Indian Beers | Ok Tested",
+   "channel": "OK Tested",
+   "lane": "people",
+   "rank": 138,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "DKfY4srx8Y4",
+   "title": "The RIGHT Way to Drink Whiskey | Neat, Water, or Ice",
+   "channel": "Jeremy Siers",
+   "lane": "education",
+   "rank": 139,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "MnEQpNUYhGE",
+   "title": "Old Fashioned Cocktail",
+   "channel": "Preppy Kitchen",
+   "lane": "education",
+   "rank": 140,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "Lg5OiCa_tls",
+   "title": "We Tried Absinthe For The First Time | Ft. Akshay And Kanishk | Ok Tested",
+   "channel": "OK Tested",
+   "lane": "people",
+   "rank": 141,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "9khN9ewjBSg",
+   "title": "15 Unique Cocktail Garnishes to Ring in the New Year! So Yummy",
+   "channel": "So Yummy",
+   "lane": "craft",
+   "rank": 142,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "HY168PJ7B5I",
+   "title": "Advanced Techniques - Cocktail Pods (Reverse Spherification)",
+   "channel": "Cocktail Chemistry",
+   "lane": "craft",
+   "rank": 143,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "wI8t3PeQNFY",
+   "title": "Sticky Hands Drinking Game",
+   "channel": "Smosh Games",
+   "lane": "comedy",
+   "rank": 144,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "_xuBYpoo_sI",
+   "title": "Guess How Drunk I Am | Lineup | Cut",
+   "channel": "Cut",
+   "lane": "people",
+   "rank": 145,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "cvQzoQ-L08g",
+   "title": "The 6 Most Famous Cocktails",
+   "channel": "The Educated Barfly",
+   "lane": "education",
+   "rank": 146,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "n8Dzvf9Aum4",
+   "title": "Absinthe Explained: Myths, Facts, History & Tasting | How to Drink",
+   "channel": "How To Drink",
+   "lane": "education",
+   "rank": 147,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "KiP1RYhZRHM",
+   "title": "Best DRINKING Jokes | Stand-Up Compilation",
+   "channel": "jimgaffigan",
+   "lane": "comedy",
+   "rank": 148,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "VCrBOrSoa2Q",
+   "title": "Australians Try America's Strongest Alcohol (190 PROOF/95%)",
+   "channel": "YeahMad",
+   "lane": "people",
+   "rank": 149,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "JQxJp-vM1Bc",
+   "title": "Top 5 Budget Whisky | Rs 600 Mein Blenders Pride Whisky l City Ka Theka",
+   "channel": "City Ka Theka",
+   "lane": "education",
+   "rank": 150,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "zzAwspdDFO4",
+   "title": "The BEST Margarita Two Ways!",
+   "channel": "Preppy Kitchen",
+   "lane": "education",
+   "rank": 151,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "JFggu73t9gA",
+   "title": "How To Make a Negroni Cocktail Home | Pro | Expert",
+   "channel": "Vlad SlickBartender",
+   "lane": "education",
+   "rank": 152,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "85xo5eQstCk",
+   "title": "\"Stopping Drinking\" | Richard Pryor: Here And Now | Now Playing",
+   "channel": "NOW COMEDY",
+   "lane": "comedy",
+   "rank": 153,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "04cjyiZqtOg",
+   "title": "The Best Bar in America Sneak Peek",
+   "channel": "Best Bar in America",
+   "lane": "craft",
+   "rank": 154,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "sIepKYSoafU",
+   "title": "Let's Get Drunk | The Basement Yard #366",
+   "channel": "The Basement Yard",
+   "lane": "comedy",
+   "rank": 155,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "LqrVZA3Ccxk",
+   "title": "a NOOB tastes the Top 10 Whiskeys For Beginners",
+   "channel": "Whiskey Tribe",
+   "lane": "education",
+   "rank": 156,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "rGdq4Ra-Zog",
+   "title": "Drunk Geography: Guessing Where These Cocktails Are Most Popular",
+   "channel": "Santagato Studios",
+   "lane": "people",
+   "rank": 157,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "gZch1skigBE",
+   "title": "Mojito Molecular Gastronomy",
+   "channel": "Make Sushi 1",
+   "lane": "craft",
+   "rank": 158,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "yFA8OeV2hWE",
+   "title": "Drunk friends Vs Sober guy | Stand-up comedy by Mervyn Rozz",
+   "channel": "evam Standup Tamasha",
+   "lane": "comedy",
+   "rank": 159,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "krQgu-pVPdE",
+   "title": "Which Celeb has the BEST Alcohol?!",
+   "channel": "JOLLY",
+   "lane": "people",
+   "rank": 160,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "3doAxcHA2tc",
+   "title": "Getting Drunk For The First Time",
+   "channel": "Jollof Raids",
+   "lane": "people",
+   "rank": 161,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "jxpT11WEtWQ",
+   "title": "5 ways to make a MARGARITA for your face",
+   "channel": "Anders Erickson",
+   "lane": "education",
+   "rank": 162,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "FKac1WpuMQg",
+   "title": "Top 10 Budget-ish Bourbons (according to whiskey lovers)",
+   "channel": "Whiskey Vault",
+   "lane": "education",
+   "rank": 163,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "_SVd96y-vb8",
+   "title": "100 Years Of Alcohol Taste Test",
+   "channel": "Good Mythical Morning",
+   "lane": "people",
+   "rank": 164,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "Yp9xbxLWhRI",
+   "title": "7 Things That Will Help You Drink Alcohol Without Harming Your Body..",
+   "channel": "Prashant Desai",
+   "lane": "education",
+   "rank": 165,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "eyM41w0a-X0",
+   "title": "Top 5 worst Whisky @nilgirikashyap #whiskey #worst",
+   "channel": "nilgiri kashyap",
+   "lane": "education",
+   "rank": 166,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "Hbz8m5O_Glg",
+   "title": "Bartender Compilation",
+   "channel": "Drew Talbert",
+   "lane": "comedy",
+   "rank": 167,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "Xlq9TjvV534",
+   "title": "How To Drink Whisky? 3 Best Ideas! | व्हिस्की पीने का 3 सबसे अच्छा तरीका | Dada Bartender | Whisky",
+   "channel": "Cocktails INDIA",
+   "lane": "education",
+   "rank": 168,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "dE9efwo6j38",
+   "title": "Holy Hangover",
+   "channel": "Bert Kreischer",
+   "lane": "comedy",
+   "rank": 169,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "YWS0fNlTABU",
+   "title": "What gear does every bartender want to have? | How to Drink",
+   "channel": "How To Drink",
+   "lane": "education",
+   "rank": 170,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "HtxfPJZJtK0",
+   "title": "Cursed Cocktails | How to Drink",
+   "channel": "How To Drink",
+   "lane": "education",
+   "rank": 171,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "p0evpBXYgwc",
+   "title": "Alcohol Taste Test: Spot The Indian Vodkas | Ok Tested",
+   "channel": "OK Tested",
+   "lane": "people",
+   "rank": 172,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "2fpok24QaAU",
+   "title": "Rob Beckett On Henry VIII's New Lover: \"She Is Proper Fit\" | Drunk History UK",
+   "channel": "Comedy Central UK",
+   "lane": "comedy",
+   "rank": 173,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "HG4F0NmGpg4",
+   "title": "How to drink whisky - Master Blender Richard Paterson shows David Hayman how to drink blends",
+   "channel": "MrWhiskyfan",
+   "lane": "education",
+   "rank": 174,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "F4BFb5sknGY",
+   "title": "A basic guide to RUM for everyone!",
+   "channel": "Anders Erickson",
+   "lane": "education",
+   "rank": 175,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "G1n4jCeug-E",
+   "title": "whiskey makers try TikTok cocktails",
+   "channel": "Whiskey Tribe",
+   "lane": "people",
+   "rank": 176,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "dPW3QebJUXo",
+   "title": "Fresh Campari Cocktail | Japan’s Greatest Bartender - Hiroyasu Kayama",
+   "channel": "88rising",
+   "lane": "craft",
+   "rank": 177,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "X7yYJnu8siw",
+   "title": "Bartender Guesses Who's Single | Lineup | Cut",
+   "channel": "Cut",
+   "lane": "people",
+   "rank": 178,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "H3XN-jHzUp0",
+   "title": "Ranking Every Cocktail w/@AltonBrown",
+   "channel": "Beyond Babish and Alton Brown",
+   "lane": "people",
+   "rank": 179,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "tFL2jH7R32M",
+   "title": "The First Time You Try To Buy Alcohol | Ladhood On iPlayer Now",
+   "channel": "BBC",
+   "lane": "people",
+   "rank": 180,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "oowL4GQE03A",
+   "title": "Drunk Shane Gillis is the Best Shane Gillis",
+   "channel": "Comedy Repository",
+   "lane": "comedy",
+   "rank": 181,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "LS32MAfYbnk",
+   "title": "Koreans Try Bourbon For The First Time | 𝙊𝙎𝙎𝘾",
+   "channel": "OSSC",
+   "lane": "people",
+   "rank": 182,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "N7jXOjmsV_Y",
+   "title": "OLD FASHIONED Cocktail Recipe - The SECRET Ingredient!?",
+   "channel": "MIXOLOGY FLAIRED",
+   "lane": "education",
+   "rank": 183,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "Vy8NbMpAnGA",
+   "title": "Distilling The Ultimate Beginners Bourbon (Safety Net)",
+   "channel": "Still It",
+   "lane": "education",
+   "rank": 184,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "hiQ57jbFY5s",
+   "title": "How to make a Great Martini - Masterclass",
+   "channel": "Behind the Bar",
+   "lane": "education",
+   "rank": 185,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "m3GDx3XCMls",
+   "title": "The Forest Cocktail | Japan's Greatest Bartender - Hiroyasu Kayama",
+   "channel": "88rising",
+   "lane": "craft",
+   "rank": 186,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "BldxBIkJI8A",
+   "title": "DokaRyan Vodka Tier List + Taste Test",
+   "channel": "DokaRyan",
+   "lane": "people",
+   "rank": 187,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "CcDikE5Dr1E",
+   "title": "How to Make Japanese Cocktails at Home",
+   "channel": "Vlad SlickBartender",
+   "lane": "education",
+   "rank": 188,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "YHwnSj9EhkI",
+   "title": "A Martini Fit for a Proper Gentleman | Duke's Bar: London's Best-Kept Secret | Kirby Allison",
+   "channel": "Kirby Allison",
+   "lane": "craft",
+   "rank": 189,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "k_Vr1XpZRbU",
+   "title": "James May rates celebrity drinks",
+   "channel": "James May’s Planet Gin",
+   "lane": "people",
+   "rank": 190,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "6uv7Fpo727U",
+   "title": "Day Drinking and Smoking Cigarettes in a Public Park at 2pm",
+   "channel": "jacobfuckingjones",
+   "lane": "comedy",
+   "rank": 191,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "OIVGM79KvDQ",
+   "title": "11 Bartenders Make a Martini (Classic, Speed, Tiki & More) | Epicurious",
+   "channel": "Epicurious",
+   "lane": "craft",
+   "rank": 192,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "FJdzoY-Wsc8",
+   "title": "Larry Miller \"Five Levels Of Drinking\" (another great version)",
+   "channel": "variedgrace",
+   "lane": "comedy",
+   "rank": 193,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "Cixsn14zcHU",
+   "title": "How To Mix Every Whiskey Cocktail | Method Mastery | Epicurious",
+   "channel": "Epicurious",
+   "lane": "education",
+   "rank": 194,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "yvq8cERmNVw",
+   "title": "Alcohol Taste Test: Spot The Indian Rum | Ft. Arushi & Akshay |  Ok Tested",
+   "channel": "OK Tested",
+   "lane": "people",
+   "rank": 195,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "j7cYPSKWLQ4",
+   "title": "We Bought Every DRINK At A Bar (*DRUNK AF*)",
+   "channel": "KianAndJc",
+   "lane": "people",
+   "rank": 196,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "GIBC-XPDe-w",
+   "title": "The RIGHT Way To Drink Tequila | It's Not What You Think",
+   "channel": "Jeremy Siers",
+   "lane": "education",
+   "rank": 197,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "z6jdaBDGOG0",
+   "title": "Millennials Try Iconic Cocktails From The 90s",
+   "channel": "Cocoa Butter",
+   "lane": "people",
+   "rank": 198,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "n5RNgIUtPv0",
+   "title": "Vodka Martini Cocktail - Four Ways | Jamie Oliver",
+   "channel": "Jamie Oliver - Drinks",
+   "lane": "education",
+   "rank": 199,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "FWtEjyLgcnk",
+   "title": "Drunk Stories, Boys Trip, Girlfriend, Comedy | Pranav Sharma Podcast | @sadhikasehgal",
+   "channel": "MensXP",
+   "lane": "comedy",
+   "rank": 200,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "Klg_AF9AjOY",
+   "title": "We Tried Cocktails From Around the World",
+   "channel": "Dan and Phil",
+   "lane": "people",
+   "rank": 201,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "Ghe8JBXGN4M",
+   "title": "we became bartenders ft. PaymoneyWubby",
+   "channel": "OFFCANNY",
+   "lane": "people",
+   "rank": 202,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "ItRVtJvZ480",
+   "title": "Beer , Wine , Whiskey , Gin , Brandy , Vodka , Tequila , Rum | Different Types Of Alcohol | Hindi",
+   "channel": "Farzi GYAN",
+   "lane": "education",
+   "rank": 203,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "ytSyvTKgKO8",
+   "title": "11 Bartenders Make a Margarita (Classic, Flair, Speed & More) | Epicurious",
+   "channel": "Epicurious",
+   "lane": "craft",
+   "rank": 204,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "01Vsc0hWhxc",
+   "title": "5 Cocktail Syrups That Will Transform Your Drinks",
+   "channel": "Steve the Bartender",
+   "lane": "education",
+   "rank": 205,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "Ek13vSY81bU",
+   "title": "6. How to Pour & Measure - Tipsy Bartender Course",
+   "channel": "Tipsy Bartender",
+   "lane": "education",
+   "rank": 206,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "CvEDhkR6K14",
+   "title": "4 EASY to Make Cocktail Syrups | grenadine & orgeat!",
+   "channel": "Anders Erickson",
+   "lane": "education",
+   "rank": 207,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "1PoG9ZF9Y9c",
+   "title": "My Drink is on Fire!! Master Bartender in Tokyo",
+   "channel": "Brian D",
+   "lane": "craft",
+   "rank": 208,
+   "addedAt": "2026-07-27"
+  },
+  {
+   "id": "Ai1NRhZx6oc",
+   "title": "My First Time: Alcohol (  दारु के बाद ) ft. Nikhil Vijay & Sahil Verma",
+   "channel": "Arré",
+   "lane": "people",
+   "rank": 209,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "HM6Rak_d-5s",
+   "title": "Sommelier André Mack Answers Wine Questions From Twitter | Tech Support | WIRED",
+   "channel": "WIRED",
+   "lane": "education",
+   "rank": 210,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "V9tgTgVs6CM",
+   "title": "whiskey makers try galaxy brain level TikTok cocktails",
+   "channel": "Whiskey Tribe",
+   "lane": "people",
+   "rank": 211,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "FE-VFXRZgLI",
+   "title": "The 3 Best Ways to Make the Perfect Margarita | Cocktails For Grown Ups",
+   "channel": "Robb Report",
+   "lane": "education",
+   "rank": 212,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "RwTp873ks0o",
+   "title": "POV Bartender Easy Start!",
+   "channel": "Jesse’s Bar",
+   "lane": "craft",
+   "rank": 213,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "0qIz1HCsUUQ",
+   "title": "STOP Drinking Don Julio 1942! Drink These Tequila Brands Instead!",
+   "channel": "Lui Fernandes",
+   "lane": "people",
+   "rank": 214,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "SeP3V3MtpxI",
+   "title": "The Perfect Old Fashioned",
+   "channel": "The Educated Barfly",
+   "lane": "education",
+   "rank": 215,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "n2XURyldWrI",
+   "title": "11 Bartenders Make an Old Fashioned (Classic, Flair, Speed & More) | Epicurious",
+   "channel": "Epicurious",
+   "lane": "craft",
+   "rank": 216,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "VPHwNqxLYSc",
+   "title": "\"I'm NOT Drunk!\"🍹🍸️Guess The Drink Challenge Gone Wrong!💕Hot Kiss💋🥤🧃🍷[Gay Couple BL]",
+   "channel": "Lucas and Kibo",
+   "lane": "people",
+   "rank": 217,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "yqniYWLN6PE",
+   "title": "The ultimate beginner's guide to SCOTCH WHISKY",
+   "channel": "Anders Erickson",
+   "lane": "education",
+   "rank": 218,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "IivdU8l1NOg",
+   "title": "Guessing vodka prices based on taste (with cousin Anatoli)",
+   "channel": "Life of Boris",
+   "lane": "people",
+   "rank": 219,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "ZQ7HZHsyf28",
+   "title": "Jerry Seinfeld - Mark Normand & Sam Morril - We Might Be Drunk Podcast",
+   "channel": "We Might Be Drunk Podcast and Gotham Production Studios",
+   "lane": "comedy",
+   "rank": 220,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "Ao7D5H702G0",
+   "title": "Trixie Learns Bartending at This Is It!",
+   "channel": "Trixie Mattel",
+   "lane": "people",
+   "rank": 221,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "0BgCnDaLW6Q",
+   "title": "How to Make Alcohol Enjoyable, Safe & Memorable | Expert Insights |RealHit|",
+   "channel": "RealHit",
+   "lane": "education",
+   "rank": 222,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "up5zi6m8IvI",
+   "title": "World's Best Bartender 2",
+   "channel": "Дмитрий Карпов",
+   "lane": "craft",
+   "rank": 223,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "LGblI8aZKCs",
+   "title": "Popular Vodka Brands Ranked From Worst To Best",
+   "channel": "Mashed",
+   "lane": "people",
+   "rank": 224,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "nA3oQKYzB6o",
+   "title": "Jimmy Fallon and Post Malone Play Every Drinking Game Ever",
+   "channel": "The Tonight Show Starring Jimmy Fallon",
+   "lane": "comedy",
+   "rank": 225,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "X3uJQXRXLeo",
+   "title": "10 Iconic Cocktails from New York City",
+   "channel": "Vlad SlickBartender",
+   "lane": "craft",
+   "rank": 226,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "EFuBvEt84OI",
+   "title": "Cocktail (1988) - All First Bar Scenes [HD]",
+   "channel": "Daniel S. Vodenitcharov, Esq.",
+   "lane": "people",
+   "rank": 227,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "ZmZS7_G08gI",
+   "title": "Bartenders Try Each Other's Drinks",
+   "channel": "Pubity Food",
+   "lane": "people",
+   "rank": 228,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "n1rxYdzkwyo",
+   "title": "ALEXANDER SHTIFANOV - FINAL WORLD CHAMPIONSHIP LAS VEGAS FLAIR BARTENDING 2019, EE.UU",
+   "channel": "jequebar",
+   "lane": "craft",
+   "rank": 229,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "FCM766Nw7p4",
+   "title": "Why I Started Drinking? By @JokeSingh | Stand Up Comedy | Amazon Prime Video",
+   "channel": "Prime Video India",
+   "lane": "comedy",
+   "rank": 230,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "sog-zSQMoE0",
+   "title": "Ranking Celebrity Alcohol (w/ AverageHarry)",
+   "channel": "Jack",
+   "lane": "people",
+   "rank": 231,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "hFCzz482oFU",
+   "title": "How to make Better Cocktails",
+   "channel": "The Educated Barfly",
+   "lane": "education",
+   "rank": 232,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "vuz2xc8XEHU",
+   "title": "The Bartender: Hail Mary",
+   "channel": "Dexter Harris",
+   "lane": "craft",
+   "rank": 233,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "hBfC-htnx14",
+   "title": "We Made the World's Worst Cocktails...",
+   "channel": "Chippo",
+   "lane": "people",
+   "rank": 234,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "w7SF5slAYWQ",
+   "title": "Bert Kreischer Gets Drunk & Embarrasses Himself",
+   "channel": "Podcast Cringe",
+   "lane": "comedy",
+   "rank": 235,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "36IV4YY3eOY",
+   "title": "Mark Cuban: From Bartender to Billionaire",
+   "channel": "eWomenNetwork, Inc.",
+   "lane": "craft",
+   "rank": 236,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "pLM7gSMxk_c",
+   "title": "How to Start a Home Bar (Best Practices)",
+   "channel": "MIXOLOGY FLAIRED",
+   "lane": "education",
+   "rank": 237,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "VR2MrwkztVo",
+   "title": "World Cocktail Championship 2017 - Super Final",
+   "channel": "International Bartenders Association - IBA",
+   "lane": "craft",
+   "rank": 238,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "aDMXnIHcwOE",
+   "title": "Indian Whisky Review/Tasting: American REACTION!!",
+   "channel": "OUR STUPID REACTIONS",
+   "lane": "people",
+   "rank": 239,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "EfrZL-q5Xf8",
+   "title": "How to Make a Martini | Cocktail Recipes",
+   "channel": "Howcast",
+   "lane": "education",
+   "rank": 240,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "640aJL2zmww",
+   "title": "Easy Cocktail Garnishes",
+   "channel": "Steve the Bartender",
+   "lane": "education",
+   "rank": 241,
+   "addedAt": "2026-07-27"
+  },
+  {
+   "id": "akZzA2KiBYY",
+   "title": "Drinking Alcohol from India for the First Time..",
+   "channel": "jacobjonesMONEY",
+   "lane": "people",
+   "rank": 242,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "M9IQXLRrujo",
+   "title": "Visiting The World's Whisky Island | Islay",
+   "channel": "Ruth Aisling",
+   "lane": "education",
+   "rank": 243,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "KhuwE2cPt5E",
+   "title": "Flair Bartending Alexander Shtifanov Final Olympic Casino Flair Mania 2014",
+   "channel": "Alexander Shtifanov Александр Штифанов",
+   "lane": "craft",
+   "rank": 244,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "75k7dsINNQ0",
+   "title": "Beginners Guide for Making Martinis",
+   "channel": "Steve the Bartender",
+   "lane": "education",
+   "rank": 245,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "6M-1BwC5Oa8",
+   "title": "The Neighborhood Bar series all 58 episodes in one video ❤️ #neighborhoodbar #bartender #newseries",
+   "channel": "Michelle The Bartender",
+   "lane": "craft",
+   "rank": 246,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "hT_zL3NbQlc",
+   "title": "Life of a Bartender",
+   "channel": "Low Budget Stories",
+   "lane": "comedy",
+   "rank": 247,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "k5cf0Q65q4U",
+   "title": "6 Easy Big Batch Cocktails Perfect for BBQs, Graduation Parties, Summer Potlucks & More | Allrecipes",
+   "channel": "Allrecipes",
+   "lane": "education",
+   "rank": 248,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "Nee2ZFz539k",
+   "title": "Bartender in Tokyo shares 3 Cocktails: Daiquiri, ...",
+   "channel": "Aden Films",
+   "lane": "craft",
+   "rank": 249,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "bYzT9i1zyj4",
+   "title": "The Drunk Tale of Charulata - Stand Up Comedy by Kenny Sebastian",
+   "channel": "Kenny Sebastian",
+   "lane": "comedy",
+   "rank": 250,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "RZX7I9G0AVc",
+   "title": "Making a Negroni",
+   "channel": "The Modern Rogue",
+   "lane": "education",
+   "rank": 251,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "zj3CSNpfFRk",
+   "title": "How to make a Smoked Old Fashioned - How to smoke cocktails at home",
+   "channel": "Truffles On The Rocks",
+   "lane": "education",
+   "rank": 252,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "-nwHiL5NHvI",
+   "title": "How to Make a Margarita (and 5 Mistakes to Avoid) | Bottle Service",
+   "channel": "FOOD & WINE",
+   "lane": "education",
+   "rank": 253,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "byApIJYPhFE",
+   "title": "The Wrong vs. Right Way to Make Cocktails | Botched by Babish",
+   "channel": "Binging with Babish",
+   "lane": "people",
+   "rank": 254,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "aADl3NvketE",
+   "title": "3 Mead Cocktails",
+   "channel": "The Modern Rogue",
+   "lane": "education",
+   "rank": 255,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "Zwhi5A0GFKM",
+   "title": "How To Make A Great Martini at Home",
+   "channel": "NOT ANOTHER COOKING SHOW",
+   "lane": "education",
+   "rank": 256,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "-LX8qV6qbiM",
+   "title": "MYSTERY Alcohol Taste Test!! (Super HARD)",
+   "channel": "Outlaw",
+   "lane": "people",
+   "rank": 257,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "xiBWJUeNnJk",
+   "title": "Dale Jones | Drunk Tank | Half Hour Comedy Special",
+   "channel": "Open Bar Comedy",
+   "lane": "comedy",
+   "rank": 258,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "uHu7iOzuFdU",
+   "title": "5. The 5 Types of Ice - Tipsy Bartender Course",
+   "channel": "Tipsy Bartender",
+   "lane": "education",
+   "rank": 259,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "qWza4D8wXVg",
+   "title": "Mezcal producers preserve traditional methods as demand for liquor grows | 60 Minutes",
+   "channel": "60 Minutes",
+   "lane": "education",
+   "rank": 260,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "iHTXI3H8N1c",
+   "title": "Louis CK w/ Sam Morril & Mark Normand - We Might Be Drunk Podcast",
+   "channel": "We Might Be Drunk Podcast",
+   "lane": "comedy",
+   "rank": 261,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "pMV-T5hkRdg",
+   "title": "Scotch Whisky Regions Explained in 13 Minutes - A Beginners Guide",
+   "channel": "First Phil Whisky",
+   "lane": "education",
+   "rank": 262,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "W-5Op3HHgfI",
+   "title": "5 x EASY MARGARITA COCKTAIL RECIPES",
+   "channel": "Steve the Bartender",
+   "lane": "education",
+   "rank": 263,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "kRt_p3vr9q4",
+   "title": "Ranking EVERY Vodka (we got wasted)",
+   "channel": "Emiru",
+   "lane": "people",
+   "rank": 264,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "JC3aAqa5jKM",
+   "title": "Whats The BEST Whiskey Under $25? | We Blind Taste 16 Budget Whiskeys to Find Out",
+   "channel": "Jeremy Siers",
+   "lane": "people",
+   "rank": 265,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "WYxvD0mefZc",
+   "title": "The Most Advanced Cocktail - Aviary's Jungle Bird",
+   "channel": "Cocktail Chemistry",
+   "lane": "craft",
+   "rank": 266,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "K34fPlsNlfU",
+   "title": "My First Time Getting Drunk",
+   "channel": "Cameron Brig",
+   "lane": "people",
+   "rank": 267,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "YGdWvEOREVY",
+   "title": "Finding The Best Pub In London | Food Tours | Insider Food",
+   "channel": "Insider Food",
+   "lane": "craft",
+   "rank": 268,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "80Qn5eVJGsc",
+   "title": "Is EXPENSIVE whiskey worth the money? | $35 vs $2,500 Blind Tasting",
+   "channel": "Whiskey Tribe",
+   "lane": "people",
+   "rank": 269,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "AVav9b584iY",
+   "title": "ScoopWhoop: Types Of Drunk Friends We All know",
+   "channel": "ScoopWhoop",
+   "lane": "comedy",
+   "rank": 270,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "HQdgxpOOYIc",
+   "title": "12. How to Garnish - Tipsy Bartender Course",
+   "channel": "Tipsy Bartender",
+   "lane": "education",
+   "rank": 271,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "2n6RXTqaeX4",
+   "title": "Sleek Stir Cocktail asmr",
+   "channel": "빠슐랭Barchelin",
+   "lane": "craft",
+   "rank": 272,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "6dk3Rhm6cRU",
+   "title": "Bhaiyas Try ABSINTHE For The FIRST Time!",
+   "channel": "Shudh Desi Videos",
+   "lane": "people",
+   "rank": 273,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "ZZ1ffluktqM",
+   "title": "Advanced Techniques - Clarified Milk Punch",
+   "channel": "Cocktail Chemistry",
+   "lane": "education",
+   "rank": 274,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "ERysFqUe0GU",
+   "title": "Rum Tier List + Taste Test",
+   "channel": "DokaRyan",
+   "lane": "people",
+   "rank": 275,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "gfW6CUDA_j8",
+   "title": "CLUBMix11 | LIVE AT BAE'S COCKTAIL CLUB - SINGAPORE🇸🇬 | HIPHOP, RNB, POP",
+   "channel": "DJ 74",
+   "lane": "craft",
+   "rank": 276,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "w2EyP2ovrsc",
+   "title": "Blind $5,000 Whisky Taste Test w/ The World's FANCIEST Man",
+   "channel": "Whiskey Tribe",
+   "lane": "people",
+   "rank": 277,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "BKHwSQcW9Zw",
+   "title": "Top 5 best Indian Whisky in budget @nilgirikashyap #top5 #whiskey",
+   "channel": "nilgiri kashyap",
+   "lane": "education",
+   "rank": 278,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "NYPU_pzahLU",
+   "title": "Japanese bartender cuts ice perfectly【ASMR】",
+   "channel": "STAY BAR.",
+   "lane": "craft",
+   "rank": 279,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "x7-InYjdDac",
+   "title": "Drinking & Driving | Dusty Slay Comedy",
+   "channel": "Dusty Slay",
+   "lane": "comedy",
+   "rank": 280,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "_TldyYyKkZY",
+   "title": "All Alcohol Explained in 10 Minutes",
+   "channel": "Flue",
+   "lane": "education",
+   "rank": 281,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "p4eBjGmMVW0",
+   "title": "Celebrity Booze Tasting with Danny Brown and Jim Meehan from PDT",
+   "channel": "First We Feast",
+   "lane": "people",
+   "rank": 282,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "gjd9c-DVWVM",
+   "title": "Top 5 Budget Whiskeys | Blind Tasting Bourbon Brawl",
+   "channel": "Jeremy Siers",
+   "lane": "people",
+   "rank": 283,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "tTo69xrT4Ek",
+   "title": "Is Celebrity Whiskey CRAP!?! | Blind Tasting 6 Celebrity Whiskeys",
+   "channel": "Jeremy Siers",
+   "lane": "people",
+   "rank": 284,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "lawqLaKkFA0",
+   "title": "Rick Bayless Margarita Master Class",
+   "channel": "Rick Bayless",
+   "lane": "education",
+   "rank": 285,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "nPltnMj5Gao",
+   "title": "So You Want To Be A Bartender",
+   "channel": "Nelson Lam",
+   "lane": "education",
+   "rank": 286,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "1kwO5bqamYk",
+   "title": "TOP 15 Must Know Drink Recipes to Lookup For New Bartenders",
+   "channel": "Bartending Pro",
+   "lane": "education",
+   "rank": 287,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "iagrrkPtbL4",
+   "title": "TOP 10 most popular cocktails in the world 2023 @TheDrCork",
+   "channel": "Dr. Cork",
+   "lane": "craft",
+   "rank": 288,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "ApMR3IWYZHI",
+   "title": "Classic Dry Gin Martini Cocktail Recipe",
+   "channel": "Steve the Bartender",
+   "lane": "education",
+   "rank": 289,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "y8DcQsY2-Lc",
+   "title": "Pro Mixologist Tries To Make A Hot Cheetos Cocktail  • Worth A Shot",
+   "channel": "Watcher",
+   "lane": "education",
+   "rank": 290,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "W68-pv13oXA",
+   "title": "Koreans Try Strong Liquor for the First Time (Binge-Watching) | 𝙊𝙎𝙎𝘾",
+   "channel": "OSSC",
+   "lane": "people",
+   "rank": 291,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "dPpUc0zbqwc",
+   "title": "Cocktail guide: Rum Sour - The Wild Geese® Golden Rum",
+   "channel": "The Wild Geese - Irish Premium Spirits Collection",
+   "lane": "education",
+   "rank": 292,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "Zlnb8ZUsh_k",
+   "title": "Bartending for Rich Clients | Expensive Cocktails / Wine | Late Night Lounge pov",
+   "channel": "David Blake Cocktails",
+   "lane": "craft",
+   "rank": 293,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "3WyaNJbotG4",
+   "title": "Celebrity Booze Taste Test (Extended Version) | DESUS & MERO | SHOWTIME",
+   "channel": "DESUS & MERO",
+   "lane": "people",
+   "rank": 294,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "DTYT9_OrMAU",
+   "title": "North Korean tries American Bourbon for the First Time",
+   "channel": "DimpleVideo",
+   "lane": "people",
+   "rank": 295,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "CCc5-ppAhkg",
+   "title": "Whiskey Tier List + Taste Test",
+   "channel": "DokaRyan",
+   "lane": "people",
+   "rank": 296,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "Q78tXMdQq00",
+   "title": "Macallan 4 Dummies (A Beginner's Buying Guide)",
+   "channel": "Scotch 4 Dummies",
+   "lane": "education",
+   "rank": 297,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "fV5_FTFxgYA",
+   "title": "Jamie’s Classic Cocktails | Frozen Margarita",
+   "channel": "Jamie Oliver",
+   "lane": "education",
+   "rank": 298,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "G1JD6vLqNuI",
+   "title": "Whiskey Expert BLIND TASTE TESTS Celebrity Whisk(e)ys",
+   "channel": "Whiskey Tribe",
+   "lane": "people",
+   "rank": 299,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "gR2reMVVZWg",
+   "title": "I Became the 2HYPE Bartender for a day!",
+   "channel": "Jiedel",
+   "lane": "people",
+   "rank": 300,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "Sp7lnf5ZZ6U",
+   "title": "Weirdest Holiday Alcohol Taste Test",
+   "channel": "try every day and The Try Guys",
+   "lane": "people",
+   "rank": 301,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "0BzpiBrAr-M",
+   "title": "DokaRyan Gin Tier List + Taste Test",
+   "channel": "DokaRyan",
+   "lane": "people",
+   "rank": 302,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "JGp1zIoIH2s",
+   "title": "Palm spin, figure 8, thumb around with a shaker | First steps in Flair Bartending | Tutorial 01",
+   "channel": "BarTRENDER Tv",
+   "lane": "education",
+   "rank": 303,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "ZUjZy3H6keE",
+   "title": "How to make The Negroni cocktail - Masterclass",
+   "channel": "Behind the Bar",
+   "lane": "education",
+   "rank": 304,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "2cDESVo_Y40",
+   "title": "Bartender Explains \"If Bartenders Were Honest\" Buzzfeed Exposed",
+   "channel": "MikeMGTV",
+   "lane": "people",
+   "rank": 305,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "dfA2mjKYhps",
+   "title": "AMERICAN Reacts to DESI DARU | INDIAN ALCOHOL OLD MONK AMRUT 🇮🇳",
+   "channel": "Volpe Drunk and Hungry",
+   "lane": "people",
+   "rank": 306,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "RcYH7KL3iL0",
+   "title": "We Challenged A Pro Sommelier At Blind Tasting Wines",
+   "channel": "The Other Channel",
+   "lane": "people",
+   "rank": 307,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "mfjhyiy-v5Y",
+   "title": "Bartending Is Not A Fun Job...",
+   "channel": "Kobo",
+   "lane": "comedy",
+   "rank": 308,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "_6b9iUwYzVg",
+   "title": "Cocktail History: The Negroni",
+   "channel": "Spirits Network",
+   "lane": "education",
+   "rank": 309,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "GYJnyyCoZ7Q",
+   "title": "NEW Drinking Game we ALL Needed | 8 Out of 10 Cats",
+   "channel": "E4",
+   "lane": "comedy",
+   "rank": 310,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "23W6-koSu4o",
+   "title": "The 7 Levels of Rum",
+   "channel": "Bottled Verdict and Rum Verdict",
+   "lane": "education",
+   "rank": 311,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "5Uq6LZXAjX4",
+   "title": "Doug Stanhope Brings Cheap Wine to Sam Morril & Mark Normand",
+   "channel": "We Might Be Drunk Podcast",
+   "lane": "comedy",
+   "rank": 312,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "qZ9f87Qfqmk",
+   "title": "9 Trendy Cocktail Garnishes in 9 Minutes",
+   "channel": "Truffles On The Rocks",
+   "lane": "craft",
+   "rank": 313,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "DmUlJHVXSoo",
+   "title": "10 Cocktails Every Bartender Should Know",
+   "channel": "Rob's Home Bar",
+   "lane": "education",
+   "rank": 314,
+   "addedAt": "2026-07-27"
+  },
+  {
+   "id": "TwQ71nyCcVs",
+   "title": "We Tried More Cocktails From Around the World",
+   "channel": "Dan and Phil",
+   "lane": "education",
+   "rank": 315,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "pJmUuEJzAgk",
+   "title": "Bartender in Tokyo shares 3 Cocktails: Martini, ...",
+   "channel": "Aden Films",
+   "lane": "craft",
+   "rank": 316,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "H0dUEzoAYCg",
+   "title": "How to Make a Manhattan Cocktail",
+   "channel": "Preppy Kitchen",
+   "lane": "education",
+   "rank": 317,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "GUhx51fg-rw",
+   "title": "How to make a delicious Old Fashioned cocktail - Masterclass",
+   "channel": "Behind the Bar",
+   "lane": "education",
+   "rank": 318,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "o3Oph7091O8",
+   "title": "STOP Drinking These 9 TOXIC Vodkas And 2 That Are ACTUALLY Worth It",
+   "channel": "STOCKPILE SECRETS",
+   "lane": "people",
+   "rank": 319,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "v12igLoPQyA",
+   "title": "Irish Drinking Song for 2022 - Live Sketch Comedy",
+   "channel": "Foil Arms and Hog",
+   "lane": "comedy",
+   "rank": 320,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "-NWPdCkMepI",
+   "title": "Drying Sausage - old fashioned way and many important tips",
+   "channel": "Cooking with the Coias",
+   "lane": "education",
+   "rank": 321,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "rsRKk2WSZGo",
+   "title": "Trying Best Whisky Under Rs 1000 | Cheers! By The Urban Guide",
+   "channel": "Cheers! By The Urban Guide",
+   "lane": "people",
+   "rank": 322,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "z68DZ6ey6HA",
+   "title": "POV: Bartender in London's Busiest Restaurant",
+   "channel": "Fallow",
+   "lane": "craft",
+   "rank": 323,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "dh-mCfUjLJs",
+   "title": "Korean Girls Try Russian Vodka For Their First Time | 𝙊𝙎𝙎𝘾",
+   "channel": "OSSC",
+   "lane": "people",
+   "rank": 324,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "FwFlGFTyEDc",
+   "title": "Tom Dyer's Greatest Routine Ever - Front View",
+   "channel": "Tom Dyer Flair Bartender",
+   "lane": "craft",
+   "rank": 325,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "Q27tG3QhhmY",
+   "title": "We Tried Weird International Cocktails",
+   "channel": "try every day",
+   "lane": "people",
+   "rank": 326,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "DuH6LhREKTQ",
+   "title": "Ultimate Alcohol Guide: Whisky, Beer, Wine, Tequila, Rum Explained | Dostcast w/ @mixitupwithmendi",
+   "channel": "Dostcast",
+   "lane": "education",
+   "rank": 327,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "fGryNOSmzvI",
+   "title": "We Tried Alcohol From Around The World",
+   "channel": "BuzzFeed UK",
+   "lane": "people",
+   "rank": 328,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "6ktjqaLc8nA",
+   "title": "Alabama Boss Tries Absinthe For The First Time",
+   "channel": "Rated Red",
+   "lane": "people",
+   "rank": 329,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "32-T90ThFQw",
+   "title": "Bartenders, What Are Your Craziest Stories From Work?",
+   "channel": "On Tap Studios",
+   "lane": "comedy",
+   "rank": 330,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "HrjZLP20pcE",
+   "title": "Ultimate Guide to Alcohol: Whisky, Gin, Wine, Beer, Vodka, Brandy & More Explained! 🍸🍷🍺",
+   "channel": "Mix it up with Mendi",
+   "lane": "education",
+   "rank": 331,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "vvFvGKBxz1M",
+   "title": "The Classic vs. The Modern Old Fashioned | Drinks Made Easy",
+   "channel": "Drinks Made Easy",
+   "lane": "people",
+   "rank": 332,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "m3fe465ujig",
+   "title": "BARTENDING FOR BEGINNERS (No Experience!)",
+   "channel": "HOMEBREW 4 LIFE",
+   "lane": "education",
+   "rank": 333,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "sAyK8_MySWw",
+   "title": "Negroni - My favorite recipe",
+   "channel": "The Educated Barfly",
+   "lane": "education",
+   "rank": 334,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "x-jKFBl0ST8",
+   "title": "Anthony Jeselnik w/ Sam Morril & Mark Normand - We Might Be Drunk Podcast",
+   "channel": "We Might Be Drunk Podcast",
+   "lane": "comedy",
+   "rank": 335,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "7CMeBtFFr8M",
+   "title": "American vs. Canadian Booze Taste Test",
+   "channel": "DokaRyan",
+   "lane": "people",
+   "rank": 336,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "bbIBzluoC3w",
+   "title": "Ten Totally Bonkers Drunk Stories | Would I Lie To You? | The Laugh Track",
+   "channel": "The Laugh Track",
+   "lane": "comedy",
+   "rank": 337,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "OcXYRoapXFo",
+   "title": "Alabama Boss Tries 5 Celebrity Liquor Brands",
+   "channel": "Rated Red",
+   "lane": "people",
+   "rank": 338,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "d38lUW_k80s",
+   "title": "How to make FOUR Classic Cocktail & Mocktail Recipes - SIMPLE DRINK RECIPES - ZEELICIOUS FOODS",
+   "channel": "Zeelicious Foods",
+   "lane": "education",
+   "rank": 339,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "pm7YVhjYz1w",
+   "title": "We Tried The Worst Types of Alcohol (So You Don’t Have To)",
+   "channel": "Mixed Up with Brewzle",
+   "lane": "people",
+   "rank": 340,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "QgHQG-8JBx4",
+   "title": "Celebrity Hangover Confessions | The Graham Norton Show",
+   "channel": "The Graham Norton Show",
+   "lane": "comedy",
+   "rank": 341,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "zMAf4A1Xj34",
+   "title": "We Might Be Drunk 58: Jim Gaffigan & Lagavulin",
+   "channel": "We Might Be Drunk Podcast",
+   "lane": "comedy",
+   "rank": 342,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "VSNKnXBt1BQ",
+   "title": "How Single Malt Whisky Is Made - Step by Step",
+   "channel": "First Phil Whisky",
+   "lane": "education",
+   "rank": 343,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "PwjM6mwvilw",
+   "title": "Friday Night Bartending | 600$+ in Tips! (My Biggest Night Ever!)",
+   "channel": "David Blake Cocktails",
+   "lane": "education",
+   "rank": 344,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "tWbxxBtmhFg",
+   "title": "Harry Potter Inspired London Cocktail Bar | Magic, Wands and Potions! | Sorted Food",
+   "channel": "Sorted Food",
+   "lane": "craft",
+   "rank": 345,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "CEjFbSwRa4g",
+   "title": "The Entire History of Scotch Whisky in 29 Minutes",
+   "channel": "First Phil Whisky",
+   "lane": "education",
+   "rank": 346,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "xYfHUQXjwOI",
+   "title": "The 7 Levels of Tequila",
+   "channel": "The Tequila Pour",
+   "lane": "people",
+   "rank": 347,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "VXH9XX8Igqw",
+   "title": "The Roast of Kevin Hart Got WILD | We Might Be Drunk",
+   "channel": "We Might Be Drunk - Clips",
+   "lane": "comedy",
+   "rank": 348,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "iOKrNljJnIo",
+   "title": "Bartender Reacts To The MOST OUTRAGEOUS Overpours Possible",
+   "channel": "MikeMGTV",
+   "lane": "people",
+   "rank": 349,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "XVVadRVZQIU",
+   "title": "Rs 600 Vs Rs 3000 Vodka | Which Is Better? | Cheers! By The Urban Guide",
+   "channel": "Cheers! By The Urban Guide",
+   "lane": "people",
+   "rank": 350,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "LtW4PEuxXn4",
+   "title": "NYC's 7 BEST Speakeasy Bars | Secret Nightlife Guide ! 🍸",
+   "channel": "Jon Barr",
+   "lane": "education",
+   "rank": 351,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "rh3XOzq5UNY",
+   "title": "5 True Scary BARTENDER Stories",
+   "channel": "Lets Read!",
+   "lane": "comedy",
+   "rank": 352,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "8tj6LctvuVw",
+   "title": "ASMR Roleplay | Tequila and Mezcal Tasting 🥃 (Soft-Spoken, Muffled Music)",
+   "channel": "Sarah Lavender ASMR",
+   "lane": "education",
+   "rank": 353,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "hqwkaYK_2P4",
+   "title": "Tier Listing the Cheapest Liquor Was a Mistake",
+   "channel": "Mixed Up with Brewzle",
+   "lane": "people",
+   "rank": 354,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "N15R9ARL-MQ",
+   "title": "Stages of Drinking Ft.Amar | Telugu Stand-Up Comedy | MicKiKirkiri | Telugu Open Mic |",
+   "channel": "Mic Ki KirKiri",
+   "lane": "comedy",
+   "rank": 355,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "H08HGJUiZ_I",
+   "title": "QI vs ALCOHOL! Funny and DRUNKEN Rounds!",
+   "channel": "Versus",
+   "lane": "comedy",
+   "rank": 356,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "XupQZfbgZpg",
+   "title": "The ONLY 5 Summer Cocktails You Need",
+   "channel": "Jeremy Siers",
+   "lane": "education",
+   "rank": 357,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "iDyQ5HNQ9tQ",
+   "title": "\"The Way of the Cocktail\" - A Documentary About Japanese Bartending",
+   "channel": "Nikka Whisky USA",
+   "lane": "craft",
+   "rank": 358,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "poJhJytJfBw",
+   "title": "STAY CALM WORKING *VERY* BUSY SHIFTS - Bartending 101",
+   "channel": "Bartending Pro",
+   "lane": "craft",
+   "rank": 359,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "Q39GNZJLwF0",
+   "title": "Everything You Need To Know About Bourbon - A Beginners Guide",
+   "channel": "SLB Drinks",
+   "lane": "education",
+   "rank": 360,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "vb2GL-BqJmg",
+   "title": "Trying WORLD'S BEST SELLING WHISKY | Cheers! By The Urban Guide",
+   "channel": "Cheers! By The Urban Guide",
+   "lane": "people",
+   "rank": 361,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "XeuJT1He-A4",
+   "title": "Why whisky BURNS when you drink It: 7 tips to get past it",
+   "channel": "First Phil Whisky",
+   "lane": "education",
+   "rank": 362,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "5csi_Zg-iuk",
+   "title": "This is What Drinking Does to You | Jim Gaffigan",
+   "channel": "jimgaffigan",
+   "lane": "comedy",
+   "rank": 363,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "tS8BON0gkgs",
+   "title": "Trying To Not Make Disgusting Cocktails (Ft. Scott Cramer)",
+   "channel": "Mista GG",
+   "lane": "people",
+   "rank": 364,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "lGzqlL8UAxw",
+   "title": "Drunk Employees | Stand-up Comedy By Anmol Garg",
+   "channel": "Anmol Garg",
+   "lane": "comedy",
+   "rank": 365,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "Mmoc9knfudY",
+   "title": "Norm ... on Drinking & \"DISEASES\" - Norm Macdonald on the upside of being sick",
+   "channel": "Maulers JediDTComics",
+   "lane": "comedy",
+   "rank": 366,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "0ieRyJeuV-E",
+   "title": "The ONLY 6 Cocktails You Need To Know",
+   "channel": "Lui Fernandes",
+   "lane": "education",
+   "rank": 367,
+   "addedAt": "2026-07-27"
+  },
+  {
+   "id": "gikXaPKRNpg",
+   "title": "Bartender Reacts To Terrible TikTok Cocktails",
+   "channel": "MikeMGTV",
+   "lane": "people",
+   "rank": 368,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "b7Q_ITs4qzc",
+   "title": "Flavored Vodka Tier List + Taste Test",
+   "channel": "DokaRyan",
+   "lane": "people",
+   "rank": 369,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "2e8TI0E5Rc8",
+   "title": "POV: Bartender at work at MACE bar NYC.",
+   "channel": "Mr.Tolmach",
+   "lane": "craft",
+   "rank": 370,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "LOhglXfeSRc",
+   "title": "Jägermeister Explained: How to drink? History, Stag Logo, Jäger Bombs and shots!",
+   "channel": "Mix it up with Mendi",
+   "lane": "education",
+   "rank": 371,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "3SzNwdgGz8U",
+   "title": "how to make margarita in hindi",
+   "channel": "Cocktails INDIA",
+   "lane": "education",
+   "rank": 372,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "LpAHNbHWsm8",
+   "title": "Americans Try Foreign Alcohol",
+   "channel": "Mixed Up with Brewzle",
+   "lane": "people",
+   "rank": 373,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "c7y1ko8dgYc",
+   "title": "How to set up a Home Bar | Discovery Wines Liquor Warehouse L1 Virtual Tour | Game of Alcohols",
+   "channel": "GameofAlcohols",
+   "lane": "education",
+   "rank": 374,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "X7GyYRKIq4k",
+   "title": "Bartender ASMR making 40 cocktails",
+   "channel": "빠슐랭Barchelin",
+   "lane": "craft",
+   "rank": 375,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "DQ32TO_NxKU",
+   "title": "I’m a Bartender in Rural Wyoming. I Follow 5 Strange Rules.",
+   "channel": "Mr. Creeps",
+   "lane": "comedy",
+   "rank": 376,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "NOZWmXL73xk",
+   "title": "DRINKING CHALLENGE DAY 04 || AMAN SHARMA ||",
+   "channel": "Aman Sharma",
+   "lane": "people",
+   "rank": 377,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "GWWJpwsHCFA",
+   "title": "Drunk girl lost control | Stand up comedy by Vijay Pandey | Audience Interaction",
+   "channel": "Vijay Pandey",
+   "lane": "comedy",
+   "rank": 378,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "Cp6zOQO5pzQ",
+   "title": "Cocktail guide: Rum Cobbler - The Wild Geese® Golden Rum",
+   "channel": "The Wild Geese - Irish Premium Spirits Collection",
+   "lane": "education",
+   "rank": 379,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "voww4sDT3QE",
+   "title": "Explaining Every Type of Alcohol: What are the differences?",
+   "channel": "Lui Fernandes",
+   "lane": "education",
+   "rank": 380,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "QF6xzSyet4U",
+   "title": "3-Point Test - How to Taste Wine | Wine Tips For Beginners |  APWASI | Dr. Clinton Lee",
+   "channel": "APWASI - Asia Pacific Wine & Spirit Institute",
+   "lane": "education",
+   "rank": 381,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "AEmgKxBT5wQ",
+   "title": "Learn How To Taste Bourbon",
+   "channel": "Fred Minnick",
+   "lane": "education",
+   "rank": 382,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "3E-5ib-xroQ",
+   "title": "Life Hack! Pre-batched Whiskey Sour, Margarita & Mojito!",
+   "channel": "Cocktail Time with Kevin Kos",
+   "lane": "education",
+   "rank": 383,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "6jc68TuXEnw",
+   "title": "World Class Bartender of the Year Final 2018",
+   "channel": "World Class",
+   "lane": "craft",
+   "rank": 384,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "6Ur9kpVjR80",
+   "title": "⚡This drink looks cute! | Pikamee Tipsy Bartender Reaction #2",
+   "channel": "⚡Daily Dose of Kettle",
+   "lane": "people",
+   "rank": 385,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "JM6Vucn_hE8",
+   "title": "The Ultimate Guide to Memorizing Cocktails - The Triple Imprint Method",
+   "channel": "Dave Allred TheRealBarman (Bar Patrol)",
+   "lane": "education",
+   "rank": 386,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "pPH2K-Mt3yk",
+   "title": "Hale And Pace.drunk in a french wine cellar",
+   "channel": "lostitems01",
+   "lane": "comedy",
+   "rank": 387,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "e1Alkctc1Vk",
+   "title": "Milk Punch and How Milk Clarification Produces a Crystal Clear Cocktail | What's Eating Dan?",
+   "channel": "America's Test Kitchen",
+   "lane": "education",
+   "rank": 388,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "bdrwdGYnxtE",
+   "title": "Basic Cocktails - The Martini",
+   "channel": "Cocktail Chemistry",
+   "lane": "education",
+   "rank": 389,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "vfNLojoXPMs",
+   "title": "Orange Garnish ideas (for cocktails)",
+   "channel": "O.D.A.D",
+   "lane": "craft",
+   "rank": 390,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "dwjAZ_d_964",
+   "title": "Tired of Muddling? | Lime & Mint Cordial for Fast and Clear Mojitos",
+   "channel": "Cocktail Time with Kevin Kos",
+   "lane": "education",
+   "rank": 391,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "dntCWth_oRI",
+   "title": "Bartender making ASMR cocktail (unintentional , no talking, 10 hours)",
+   "channel": "빠슐랭Barchelin",
+   "lane": "craft",
+   "rank": 392,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "LOg1EmboXIw",
+   "title": "Comedian Jim Gaffigan Tastes Iconic American Whiskey | Sotheby’s",
+   "channel": "Sotheby's",
+   "lane": "comedy",
+   "rank": 393,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "L7_p8fNS2LQ",
+   "title": "how to make a GOOD MARGARITA",
+   "channel": "NOT ANOTHER COOKING SHOW",
+   "lane": "education",
+   "rank": 394,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "q5DaFysrY3o",
+   "title": "5 Easy Tequila Cocktails that Aren't The Margarita",
+   "channel": "Lui Fernandes",
+   "lane": "craft",
+   "rank": 395,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "QYZRj0mYMzc",
+   "title": "Old Fashioned Cocktail - The Cocktail Spirit with Robert Hess - Small Screen",
+   "channel": "Small Screen",
+   "lane": "education",
+   "rank": 396,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "IwpM9grfGH8",
+   "title": "Advanced Techniques - Foams (molecular mixology)",
+   "channel": "Cocktail Chemistry",
+   "lane": "craft",
+   "rank": 397,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "XX1jRkKZyMA",
+   "title": "SOJU TASTE TEST | 소주 마시기",
+   "channel": "AngelaMinjiKim",
+   "lane": "people",
+   "rank": 398,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "p_y0R5WsCWQ",
+   "title": "Top 6 basic cocktails for beginner bartenders.",
+   "channel": "Tipsy Nerd",
+   "lane": "education",
+   "rank": 399,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "C0n4Fmnht7c",
+   "title": "10 Three-Ingredient Cocktails Every Bartender Needs To Know | Alchemix",
+   "channel": "Alchemix",
+   "lane": "education",
+   "rank": 400,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "yb5TPHFGEZw",
+   "title": "The amazing COCKTAILS of the CONNAUGHT BAR, in London 🍸🍹🥂🥃",
+   "channel": "Cosa mangiamo oggi?",
+   "lane": "craft",
+   "rank": 401,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "Hi8KUWlJjgI",
+   "title": "Jim Gaffigan w/ Sam Morril & Mark Normand - We Might Be Drunk",
+   "channel": "We Might Be Drunk Podcast",
+   "lane": "comedy",
+   "rank": 402,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "zDa4TEKjE9I",
+   "title": "I meet an Expert - Vermouth (& fortified/aromatised wines) explained!",
+   "channel": "Behind the Bar",
+   "lane": "education",
+   "rank": 403,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "9-PW4CAvxnI",
+   "title": "Manhattan Three Ways | Whiskey Cocktail History Lesson",
+   "channel": "Cocktail Time with Kevin Kos",
+   "lane": "education",
+   "rank": 404,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "jx6qwknbXHI",
+   "title": "Pro Mixologist Tries To Make A Cocktail Out Of Bubble Gum • Worth A Shot",
+   "channel": "Watcher",
+   "lane": "education",
+   "rank": 405,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "Xslps5bF81E",
+   "title": "Old People Try Monster, Absinthe & Sour Candy",
+   "channel": "JOE",
+   "lane": "people",
+   "rank": 406,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "XQEjRT7RCnE",
+   "title": "Which is More Harmful Cheap or Expensive Whisky?|सस्ता या महँगा व्हिस्की Kon अधिक नुकसान पहुँचाता है",
+   "channel": "Cocktails INDIA",
+   "lane": "people",
+   "rank": 407,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "9ZNbioKtqu8",
+   "title": "Former Bartender Matches Drinks to the Person",
+   "channel": "Lush Life",
+   "lane": "people",
+   "rank": 408,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "PDSfEBXwWzs",
+   "title": "INDIA’S STRONGEST BEER - OK Tested - Who Gets Drunk First REACTION! | Noobs vs Pros",
+   "channel": "CineDesi",
+   "lane": "people",
+   "rank": 409,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "jNscjS1wgDE",
+   "title": "Trying Celebrity Alcohol Brands | Ft. Ranveer Singh's Vodka | The Urban Guide",
+   "channel": "The Urban Guide and Cheers! By The Urban Guide",
+   "lane": "people",
+   "rank": 410,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "XFxZu8sf0wE",
+   "title": "We Played The Weirdest Drinking Games In America",
+   "channel": "Try Guys Game Time and The Try Guys",
+   "lane": "comedy",
+   "rank": 411,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "f7aoIQAx8jI",
+   "title": "We Made Celebrities' Favourite Cocktails",
+   "channel": "Chippo",
+   "lane": "people",
+   "rank": 412,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "0hjMuvYh06o",
+   "title": "Clarified Negroni - How to clarify cocktails part 2",
+   "channel": "Truffles On The Rocks",
+   "lane": "education",
+   "rank": 413,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "X1u2wXORqCg",
+   "title": "GoPro POV: How to Setup a Dayshift Bar - Bartending 101",
+   "channel": "Bartending Pro",
+   "lane": "education",
+   "rank": 414,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "Ub0nPImpMlM",
+   "title": "Mezcal vs Tequila - What You're Getting Wrong About These Spirits",
+   "channel": "Lui Fernandes",
+   "lane": "people",
+   "rank": 415,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "3AdX2WwYLs4",
+   "title": "Pete Holmes w/ Sam Morril & Mark Normand - We Might Be Drunk Podcast",
+   "channel": "We Might Be Drunk Podcast and Gotham Production Studios",
+   "lane": "comedy",
+   "rank": 416,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "rmIqE_VKgXw",
+   "title": "Molecular Mixology - Aviation Cocktail with Jamie Boudreau - The Cocktail Spirit with Robert Hess",
+   "channel": "Small Screen",
+   "lane": "craft",
+   "rank": 417,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "YcZiNi3Ibyw",
+   "title": "What is Jerry Seinfeld Really Like? | Godfrey on We Might Be Drunk",
+   "channel": "We Might Be Drunk - Clips",
+   "lane": "comedy",
+   "rank": 418,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "74fsCUdQAtw",
+   "title": "The Ultimate Cocktail Clarification Guide - Faster Filtration, Bigger Yield & Better Taste",
+   "channel": "Truffles On The Rocks",
+   "lane": "education",
+   "rank": 419,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "9Eg2njAliyY",
+   "title": "I Was Challenged To Hunt the BEST Cheap Bourbon In Delaware",
+   "channel": "Brewzle",
+   "lane": "people",
+   "rank": 420,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "ujDmLbXuYBI",
+   "title": "Trying Soju for the First Time",
+   "channel": "Queen Bee Mixology",
+   "lane": "people",
+   "rank": 421,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "isiwHz2S4C4",
+   "title": "Bitters 101: Everything You Need to Know About Cocktail Bitters",
+   "channel": "House of Angostura",
+   "lane": "education",
+   "rank": 422,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "rXMSpUyujKI",
+   "title": "How to shake a cocktail!",
+   "channel": "Le Barman Vous Deteste",
+   "lane": "education",
+   "rank": 423,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "b7H-Wr5qwAU",
+   "title": "CHEAP versus EXPENSIVE Whisky - Gani inaweza?",
+   "channel": "1890 Motion",
+   "lane": "people",
+   "rank": 424,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "DFNIUXaZ3pY",
+   "title": "World Class Bartender of the Year 2014",
+   "channel": "World Class Netherlands",
+   "lane": "craft",
+   "rank": 425,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "Y6ZH5Cx4f7o",
+   "title": "Simone Caporale - Artesian - Cocktail recipe",
+   "channel": "diffordsguide",
+   "lane": "education",
+   "rank": 426,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "WEC8CSVd-8w",
+   "title": "How to drink whiskey like a sir",
+   "channel": "J D",
+   "lane": "education",
+   "rank": 427,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "QR3iGlbheEU",
+   "title": "Whiskey for beginners. An explanation of different types of whiskey",
+   "channel": "Winetasters Choice",
+   "lane": "education",
+   "rank": 428,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "ydzWuY1uiWM",
+   "title": "How To MAKE SIMPLE SYRUP & Rich Syrup For Cocktails",
+   "channel": "Glen And Friends Cooking",
+   "lane": "education",
+   "rank": 429,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "eHRP6lqYqk8",
+   "title": "The Decay Of TikTok's Unhinged User | Michelle the Bartender",
+   "channel": "RKH Media",
+   "lane": "craft",
+   "rank": 430,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "BGhAjld2D8M",
+   "title": "Bartender Reacts To \"How To Mix Every Cocktail\" On Epicurious",
+   "channel": "MikeMGTV",
+   "lane": "people",
+   "rank": 431,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "NnC8fdGhRWk",
+   "title": "Inside The Best Bar In The World: Lyaness | Forbes",
+   "channel": "Forbes",
+   "lane": "craft",
+   "rank": 432,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "dbBvhrZVIwE",
+   "title": "Kenyan's Try Vodka from Ukraine! Pervak!",
+   "channel": "1890 Motion",
+   "lane": "people",
+   "rank": 433,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "MxIZKqRHuI0",
+   "title": "I Tried NYC's Top 5 Most SECRET Speakeasy Bars",
+   "channel": "Taylor Bell",
+   "lane": "craft",
+   "rank": 434,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "Q17pGeUsQQY",
+   "title": "The Barstool Summer Cocktail Competition",
+   "channel": "Barstool Sports",
+   "lane": "craft",
+   "rank": 435,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "L0jkoUp_cWw",
+   "title": "Advanced Techniques - Sous Vide Infusions",
+   "channel": "Cocktail Chemistry",
+   "lane": "education",
+   "rank": 436,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "YTvx11Fsq9g",
+   "title": "Absinthe  (whisky review 300)",
+   "channel": "thewhiskybothy",
+   "lane": "people",
+   "rank": 437,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "8Apm6ExGj5M",
+   "title": "Negroni - Evolution of the #1 Cocktail in the World!",
+   "channel": "Cocktail Time with Kevin Kos",
+   "lane": "education",
+   "rank": 438,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "51yxFdWI7WI",
+   "title": "How to make The Martini",
+   "channel": "BarTalk&Cocktails",
+   "lane": "education",
+   "rank": 439,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "okWymPwPj5s",
+   "title": "Peaceful Stir & Build Cocktails",
+   "channel": "빠슐랭Barchelin",
+   "lane": "craft",
+   "rank": 440,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "Ogo8SduaNIE",
+   "title": "Inside the MOST EXPENSIVE Bourbon Collection We've Ever Seen",
+   "channel": "Whiskeyland TV",
+   "lane": "people",
+   "rank": 441,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "dWe_YFc6u4k",
+   "title": "NYC Nightlife Guide: BEST Rooftop & Cocktail Bars 2024!",
+   "channel": "Jon Barr",
+   "lane": "education",
+   "rank": 442,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "O_Gtkfw7zwE",
+   "title": "My 15 Essential Scotches to Start a Collection for Beginners",
+   "channel": "First Phil Whisky",
+   "lane": "education",
+   "rank": 443,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "eqAHKniJ50w",
+   "title": "20 Things Great Bartenders Know How to Do",
+   "channel": "Dave Allred TheRealBarman (Bar Patrol)",
+   "lane": "education",
+   "rank": 444,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "JHAS9W1H14Y",
+   "title": "Reacting To TikTok Cocktails You Submitted",
+   "channel": "MikeMGTV",
+   "lane": "people",
+   "rank": 445,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "S4GUQIIkFe0",
+   "title": "4 Comedians on Drinking (Jim Jefferies, Andrew Santino, Taylor Tomlinson, Sam Morril)",
+   "channel": "Neal Brennan",
+   "lane": "comedy",
+   "rank": 446,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "yspr9e-sFrQ",
+   "title": "Trying Most Expensive Whisky | Cheers! By The Urban Guide",
+   "channel": "Cheers! By The Urban Guide",
+   "lane": "people",
+   "rank": 447,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "D7XHFyHyNWc",
+   "title": "Charlotte Ritchie, Joel Dommett, and Rob Beckett on Drunk History",
+   "channel": "IsThisAStep",
+   "lane": "comedy",
+   "rank": 448,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "p3NZXdErj_Y",
+   "title": "Irish People Try WORLD's STRONGEST ALCOHOL For First Time!! - (( Polish Spirytus '192 PROOF' ))",
+   "channel": "AreYaHavingThat",
+   "lane": "people",
+   "rank": 449,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "iovvdos0XRA",
+   "title": "How to make The perfect Margarita cocktail - Masterclass",
+   "channel": "Behind the Bar",
+   "lane": "education",
+   "rank": 450,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "_nQukqCl7IA",
+   "title": "Irish People Taste Test 'ABSINTHE' For The First Time!! - (110% Proof)",
+   "channel": "AreYaHavingThat",
+   "lane": "people",
+   "rank": 451,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "LHDeK_5lzG0",
+   "title": "A Week in my Bartending Life Making 10 000$ per Month !!!",
+   "channel": "David Blake Cocktails",
+   "lane": "craft",
+   "rank": 452,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "IGUx1P7M1To",
+   "title": "Trying India's BEST SELLING VODKA | Cheers! By The Urban Guide",
+   "channel": "Cheers! By The Urban Guide",
+   "lane": "people",
+   "rank": 453,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "GY7Fi2s-27A",
+   "title": "Caribbeans Try Each Other's RUM PUNCH !",
+   "channel": "Cooking.withnyc",
+   "lane": "people",
+   "rank": 454,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "dFyWBlbBed0",
+   "title": "DRUNK STORIES WITH TIPSYBARTENDER!",
+   "channel": "Simple Pickup 2",
+   "lane": "comedy",
+   "rank": 455,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "0QZe7AB7P9I",
+   "title": "5 Cocktail Garnishes  - How to make amazing cocktail garnishes",
+   "channel": "Truffles On The Rocks",
+   "lane": "education",
+   "rank": 456,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "p5KMktDkkrU",
+   "title": "Best Bartending | World Record Holders | Flair Mania Bartending #shorts #cocktails | kavita Medar",
+   "channel": "Flair Mania Bartending Academy in India",
+   "lane": "craft",
+   "rank": 457,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "RooM6PjpQz0",
+   "title": "Scary story from a closing bartender when I used to bartend in charlotte NC #bartenderstories",
+   "channel": "Michelle The Bartender",
+   "lane": "comedy",
+   "rank": 458,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "qK3oL4uCR7w",
+   "title": "Liquor| Basics 101",
+   "channel": "RockstarBarGirl",
+   "lane": "education",
+   "rank": 459,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "GHYGPB2Cafc",
+   "title": "The BEST $30 Bourbon Money Can Buy",
+   "channel": "Brewzle",
+   "lane": "education",
+   "rank": 460,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "1M2RbRaleHk",
+   "title": "Finding The Best Flavoured Vodka | Ft. Neeraj | Cheers! By The Urban Guide",
+   "channel": "Cheers! By The Urban Guide",
+   "lane": "education",
+   "rank": 461,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "CeriC1_asNs",
+   "title": "POV - asmr | Tiki Drinks Part 2 | Bartender at work | First Person",
+   "channel": "George Bodistean",
+   "lane": "craft",
+   "rank": 462,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "by5j-Jn3eK8",
+   "title": "KASH'S DRINKING PROBLEM | STAND UP COMEDY",
+   "channel": "Sammy Obeid",
+   "lane": "comedy",
+   "rank": 463,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "b0EynGzoouw",
+   "title": "Ultimate Guide to Making Cocktails & Bartending",
+   "channel": "Lui Fernandes",
+   "lane": "education",
+   "rank": 464,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "wGZ6VlKv-vE",
+   "title": "Americans Try Foreign Whiskey",
+   "channel": "Mixed Up with Brewzle",
+   "lane": "people",
+   "rank": 465,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "8fbzmbkv3lA",
+   "title": "1 Minute Mixology Competition I Famous Movie Cocktails (ft. Big Lebowski, Zodiac)",
+   "channel": "REACT",
+   "lane": "people",
+   "rank": 466,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "JgIIL1Rmpd0",
+   "title": "All About Scotch || Whiskey for Dummies",
+   "channel": "Bourbon Moth Woodworking",
+   "lane": "education",
+   "rank": 467,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "HtH3CJopAY4",
+   "title": "Best Way to Drink Whisky | How to drink Whisky | The Whiskeypedia",
+   "channel": "The Whiskeypedia",
+   "lane": "education",
+   "rank": 468,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "qfDaybIfSnM",
+   "title": "Tokyo Cocktail Tour - Eric Meal Time #397",
+   "channel": "Ericsurf6",
+   "lane": "craft",
+   "rank": 469,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "SBe-h-Mc82s",
+   "title": "2 Amateurs Attempt Professional Bartending",
+   "channel": "SPICY FRUIT",
+   "lane": "people",
+   "rank": 470,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "9bvEJx4PsUM",
+   "title": "13 Most Popular YouTube Cocktails!!",
+   "channel": "Behind the Bar",
+   "lane": "education",
+   "rank": 471,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "upwAIlUPTBU",
+   "title": "A Connaught Martini cocktail with Stanley Tucci",
+   "channel": "Ago Perrone and Giorgio Bargiani",
+   "lane": "craft",
+   "rank": 472,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "Hf8g55fW7gw",
+   "title": "Tom Kerridge and The ONLY 2 Michelin Star Pub in The World : The Hand & Flowers",
+   "channel": "The Staff Canteen",
+   "lane": "craft",
+   "rank": 473,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "XF8bZ4wrI6g",
+   "title": "Kolkata Bars: Then vs Now | Heritage Bar vs Modern Cocktail Bar | Foodka",
+   "channel": "Foodka Series",
+   "lane": "people",
+   "rank": 474,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "axCbxWXggoc",
+   "title": "A Master Sommelier blind tastes 6 wines against one of the world's greatest tasters",
+   "channel": "SOMM TV",
+   "lane": "people",
+   "rank": 475,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "65IWyTJNgsg",
+   "title": "American People Try Indian Whisky!",
+   "channel": "OUR STUPID REACTIONS",
+   "lane": "people",
+   "rank": 476,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "Nu2tm-6zmu4",
+   "title": "Bartender Reacts To 5 Minute Crafts Cocktails",
+   "channel": "MikeMGTV",
+   "lane": "people",
+   "rank": 477,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "usLzgwFPZPE",
+   "title": "How Alcohol Destroys Your Body | Best vs Worst Drinks Explained @mixitupwithmendi",
+   "channel": "Riya Upreti",
+   "lane": "people",
+   "rank": 478,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "bdCeuQfBHBA",
+   "title": "\"I Would've Introduced Alcohol Earlier\": Jim Gaffigan on Parenting Teenagers | The Tonight Show",
+   "channel": "The Tonight Show Starring Jimmy Fallon",
+   "lane": "comedy",
+   "rank": 479,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "lZmcD6xTRKw",
+   "title": "TOP 10 Most Popular Cocktails in the WORLD!",
+   "channel": "Just Have a Drink",
+   "lane": "craft",
+   "rank": 480,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "Ilta1hMAuJc",
+   "title": "Margarita - How to Make the No. 1 Classic Tequila Cocktail",
+   "channel": "Distinguished Spirits",
+   "lane": "education",
+   "rank": 481,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "jQQL8FfkW8c",
+   "title": "My Beginners Guide to Whisky Distillation",
+   "channel": "First Phil Whisky",
+   "lane": "education",
+   "rank": 482,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "FpLi6I2GAzQ",
+   "title": "Home Bar Setup Guide 🥃 | Must-Have Tools, Glassware & Alcohol for Every Budget!",
+   "channel": "Mix it up with Mendi",
+   "lane": "education",
+   "rank": 483,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "ZQs2e5dVo-k",
+   "title": "Beware India’s Whisky Drinking Rickshaw Driver! 🇮🇳",
+   "channel": "Wendall",
+   "lane": "people",
+   "rank": 484,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "hgQ7VpHHZcc",
+   "title": "Jessica Knappett and Joe Lycett on Drunk History",
+   "channel": "IsThisAStep",
+   "lane": "comedy",
+   "rank": 485,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "IXbAMz0yYO8",
+   "title": "ASMR - Bartender Makes Cocktails",
+   "channel": "Monotonic ASMR",
+   "lane": "craft",
+   "rank": 486,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "IcLR4epNtFo",
+   "title": "Cocktail Hacks Everyone Should Know | Budget Drinks at Home",
+   "channel": "Spice Gal Show",
+   "lane": "education",
+   "rank": 487,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "-926ORYLU0g",
+   "title": "Mainstream Gin Comparison!",
+   "channel": "Bobby Freeman",
+   "lane": "people",
+   "rank": 488,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "ASEbM8M0Gig",
+   "title": "HOW RUM IS MADE - From Sugarcane to Spirit - 3D Animation",
+   "channel": "EXPLANATION-AVENUE - 3D Animations by Oliver Ende",
+   "lane": "education",
+   "rank": 489,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "Vv5Ip56Yj6Y",
+   "title": "BLIND TASTING THE 10 CHEAPEST VODKAS WE COULD FIND!",
+   "channel": "Liquor Store 352",
+   "lane": "people",
+   "rank": 490,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "OdD4lzFFJuk",
+   "title": "Comedian's Get Nervous Around Bill Burr | We Might Be Drunk Podcast",
+   "channel": "We Might Be Drunk - Clips",
+   "lane": "comedy",
+   "rank": 491,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "tzxE58se0RI",
+   "title": "Shaker Showdown: The Best Cocktail Shaker for Your Bar",
+   "channel": "Liber & Co.",
+   "lane": "education",
+   "rank": 492,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "C-T61d99dT4",
+   "title": "Before the Rush... 26 Minutes of POV Cocktail Making",
+   "channel": "ChrisTender",
+   "lane": "craft",
+   "rank": 493,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "pABPqozyZCA",
+   "title": "Irish Whiskey: The Definitive Beginner Buying Guide",
+   "channel": "The Whiskey Dictionary",
+   "lane": "education",
+   "rank": 494,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "QybaN5dFLbw",
+   "title": "Aussies Try Each Other's Favourite Cocktails",
+   "channel": "BuzzFeedOz",
+   "lane": "people",
+   "rank": 495,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "UGUnoBugFrk",
+   "title": "Simone Caporale - Artesian Bar - Cocktail recipe",
+   "channel": "diffordsguide",
+   "lane": "education",
+   "rank": 496,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "_s3limpgCTA",
+   "title": "Mocktails Masterclass - Improve Your Non-Alcoholic Cocktails",
+   "channel": "Cocktail Time with Kevin Kos",
+   "lane": "education",
+   "rank": 497,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "3GYzdO1_eJA",
+   "title": "The Difficulty of Clean Stand Up Comedy | We Might Be Drunk",
+   "channel": "We Might Be Drunk - Clips",
+   "lane": "comedy",
+   "rank": 498,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "rj1zpRlAkUs",
+   "title": "The Old-Fashioned Homemaking Habit That Changed My Life",
+   "channel": "The Farmer’s Wife",
+   "lane": "education",
+   "rank": 499,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "KnpjiUPOhj4",
+   "title": "Top 10 Cocktails & Aperitifs in Paris (EXPLAINED)",
+   "channel": "Les Frenchies",
+   "lane": "education",
+   "rank": 500,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "QSeBOh87_Mo",
+   "title": "Whiskey Noob Tries Whiskey for the FIRST Time!",
+   "channel": "SLB Drinks",
+   "lane": "people",
+   "rank": 501,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "CihJG_nM9Xo",
+   "title": "Best 18 year old Scotch | Crazy No Holds Barred BLIND Showdown! | Curiosity Public",
+   "channel": "Curiosity Public",
+   "lane": "people",
+   "rank": 502,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "a6vxmNs6B-s",
+   "title": "Most Bizarre Drinking Games 🍸 - Tosh.0",
+   "channel": "Tosh.0",
+   "lane": "comedy",
+   "rank": 503,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "gQ8Sc5_N9c4",
+   "title": "How To Start Bartending With No Experience! (Don't Pay For School) | SinCityBartender",
+   "channel": "SinCityBartender",
+   "lane": "education",
+   "rank": 504,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "a9XzTk4sqfY",
+   "title": "Mark Normand's AWKWARD Meeting with Larry David | We Might Be Drunk",
+   "channel": "We Might Be Drunk - Clips",
+   "lane": "comedy",
+   "rank": 505,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "Zl2n7qj_TgM",
+   "title": "AI Mixologist vs. Human Bartender: Can You Taste the Difference? | WIRED",
+   "channel": "WIRED",
+   "lane": "people",
+   "rank": 506,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "RtFBIwUTYEY",
+   "title": "Make Your Own Cocktail Bitters + Botanica Unboxing",
+   "channel": "Cocktail Time with Kevin Kos",
+   "lane": "education",
+   "rank": 507,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "jvxFsY6f39o",
+   "title": "Easy Cocktails at Home: Fresh Strawberry Daiquiri",
+   "channel": "Liquor Lab Events",
+   "lane": "education",
+   "rank": 508,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "M5SDijWeVKM",
+   "title": "5 easy cocktails with Vodka | Cosmopolitan Recipe | Appletini Recipe | Vodka cocktails at home",
+   "channel": "Mix it up with Mendi",
+   "lane": "education",
+   "rank": 509,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "EEjznG3QqX8",
+   "title": "The Perfect Daiquiri (Rum: Part One)",
+   "channel": "The Modern Rogue",
+   "lane": "education",
+   "rank": 510,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "6jhLpSlFfd8",
+   "title": "YOU ONLY NEED THESE 4 MOVES!",
+   "channel": "Tom Dyer Flair Bartender",
+   "lane": "education",
+   "rank": 511,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "Qpg4hw5M_ec",
+   "title": "Cheap Liquor, High Quality: 5 Best Value for Money Bottles",
+   "channel": "MBs Mancave",
+   "lane": "education",
+   "rank": 512,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "ZQLACcjNDss",
+   "title": "The Most RIDICULOUS Drinking Stories 😂🍺 | Would I Lie To You?",
+   "channel": "Would I Lie To You? and The Laugh Track",
+   "lane": "comedy",
+   "rank": 513,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "m8KwSxsC0XA",
+   "title": "10 easy cocktail recipes   how to make easy cocktails at home",
+   "channel": "Truffles On The Rocks",
+   "lane": "education",
+   "rank": 514,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "G-6u1M9g_kY",
+   "title": "All about vermouth! || Everything you need to know about vermut!",
+   "channel": "The Gastro Traveler",
+   "lane": "education",
+   "rank": 515,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "N18NxAH27E0",
+   "title": "Drinking Everclear for the First Time (100k Sub Special)",
+   "channel": "jacobjonesMONEY",
+   "lane": "people",
+   "rank": 516,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "PmvWj-DekEA",
+   "title": "What I bring when Bartending Private Events",
+   "channel": "A Bar Above",
+   "lane": "craft",
+   "rank": 517,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "NVZYW891GM0",
+   "title": "Where's Jamie Drinking? | American Bar, The Savoy, London",
+   "channel": "Jamie Oliver - Drinks",
+   "lane": "craft",
+   "rank": 518,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "y2Q3C0LjtXE",
+   "title": "Bartenders, What Cool Things Did You See At the Bar?",
+   "channel": "UE Stories",
+   "lane": "comedy",
+   "rank": 519,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "5UW2FDUqgpw",
+   "title": "Gin Guide: Every Style EXPLAINED!",
+   "channel": "Tim and Tonic",
+   "lane": "education",
+   "rank": 520,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "2eeojRkL_iY",
+   "title": "Must Watch FOR NEWBIES- *FULL REVIEW* Don't Drink Shit Tequila. Here's Why...And Some Better Choices",
+   "channel": "Long Island Lou Tequila",
+   "lane": "people",
+   "rank": 521,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "m69h5KAVF9U",
+   "title": "Margarita and Edu discover Hong Kong's award-winning restaurants and bars | The Crawl Hong Kong",
+   "channel": "Metro.Style",
+   "lane": "craft",
+   "rank": 522,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "jG0CNf6rKRI",
+   "title": "4 Orange Skewer Cocktail Garnish Ideas",
+   "channel": "O.D.A.D",
+   "lane": "craft",
+   "rank": 523,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "8JL-NawQdZs",
+   "title": "MUST TRY Cocktails in LAS VEGAS",
+   "channel": "Norma Geli",
+   "lane": "people",
+   "rank": 524,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "oDONWbTmVxA",
+   "title": "Mastering Italian Mixology: 5 Classic Italian COCKTAILS",
+   "channel": "Pasta Grammar",
+   "lane": "education",
+   "rank": 525,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "-HKo5zCrxZ4",
+   "title": "How to drink whiskey? 3 ways to drink whisky? | How are people drinking their whisky wrong? |",
+   "channel": "Mix it up with Mendi",
+   "lane": "education",
+   "rank": 526,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "wP9Rv3pkMyI",
+   "title": "Drinking Rules - Ron Taylor Stand-up Comedy",
+   "channel": "Comedy Dynamics",
+   "lane": "comedy",
+   "rank": 527,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "Xq6O6r9_cG4",
+   "title": "Royal Caribbean's Unlimited Drink Package. Day Drinking Starts Early",
+   "channel": "Going Out With Paul and Amy",
+   "lane": "comedy",
+   "rank": 528,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "JU7PAiUPC4g",
+   "title": "Learn Everything You Need To Know About Bourbon in 15 Minutes",
+   "channel": "Barrel Hunters",
+   "lane": "education",
+   "rank": 529,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "uKAgJAm5oKs",
+   "title": "How to Make a Negroni",
+   "channel": "Preppy Kitchen",
+   "lane": "education",
+   "rank": 530,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "PU_J95V8hjU",
+   "title": "How to Setup Real Cocktail Bar at Home on a Budget | Vlad SlickBartender",
+   "channel": "Vladflix",
+   "lane": "education",
+   "rank": 531,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "QuOk7JO-A1s",
+   "title": "Dive Bar Bartenders , What's Your Horror Story?",
+   "channel": "On Tap Studios",
+   "lane": "comedy",
+   "rank": 532,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "Mtpi1ESRPds",
+   "title": "New Orleans' best cocktails: The Margarita",
+   "channel": "Keith Marszalek",
+   "lane": "education",
+   "rank": 533,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "CPGM3NuGx4o",
+   "title": "Behind the Stills: Philosophy of Scotch",
+   "channel": "Scotch Academy",
+   "lane": "education",
+   "rank": 534,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "DYm9BidnF4w",
+   "title": "How to Make a Flavour Essence for Soda Syrup and Cocktails",
+   "channel": "Art of Drink",
+   "lane": "education",
+   "rank": 535,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "Dz51-kiVQVI",
+   "title": "Korean Girls Try the U.S. STRONGEST Liquor for the First Time | 𝙊𝙎𝙎𝘾",
+   "channel": "OSSC",
+   "lane": "people",
+   "rank": 536,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "g2XSEFrXmRs",
+   "title": "Drunk at the Zoo",
+   "channel": "Josh Wolf",
+   "lane": "comedy",
+   "rank": 537,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "fvS4blQkVxg",
+   "title": "Bourbon Tasting 101 - How To Improve Tasting & Nosing",
+   "channel": "SLB Drinks",
+   "lane": "education",
+   "rank": 538,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "PP6fZrba-64",
+   "title": "The Best Speakeasy Bars in Las Vegas - MUST VISIT🍸",
+   "channel": "Vegas Must Try",
+   "lane": "craft",
+   "rank": 539,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "fd0Tkmqthq4",
+   "title": "How to Make a Growing Old, the Rule-Breaking Cocktail That Negroni Fans Will Love",
+   "channel": "Robb Report",
+   "lane": "education",
+   "rank": 540,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "3LmIFSSQ0gE",
+   "title": "A Beginners Guide To Gin!",
+   "channel": "Bobby Freeman",
+   "lane": "education",
+   "rank": 541,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "izCHNg34ZoA",
+   "title": "RUM - Everything you need to know in 3 minutes...ish | Bootsy Guide",
+   "channel": "Bootsy Brogan",
+   "lane": "education",
+   "rank": 542,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "b9iNo-JLDsU",
+   "title": "Jon Arvid Rosengren - 3rd Station in finals of 2016 World Best Sommelier",
+   "channel": "wine.co.za",
+   "lane": "people",
+   "rank": 543,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "VAmFCbBg6zk",
+   "title": "5 Bottles Of Rum To Kickstart Your Home Rum Bar",
+   "channel": "Make and Drink",
+   "lane": "education",
+   "rank": 544,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "8UwYAlO2yCE",
+   "title": "The Best Batched Margarita Recipe for Parties",
+   "channel": "A Bar Above",
+   "lane": "education",
+   "rank": 545,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "QD_T0R-V7FQ",
+   "title": "The Top 8 Liqueurs You Need for Your Home Bar",
+   "channel": "Liber & Co.",
+   "lane": "education",
+   "rank": 546,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "AuHs2ni0hls",
+   "title": "Stocking Our Home Bar with $2,000 Worth of Alcohol!",
+   "channel": "Jaret Campisi",
+   "lane": "education",
+   "rank": 547,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "YNEps3r6OKM",
+   "title": "Negroni - The History of the 3 Ingredient Cocktail and How to Make It",
+   "channel": "Distinguished Spirits",
+   "lane": "education",
+   "rank": 548,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "GzyjA9nnOT8",
+   "title": "How to Drink Vermouth (& Pair it with Tapas) Like a Local",
+   "channel": "Spain Revealed",
+   "lane": "education",
+   "rank": 549,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "G45BiiwF49g",
+   "title": "How Bad is this Bartender?  COULD THIS BE YOUR BAR?",
+   "channel": "Barfly Sms",
+   "lane": "craft",
+   "rank": 550,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "lNF4M14B2HY",
+   "title": "This Is The Best Tequila For A Margarita",
+   "channel": "Mixed Up with Brewzle",
+   "lane": "people",
+   "rank": 551,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "-uRUDhy_p68",
+   "title": "What is Campari? - History, Use, Taste Test - Inebrious",
+   "channel": "Inebrious",
+   "lane": "people",
+   "rank": 552,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "lcF3eo8ItHU",
+   "title": "LIGHT BEER BLIND TASTING CHALLENGE!",
+   "channel": "Liquor Store 352",
+   "lane": "people",
+   "rank": 553,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "t3NQf3hXOX8",
+   "title": "How to Cost Out a Cocktail",
+   "channel": "A Bar Above",
+   "lane": "education",
+   "rank": 554,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "_bq544rzk0k",
+   "title": "Best Blanco Tequila | Blind Challenge | Curiosity Public",
+   "channel": "Curiosity Public",
+   "lane": "people",
+   "rank": 555,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "_qXoJApK8VM",
+   "title": "How to Make James Bond Martini - Hindi | James Bond Martini Recipe | Cocktails India | Martini",
+   "channel": "Cocktails INDIA",
+   "lane": "education",
+   "rank": 556,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "Zfrjr-OQxKk",
+   "title": "Top 10 Cocktails Made Famous by Film and TV",
+   "channel": "WatchMojo.com",
+   "lane": "people",
+   "rank": 557,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "Sx9lzriyGs4",
+   "title": "A Whiskey NOOB Picked Our Blind – Total Chaos!",
+   "channel": "SLB Drinks",
+   "lane": "people",
+   "rank": 558,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "LC4-VtILnA4",
+   "title": "The 'WORST' Part About Bartending...",
+   "channel": "Kobo",
+   "lane": "comedy",
+   "rank": 559,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "mcQNMkgWGjY",
+   "title": "❓ What are bitters? How are they used in a cocktail? Amari, Amaro, Non-Potable & More",
+   "channel": "Common Man Cocktails",
+   "lane": "education",
+   "rank": 560,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "v-ObB8T5ZrA",
+   "title": "How to Make Simple Syrup for Cocktails",
+   "channel": "Art of Drink",
+   "lane": "education",
+   "rank": 561,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "Hmxh0r6TilQ",
+   "title": "Jeet Rana making cocktails and representing India - Diageo World Class 2016 at Miami",
+   "channel": "Cocktail Jockey",
+   "lane": "craft",
+   "rank": 562,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "rOOYNIxOg5U",
+   "title": "Every Whiskey Explained in 10 Minutes",
+   "channel": "Decoded Barrel",
+   "lane": "education",
+   "rank": 563,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "DDf_72KrhuY",
+   "title": "A Martini Tour of New York City | The New Yorker",
+   "channel": "The New Yorker",
+   "lane": "craft",
+   "rank": 564,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "9SBgtojbPMo",
+   "title": "The best Raspberry Syrup for Cocktails and how to make it",
+   "channel": "BarTalk&Cocktails",
+   "lane": "education",
+   "rank": 565,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "N4x3SFSBu4c",
+   "title": "You NEED these Spirits to start your home bar",
+   "channel": "SLB Drinks",
+   "lane": "education",
+   "rank": 566,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "dnL29MbR0-k",
+   "title": "Confessions of a Bartender // Animated Story",
+   "channel": "Manta Animates",
+   "lane": "comedy",
+   "rank": 567,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "dlkGlmTokjU",
+   "title": "EU4 Karaman Guide I Early Wars & Forming Rum",
+   "channel": "Ludi et Historia",
+   "lane": "education",
+   "rank": 568,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "6ZuQsDhU3T0",
+   "title": "HOW TO MAKE NEGRONI",
+   "channel": "Rasmus Bartender",
+   "lane": "education",
+   "rank": 569,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "zx2ZuDlm8EA",
+   "title": "ROCKIN THURSDAY NIGHT!!! | Made over 500$!! (Crazy asmr Night Shift)",
+   "channel": "David Blake Cocktails",
+   "lane": "craft",
+   "rank": 570,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "piqeQSYIkwA",
+   "title": "What is Vermouth? How to Drink Vermouth",
+   "channel": "Steve the Barman",
+   "lane": "education",
+   "rank": 571,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "_i4I_R5813c",
+   "title": "Best Bars in London | 16 London Cocktail Bars you HAVE TO visit!",
+   "channel": "Sophie In Kent",
+   "lane": "craft",
+   "rank": 572,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "rLMWjN18rDE",
+   "title": "Make the perfect Gin & Tonic | History of Gin | History of Tonic | Gin &Tonic 5 ways |",
+   "channel": "Mix it up with Mendi",
+   "lane": "education",
+   "rank": 573,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "2GkyS3PN8Pg",
+   "title": "Korean flavors unleashed/ trying soju for the first time",
+   "channel": "Praveen Salal",
+   "lane": "people",
+   "rank": 574,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "8Zt0ykSsGG8",
+   "title": "Bartenders, What Are the Worst Drunken Mistakes You’ve Seen?",
+   "channel": "On Tap Studios",
+   "lane": "comedy",
+   "rank": 575,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "dKI8IEnqvbU",
+   "title": "Scotch Whisky: Explained",
+   "channel": "VisitScotland",
+   "lane": "education",
+   "rank": 576,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "CgUNCnEALw8",
+   "title": "Transforming Classic Cocktails With Coffee",
+   "channel": "Morgan Eckroth",
+   "lane": "craft",
+   "rank": 577,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "5REbr45A9mU",
+   "title": "Mixology Secrets: 12 COCKTAIL SYRUP Recipes",
+   "channel": "Rob's Home Bar",
+   "lane": "craft",
+   "rank": 578,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "paCHf4WIRIA",
+   "title": "The top 5 GREATEST Old Fashioned variations! 🥃",
+   "channel": "Johnny Drinks",
+   "lane": "education",
+   "rank": 579,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "8IGD5yHeqhY",
+   "title": "Japanese Bartending with Hidetsugu Ueno",
+   "channel": "Frantzis TV",
+   "lane": "craft",
+   "rank": 580,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "hKcYb0w3U-4",
+   "title": "Cheap Scotch Whisky Collection @nilgirikashyap #whiskey",
+   "channel": "nilgiri kashyap",
+   "lane": "education",
+   "rank": 581,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "-q5wbINk8Zk",
+   "title": "Inside of New York's Best Japanese Speakeasy Bars",
+   "channel": "Flaviar",
+   "lane": "craft",
+   "rank": 582,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "g7CdENmNIrs",
+   "title": "THE BEST PINEAPPLE SYRUP RECIPE! For cocktails | BAR TALK AND COCKTAILS",
+   "channel": "BarTalk&Cocktails",
+   "lane": "education",
+   "rank": 583,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "LemzTsw4Xmo",
+   "title": "What's the best GIN on a budget? (Liquor under $25)",
+   "channel": "Johnny Drinks",
+   "lane": "education",
+   "rank": 584,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "Mq8q-BSheAA",
+   "title": "👉 Relatable Stand-Up Comedy | Swati Sachdeva | Funny Story About Drunk Friends",
+   "channel": "ShotPeComedy",
+   "lane": "comedy",
+   "rank": 585,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "sTM6xzUOxOM",
+   "title": "What is DARK RUM and which of these 16 dark rums is best?",
+   "channel": "Make and Drink",
+   "lane": "education",
+   "rank": 586,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "BihHHhRyyyo",
+   "title": "How to drink Scotch Whisky | स्कॉच व्हिस्की पीने का सही तरीका @nilgirikashyap",
+   "channel": "nilgiri kashyap",
+   "lane": "education",
+   "rank": 587,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "J-0alVyG_kw",
+   "title": "Best Reposado Tequila | Blind Challenge | Curiosity Public",
+   "channel": "Curiosity Public",
+   "lane": "people",
+   "rank": 588,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "plFHbB11Ulg",
+   "title": "I Tried Every Weird Cocktail Bar in LONDON",
+   "channel": "Ed Chapman",
+   "lane": "craft",
+   "rank": 589,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "YUZvIk2670A",
+   "title": "Best Bar Guide to Singapore with Erwan",
+   "channel": "FEATR",
+   "lane": "education",
+   "rank": 590,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "rHKR1UEkmH8",
+   "title": "15 Famous Tequila Brands Ranked Worst to Best",
+   "channel": "Bottled Bites",
+   "lane": "people",
+   "rank": 591,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "GT8jyaPNYjs",
+   "title": "How to Batch Delicious Cocktails for a Party | The Cocktail Lab | America's Test Kitchen",
+   "channel": "America's Test Kitchen",
+   "lane": "education",
+   "rank": 592,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "rV5aCTp1HhA",
+   "title": "We Tried EVERY Absolut Vodka Flavor",
+   "channel": "Joss and Janik",
+   "lane": "people",
+   "rank": 593,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "1xj2Azh8XHg",
+   "title": "Batched Cocktail Recipes (Negroni & Cosmopolitan) | Jamie Oliver & Rich Hunt",
+   "channel": "Jamie Oliver - Drinks",
+   "lane": "education",
+   "rank": 594,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "2ykfW-iUZ18",
+   "title": "5 Methods For Infusing Spirits",
+   "channel": "Adventures With Alchemy",
+   "lane": "education",
+   "rank": 595,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "fnibVLy_j0E",
+   "title": "TRYING THE CRAZIEST COCKTAILS IN LONDON *WARNING*",
+   "channel": "OliWhiteVlogs",
+   "lane": "people",
+   "rank": 596,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "3fpIPcq58tk",
+   "title": "How to Batch (Almost) Any Cocktail | Serious Eats",
+   "channel": "Serious Eats",
+   "lane": "education",
+   "rank": 597,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "U_oofyICaoc",
+   "title": "Homemade FRUIT LIQUEUR Recipe",
+   "channel": "Rob's Home Bar",
+   "lane": "education",
+   "rank": 598,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "SUT7dBenUyY",
+   "title": "How To Make The Margarita | Cocktail Cards",
+   "channel": "Cocktail Cards",
+   "lane": "education",
+   "rank": 599,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "9t03IAN7agY",
+   "title": "My First Time - Drinking Alcohol",
+   "channel": "Over Twenty Five",
+   "lane": "people",
+   "rank": 600,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "vSo8B2k-h4g",
+   "title": "Top 5 Shots! | Bartending 101",
+   "channel": "Thirsty Bartenders",
+   "lane": "craft",
+   "rank": 601,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "6rzszSK5I10",
+   "title": "Absinthe The Show! Las Vegas !!!Adult Language!!!",
+   "channel": "Gio and JC",
+   "lane": "people",
+   "rank": 602,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "UDEde3IVyvs",
+   "title": "The Olympics the Drinking Game",
+   "channel": "funboxcomedy",
+   "lane": "comedy",
+   "rank": 603,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "9DuV0y3FVV0",
+   "title": "Rum Styles - A Guide To Rum / The More You Know",
+   "channel": "Common Man Cocktails",
+   "lane": "education",
+   "rank": 604,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "cjkq0etrqtU",
+   "title": "Meilleur sommelier du monde Best sommelier of world - winner's final - Raimonds Tomsons from Latvia",
+   "channel": "LA CHAINE DES SOMMELIERS PAR BULLES GOURMANDES",
+   "lane": "people",
+   "rank": 605,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "5uz5IodYlX0",
+   "title": "A Brief History of Mezcal",
+   "channel": "Flaviar",
+   "lane": "education",
+   "rank": 606,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "2qb8tOhOq5w",
+   "title": "Cheap Vs Expensive Whiskey Showdown!",
+   "channel": "Brewzle",
+   "lane": "people",
+   "rank": 607,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "DYKzyNZKIpw",
+   "title": "POV Bartender Summer Nights are the Best",
+   "channel": "Jesse’s Bar",
+   "lane": "craft",
+   "rank": 608,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "biWjWILm2Yo",
+   "title": "How to Cut Someone Off While Bartending - Bartender 101",
+   "channel": "Bartending Pro",
+   "lane": "education",
+   "rank": 609,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "Bp8kppYz_O0",
+   "title": "I drank alcohol for the first time",
+   "channel": "Cassie",
+   "lane": "people",
+   "rank": 610,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "P4TXdeVL9mw",
+   "title": "Build a BUDGET Beginner Bourbon Collection",
+   "channel": "ADHD Whiskey",
+   "lane": "education",
+   "rank": 611,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "EqGBJSiQIYA",
+   "title": "Best Añejo Tequila | Blind Challenge | Curiosity Public",
+   "channel": "Curiosity Public",
+   "lane": "people",
+   "rank": 612,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "g0MKZn9LK5M",
+   "title": "The Cocktail Party by T. S. Eliot - Summary and Details in Hindi",
+   "channel": "Literary Love",
+   "lane": "education",
+   "rank": 613,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "BQB5_bMTGf8",
+   "title": "Is Rum The Next Bourbon?",
+   "channel": "SLB Drinks",
+   "lane": "people",
+   "rank": 614,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "n4p2A84D-sI",
+   "title": "I Went To The Abroad In Japan Cocktail Bar",
+   "channel": "jake valianes",
+   "lane": "craft",
+   "rank": 615,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "zEpnfbtDhv8",
+   "title": "BLIND VODKA TASTING!!!",
+   "channel": "Liquor Store 352",
+   "lane": "people",
+   "rank": 616,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "X4VghXaSOHk",
+   "title": "How to Make The Best Spicy Margarita Cocktail. Drink Ingredients and Recipe.",
+   "channel": "Cocktail Club",
+   "lane": "education",
+   "rank": 617,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "wfiGRw3FgwM",
+   "title": "Dry (White) Vs. Sweet (Red) Vermouth: Which Should You Use?",
+   "channel": "Liber & Co.",
+   "lane": "people",
+   "rank": 618,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "JU4rPzwuR0o",
+   "title": "The NOT SO CRAZY TRUTH About ABSINTHE | Master Your Glass",
+   "channel": "Master Your Glass",
+   "lane": "people",
+   "rank": 619,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "9Xizioefa_E",
+   "title": "Bartender pov: I Made over 1300$ Making Cocktails for Millionaires ( this is what they drank!!! )",
+   "channel": "David Blake Cocktails",
+   "lane": "craft",
+   "rank": 620,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "L0uga4D6_Ls",
+   "title": "POV Bartender BUSY NIGHT",
+   "channel": "Jesse’s Bar",
+   "lane": "craft",
+   "rank": 621,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "XIulwxIeTaE",
+   "title": "We Tried Alcohol From Around The World Pt.2",
+   "channel": "BuzzFeed UK",
+   "lane": "people",
+   "rank": 622,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "HuOB1Z3RCW4",
+   "title": "Drunk | Rohan Desai Standup Comedy",
+   "channel": "rohubhai",
+   "lane": "comedy",
+   "rank": 623,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "Iz3vGXjGl9w",
+   "title": "GO BANANAS FOR BANANA SYRUP - Banana Syrup for Cocktails",
+   "channel": "BarTalk&Cocktails",
+   "lane": "education",
+   "rank": 624,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "p38lo5T8pbo",
+   "title": "NON $TOP FRIDAY NIGHT !! | Making Cocktails and Making Bank !! bar asmr + recipes",
+   "channel": "David Blake Cocktails",
+   "lane": "craft",
+   "rank": 625,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "D53XjAA1LhA",
+   "title": "Las Vegas Cocktail Competition– Finalists Challenge: Blind Taste Test–America’s Bartender–GQ",
+   "channel": "GQ",
+   "lane": "people",
+   "rank": 626,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "kLlgeiCfhbc",
+   "title": "Tools of the Trade | How to Win a Cocktail Competition",
+   "channel": "Jamie Oliver - Drinks",
+   "lane": "education",
+   "rank": 627,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "Dsq6hhllXxM",
+   "title": "How to Make the Perfect Martini | The Cocktail Lab | America's Test Kitchen",
+   "channel": "America's Test Kitchen",
+   "lane": "education",
+   "rank": 628,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "M3I5I-d3k1g",
+   "title": "The History of Gin",
+   "channel": "Crazy Food History",
+   "lane": "education",
+   "rank": 629,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "tx_zW20e4Io",
+   "title": "Lime it up! How to make Lime Syrup for cocktails",
+   "channel": "BarTalk&Cocktails",
+   "lane": "education",
+   "rank": 630,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "jGBAwN_1v1Y",
+   "title": "How to Make a Daiquiri",
+   "channel": "Howdini",
+   "lane": "education",
+   "rank": 631,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "X17NxjRPeb4",
+   "title": "Clarified Milk - How To Make The Best Crystal Clear Milk Punch Recipe  |  With & Without Alcohol",
+   "channel": "The Wee Pearl",
+   "lane": "education",
+   "rank": 632,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "MebRAL2jfSA",
+   "title": "How to create a HOME BAR 🍾 Essential alcohol to buy @TheDrCork",
+   "channel": "Dr. Cork",
+   "lane": "education",
+   "rank": 633,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "13sykSfrmS8",
+   "title": "Irish Girls Try ABSINTHE For The First Time",
+   "channel": "Diane Jennings",
+   "lane": "people",
+   "rank": 634,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "K77EOMsRzGQ",
+   "title": "How to make your FLAIR as SMOOTH as a WORLD CHAMPION!",
+   "channel": "Tom Dyer Flair Bartender",
+   "lane": "education",
+   "rank": 635,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "y-Gtd5Zj9OE",
+   "title": "A Brief History of Tequila",
+   "channel": "Flaviar",
+   "lane": "education",
+   "rank": 636,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "_E8q_yZuF7s",
+   "title": "I Went To The NEW Best Bar In New York City",
+   "channel": "jake valianes",
+   "lane": "craft",
+   "rank": 637,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "_7L9TMTTNyw",
+   "title": "Price Se Quality Decide Mat Karo! 🥃 Cheap vs Expensive Whisky Reality Check 🔥",
+   "channel": "Cocktails INDIA",
+   "lane": "people",
+   "rank": 638,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "XOHV1dg5B-U",
+   "title": "Bartending Basics with Rico: Simple Syrup | Absolut Drinks",
+   "channel": "ABSOLUT DRINKS",
+   "lane": "education",
+   "rank": 639,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "lhix8HaPi9M",
+   "title": "What is Rum? | Everything You Need to Know",
+   "channel": "Distiller",
+   "lane": "education",
+   "rank": 640,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "sWaL7kYH-As",
+   "title": "Exploring the Cocktail Scene of San Francisco 🍹 Best Bars in San Francisco (Drink Destinations)",
+   "channel": "Jeff Bradford",
+   "lane": "craft",
+   "rank": 641,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "tSVYVUiB8Lo",
+   "title": "The 8 MOST Essential Syrups for Tiki and Tropical Cocktails",
+   "channel": "Make and Drink",
+   "lane": "education",
+   "rank": 642,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "oBVMn9JH5zY",
+   "title": "How To Make The Perfect Bourbon Old Fashioned | Booze On The Rocks",
+   "channel": "Booze On The Rocks",
+   "lane": "education",
+   "rank": 643,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "UqH8i6E8iP8",
+   "title": "Budget Irish Whiskey VS Expensive Irish Whiskey + Blind Tasting (Whiskey Beast Trial 1)",
+   "channel": "Whiskey Vault",
+   "lane": "people",
+   "rank": 644,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "4foBuPEEoEM",
+   "title": "World Class Bartender of the Year 2019: Top 8 in the Final Challenge",
+   "channel": "World Class",
+   "lane": "people",
+   "rank": 645,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "kNQz6geyaNk",
+   "title": "Your Guide to NYC’s Best Drinks: 15 Top Cocktail Bars to Try",
+   "channel": "Through My Lens",
+   "lane": "education",
+   "rank": 646,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "_JQDAtzZRBc",
+   "title": "Designing Your Own Signature Cocktail 🍹",
+   "channel": "The Modern Rogue",
+   "lane": "craft",
+   "rank": 647,
+   "addedAt": "2026-08-04"
+  },
+  {
+   "id": "vMyjNBMfopE",
+   "title": "People Try Alcohol For The First Time",
+   "channel": "Facts.",
+   "lane": "people",
+   "rank": 648,
+   "addedAt": "2026-07-27"
+  },
+  {
+   "id": "HdMzpiuA9o4",
+   "title": "21 Year Olds Try Drinks For The First Time",
+   "channel": "People Vs Food",
+   "lane": "people",
+   "rank": 649,
+   "addedAt": "2026-07-27"
+  },
+  {
+   "id": "2wcGdI78dIM",
+   "title": "World's Best Samurai Bartender Cuts Ice with a Sword",
+   "channel": "Rob Ilas",
+   "lane": "craft",
+   "rank": 650,
+   "addedAt": "2026-07-27"
+  },
+  {
+   "id": "HFJ2a-3mmWc",
+   "title": "How the World's Best Bar Turns Food Into Cocktails",
+   "channel": "Bon Appétit",
+   "lane": "craft",
+   "rank": 651,
+   "addedAt": "2026-07-27"
+  },
+  {
+   "id": "TPQdwotfaQE",
+   "title": "How To Create Craft Cocktails for The Dead Rabbit",
+   "channel": "The Dead Rabbit",
+   "lane": "craft",
+   "rank": 652,
+   "addedAt": "2026-07-27"
+  },
+  {
+   "id": "N6j_13-qzDY",
+   "title": "Drunk People",
+   "channel": "Gabriel Iglesias",
+   "lane": "comedy",
+   "rank": 653,
+   "addedAt": "2026-07-27"
+  },
+  {
+   "id": "IOd2Wb23mds",
+   "title": "Irish People Try Indian Alcohol",
+   "channel": "The TRY Channel",
+   "lane": "people",
+   "rank": 654,
+   "addedAt": "2026-07-27"
+  },
+  {
+   "id": "mnnbDeVC_ro",
+   "title": "Hidetsugu Ueno makes a White Lady",
+   "channel": "BAR TIMES",
+   "lane": "craft",
+   "rank": 655,
+   "addedAt": "2026-07-27"
+  },
+  {
+   "id": "_m4EJ6RDuSM",
+   "title": "A Drunk Bartender Tries to Match the Drink to the Person",
+   "channel": "Cut",
+   "lane": "people",
+   "rank": 656,
+   "addedAt": "2026-07-27"
+  },
+  {
+   "id": "QmHJxbGjP2g",
+   "title": "Inside the Cocktail Lab of a 3 Star Michelin Chef",
+   "channel": "S3",
+   "lane": "craft",
+   "rank": 657,
+   "addedAt": "2026-07-27"
+  },
+  {
+   "id": "4oFlIu-HxB0",
+   "title": "How to create your own Cocktail",
+   "channel": "Behind the Bar",
+   "lane": "education",
+   "rank": 658,
+   "addedAt": "2026-07-27"
+  },
+  {
+   "id": "hfSoPh1flMc",
+   "title": "Blind taste testing 7 different vodkas",
+   "channel": "Michelle The Bartender",
+   "lane": "people",
+   "rank": 659,
+   "addedAt": "2026-07-27"
+  },
+  {
+   "id": "a-MEfSkiq6w",
+   "title": "Diamond Ice and Service Masterclass at Tokyo's High Five",
+   "channel": "Vlad SlickBartender",
+   "lane": "craft",
+   "rank": 660,
+   "addedAt": "2026-07-27"
+  },
+  {
+   "id": "iJYdCAAeilo",
+   "title": "4 Beginner Bartending Mistakes To Avoid",
+   "channel": "European Bartender School",
+   "lane": "education",
+   "rank": 661,
+   "addedAt": "2026-07-27"
+  },
+  {
+   "id": "lDtJtkBOBj0",
+   "title": "Daaru Party",
+   "channel": "Jaspreet Singh",
+   "lane": "comedy",
+   "rank": 662,
+   "addedAt": "2026-07-27"
+  },
+  {
+   "id": "3G-bAz-84nQ",
+   "title": "Level Up Your Cocktail Garnish Game",
+   "channel": "Truffles On The Rocks",
+   "lane": "education",
+   "rank": 663,
+   "addedAt": "2026-07-27"
+  },
+  {
+   "id": "a4jN61TH0fU",
+   "title": "Bar Centifolia's Samurai Bartender Crafts a Dragon Mojito",
+   "channel": "Rob Ilas",
+   "lane": "craft",
+   "rank": 664,
+   "addedAt": "2026-07-27"
+  },
+  {
+   "id": "98hpGU0jrME",
+   "title": "Ranking Every Four Loko",
+   "channel": "Mixed Up with Brewzle",
+   "lane": "people",
+   "rank": 665,
+   "addedAt": "2026-07-27"
+  },
+  {
+   "id": "QZo4SDa46YA",
+   "title": "When to build, shake or stir a drink",
+   "channel": "Michelle The Bartender",
+   "lane": "education",
+   "rank": 666,
+   "addedAt": "2026-07-27"
+  },
+  {
+   "id": "w-z5mbZ-yCI",
+   "title": "Is this the world's best cocktail maker?",
+   "channel": "Got Talent Global",
+   "lane": "craft",
+   "rank": 667,
+   "addedAt": "2026-07-27"
+  },
+  {
+   "id": "sGhgC5F3Oi0",
+   "title": "Easy Cocktail Garnishes and Techniques",
+   "channel": "Common Man Cocktails",
+   "lane": "education",
+   "rank": 668,
+   "addedAt": "2026-07-27"
+  }
  ]
 }

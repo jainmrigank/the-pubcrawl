@@ -12,7 +12,7 @@ import { chat, extractJson, llmAvailable, llmConfig } from './llm.mjs';
 import { generateFallback } from './generator.mjs';
 import { buildNudge, buildDailyQuestionNudge, WELCOME } from './push.mjs';
 import { playlistSlice, questionOfDay, QUESTIONS } from './quiz.mjs';
-import { buildShelves, VIDEOS } from './videos.mjs';
+import { buildLibrary, VIDEOS } from './videos.mjs';
 import {
   initStore,
   storeMode,
@@ -353,7 +353,7 @@ Respond with JSON exactly like:
 
 
   /* ================= the watch shelf ================= */
-  app.get('/api/videos', (_req, res) => res.json(buildShelves(getVideoStats())));
+  app.get('/api/videos', (_req, res) => res.json(buildLibrary(getVideoStats())));
 
   /**
    * Refreshes view counts and checks every embed still works. Fired weekly by
@@ -372,19 +372,27 @@ Respond with JSON exactly like:
     const ids = VIDEOS.map((v) => v.id);
     const next = {};
 
-    // 1. is it still watchable and embeddable? oEmbed 200s only when both hold
+    // 1. is it still watchable and embeddable? oEmbed 200s only when both hold.
+    // Eight at a time: serially this is ~200ms per video, which at library
+    // scale is minutes and long enough for a proxy to hang up on us.
     let dead = 0;
-    for (const id of ids) {
-      try {
-        const r = await fetch(`https://www.youtube.com/oembed?format=json&url=https://www.youtube.com/watch?v=${id}`, {
-          signal: AbortSignal.timeout(10000),
-        });
-        next[id] = { dead: !r.ok };
-        if (!r.ok) dead++;
-      } catch {
-        /* a network blip is not evidence a video is gone, so leave it alone */
-      }
-    }
+    const queue = [...ids];
+    await Promise.all(
+      Array.from({ length: 8 }, async () => {
+        for (let id = queue.pop(); id; id = queue.pop()) {
+          try {
+            const r = await fetch(
+              `https://www.youtube.com/oembed?format=json&url=https://www.youtube.com/watch?v=${id}`,
+              { signal: AbortSignal.timeout(10000) }
+            );
+            next[id] = { dead: !r.ok };
+            if (!r.ok) dead++;
+          } catch {
+            /* a network blip is not evidence a video is gone, so leave it alone */
+          }
+        }
+      })
+    );
 
     // 2. numbers, when a key is configured. 50 ids per call, 1 quota unit each
     let counted = 0;

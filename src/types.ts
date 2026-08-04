@@ -92,12 +92,8 @@ export interface WatchLane {
   color: string;
 }
 
-export interface WatchShelves {
-  allTime: WatchVideo[];
-  rising: WatchVideo[];
-  /** 'climbing' once we have real movement, 'fresh' before that */
-  risingMode: 'climbing' | 'fresh';
-  pool: WatchVideo[];
+export interface WatchLibrary {
+  videos: WatchVideo[];
   lanes: WatchLane[];
   hasNumbers: boolean;
   updatedAt: number | null;

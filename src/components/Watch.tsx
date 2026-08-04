@@ -1,28 +1,39 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import { motion } from 'framer-motion';
 import { fetchVideos } from '../api';
-import type { WatchShelves, WatchVideo } from '../types';
-import { Play, Shuffle } from '../icons';
-import { EASE, LOADED_HIDDEN } from '../motion';
+import type { WatchLane, WatchLibrary, WatchVideo } from '../types';
+import { Play, Search, Shuffle, X } from '../icons';
+
+type Tab = 'watched' | 'new' | 'surprise';
+
+const TABS: { id: Tab; label: string; note: string }[] = [
+  { id: 'watched', label: 'MOST WATCHED', note: 'The biggest of them, by views' },
+  { id: 'new', label: 'NEW & RISING', note: 'Climbing fastest, and just added' },
+  { id: 'surprise', label: 'SURPRISE ME', note: 'Three at random, no decisions' },
+];
+
+const PAGE = 24;
 
 /** 12.4M rather than 12,438,201: nobody reads the last six digits */
-function views(n: number | null): string | null {
+function short(n: number | null, unit: string): string | null {
   if (n == null) return null;
-  if (n >= 1e9) return `${(n / 1e9).toFixed(1)}B views`;
-  if (n >= 1e6) return `${(n / 1e6).toFixed(n >= 1e7 ? 0 : 1)}M views`;
-  if (n >= 1e3) return `${Math.round(n / 1e3)}K views`;
-  return `${n} views`;
+  if (n >= 1e9) return `${(n / 1e9).toFixed(1)}B ${unit}`;
+  if (n >= 1e6) return `${(n / 1e6).toFixed(n >= 1e7 ? 0 : 1)}M ${unit}`;
+  if (n >= 1e3) return `${Math.round(n / 1e3)}K ${unit}`;
+  return `${n} ${unit}`;
 }
 
+const norm = (s: string) => s.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '');
+
 /**
- * One video. The thumbnail is a facade: YouTube's player, and everything it
- * loads with it, arrives only when someone actually asks for it. Thumbnails
- * come straight off i.ytimg.com, which needs no key and no script.
+ * One video. The still is a facade: YouTube's player, and everything it drags
+ * in with it, arrives only when someone actually asks for it. Thumbnails come
+ * straight off i.ytimg.com, which needs no key and no script.
  */
-function VideoCard({ v, index, lanes }: { v: WatchVideo; index: number; lanes: WatchShelves['lanes'] }) {
+function VideoCard({ v, lanes }: { v: WatchVideo; lanes: WatchLane[] }) {
   const [playing, setPlaying] = useState(false);
   const lane = lanes.find((l) => l.id === v.lane);
-  const count = views(v.views);
+  const views = short(v.views, 'views');
+  const likes = short(v.likes, 'likes');
 
   return (
     <article className="wv">
@@ -37,12 +48,7 @@ function VideoCard({ v, index, lanes }: { v: WatchVideo; index: number; lanes: W
           />
         ) : (
           <button className="wv-thumb" onClick={() => setPlaying(true)} aria-label={`Play ${v.title}`}>
-            <img
-              src={`https://i.ytimg.com/vi/${v.id}/hqdefault.jpg`}
-              alt=""
-              loading="lazy"
-              decoding="async"
-            />
+            <img src={`https://i.ytimg.com/vi/${v.id}/hqdefault.jpg`} alt="" loading="lazy" decoding="async" />
             <span className="wv-play">
               <Play size={20} />
             </span>
@@ -50,87 +56,36 @@ function VideoCard({ v, index, lanes }: { v: WatchVideo; index: number; lanes: W
         )}
       </div>
       <div className="wv-meta">
-        <div className="wv-top">
-          <span className="k-label dim">N° {String(index + 1).padStart(3, '0')}</span>
-          {lane && (
-            <span className="k-label wv-lane">
-              <i style={{ background: lane.color }} />
-              {lane.label}
-            </span>
-          )}
-        </div>
+        {lane && (
+          <span className="k-label wv-lane">
+            <i style={{ background: lane.color }} />
+            {lane.label}
+          </span>
+        )}
         <h3 className="wv-title">{v.title}</h3>
         <p className="k-label dim wv-by">
-          {v.channel}
-          {count && <span className="wv-views">{count}</span>}
-          {v.why && <span className="wv-why">{v.why}</span>}
+          <span>{v.channel}</span>
+          {views && <span className="wv-stat">{views}</span>}
+          {likes && <span className="wv-stat">{likes}</span>}
         </p>
       </div>
     </article>
   );
 }
 
-function Shelf({
-  index,
-  title,
-  note,
-  lead,
-  videos,
-  lanes,
-  action,
-}: {
-  index: string;
-  title: string;
-  note: string;
-  lead?: string;
-  videos: WatchVideo[];
-  lanes: WatchShelves['lanes'];
-  action?: React.ReactNode;
-}) {
-  if (!videos.length) return null;
-  return (
-    <section className="sec">
-      <div className="sec-head">
-        <motion.div
-          className="rule"
-          initial={LOADED_HIDDEN ? false : { scaleX: 0 }}
-          whileInView={{ scaleX: 1 }}
-          viewport={{ once: true, margin: '-40px' }}
-          transition={{ duration: 0.9, ease: EASE }}
-          style={{ transformOrigin: 'left' }}
-        />
-        <div className="sec-head-row">
-          <span className="k-label sec-index">/{index}</span>
-          <h2 className="sec-title">{title}</h2>
-          <span className="k-label dim sec-note">{note}</span>
-        </div>
-        {lead && <p className="sec-lead">{lead}</p>}
-      </div>
-      {action}
-      <div className="wv-grid">
-        {videos.map((v, i) => (
-          <VideoCard key={v.id} v={v} index={i} lanes={lanes} />
-        ))}
-      </div>
-    </section>
-  );
-}
-
-/** three at random, but never three of the same kind in a row */
+/** three at random, spread across kinds so it is never three of the same */
 function pickThree(pool: WatchVideo[], exclude: Set<string>): WatchVideo[] {
-  const out: WatchVideo[] = [];
-  const usedLanes = new Set<string>();
   const bag = pool.filter((v) => !exclude.has(v.id));
   const source = bag.length >= 3 ? bag : pool;
   const shuffled = [...source].sort(() => Math.random() - 0.5);
-
+  const out: WatchVideo[] = [];
+  const usedLanes = new Set<string>();
   for (const v of shuffled) {
     if (out.length >= 3) break;
     if (usedLanes.has(v.lane)) continue;
     usedLanes.add(v.lane);
     out.push(v);
   }
-  // if the pool is lane-poor, fill the rest with anything left
   for (const v of shuffled) {
     if (out.length >= 3) break;
     if (!out.includes(v)) out.push(v);
@@ -139,29 +94,76 @@ function pickThree(pool: WatchVideo[], exclude: Set<string>): WatchVideo[] {
 }
 
 /**
- * The Watch shelf. Three ways in: the biggest of them, what is moving right
- * now, and three at random for when you do not want to choose.
+ * The Watch library. Search and the kind filter narrow the whole shelf; the
+ * three tabs decide how what is left is ordered. Everything defaults to
+ * most-watched first, because with a few hundred videos that is the only
+ * ordering anyone can reason about.
  */
 export function Watch() {
-  const [data, setData] = useState<WatchShelves | null>(null);
+  const [data, setData] = useState<WatchLibrary | null>(null);
   const [error, setError] = useState(false);
-  const [random, setRandom] = useState<WatchVideo[]>([]);
+  const [tab, setTab] = useState<Tab>('watched');
+  const [q, setQ] = useState('');
+  const [lane, setLane] = useState('');
+  const [shown, setShown] = useState(PAGE);
+  const [surprise, setSurprise] = useState<WatchVideo[]>([]);
 
   useEffect(() => {
     fetchVideos()
       .then((d) => {
+        // the frontend and the API deploy independently, so an older API can
+        // answer a newer page for a minute or two. Fail visibly, not blankly.
+        if (!Array.isArray(d?.videos)) throw new Error('unexpected shape');
         setData(d);
-        setRandom(pickThree(d.pool, new Set()));
+        setSurprise(pickThree(d.videos, new Set()));
       })
       .catch(() => setError(true));
   }, []);
 
-  const shuffle = useCallback(() => {
-    if (!data) return;
-    setRandom((prev) => pickThree(data.pool, new Set(prev.map((v) => v.id))));
-  }, [data]);
+  // a new search or filter starts the list from the top again
+  useEffect(() => setShown(PAGE), [q, lane, tab]);
 
-  const lanes = useMemo(() => data?.lanes ?? [], [data]);
+  /** search and kind first, then always most-watched, likes breaking ties */
+  const filtered = useMemo(() => {
+    if (!data) return [];
+    const needle = norm(q.trim());
+    const lanes = new Map(data.lanes.map((l) => [l.id, l.label]));
+    return data.videos
+      .filter((v) => {
+        if (lane && v.lane !== lane) return false;
+        if (!needle) return true;
+        // the lane id as well as its label, so "comedy" finds For The Laugh
+        return norm(`${v.title} ${v.channel} ${v.lane} ${lanes.get(v.lane) || ''}`).includes(needle);
+      })
+      .sort((a, b) => (b.views || 0) - (a.views || 0) || (b.likes || 0) - (a.likes || 0) || a.rank - b.rank);
+  }, [data, q, lane]);
+
+  /**
+   * Rising means the growth we measured ourselves, since YouTube will not tell
+   * you a video's views this month. Until enough snapshots exist it falls back
+   * to whatever was added most recently, which is at least honestly different
+   * from the most-watched tab.
+   */
+  const rising = useMemo(
+    () =>
+      [...filtered].sort(
+        (a, b) =>
+          b.movement - a.movement ||
+          Date.parse(b.addedAt || '') - Date.parse(a.addedAt || '') ||
+          (b.views || 0) - (a.views || 0)
+      ),
+    [filtered]
+  );
+
+  const shuffle = useCallback(() => {
+    setSurprise((prev) => pickThree(filtered, new Set(prev.map((v) => v.id))));
+  }, [filtered]);
+
+  // keep the surprise picks inside whatever is currently filtered
+  useEffect(() => {
+    if (!filtered.length) return;
+    setSurprise((prev) => (prev.length && prev.every((v) => filtered.includes(v)) ? prev : pickThree(filtered, new Set())));
+  }, [filtered]);
 
   if (error)
     return (
@@ -172,48 +174,115 @@ export function Watch() {
       </section>
     );
 
-  if (!data) return <section className="sec page-top"><span className="loadline" aria-label="Loading" /></section>;
+  if (!data)
+    return (
+      <section className="sec page-top">
+        <span className="loadline" aria-label="Loading" />
+      </section>
+    );
+
+  const ordered = tab === 'surprise' ? surprise : tab === 'new' ? rising : filtered;
+  const list = tab === 'surprise' ? ordered : ordered.slice(0, shown);
+  const more = tab !== 'surprise' && ordered.length > shown;
+  const current = TABS.find((t) => t.id === tab)!;
 
   return (
     <div className="watch page-top">
-      <Shelf
-        index="01"
-        title="THE BIG ONES"
-        note={`${data.allTime.length} TO WATCH`}
-        lead="The cocktail videos everybody has already seen, and the ones they should have."
-        videos={data.allTime}
-        lanes={lanes}
-      />
-      <Shelf
-        index="02"
-        title={data.risingMode === 'climbing' ? 'CLIMBING' : 'JUST ADDED'}
-        note={data.risingMode === 'climbing' ? 'MOVING RIGHT NOW' : 'NEW ON THE SHELF'}
-        lead={
-          data.risingMode === 'climbing'
-            ? 'What is picking up views, plus whatever we put on the shelf this month.'
-            : 'The newest additions. Once we have watched the numbers for a few weeks, this becomes whatever is climbing fastest.'
-        }
-        videos={data.rising}
-        lanes={lanes}
-      />
-      <Shelf
-        index="03"
-        title="THREE AT RANDOM"
-        note="NO DECISIONS REQUIRED"
-        videos={random}
-        lanes={lanes}
-        action={
-          <div className="wv-shuffle">
-            <button className="btn btn-solid" onClick={shuffle}>
-              SHUFFLE <Shuffle size={14} />
-            </button>
-            <span className="k-label dim">{data.pool.length} IN THE LIBRARY</span>
-          </div>
-        }
-      />
+      <div className="sec-head">
+        <div className="rule" />
+        <div className="sec-head-row">
+          <span className="k-label sec-index">/01</span>
+          <h2 className="sec-title">WATCH</h2>
+          <span className="k-label dim sec-note">
+            {q || lane ? `${filtered.length} OF ${data.videos.length}` : `${data.videos.length} VIDEOS`}
+          </span>
+        </div>
+        <p className="sec-lead">
+          Everything worth watching about drinking. The craft, the history, the comedy, and people finding
+          out what they like.
+        </p>
+      </div>
+
+      <div className="wv-search field">
+        <Search size={16} />
+        <input
+          value={q}
+          onChange={(e) => setQ(e.target.value)}
+          placeholder="Search a video, a channel, a spirit…"
+          aria-label="Search the video library"
+        />
+        {q && (
+          <button className="wv-clear" onClick={() => setQ('')} aria-label="Clear search">
+            <X size={13} />
+          </button>
+        )}
+      </div>
+
+      <div className="wv-filters">
+        <span className="k-label dim wv-filters-label">KIND</span>
+        <button className={`vibe-chip ${lane === '' ? 'on' : ''}`} onClick={() => setLane('')}>
+          ALL
+        </button>
+        {data.lanes.map((l) => (
+          <button
+            key={l.id}
+            className={`vibe-chip ${lane === l.id ? 'on' : ''}`}
+            style={{ ['--vc' as string]: l.color }}
+            onClick={() => setLane(lane === l.id ? '' : l.id)}
+          >
+            <i className="swatch" />
+            {l.label.toUpperCase()}
+          </button>
+        ))}
+      </div>
+
+      <div className="wv-tabs" role="tablist">
+        {TABS.map((t) => (
+          <button
+            key={t.id}
+            role="tab"
+            aria-selected={tab === t.id}
+            className={`wv-tab ${tab === t.id ? 'on' : ''}`}
+            onClick={() => setTab(t.id)}
+          >
+            {t.label}
+          </button>
+        ))}
+      </div>
+
+      <p className="k-label dim wv-tabnote">
+        {current.note}
+        {tab === 'surprise' && (
+          <button className="text-btn wv-shuffle-btn" onClick={shuffle}>
+            SHUFFLE <Shuffle size={13} />
+          </button>
+        )}
+      </p>
+
+      {list.length === 0 ? (
+        <p className="wv-empty">Nothing here for that. Try a spirit, a channel, or clear the filters.</p>
+      ) : (
+        <div className="wv-grid">
+          {list.map((v) => (
+            <VideoCard key={v.id} v={v} lanes={data.lanes} />
+          ))}
+        </div>
+      )}
+
+      {more && (
+        <div className="wv-more">
+          <button className="btn btn-solid" onClick={() => setShown((n) => n + PAGE)}>
+            SHOW MORE
+          </button>
+          <span className="k-label dim">
+            {list.length} OF {ordered.length}
+          </span>
+        </div>
+      )}
+
       <p className="wv-foot k-label dim">
-        Everything here lives on YouTube. Tap a still and it plays in place.{' '}
-        {!data.hasNumbers && 'View counts arrive once the shelf has been counted.'}
+        Everything here lives on YouTube. Tap a still and it plays in place.
+        {!data.hasNumbers && ' View counts arrive once the shelf has been counted.'}
       </p>
     </div>
   );
