@@ -36,6 +36,20 @@ export function tabShareText(list: Recipe[]): string {
   return lines.join('\n');
 }
 
+/**
+ * Plain-text card for one video from the Watch shelf.
+ *
+ * The channel line is dropped when the title already carries it, because
+ * YouTube titles routinely end in "| Cut" or "- Bon Appétit" and repeating it
+ * reads as a stutter: "Lineup | Cut · Cut".
+ */
+export function videoShareText(title: string, channel: string, id: string): string {
+  const said = title.toLowerCase().includes(channel.toLowerCase().trim());
+  return [title.trim(), ...(said || !channel ? [] : [channel.trim()]), '', `https://youtu.be/${id}`, '', `Found on The PubCrawl · ${SITE}`].join(
+    '\n'
+  );
+}
+
 export type ShareOutcome = 'shared' | 'copied' | 'cancelled' | 'failed';
 
 /**

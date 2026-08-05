@@ -1510,7 +1510,29 @@ button, a, .fc {
 .wv-thumb:hover .wv-play { background: var(--ink); color: var(--paper); }
 
 .wv-meta { padding: 14px 16px 16px; display: flex; flex-direction: column; gap: 7px; }
+.wv-top { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
 .wv-lane { display: inline-flex; align-items: center; gap: 7px; color: var(--ink-60); }
+
+/* sits with the lane label rather than over the still, so it never competes
+   with the play button for the same tap */
+.wv-share {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: none;
+  width: 30px;
+  height: 30px;
+  margin: -4px -4px -4px 0;
+  padding: 0;
+  background: none;
+  border: 1px solid transparent;
+  border-radius: 0;
+  color: var(--grey);
+  cursor: pointer;
+  transition: color var(--t-fast) var(--ease), border-color var(--t-fast) var(--ease);
+}
+.wv-share:hover { color: var(--ink); border-color: var(--line); }
+.wv-share.said { color: var(--accent); border-color: var(--accent); }
 .wv-lane i { width: 9px; height: 9px; flex: none; }
 
 .wv-title {

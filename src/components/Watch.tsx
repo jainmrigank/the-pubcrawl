@@ -1,7 +1,8 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { fetchVideos } from '../api';
 import type { WatchLane, WatchLibrary, WatchVideo } from '../types';
-import { Play, Search, Shuffle, X } from '../icons';
+import { Check, Play, Search, Share, Shuffle, X } from '../icons';
+import { shareContent, videoShareText } from '../share';
 
 type Tab = 'watched' | 'new' | 'surprise';
 
@@ -31,9 +32,19 @@ const norm = (s: string) => s.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,
  */
 function VideoCard({ v, lanes }: { v: WatchVideo; lanes: WatchLane[] }) {
   const [playing, setPlaying] = useState(false);
+  const [shared, setShared] = useState<'idle' | 'copied' | 'failed'>('idle');
   const lane = lanes.find((l) => l.id === v.lane);
   const views = short(v.views, 'views');
   const likes = short(v.likes, 'likes');
+
+  async function doShare() {
+    const outcome = await shareContent(`${v.title} · The PubCrawl`, videoShareText(v.title, v.channel, v.id));
+    // the native sheet says its own piece; only the clipboard path needs telling
+    if (outcome === 'copied' || outcome === 'failed') {
+      setShared(outcome);
+      setTimeout(() => setShared('idle'), 1600);
+    }
+  }
 
   return (
     <article className="wv">
@@ -56,12 +67,22 @@ function VideoCard({ v, lanes }: { v: WatchVideo; lanes: WatchLane[] }) {
         )}
       </div>
       <div className="wv-meta">
-        {lane && (
-          <span className="k-label wv-lane">
-            <i style={{ background: lane.color }} />
-            {lane.label}
-          </span>
-        )}
+        <div className="wv-top">
+          {lane && (
+            <span className="k-label wv-lane">
+              <i style={{ background: lane.color }} />
+              {lane.label}
+            </span>
+          )}
+          <button
+            className={`wv-share ${shared !== 'idle' ? 'said' : ''}`}
+            onClick={doShare}
+            aria-label={`Share ${v.title}`}
+            data-tip={shared === 'copied' ? 'COPIED!' : shared === 'failed' ? 'SHARING BLOCKED HERE' : 'SHARE THIS VIDEO'}
+          >
+            {shared === 'copied' ? <Check size={14} /> : <Share size={14} />}
+          </button>
+        </div>
         <h3 className="wv-title">{v.title}</h3>
         <p className="k-label dim wv-by">
           <span>{v.channel}</span>
