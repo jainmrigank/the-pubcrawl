@@ -5394,7 +5394,7 @@
  },
  {
   "id": "12706",
-  "name": "Imperial Cocktail",
+  "name": "Aperol Gin Fizz",
   "category": "Cocktail",
   "alcoholic": "Alcoholic",
   "glass": "Cocktail glass",
@@ -5406,15 +5406,19 @@
   "ingredients": [
    {
     "name": "Lime juice",
-    "measure": "4 cl"
+    "measure": "30 ml"
    },
    {
     "name": "Gin",
-    "measure": "2 cl"
+    "measure": "30 ml"
    },
    {
     "name": "Aperol",
-    "measure": "4 cl"
+    "measure": "30 ml"
+   },
+   {
+    "name": "Sugar Syrup",
+    "measure": "15 ml"
    }
   ]
  },
