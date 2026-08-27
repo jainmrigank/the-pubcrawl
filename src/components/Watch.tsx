@@ -1,8 +1,9 @@
-import { useCallback, useEffect, useMemo, useState } from 'react';
-import { fetchVideos } from '../api';
+import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
+import { fetchVideos, postWatchEvent } from '../api';
 import type { WatchLane, WatchLibrary, WatchVideo } from '../types';
-import { Check, Play, Search, Share, Shuffle, X } from '../icons';
+import { ArrowRight, Check, Play, Search, Share, Shuffle, X } from '../icons';
 import { shareContent, videoShareText } from '../share';
+import { LANDING_WATCH_SEED, WATCH_CATALOGUE_COUNT, thumbnailForWatch, watchLaneLabel } from '../watchData';
 
 type Tab = 'watched' | 'new' | 'surprise';
 
@@ -25,17 +26,113 @@ function short(n: number | null, unit: string): string | null {
 
 const norm = (s: string) => s.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '');
 
+function randomIndex(length: number) {
+  if (!length) return 0;
+  if (typeof crypto !== 'undefined' && typeof crypto.getRandomValues === 'function') {
+    return crypto.getRandomValues(new Uint32Array(1))[0] % length;
+  }
+  return Math.floor(Math.random() * length);
+}
+
+function randomFeaturedVideos(count = 6): WatchVideo[] {
+  const pool = [...LANDING_WATCH_SEED];
+  for (let index = pool.length - 1; index > 0; index -= 1) {
+    const swapIndex = randomIndex(index + 1);
+    [pool[index], pool[swapIndex]] = [pool[swapIndex], pool[index]];
+  }
+  return pool.slice(0, Math.min(count, pool.length));
+}
+
+interface WatchTeaserProps {
+  active?: boolean;
+  catalogueCount?: number;
+}
+
+/** Static landing facade: no API request and no iframe until the visitor opens Watch. */
+export function WatchTeaser({ active = true, catalogueCount = WATCH_CATALOGUE_COUNT }: WatchTeaserProps) {
+  const [featured, setFeatured] = useState(() => randomFeaturedVideos());
+  const wasActive = useRef(active);
+  const impressionSent = useRef(false);
+  const teaserRef = useRef<HTMLElement>(null);
+  const trackRef = useRef<HTMLDivElement>(null);
+
+  useLayoutEffect(() => {
+    if (active && !wasActive.current) {
+      setFeatured(randomFeaturedVideos());
+      trackRef.current?.scrollTo({ left: 0, behavior: 'auto' });
+    }
+    wasActive.current = active;
+  }, [active]);
+
+  useEffect(() => {
+    impressionSent.current = false;
+    if (!active || !featured || !teaserRef.current) return;
+    const send = () => {
+      if (impressionSent.current) return;
+      impressionSent.current = true;
+      postWatchEvent({ type: 'preview-impression' }).catch(() => {});
+    };
+    if (!('IntersectionObserver' in window)) {
+      send();
+      return;
+    }
+    const observer = new IntersectionObserver((entries) => {
+      if (entries.some((entry) => entry.isIntersecting && entry.intersectionRatio >= 0.5)) send();
+    }, { threshold: [0.5] });
+    observer.observe(teaserRef.current);
+    return () => observer.disconnect();
+  }, [active, featured]);
+
+  if (!featured.length) return null;
+  return (
+    <section className="watch-teaser" ref={teaserRef} aria-labelledby="watch-teaser-title">
+      <div className="watch-teaser-head">
+        <span id="watch-teaser-title" className="k-label">WATCH / THE BAR ON FILM</span>
+        <span className="k-label dim">6 PICKS · {catalogueCount} VIDEOS</span>
+      </div>
+      <div ref={trackRef} className="watch-teaser-track" aria-label="Featured Watch videos">
+        {featured.map((video, index) => {
+          const lane = watchLaneLabel[video.lane] || video.lane.toUpperCase();
+          return (
+            <a
+              key={video.id}
+              className="watch-teaser-card"
+              href={`#/watch?v=${encodeURIComponent(video.id)}&src=landing`}
+            >
+              <span className="watch-teaser-media">
+                <img src={thumbnailForWatch(video)} alt="" loading={index < 2 ? 'eager' : 'lazy'} decoding="async" />
+                <span className="watch-teaser-play" aria-hidden="true"><Play size={16} /></span>
+              </span>
+              <span className="watch-teaser-copy">
+                <span className="k-label watch-teaser-lane">{lane}</span>
+                <strong>{video.title}</strong>
+                <span className="k-label dim">{video.channel}</span>
+                <span className="watch-teaser-open">OPEN WATCH <ArrowRight size={12} /></span>
+              </span>
+            </a>
+          );
+        })}
+      </div>
+    </section>
+  );
+}
+
 /**
  * One video. The still is a facade: YouTube's player, and everything it drags
  * in with it, arrives only when someone actually asks for it. Thumbnails come
  * straight off i.ytimg.com, which needs no key and no script.
  */
-function VideoCard({ v, lanes }: { v: WatchVideo; lanes: WatchLane[] }) {
-  const [playing, setPlaying] = useState(false);
+function VideoCard({ v, lanes, active, autoPlay }: { v: WatchVideo; lanes: WatchLane[]; active: boolean; autoPlay: boolean }) {
+  const [playing, setPlaying] = useState(autoPlay);
   const [shared, setShared] = useState<'idle' | 'copied' | 'failed'>('idle');
   const lane = lanes.find((l) => l.id === v.lane);
   const views = short(v.views, 'views');
   const likes = short(v.likes, 'likes');
+
+  useEffect(() => {
+    if (autoPlay) setPlaying(true);
+    if (!active) setPlaying(false);
+  }, [active, autoPlay]);
 
   async function doShare() {
     const outcome = await shareContent(`${v.title} · The PubCrawl`, videoShareText(v.title, v.channel, v.id));
@@ -47,15 +144,16 @@ function VideoCard({ v, lanes }: { v: WatchVideo; lanes: WatchLane[] }) {
   }
 
   return (
-    <article className="wv">
+    <article className="wv" data-video-id={v.id}>
       <div className="wv-frame">
-        {playing ? (
+        {active && playing ? (
           <iframe
             className="wv-player"
-            src={`https://www.youtube-nocookie.com/embed/${v.id}?autoplay=1&rel=0&modestbranding=1`}
+            src={`https://www.youtube-nocookie.com/embed/${v.id}?autoplay=1&rel=0&modestbranding=1&playsinline=1&enablejsapi=1&origin=${encodeURIComponent(typeof window === 'undefined' ? '' : window.location.origin)}`}
             title={v.title}
             allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"
             allowFullScreen
+            referrerPolicy="strict-origin-when-cross-origin"
           />
         ) : (
           <button className="wv-thumb" onClick={() => setPlaying(true)} aria-label={`Play ${v.title}`}>
@@ -120,33 +218,121 @@ function pickThree(pool: WatchVideo[], exclude: Set<string>): WatchVideo[] {
  * most-watched first, because with a few hundred videos that is the only
  * ordering anyone can reason about.
  */
-export function Watch() {
+interface WatchProps {
+  active?: boolean;
+  initialId?: string;
+  source?: string;
+}
+
+function eventSource(source: string): 'landing' | 'nav' | 'deep-link' | 'direct' {
+  return source === 'landing' || source === 'nav' || source === 'deep-link' ? source : 'direct';
+}
+
+export function Watch({ active = true, initialId = '', source = 'direct' }: WatchProps) {
   const [data, setData] = useState<WatchLibrary | null>(null);
   const [error, setError] = useState(false);
+  const loadStartedRef = useRef(false);
+  const mountedRef = useRef(true);
+
+  useEffect(() => () => {
+    mountedRef.current = false;
+  }, []);
+
+  useEffect(() => {
+    if (!active || loadStartedRef.current) return;
+    loadStartedRef.current = true;
+    let usable = false;
+    let pending = 2;
+
+    const reject = () => {
+      pending -= 1;
+      if (mountedRef.current && pending === 0 && !usable) setError(true);
+    };
+    const accept = (library: WatchLibrary) => {
+      if (!Array.isArray(library?.videos) || library.videos.length === 0) {
+        reject();
+        return;
+      }
+      usable = true;
+      pending -= 1;
+      if (!mountedRef.current) return;
+      setError(false);
+      setData(library);
+    };
+
+    // The reviewed catalogue and live statistics are independent. The local
+    // chunk renders first on a cold/offline API; a later API response enriches
+    // it and removes anything the weekly health sweep marked dead.
+    import('../watchLibrary')
+      .then(({ STATIC_WATCH_LIBRARY }) => accept(STATIC_WATCH_LIBRARY))
+      .catch(reject);
+    fetchVideos().then(accept).catch(reject);
+  }, [active]);
+
+  if (error && !data)
+    return (
+      <section className="sec page-top">
+        <p className="err" role="alert">
+          The projector is not warming up. Try again in a moment.
+        </p>
+      </section>
+    );
+
+  if (!data)
+    return (
+      <section className="sec page-top">
+        <span className="loadline" aria-label="Loading" />
+      </section>
+    );
+
+  return <WatchShelf data={data} active={active} initialId={initialId} source={source} />;
+}
+
+interface WatchShelfProps extends Required<WatchProps> {
+  data: WatchLibrary;
+}
+
+function WatchShelf({ data, active, initialId, source }: WatchShelfProps) {
   const [tab, setTab] = useState<Tab>('watched');
   const [q, setQ] = useState('');
   const [lane, setLane] = useState('');
   const [shown, setShown] = useState(PAGE);
   const [surprise, setSurprise] = useState<WatchVideo[]>([]);
+  const [promotedId, setPromotedId] = useState<string | null>(null);
+  const openedKeyRef = useRef('');
 
   useEffect(() => {
-    fetchVideos()
-      .then((d) => {
-        // the frontend and the API deploy independently, so an older API can
-        // answer a newer page for a minute or two. Fail visibly, not blankly.
-        if (!Array.isArray(d?.videos)) throw new Error('unexpected shape');
-        setData(d);
-        setSurprise(pickThree(d.videos, new Set()));
-      })
-      .catch(() => setError(true));
-  }, []);
+    if (!active) {
+      openedKeyRef.current = '';
+      setPromotedId(null);
+      return;
+    }
+    // Treat a deep-link change while Watch stays mounted as a new route visit;
+    // ordinary renders of the same promoted card remain one aggregate open.
+    const visitKey = `${eventSource(source)}:${initialId || ''}`;
+    if (openedKeyRef.current === visitKey) return;
+    openedKeyRef.current = visitKey;
+    postWatchEvent({ type: 'open', source: eventSource(source) }).catch(() => {});
+  }, [active, initialId, source]);
+
+  // A landing deep link is an instruction to promote that exact card, not a
+  // new search. Clear filters first, then let the rendered card scroll into
+  // view and open its native player.
+  useEffect(() => {
+    if (!active || !data || !initialId) return;
+    const exists = data.videos.some((video) => video.id === initialId);
+    setQ('');
+    setLane('');
+    setTab('watched');
+    setShown(PAGE);
+    setPromotedId(exists ? initialId : null);
+  }, [active, data, initialId]);
 
   // a new search or filter starts the list from the top again
   useEffect(() => setShown(PAGE), [q, lane, tab]);
 
   /** search and kind first, then always most-watched, likes breaking ties */
   const filtered = useMemo(() => {
-    if (!data) return [];
     const needle = norm(q.trim());
     const lanes = new Map(data.lanes.map((l) => [l.id, l.label]));
     return data.videos
@@ -186,26 +372,26 @@ export function Watch() {
     setSurprise((prev) => (prev.length && prev.every((v) => filtered.includes(v)) ? prev : pickThree(filtered, new Set())));
   }, [filtered]);
 
-  if (error)
-    return (
-      <section className="sec page-top">
-        <p className="err" role="alert">
-          The projector is not warming up. Try again in a moment.
-        </p>
-      </section>
-    );
-
-  if (!data)
-    return (
-      <section className="sec page-top">
-        <span className="loadline" aria-label="Loading" />
-      </section>
-    );
-
-  const ordered = tab === 'surprise' ? surprise : tab === 'new' ? rising : filtered;
+  const baseOrdered = tab === 'surprise' ? surprise : tab === 'new' ? rising : filtered;
+  const ordered = promotedId && tab !== 'surprise'
+    ? [
+        ...baseOrdered.filter((video) => video.id === promotedId),
+        ...baseOrdered.filter((video) => video.id !== promotedId),
+      ]
+    : baseOrdered;
   const list = tab === 'surprise' ? ordered : ordered.slice(0, shown);
   const more = tab !== 'surprise' && ordered.length > shown;
   const current = TABS.find((t) => t.id === tab)!;
+
+  useEffect(() => {
+    if (!active || !promotedId || !list.some((video) => video.id === promotedId)) return;
+    const frame = requestAnimationFrame(() => {
+      const card = [...document.querySelectorAll<HTMLElement>('.watch [data-video-id]')]
+        .find((element) => element.dataset.videoId === promotedId);
+      card?.scrollIntoView({ block: 'start', behavior: 'auto' });
+    });
+    return () => cancelAnimationFrame(frame);
+  }, [active, list, promotedId]);
 
   return (
     <div className="watch page-top">
@@ -285,7 +471,7 @@ export function Watch() {
       ) : (
         <div className="wv-grid">
           {list.map((v) => (
-            <VideoCard key={v.id} v={v} lanes={data.lanes} />
+            <VideoCard key={v.id} v={v} lanes={data.lanes} active={active} autoPlay={promotedId === v.id} />
           ))}
         </div>
       )}

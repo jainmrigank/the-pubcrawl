@@ -50,6 +50,18 @@ export function videoShareText(title: string, channel: string, id: string): stri
   );
 }
 
+/** Plain-text deep link for a PubCrawl Short, with the original video credit. */
+export function shortShareText(title: string, channel: string, id: string): string {
+  return [
+    title.trim(),
+    ...(channel ? [channel.trim()] : []),
+    '',
+    `https://the-pubcrawl.vercel.app/#/shorts?v=${encodeURIComponent(id)}&src=deep-link`,
+    '',
+    'Watch it on The PubCrawl · the original creator player is embedded from YouTube',
+  ].join('\n');
+}
+
 export type ShareOutcome = 'shared' | 'copied' | 'cancelled' | 'failed';
 
 /**

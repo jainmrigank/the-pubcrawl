@@ -25,6 +25,14 @@ const path = join(ROOT, 'data', 'watchlist.json');
 const raw = existsSync(path) ? JSON.parse(readFileSync(path, 'utf8')) : { videos: [] };
 export const VIDEOS = (raw.videos || []).filter((v) => v.id && v.title);
 
+/** IDs used by the static landing Watch teaser (three per lane). */
+export const LANDING_FEATURED_IDS = [
+  'i1iqVGORUck', 'ml_KwtaTC-A', 'OIVGM79KvDQ',
+  'b0IuTL3Z-kk', 'c6GV_vRlIIA', 'pdcrJ5V7YKM',
+  'GE8vyfKyZfQ', 'X3n5Pk8fkLg', 'ZFvup0aXRsU',
+  'UckkY0rrsAM', 'RGOWPswqRwc', 'gIg1gAy4lVg',
+];
+
 export const LANES = {
   craft: { id: 'craft', label: 'The Craft', color: '#8A5A24' },
   education: { id: 'education', label: 'Learn It', color: '#5C7A3B' },
@@ -35,7 +43,7 @@ export const LANES = {
 const DAY = 86400000;
 
 /** views gained over the last ~30 days, from whatever snapshots we hold */
-function movement(stat) {
+export function movement(stat) {
   const h = stat?.history;
   if (!Array.isArray(h) || h.length < 2 || !stat.views) return 0;
   const cutoff = Date.now() - 30 * DAY;
@@ -62,6 +70,7 @@ export function buildLibrary(stats = {}) {
       views: s.views ?? null,
       likes: s.likes ?? null,
       movement: movement(s),
+      landingFeatured: Boolean(v.landingFeatured),
     };
   });
 
@@ -70,5 +79,24 @@ export function buildLibrary(stats = {}) {
     lanes: Object.values(LANES),
     hasNumbers: videos.some((v) => v.views != null),
     updatedAt: Math.max(0, ...Object.values(stats).map((s) => s?.checkedAt || 0)) || null,
+  };
+}
+
+/** Validate the reviewed landing set against the latest health snapshot. */
+export function validateLandingFeatured(stats = {}) {
+  const byId = new Map(VIDEOS.map((video) => [video.id, video]));
+  const missing = LANDING_FEATURED_IDS.filter((id) => !byId.has(id));
+  const dead = LANDING_FEATURED_IDS.filter((id) => stats?.[id]?.dead);
+  const lanes = new Map();
+  for (const id of LANDING_FEATURED_IDS) {
+    const lane = byId.get(id)?.lane;
+    if (lane) lanes.set(lane, (lanes.get(lane) || 0) + 1);
+  }
+  const distribution = Object.fromEntries(lanes);
+  return {
+    ok: missing.length === 0 && dead.length === 0 && Object.values(distribution).length === 4 && Object.values(distribution).every((count) => count === 3),
+    missing,
+    dead,
+    distribution,
   };
 }

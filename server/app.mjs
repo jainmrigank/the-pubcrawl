@@ -6,13 +6,17 @@
 import './env.mjs'; // must run before store.mjs / push keys read process.env
 import express from 'express';
 import webpush from 'web-push';
-import { loadCatalog, searchIngredients, matchRecipes, categorise, norm } from './catalog.mjs';
+import { loadCatalog, searchIngredients, matchRecipes, categorise, norm, visibleRecipes } from './catalog.mjs';
 import { VIBES, withVibe } from './vibes.mjs';
 import { chat, extractJson, llmAvailable, llmConfig } from './llm.mjs';
 import { generateFallback } from './generator.mjs';
 import { buildNudge, buildDailyQuestionNudge, WELCOME } from './push.mjs';
 import { playlistSlice, questionOfDay, QUESTIONS } from './quiz.mjs';
 import { buildLibrary, VIDEOS } from './videos.mjs';
+import { buildShortLibrary, SHORTS } from './shorts.mjs';
+import { validateShortSession } from './shorts-schema.mjs';
+import { validateWatchEvent } from './watch-schema.mjs';
+import { classifyVideoStatus } from './youtube-health.mjs';
 import {
   initStore,
   storeMode,
@@ -28,6 +32,10 @@ import {
   addToHall,
   getVideoStats,
   saveVideoStats,
+  getShortMetrics,
+  recordShortSession,
+  getWatchMetrics,
+  recordWatchEvent,
   getHighScore,
   submitScore,
 } from './store.mjs';
@@ -35,6 +43,7 @@ import {
 export async function createApp() {
   await initStore();
   const app = express();
+  const PUSH_SECRET = process.env.PUSH_SECRET || '';
   app.use(express.json({ limit: '15mb' }));
 
   // CORS: the frontend may be served from another origin (Vercel) while the
@@ -43,7 +52,7 @@ export async function createApp() {
     res.setHeader('Access-Control-Allow-Origin', req.headers.origin || '*');
     res.setHeader('Vary', 'Origin');
     res.setHeader('Access-Control-Allow-Methods', 'GET,POST,OPTIONS');
-    res.setHeader('Access-Control-Allow-Headers', 'content-type, ngrok-skip-browser-warning');
+    res.setHeader('Access-Control-Allow-Headers', 'content-type, x-push-secret, ngrok-skip-browser-warning');
     if (req.method === 'OPTIONS') return res.sendStatus(204);
     next();
   });
@@ -119,7 +128,13 @@ export async function createApp() {
   });
 
   app.get('/api/health', (_req, res) =>
-    res.json({ ok: true, cocktails: cocktails.length, ingredients: ingredients.length, llm: llmAvailable() ? llmConfig.model : null })
+    res.json({
+      ok: true,
+      cocktails: visibleRecipes(cocktails).length,
+      catalogueCocktails: cocktails.length,
+      ingredients: ingredients.length,
+      llm: llmAvailable() ? llmConfig.model : null,
+    })
   );
 
   app.get('/api/vibes', (_req, res) => res.json(Object.values(VIBES)));
@@ -136,7 +151,7 @@ export async function createApp() {
     const vibe = String(req.query.vibe || '');
     const q = norm(String(req.query.q || ''));
     const limit = Math.min(Number(req.query.limit) || 12, 120);
-    let list = cocktails.filter((c) => c.thumb || c.house);
+    let list = visibleRecipes(cocktails);
     if (vibe === 'zeroproof') list = list.filter((c) => (c.alcoholic || '').toLowerCase().includes('non'));
     else if (vibe === 'indian') list = list.filter((c) => (c.tags || []).includes('India'));
     else if (vibe) list = list.filter((c) => c.vibe === vibe);
@@ -355,6 +370,55 @@ Respond with JSON exactly like:
   /* ================= the watch shelf ================= */
   app.get('/api/videos', (_req, res) => res.json(buildLibrary(getVideoStats())));
 
+  /** Anonymous Watch discovery counters: no video id, user, or device data. */
+  app.post('/api/watch/event', (req, res) => {
+    const parsed = validateWatchEvent(req.body);
+    if (!parsed.ok) return res.status(400).json({ error: parsed.error });
+    res.json({ ok: true, metrics: recordWatchEvent(parsed.value) });
+  });
+
+  app.get('/api/watch/status', (req, res) => {
+    const token = req.get('x-push-secret') || '';
+    if (!PUSH_SECRET || token !== PUSH_SECRET) return res.status(401).json({ error: 'unauthorized' });
+    const metrics = getWatchMetrics();
+    res.json({
+      ...metrics,
+      landingPreviewClickThroughRate: metrics.impressions ? Number((metrics.landingOpens / metrics.impressions).toFixed(4)) : 0,
+      sourceTotals: {
+        landing: metrics.landingOpens,
+        nav: metrics.navOpens,
+        deepLink: metrics.deepLinkOpens,
+        direct: metrics.directOpens,
+      },
+    });
+  });
+
+  /* ================= the Shorts shelf ================= */
+  app.get('/api/shorts', (_req, res) => res.json(buildShortLibrary(getVideoStats())));
+
+  /** Anonymous, capped counters only. No account, device, or viewing history is accepted. */
+  app.post('/api/shorts/session', (req, res) => {
+    const parsed = validateShortSession(req.body);
+    if (!parsed.ok) return res.status(400).json({ error: parsed.error });
+    res.json({ ok: true, metrics: recordShortSession(parsed.value) });
+  });
+
+  app.get('/api/shorts/status', (req, res) => {
+    const token = req.get('x-push-secret') || '';
+    if (!PUSH_SECRET || token !== PUSH_SECRET) return res.status(401).json({ error: 'unauthorized' });
+    const metrics = getShortMetrics();
+    res.json({
+      ...metrics,
+      averageShortsPerSession: metrics.sessions ? Number((metrics.videosStarted / metrics.sessions).toFixed(2)) : 0,
+      averageStartupMs: metrics.videosStarted ? Math.round(metrics.startupMsTotal / metrics.videosStarted) : 0,
+      conversions: {
+        landing: metrics.landingSessions,
+        navigation: metrics.navSessions,
+        deepLink: metrics.deepLinkSessions,
+      },
+    });
+  });
+
   /**
    * Refreshes view counts and checks every embed still works. Fired weekly by
    * a scheduled workflow, never by a visitor: it is slow, it is rate-limited
@@ -369,66 +433,99 @@ Respond with JSON exactly like:
     if (!PUSH_SECRET || token !== PUSH_SECRET) return res.status(401).json({ error: 'unauthorized' });
 
     const key = process.env.YOUTUBE_API_KEY || '';
-    const ids = VIDEOS.map((v) => v.id);
+    const ids = [...new Set([...VIDEOS, ...SHORTS].map((v) => v.id))];
+    const shortIds = new Set(SHORTS.map((short) => short.id));
     const next = {};
-
-    // 1. is it still watchable and embeddable? oEmbed 200s only when both hold.
-    // Eight at a time: serially this is ~200ms per video, which at library
-    // scale is minutes and long enough for a proxy to hang up on us.
     let dead = 0;
-    const queue = [...ids];
+    let counted = 0;
+    let apiBatches = 0;
+
+    /**
+     * The Data API is the authoritative health check when configured. A
+     * successful response that omits an id is a confirmed removal; a failed
+     * request is never treated as evidence that an embed died.
+     */
+    if (key) {
+      for (let i = 0; i < ids.length; i += 50) {
+        const batchIds = ids.slice(i, i + 50);
+        const batch = batchIds.join(',');
+        try {
+          const response = await fetch(
+            `https://www.googleapis.com/youtube/v3/videos?part=status,contentDetails,statistics&id=${batch}&key=${key}`,
+            { signal: AbortSignal.timeout(15000) }
+          );
+          if (!response.ok) {
+            console.error(`[watch] YouTube videos.list ${response.status} for batch ${i / 50 + 1}`);
+            continue;
+          }
+          const payload = await response.json();
+          apiBatches++;
+          const returned = new Set();
+          for (const item of payload.items || []) {
+            if (!item?.id) continue;
+            returned.add(item.id);
+            const health = classifyVideoStatus(item, { short: shortIds.has(item.id) });
+            const stats = item.statistics || {};
+            next[item.id] = {
+              dead: health.dead,
+              deadReason: health.dead ? health.reason : null,
+              views: Number(stats.viewCount) || 0,
+              likes: Number(stats.likeCount) || 0,
+            };
+            if (health.dead) dead++;
+            if (item.statistics) counted++;
+          }
+          for (const id of batchIds) {
+            if (returned.has(id)) continue;
+            next[id] = { dead: true, deadReason: 'missing' };
+            dead++;
+          }
+        } catch (error) {
+          console.error(`[watch] YouTube videos.list failed for batch ${i / 50 + 1}:`, error.message);
+        }
+      }
+    }
+
+    /**
+     * oEmbed is the no-key fallback and a recovery path for a transient API
+     * batch failure. Only a 404/410 (or a no-key non-2xx response) is treated
+     * as dead; timeouts and rate limits leave the previous state untouched.
+     */
+    const unresolved = ids.filter((id) => !Object.prototype.hasOwnProperty.call(next, id));
+    const queue = [...unresolved];
     await Promise.all(
       Array.from({ length: 8 }, async () => {
         for (let id = queue.pop(); id; id = queue.pop()) {
           try {
-            const r = await fetch(
-              `https://www.youtube.com/oembed?format=json&url=https://www.youtube.com/watch?v=${id}`,
+            const response = await fetch(
+              `https://www.youtube.com/oembed?format=json&url=https://www.youtube.com/watch?v=${id}&hl=en&gl=IN`,
               { signal: AbortSignal.timeout(10000) }
             );
-            next[id] = { dead: !r.ok };
-            if (!r.ok) dead++;
+            // Only terminal not-found responses prove an embed is gone. A
+            // 403/429/5xx can be a quota, consent, region, or transient
+            // network response and must preserve the previous health state.
+            const gone = !response.ok && (response.status === 404 || response.status === 410);
+            if (gone) {
+              next[id] = { dead: true, deadReason: `oembed:${response.status}` };
+              dead++;
+            } else if (response.ok) {
+              next[id] = { dead: false, deadReason: null };
+            }
           } catch {
-            /* a network blip is not evidence a video is gone, so leave it alone */
+            /* A network blip is not evidence a video is gone. */
           }
         }
       })
     );
 
-    // 2. numbers, when a key is configured. 50 ids per call, 1 quota unit each
-    let counted = 0;
-    if (key) {
-      for (let i = 0; i < ids.length; i += 50) {
-        const batch = ids.slice(i, i + 50).join(',');
-        try {
-          const r = await fetch(
-            `https://www.googleapis.com/youtube/v3/videos?part=statistics&id=${batch}&key=${key}`,
-            { signal: AbortSignal.timeout(15000) }
-          );
-          if (!r.ok) break;
-          const j = await r.json();
-          for (const item of j.items || []) {
-            next[item.id] = {
-              ...next[item.id],
-              views: Number(item.statistics?.viewCount) || 0,
-              likes: Number(item.statistics?.likeCount) || 0,
-            };
-            counted++;
-          }
-        } catch {
-          break;
-        }
-      }
-    }
-
     saveVideoStats(next);
-    console.log(`[watch] refreshed ${ids.length} videos, ${counted} counted, ${dead} dead`);
-    res.json({ checked: ids.length, counted, dead, hasKey: Boolean(key) });
+    console.log(`[watch] refreshed ${ids.length} videos, ${counted} counted, ${dead} dead (${apiBatches} API batches)`);
+    res.json({ checked: ids.length, counted, dead, hasKey: Boolean(key), apiBatches });
   });
 
   /* ================= bar nudges (web push) ================= */
   const VAPID_PUBLIC = process.env.VAPID_PUBLIC_KEY || '';
   const VAPID_PRIVATE = process.env.VAPID_PRIVATE_KEY || '';
-  const PUSH_SECRET = process.env.PUSH_SECRET || '';
   const pushReady = Boolean(VAPID_PUBLIC && VAPID_PRIVATE);
   if (pushReady) {
     webpush.setVapidDetails(process.env.VAPID_SUBJECT || 'mailto:hello@the-pubcrawl.app', VAPID_PUBLIC, VAPID_PRIVATE);

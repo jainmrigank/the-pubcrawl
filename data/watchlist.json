@@ -15,7 +15,8 @@
    "channel": "Aakash Gupta",
    "lane": "comedy",
    "rank": 2,
-   "addedAt": "2026-08-04"
+   "addedAt": "2026-08-04",
+   "landingFeatured": true
   },
   {
    "id": "MsUtcrQ7M0c",
@@ -31,7 +32,8 @@
    "channel": "Late Night with Seth Meyers",
    "lane": "comedy",
    "rank": 4,
-   "addedAt": "2026-07-27"
+   "addedAt": "2026-07-27",
+   "landingFeatured": true
   },
   {
    "id": "QTrqGwj3XpA",
@@ -63,7 +65,8 @@
    "channel": "Epicurious",
    "lane": "education",
    "rank": 8,
-   "addedAt": "2026-08-04"
+   "addedAt": "2026-08-04",
+   "landingFeatured": true
   },
   {
    "id": "FgnXJu7jU9Q",
@@ -95,7 +98,8 @@
    "channel": "Gabriel Iglesias",
    "lane": "comedy",
    "rank": 12,
-   "addedAt": "2026-08-04"
+   "addedAt": "2026-08-04",
+   "landingFeatured": true
   },
   {
    "id": "U9B6MhxLXFA",
@@ -151,7 +155,8 @@
    "channel": "Munchies",
    "lane": "craft",
    "rank": 19,
-   "addedAt": "2026-08-04"
+   "addedAt": "2026-08-04",
+   "landingFeatured": true
   },
   {
    "id": "cQZnUeoaEEE",
@@ -239,7 +244,8 @@
    "channel": "Cut",
    "lane": "people",
    "rank": 30,
-   "addedAt": "2026-07-27"
+   "addedAt": "2026-07-27",
+   "landingFeatured": true
   },
   {
    "id": "A6kdEFSFGaU",
@@ -327,7 +333,8 @@
    "channel": "The Educated Barfly",
    "lane": "education",
    "rank": 41,
-   "addedAt": "2026-08-04"
+   "addedAt": "2026-08-04",
+   "landingFeatured": true
   },
   {
    "id": "PpBzl5KlafM",
@@ -575,7 +582,8 @@
    "channel": "Bon Appétit",
    "lane": "craft",
    "rank": 72,
-   "addedAt": "2026-07-27"
+   "addedAt": "2026-07-27",
+   "landingFeatured": true
   },
   {
    "id": "dhFlS4jVtR4",
@@ -639,7 +647,8 @@
    "channel": "Bon Appétit",
    "lane": "people",
    "rank": 80,
-   "addedAt": "2026-08-04"
+   "addedAt": "2026-08-04",
+   "landingFeatured": true
   },
   {
    "id": "S9gvxiX2a8U",
@@ -671,7 +680,8 @@
    "channel": "Epicurious",
    "lane": "people",
    "rank": 84,
-   "addedAt": "2026-08-04"
+   "addedAt": "2026-08-04",
+   "landingFeatured": true
   },
   {
    "id": "pdcrJ5V7YKM",
@@ -679,7 +689,8 @@
    "channel": "Anders Erickson",
    "lane": "education",
    "rank": 85,
-   "addedAt": "2026-08-04"
+   "addedAt": "2026-08-04",
+   "landingFeatured": true
   },
   {
    "id": "kUA4wVWn7tk",
@@ -1535,7 +1546,8 @@
    "channel": "Epicurious",
    "lane": "craft",
    "rank": 192,
-   "addedAt": "2026-08-04"
+   "addedAt": "2026-08-04",
+   "landingFeatured": true
   },
   {
    "id": "FJdzoY-Wsc8",

@@ -26,6 +26,8 @@ It is not positioned as production AI employment experience. It is a hands-on po
 - `#/bar`: Ingredient shelf, photo upload, matched recipes, near misses, and house specials.
 - `#/basics`: Techniques, tools, glassware, measurements, and starter-shelf guidance.
 - `#/tab`: Saved shortlist with shareable text output.
+- `#/shorts`: Immersive, vertically snapping short-form video feed.
+- `#/watch`: Curated long-form cocktail and bar-culture videos.
 
 Pages stay mounted while switching routes, preserving scroll position, search state, flipped cards, and accordions.
 
@@ -83,6 +85,47 @@ House-special generation:
 - Frontend runtime override supports changing API base URL without rebuilding.
 - Secrets stay on the API service and are not exposed to the Vite frontend.
 
+## Shorts
+
+The `SHORTS` route (`#/shorts`) is an immersive feed beneath the persistent
+PubCrawl navigation. Each Short fills the remaining app viewport, snaps
+vertically, and uses YouTube's native controls. PubCrawl renders only BACK,
+SHARE and an optional `MAKE THIS` action outside the player. BACK sits in a
+minimal transparent top-left overlay and SHARE in a matching player-relative
+gutter/edge; desktop actions reveal on hover or keyboard focus, while touch
+devices keep the icon target discoverable. `MAKE THIS` remains a separate
+action when a recipe match exists. On touch-sized Shorts routes the site header
+is hidden so the feed owns the full dynamic viewport; the uncropped portrait
+player is centred over a darkened, thumbnail-matched backdrop. A normal
+connection keeps a directional five-slot pool (one previous, current and three
+ahead while moving forward, mirrored when moving backward) cued; 3G uses three
+slots, while reduced motion, Save Data and 2G use one tap-to-play player;
+individual autoplay failures leave the rest of the pool alive. Thumbnails stay
+over the player until its native state
+reaches `PLAYING`, and a stalled start becomes a `TAP TO PLAY` state after six
+seconds.
+YouTube sound changes are polled from the native active player and propagated
+to subsequent Shorts for the current app session only.
+
+The landing page keeps six compact, freshly randomized build-time thumbnail
+facades with titles and creators beneath them, so it loads no YouTube player.
+Each new Shorts visit also receives a fresh shuffled feed order while exact deep
+links still open their requested video. Teasers preserve
+`#/shorts?v=VIDEO_ID&src=landing` links; sharing produces the same deep-link
+format, and `MAKE THIS` opens an existing menu search.
+
+`data/shorts.json` is the reviewed metadata catalogue. The free weekly workflow
+(`.github/workflows/watch-library.yml`) sweeps trusted RSS feeds, verifies the
+actual Shorts URL, India availability, duration, safety signals, thumbnail and
+embed response, caps additions at 12 (two per channel), refreshes live health
+before pruning, and opens one review PR containing separate Watch and Shorts
+diffs. Monthly API discovery is optional and uses the existing
+`YOUTUBE_API_KEY`. The Monday refresh checks the union of Watch and Shorts IDs
+with `status`, `contentDetails` and `statistics`, dropping confirmed private,
+unprocessed, non-embeddable, India-blocked, age-restricted and made-for-kids
+Shorts. The store keeps only aggregate Shorts session counters and startup/
+unavailable totals.
+
 ## Run Locally
 
 ```bash
@@ -102,6 +145,7 @@ Build check:
 
 ```bash
 npm run build
+npm test
 ```
 
 Data rebuilds:
@@ -148,7 +192,8 @@ This was an AI-assisted portfolio project built with modern coding assistants fo
 
 ## Current Limitations
 
-- No formal test suite is included yet.
+- The dependency-free `node:test` suite covers Shorts schema, duplicates,
+  lane/duration limits, dead filtering, catalogue limits and metrics payloads.
 - Photo identification requires a configured LLM provider key.
 - Free hosting tiers can sleep, so first API calls may be slower after inactivity.
 - Public likes are browser-limited client-side and should not be treated as abuse-proof analytics.

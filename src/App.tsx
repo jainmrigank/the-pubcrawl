@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import { AnimatePresence, motion, MotionConfig } from 'framer-motion';
 import { fetchHealth, fetchLikes, fetchRecipes, fetchVibes, generateRecipe, keepRecipe, matchRecipes, postLike } from './api';
-import type { Health, Ingredient, MatchResult, Recipe, Vibe } from './types';
+import type { Health, Ingredient, MatchResult, Recipe, ShortsReturnState, Vibe } from './types';
 import { Typeahead } from './components/Typeahead';
 import { UploadZone } from './components/UploadZone';
 import { RecipeCard } from './components/RecipeCard';
@@ -12,7 +12,8 @@ import { InstallBanner } from './components/InstallBanner';
 import { NudgeToggle } from './components/NudgeToggle';
 import { NudgePrompt } from './components/NudgePrompt';
 import { Quiz } from './components/Quiz';
-import { Watch } from './components/Watch';
+import { Watch, WatchTeaser } from './components/Watch';
+import { Shorts, ShortsTeaser } from './components/Shorts';
 import { DailyQuestion } from './components/DailyQuestion';
 import { EASE, Lines, LOADED_HIDDEN, Reveal } from './motion';
 import { ArrowDown, ArrowRight, Burger, Check, Heart, PubGlyph, Share, Shuffle, SketchDefs, X } from './icons';
@@ -21,13 +22,14 @@ import './App.css';
 
 const FALLBACK_VIBE: Vibe = { id: 'boozy', label: 'Spirit-Forward', color: '#8A5A24' };
 
-type Route = 'menu' | 'bar' | 'basics' | 'tab' | 'quiz' | 'watch';
-const ROUTES: Route[] = ['menu', 'bar', 'basics', 'tab', 'quiz', 'watch'];
+type Route = 'menu' | 'bar' | 'basics' | 'tab' | 'quiz' | 'watch' | 'shorts';
+const ROUTES: Route[] = ['menu', 'bar', 'basics', 'tab', 'quiz', 'watch', 'shorts'];
 const NAV: { route: Route; label: string }[] = [
   { route: 'menu', label: 'THE MENU' },
   { route: 'bar', label: 'THE BAR' },
   { route: 'tab', label: 'THE TAB' },
   { route: 'quiz', label: 'QUIZ' },
+  { route: 'shorts', label: 'SHORTS' },
   { route: 'watch', label: 'WATCH' },
   { route: 'basics', label: 'BAR BASICS' },
 ];
@@ -66,6 +68,24 @@ function wantsDaily(): boolean {
   return hashParams().get('daily') === '1';
 }
 
+/** a shareable Shorts link carries the YouTube id after ?v= */
+function shortVideoId(): string {
+  return hashParams().get('v') || '';
+}
+
+function shortsSource(): string {
+  return hashParams().get('src') || 'direct';
+}
+
+/** a shareable Watch link carries the YouTube id after ?v= */
+function watchVideoId(): string {
+  return hashParams().get('v') || '';
+}
+
+function watchSource(): string {
+  return hashParams().get('src') || 'direct';
+}
+
 /** top of the drinks list, allowing for the sticky nav */
 function menuListTop(): number {
   const el = document.getElementById('menu-list');
@@ -76,6 +96,7 @@ function menuListTop(): number {
 
 /** the landing view and the drinks list are separate places to come back to */
 const viewKey = (route: Route, landing: boolean) => (landing ? 'landing' : route);
+let preserveLandingPositionOnce = false;
 
 function useRoute(): { route: Route; landing: boolean } {
   const [view, setView] = useState(() => ({ route: parseRoute(), landing: isLandingView() }));
@@ -90,7 +111,8 @@ function useRoute(): { route: Route; landing: boolean } {
       const landing = isLandingView();
       current = viewKey(route, landing);
       // the wordmark means "take me home", so always open at the top
-      if (landing) delete positions.current.landing;
+      if (landing && !preserveLandingPositionOnce) delete positions.current.landing;
+      preserveLandingPositionOnce = false;
       setView({ route, landing });
     };
     window.addEventListener('hashchange', onChange);
@@ -129,6 +151,8 @@ const MENU_MAX = 120;
 
 export default function App() {
   const { route, landing } = useRoute();
+  const shortsActive = route === 'shorts';
+  const lastNonShortsHash = useRef('#/');
   const [vibes, setVibes] = useState<Vibe[]>([]);
   const [health, setHealth] = useState<Health | null>(null);
   const [pantry, setPantry] = useState<Ingredient[]>([]);
@@ -165,6 +189,7 @@ export default function App() {
   const [loved, setLoved] = useState(false);
   const [inventMood, setInventMood] = useState('');
   const [dailyForced, setDailyForced] = useState(wantsDaily);
+  const [shortsReturn, setShortsReturn] = useState<ShortsReturnState | null>(null);
 
   const vibeOf = useCallback(
     (id: string) => vibes.find((v) => v.id === id) ?? FALLBACK_VIBE,
@@ -189,13 +214,57 @@ export default function App() {
     return () => window.removeEventListener('hashchange', onHash);
   }, []);
 
-  // the page behind the mobile drawer shouldn't scroll while it's open
+  // The page behind the mobile drawer and the immersive Shorts feed should
+  // never scroll. Shorts owns its own full-height snap-scrolling surface.
   useEffect(() => {
-    document.body.style.overflow = menuOpen ? 'hidden' : '';
+    const root = document.documentElement;
+    document.body.style.overflow = menuOpen || shortsActive ? 'hidden' : '';
+    document.body.style.overscrollBehavior = shortsActive ? 'none' : '';
+    root.style.overflow = shortsActive ? 'hidden' : '';
+    root.style.overscrollBehavior = shortsActive ? 'none' : '';
     return () => {
       document.body.style.overflow = '';
+      document.body.style.overscrollBehavior = '';
+      root.style.overflow = '';
+      root.style.overscrollBehavior = '';
     };
-  }, [menuOpen]);
+  }, [menuOpen, shortsActive]);
+
+  // Remember where an in-app Shorts visit began. Direct deep links have no
+  // prior PubCrawl screen, so BACK safely falls home instead of leaving the app.
+  useEffect(() => {
+    let previousHash = window.location.hash || '#/';
+    let previousWasShorts = parseRoute() === 'shorts';
+    if (!previousWasShorts) lastNonShortsHash.current = previousHash;
+    const remember = () => {
+      const nextHash = window.location.hash || '#/';
+      const nextIsShorts = parseRoute() === 'shorts';
+      if (nextIsShorts && !previousWasShorts) {
+        lastNonShortsHash.current = previousHash;
+      }
+      previousHash = nextHash;
+      previousWasShorts = nextIsShorts;
+    };
+    window.addEventListener('hashchange', remember);
+    return () => window.removeEventListener('hashchange', remember);
+  }, []);
+
+  const leaveShorts = useCallback(() => {
+    const target = lastNonShortsHash.current || '#/';
+    setShortsReturn(null);
+    // A bare-hash landing navigation normally means the wordmark and opens at
+    // the top. BACK is different: keep the landing position remembered by the
+    // route hook for this one transition.
+    preserveLandingPositionOnce = target === '#/' || target === '#' || target === '';
+    window.location.hash = target;
+  }, []);
+
+  const continueToBar = useCallback((snapshot: ShortsReturnState) => {
+    setShortsReturn(snapshot);
+    window.location.hash = `#/menu?q=${encodeURIComponent(snapshot.recipeQuery || '')}&from=shorts`;
+  }, []);
+
+  const consumeShortsReturn = useCallback(() => setShortsReturn(null), []);
 
   useEffect(() => {
     try {
@@ -410,11 +479,11 @@ export default function App() {
 
   return (
     <MotionConfig reducedMotion="user">
-      <div className="site">
+      <div className={`site ${shortsActive ? 'shorts-active' : ''}`}>
         <SketchDefs />
-        <DailyQuestion force={dailyForced} />
-        <InstallBanner />
-        <NudgePrompt />
+        {!shortsActive && <DailyQuestion force={dailyForced} />}
+        {!shortsActive && <InstallBanner />}
+        {!shortsActive && <NudgePrompt />}
 
         {/* ================= nav ================= */}
         <header className="nav">
@@ -426,7 +495,7 @@ export default function App() {
             {NAV.map((n) => (
               <a
                 key={n.route}
-                href={`#/${n.route}`}
+                href={n.route === 'shorts' ? '#/shorts?src=nav' : n.route === 'watch' ? '#/watch?src=nav' : `#/${n.route}`}
                 className={`nav-link ${active === n.route ? 'active' : ''}`}
                 aria-current={active === n.route ? 'page' : undefined}
               >
@@ -469,7 +538,7 @@ export default function App() {
                 {NAV.map((n, i) => (
                   <motion.a
                     key={n.route}
-                    href={`#/${n.route}`}
+                    href={n.route === 'shorts' ? '#/shorts?src=nav' : n.route === 'watch' ? '#/watch?src=nav' : `#/${n.route}`}
                     onClick={() => setMenuOpen(false)}
                     initial={{ y: 44, opacity: 0 }}
                     animate={{ y: 0, opacity: 1 }}
@@ -491,6 +560,17 @@ export default function App() {
               flipped cards and accordion state survive switching between them */}
             <div hidden={route !== 'menu'}>
               <>
+                {shortsReturn && !landing && (
+                  <div className="shorts-return-banner" role="status">
+                    <span>
+                      <span className="k-label">SHORT PAUSED</span>
+                      <strong>{shortsReturn.title || 'YOUR LAST POUR'}</strong>
+                    </span>
+                    <a className="text-btn" href={`#/shorts?v=${encodeURIComponent(shortsReturn.videoId)}&src=return`}>
+                      BACK TO SHORT <ArrowRight size={12} />
+                    </a>
+                  </div>
+                )}
                 {/* ================= the menu (landing) ================= */}
                 <section className="hero">
                   <div className="hero-kicker">
@@ -516,6 +596,8 @@ export default function App() {
                         </button>
                       </div>
                     </Reveal>
+                    <WatchTeaser active={landing} />
+                    <ShortsTeaser active={landing} />
                     <ol className="hero-steps" aria-label="How it works">
                       <li>
                         <span className="k-label dim">01</span>
@@ -749,7 +831,26 @@ export default function App() {
             </div>
 
             <div hidden={route !== 'watch'}>
-              <Watch />
+              <Watch active={route === 'watch'} initialId={watchVideoId()} source={watchSource()} />
+            </div>
+
+            <div className="shorts-route" hidden={route !== 'shorts'}>
+              <Shorts
+                active={shortsActive}
+                initialId={shortVideoId()}
+                source={shortsSource()}
+                onBack={leaveShorts}
+                returnState={shortsReturn}
+                onContinueToBar={continueToBar}
+                onReturnConsumed={consumeShortsReturn}
+                recipeVibe={(recipe) => vibeOf(recipe.vibe)}
+                onToggleRecipeTab={toggleTab}
+                recipeTabIds={tabIds}
+                recipeLikes={likes}
+                recipeLikedIds={likedIds}
+                onToggleRecipeLike={toggleLike}
+                onKeepRecipe={keepDrink}
+              />
             </div>
 
             <div hidden={route !== 'tab'}>
@@ -802,17 +903,19 @@ export default function App() {
         </main>
 
         {/* ================= footer ================= */}
-        <footer className="foot">
-          <Lines as="p" className="foot-big" lines={['POUR SOMETHING', 'PROPER.']} stagger={0.08} />
-          <div className="foot-nudge">
-            <NudgeToggle />
-          </div>
-          <div className="foot-meta">
-            <span className="k-label">RECIPES FROM THECOCKTAILDB</span>
-            <span className="k-label">HOUSE SPECIALS ARE ROBOT-MADE. TASTE BEFORE SERVING.</span>
-            <span className="k-label">THE PUBCRAWL © 2026</span>
-          </div>
-        </footer>
+        {!shortsActive && (
+          <footer className="foot">
+            <Lines as="p" className="foot-big" lines={['POUR SOMETHING', 'PROPER.']} stagger={0.08} />
+            <div className="foot-nudge">
+              <NudgeToggle />
+            </div>
+            <div className="foot-meta">
+              <span className="k-label">RECIPES FROM THECOCKTAILDB</span>
+              <span className="k-label">HOUSE SPECIALS ARE ROBOT-MADE. TASTE BEFORE SERVING.</span>
+              <span className="k-label">THE PUBCRAWL © 2026</span>
+            </div>
+          </footer>
+        )}
 
         {/* ================= video modal ================= */}
         <AnimatePresence>

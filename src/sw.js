@@ -4,8 +4,8 @@
  *  - caches drink photos
  *  - shows bar nudges and opens the right page when one is tapped
  *
- * New deploys are picked up automatically: this worker takes over as soon as
- * it installs, so reopening the app is all anyone ever has to do.
+ * New deploys wait for the current app page to close. This avoids tearing down
+ * an active Shorts player or recipe continuation in the middle of a session.
  */
 import { precacheAndRoute, cleanupOutdatedCaches } from 'workbox-precaching';
 import { clientsClaim } from 'workbox-core';
@@ -13,7 +13,6 @@ import { registerRoute } from 'workbox-routing';
 import { CacheFirst } from 'workbox-strategies';
 import { ExpirationPlugin } from 'workbox-expiration';
 
-self.skipWaiting();
 clientsClaim();
 cleanupOutdatedCaches();
 precacheAndRoute(self.__WB_MANIFEST);

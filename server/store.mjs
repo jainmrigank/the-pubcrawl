@@ -10,6 +10,8 @@
 import { readFileSync, writeFileSync, existsSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { emptyShortMetrics } from './shorts-schema.mjs';
+import { emptyWatchMetrics } from './watch-schema.mjs';
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
 const dataFile = (name) => join(ROOT, 'data', name);
@@ -61,6 +63,8 @@ let subs = []; // push subscriptions: { sub, createdAt, lastSeen }
 let highScore = { score: 0, at: 0 }; // best run by anyone, ever
 let hall = []; // everyone who has cleared the whole bank: { name, score, at }
 let videoStats = {}; // youtube id -> { views, likes, dead, checkedAt, history: [{at, views}] }
+let shortMetrics = emptyShortMetrics();
+let watchMetrics = emptyWatchMetrics();
 
 export async function initStore() {
   likes = await readBlob('pubcrawl:likes', 'likes.json', {});
@@ -69,6 +73,8 @@ export async function initStore() {
   highScore = await readBlob('pubcrawl:highscore', 'high_score.json', { score: 0, at: 0 });
   hall = await readBlob('pubcrawl:hall', 'hall_of_fame.json', []);
   videoStats = await readBlob('pubcrawl:videostats', 'video_stats.json', {});
+  shortMetrics = { ...emptyShortMetrics(), ...(await readBlob('pubcrawl:shortmetrics', 'short_metrics.json', {})) };
+  watchMetrics = { ...emptyWatchMetrics(), ...(await readBlob('pubcrawl:watchmetrics', 'watch_metrics.json', {})) };
   console.log(
     `[store] ${useKV ? 'Upstash KV' : 'local file'} — ${Object.keys(likes).length} liked, ${kept.length} kept, ${subs.length} subscribed, high score ${highScore.score}, ${hall.length} in the hall`
   );
@@ -105,6 +111,49 @@ export function addToHall(name, score) {
 }
 
 export const getVideoStats = () => videoStats;
+
+export const getShortMetrics = () => shortMetrics;
+export const getWatchMetrics = () => watchMetrics;
+
+/**
+ * Record one anonymous Shorts session. The request is validated and capped in
+ * the API layer; this function only ever stores counters, never an identifier.
+ */
+export function recordShortSession(session) {
+  const sourceKey = session.source === 'landing' ? 'landingSessions' : session.source === 'nav' ? 'navSessions' : session.source === 'deep-link' ? 'deepLinkSessions' : null;
+  const next = {
+    ...shortMetrics,
+    sessions: shortMetrics.sessions + 1,
+    videosStarted: shortMetrics.videosStarted + session.videosStarted,
+    advances: shortMetrics.advances + session.advances,
+    shares: shortMetrics.shares + session.shares,
+    recipeClicks: shortMetrics.recipeClicks + session.recipeClicks,
+    autoplayFailures: shortMetrics.autoplayFailures + session.autoplayFailures,
+    unavailableSkips: shortMetrics.unavailableSkips + session.unavailableSkips,
+    bufferingEvents: shortMetrics.bufferingEvents + session.bufferingEvents,
+    startupMsTotal: shortMetrics.startupMsTotal + session.startupMsTotal,
+  };
+  if (sourceKey) next[sourceKey] += 1;
+  shortMetrics = next;
+  writeBlob('pubcrawl:shortmetrics', 'short_metrics.json', shortMetrics);
+  return shortMetrics;
+}
+
+/** Record anonymous Watch discovery events; only aggregate counters persist. */
+export function recordWatchEvent(event) {
+  if (event.type === 'preview-impression') {
+    watchMetrics = { ...watchMetrics, impressions: watchMetrics.impressions + 1 };
+  } else {
+    const key = event.source === 'deep-link' ? 'deepLinkOpens' : `${event.source}Opens`;
+    watchMetrics = {
+      ...watchMetrics,
+      opens: watchMetrics.opens + 1,
+      [key]: (watchMetrics[key] || 0) + 1,
+    };
+  }
+  writeBlob('pubcrawl:watchmetrics', 'watch_metrics.json', watchMetrics);
+  return watchMetrics;
+}
 
 /**
  * Merge a refresh into the stored statistics, keeping a short view-count

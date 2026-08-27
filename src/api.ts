@@ -1,4 +1,4 @@
-import type { HallMember, Health, Ingredient, MatchResult, Question, Recipe, Vibe, WatchLibrary } from './types';
+import type { HallMember, Health, Ingredient, MatchResult, Question, Recipe, ShortLibrary, Vibe, WatchLibrary } from './types';
 
 /**
  * Where the API lives. Empty (default) means same origin — the dev server
@@ -122,6 +122,31 @@ export const fetchDailyQuestion = () => get<Question>('/api/quiz/today');
 
 /* ---- the watch shelf ---- */
 export const fetchVideos = () => get<WatchLibrary>('/api/videos');
+
+export type WatchEventPayload =
+  | { type: 'preview-impression' }
+  | { type: 'open'; source: 'landing' | 'nav' | 'deep-link' | 'direct' };
+
+export const postWatchEvent = (payload: WatchEventPayload) =>
+  post<{ ok: boolean }>('/api/watch/event', payload, false, 8000);
+
+/* ---- the Shorts shelf ---- */
+export const fetchShorts = () => get<ShortLibrary>('/api/shorts');
+
+export interface ShortSessionPayload {
+  source: 'landing' | 'nav' | 'deep-link' | 'direct';
+  videosStarted: number;
+  advances: number;
+  shares: number;
+  recipeClicks: number;
+  autoplayFailures: number;
+  unavailableSkips?: number;
+  bufferingEvents?: number;
+  startupMsTotal?: number;
+}
+
+export const postShortSession = (payload: ShortSessionPayload) =>
+  post<{ ok: boolean }>('/api/shorts/session', payload, false, 8000);
 
 /* ---- bar nudges (web push) ---- */
 export const fetchPushKey = () => get<{ key: string | null }>('/api/push/key');

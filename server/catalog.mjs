@@ -86,6 +86,11 @@ export function categorise(name) {
 export const isBoozeCategory = (cat) =>
   ['Spirit', 'Liqueur', 'Wine & Fortified', 'Beer & Cider'].includes(cat);
 
+/** A flashcard needs a real photograph; house recipes without one stay in the
+ * matching catalogue but do not appear on the public browse shelf. */
+export const hasRecipeImage = (recipe) => typeof recipe?.thumb === 'string' && recipe.thumb.trim().length > 0;
+export const visibleRecipes = (recipes) => (Array.isArray(recipes) ? recipes : []).filter(hasRecipeImage);
+
 /* ---------- normalisation + matching ---------- */
 export const norm = (s) =>
   s

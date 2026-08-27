@@ -34,6 +34,9 @@ jobs:
       - name: Sweep trusted channels for new uploads
         run: node scripts/sweep_channels.mjs --days 14
 
+      - name: Sweep trusted channels for new Shorts
+        run: node scripts/sweep_shorts.mjs --days 14 --perchannel 2 --max 12
+
       # Only on the first Monday of the month, or when asked by hand. search.list
       # costs 100 quota units a call, so this is not a weekly habit.
       - name: Decide whether to run discovery
@@ -52,36 +55,70 @@ jobs:
           YOUTUBE_API_KEY: ${{ secrets.YOUTUBE_API_KEY }}
         run: node scripts/discover_videos.mjs --queries 40
 
+      - name: Discover new Shorts
+        if: steps.when.outputs.run == 'yes' && env.YOUTUBE_API_KEY != ''
+        env:
+          YOUTUBE_API_KEY: ${{ secrets.YOUTUBE_API_KEY }}
+        run: node scripts/discover_shorts.mjs --queries 20 --max 12
+
+      # Health must run before pruning so the review PR contains confirmed
+      # removals from both catalogues. The endpoint preserves prior state when
+      # YouTube or Render is temporarily unavailable.
+      - name: Refresh live Watch and Shorts health before pruning
+        env:
+          API_BASE: ${{ secrets.API_BASE }}
+          PUSH_SECRET: ${{ secrets.PUSH_SECRET }}
+        run: |
+          code=$(curl -s -o /tmp/pubcrawl-refresh.json -w '%{http_code}' -X POST \
+            -H "x-push-secret: $PUSH_SECRET" \
+            -H 'content-type: application/json' \
+            --max-time 300 \
+            "$API_BASE/api/videos/refresh")
+          echo "HTTP $code"
+          cat /tmp/pubcrawl-refresh.json
+          test "$code" = "200"
+
       - name: Prune the dead and the stagnant
         env:
           API_BASE: ${{ secrets.API_BASE }}
         run: node scripts/prune_watchlist.mjs
 
+      - name: Prune dead and stale Shorts
+        env:
+          API_BASE: ${{ secrets.API_BASE }}
+        run: node scripts/prune_shorts.mjs --days 120
+
+      - name: Guard the reviewed Shorts catalogue
+        run: node --test test/shorts.test.mjs
+
       - name: Open a pull request if anything changed
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          if git diff --quiet -- data/watchlist.json; then
+          if git diff --quiet -- data/watchlist.json data/shorts.json; then
             echo "No change to the library."
             exit 0
           fi
 
-          added=$(git diff -- data/watchlist.json | grep -c '^+ *"id"' || true)
-          gone=$(git diff -- data/watchlist.json | grep -c '^- *"id"' || true)
+          watch_added=$(git diff -- data/watchlist.json | grep -c '^+ *"id"' || true)
+          watch_gone=$(git diff -- data/watchlist.json | grep -c '^- *"id"' || true)
+          short_added=$(git diff -- data/shorts.json | grep -c '^+ *"id"' || true)
+          short_gone=$(git diff -- data/shorts.json | grep -c '^- *"id"' || true)
           total=$(node -e "console.log(require('./data/watchlist.json').videos.length)")
+          short_total=$(node -e "console.log(require('./data/shorts.json').shorts.length)")
           branch="watch-library/$(date -u +%Y-%m-%d)"
 
           git config user.name  'github-actions[bot]'
           git config user.email 'github-actions[bot]@users.noreply.github.com'
           git checkout -B "$branch"
-          git add data/watchlist.json
-          git commit -m "Watch library: +${added} / -${gone} (${total} total)"
+          git add data/watchlist.json data/shorts.json
+          git commit -m "Watch + Shorts library: +${watch_added}/-${watch_gone} Watch, +${short_added}/-${short_gone} Shorts"
           git push -f origin "$branch"
 
           # reuse the open PR for this branch if there is one
           if ! gh pr view "$branch" --json number >/dev/null 2>&1; then
             gh pr create \
               --base main --head "$branch" \
-              --title "Watch library: +${added} / -${gone}" \
-              --body "$(printf 'Automated sweep of the trusted channels, plus a prune of the dead and the stagnant.\n\n- added: %s\n- removed: %s\n- library: %s videos\n\nSkim the titles before merging. Everything here passed the topic filters and the Shorts check, but no filter has taste.' "$added" "$gone" "$total")"
+              --title "Watch + Shorts library: +${watch_added}/-${watch_gone} Watch, +${short_added}/-${short_gone} Shorts" \
+              --body "$(printf 'Automated Watch and Shorts sweep of the trusted channels, plus a prune of dead and stale entries.\n\nWatch: +%s / -%s\nShorts: +%s / -%s\nWatch library: %s videos\nShorts library: %s Shorts\n\nSkim titles before merging. Everything passed the topic filters and the Shorts check, but no filter has taste.' "$watch_added" "$watch_gone" "$short_added" "$short_gone" "$total" "$short_total")"
           fi

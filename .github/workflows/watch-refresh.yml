@@ -1,7 +1,7 @@
-name: Refresh the watch shelf
+name: Refresh the watch and Shorts shelves
 
 # Weekly. Two jobs in one call: check every embed still plays, and snapshot
-# view counts so "what is climbing" can be worked out from our own history.
+# view counts for both shelves so "what is climbing" can be worked out from our own history.
 # YouTube will not tell you a video's views this month, so the only way to
 # know is to have been counting.
 on:
@@ -13,7 +13,7 @@ jobs:
   refresh:
     runs-on: ubuntu-latest
     steps:
-      - name: Refresh counts and drop dead embeds
+      - name: Refresh counts and drop dead Watch/Shorts embeds
         run: |
           code=$(curl -s -o /tmp/out.json -w '%{http_code}' -X POST \
             -H "x-push-secret: ${{ secrets.PUSH_SECRET }}" \

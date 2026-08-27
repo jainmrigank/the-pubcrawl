@@ -6,9 +6,9 @@ export default defineConfig({
   plugins: [
     react(),
     VitePWA({
-      // future deploys reach installed apps automatically: the new build is
-      // fetched in the background and applied on the next launch/restart
-      registerType: 'autoUpdate',
+      // Keep an active Shorts/recipe session intact. A downloaded update waits
+      // for the current app page to close and is picked up on next launch.
+      registerType: 'prompt',
       // our own worker (src/sw.js) so it can show bar nudges
       strategies: 'injectManifest',
       srcDir: 'src',
@@ -36,9 +36,13 @@ export default defineConfig({
       },
     }),
     {
-      // Serve the cocktail API inside the Vite dev server — one process, one port.
+      // Serve the cocktail API inside both local modes — one process, one port.
       name: 'cocktail-api',
       async configureServer(server) {
+        const { createApp } = await import('./server/app.mjs');
+        server.middlewares.use(await createApp());
+      },
+      async configurePreviewServer(server) {
         const { createApp } = await import('./server/app.mjs');
         server.middlewares.use(await createApp());
       },

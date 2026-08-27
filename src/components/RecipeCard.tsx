@@ -22,7 +22,7 @@ interface Props {
 }
 
 /** The three card actions (tab / share / like), used on both faces. */
-function CardButtons({
+export function RecipeCardActions({
   recipe,
   vibe,
   onToggleTab,
@@ -98,7 +98,7 @@ export function RecipeCard(props: Props) {
   const isAI = recipe.source === 'ai' || recipe.source === 'fallback';
   const missing = recipe.missing ?? [];
   const ready = recipe.total != null && missing.length === 0;
-  const buttons = <CardButtons {...props} />;
+  const buttons = <RecipeCardActions {...props} />;
 
   return (
     <div

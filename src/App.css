@@ -280,6 +280,14 @@ main { flex: 1; width: 100%; max-width: 1440px; margin: 0 auto; padding: 0 clamp
   margin-top: clamp(24px, 4vh, 56px);
 }
 
+/* Watch gets the unused hero column so the large feature is discoverable
+   without competing with the promise and CTAs. Shorts remains the full-width
+   contact strip underneath it. */
+.hero-copy { grid-column: 1; grid-row: 1; }
+.hero-lower > .watch-teaser { grid-column: 2; grid-row: 1; }
+.hero-lower > .shorts-teaser { grid-column: 1 / -1; grid-row: 2; }
+.hero-lower > .hero-steps { grid-column: 1 / -1; grid-row: 3; }
+
 .hero-sub {
   margin: 0 0 22px;
   font-size: clamp(18px, 2vw, 22px);
@@ -288,6 +296,98 @@ main { flex: 1; width: 100%; max-width: 1440px; margin: 0 auto; padding: 0 clamp
   font-weight: 500;
 }
 .hero-cta { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+
+/* Static Watch landing preview. The iframe is deliberately absent here; the
+   full player only mounts after OPEN WATCH/deep-link navigation. */
+.watch-teaser {
+  min-width: 0;
+  width: 100%;
+  max-width: 620px;
+  align-self: end;
+  justify-self: end;
+  margin-top: clamp(18px, 3vh, 34px);
+  border-top: 1px solid var(--line-strong);
+  padding-top: 12px;
+}
+.watch-teaser-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+.watch-teaser-track {
+  display: flex;
+  gap: 12px;
+  overflow-x: auto;
+  padding: 0 1px 8px;
+  scroll-snap-type: x mandatory;
+  scrollbar-width: thin;
+  scrollbar-color: var(--line-strong) transparent;
+}
+.watch-teaser-card {
+  display: grid;
+  grid-template-columns: minmax(118px, 42%) minmax(0, 1fr);
+  flex: 0 0 min(82%, 310px);
+  min-width: 0;
+  min-height: 148px;
+  border: 1px solid var(--line-strong);
+  color: var(--ink);
+  text-decoration: none;
+  background: var(--paper-2);
+  scroll-snap-align: start;
+}
+.watch-teaser-media {
+  position: relative;
+  display: block;
+  min-height: 148px;
+  overflow: hidden;
+  background: var(--ink);
+}
+.watch-teaser-media img { width: 100%; height: 100%; object-fit: cover; transition: transform var(--t-med) var(--ease); }
+.watch-teaser-card:hover .watch-teaser-media img { transform: scale(1.04); }
+.watch-teaser-play {
+  position: absolute;
+  left: 14px;
+  bottom: 14px;
+  display: inline-flex;
+  width: 38px;
+  height: 38px;
+  align-items: center;
+  justify-content: center;
+  background: var(--paper);
+  color: var(--ink);
+  border: 1px solid var(--ink);
+}
+.watch-teaser-copy {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 9px;
+  padding: 16px;
+}
+.watch-teaser-lane { color: var(--accent); }
+.watch-teaser-copy strong {
+  display: -webkit-box;
+  overflow: hidden;
+  font-size: clamp(15px, 1.35vw, 19px);
+  line-height: 1.05;
+  text-transform: uppercase;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3;
+}
+.watch-teaser-copy .dim { overflow: hidden; max-width: 100%; text-overflow: ellipsis; white-space: nowrap; }
+.watch-teaser-open {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: auto;
+  color: var(--accent);
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.1em;
+}
 
 /* how-it-works — teaches the app's purpose at a glance */
 .hero-steps {
@@ -320,6 +420,107 @@ main { flex: 1; width: 100%; max-width: 1440px; margin: 0 auto; padding: 0 clamp
   margin-top: 2px;
 }
 .hero-steps li .k-label { grid-row: span 2; color: var(--accent); }
+
+/* ==========================================================================
+   Shorts contact strip — static facades only; no YouTube iframe on landing
+   ========================================================================== */
+.shorts-teaser {
+  width: 100%;
+  min-width: 0;
+  margin-top: clamp(18px, 3vh, 34px);
+  border-top: 1px solid var(--line-strong);
+  padding-top: 12px;
+}
+.shorts-teaser-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 14px;
+}
+.shorts-teaser-head .text-btn { color: var(--ink); }
+.shorts-teaser-track {
+  display: flex;
+  width: 100%;
+  min-width: 0;
+  align-items: flex-start;
+  justify-content: flex-start;
+  gap: clamp(12px, 2vw, 22px);
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+  scroll-snap-type: x mandatory;
+  scrollbar-width: none;
+  padding: 1px 2px 9px;
+}
+.shorts-teaser-track::-webkit-scrollbar { display: none; }
+.shorts-teaser-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  flex: 0 0 clamp(160px, 15vw, 198px);
+  max-width: 198px;
+  min-width: 0;
+  gap: 8px;
+  color: var(--ink);
+  text-decoration: none;
+  scroll-snap-align: start;
+}
+.shorts-teaser-image {
+  position: relative;
+  display: block;
+  width: 100%;
+  aspect-ratio: 9 / 13;
+  overflow: hidden;
+  border: 1px solid var(--line-strong);
+  background: var(--paper-2);
+}
+.shorts-teaser-image img { width: 100%; height: 100%; object-fit: cover; }
+.shorts-teaser-play {
+  position: absolute;
+  left: 12px;
+  bottom: 12px;
+  display: inline-flex;
+  width: 36px;
+  height: 36px;
+  align-items: center;
+  justify-content: center;
+  background: var(--paper);
+  color: var(--ink);
+  border: 1px solid var(--ink);
+}
+.shorts-teaser-duration {
+  position: absolute;
+  right: 9px;
+  bottom: 9px;
+  padding: 2px 4px;
+  color: var(--paper);
+  background: rgba(22, 21, 18, 0.78);
+}
+.shorts-teaser-copy {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 0 2px;
+  color: var(--ink);
+  pointer-events: none;
+}
+.shorts-teaser-copy strong {
+  display: -webkit-box;
+  overflow: hidden;
+  font-size: 13px;
+  line-height: 1.14;
+  text-transform: uppercase;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3;
+}
+.shorts-teaser-copy .dim {
+  overflow: hidden;
+  color: var(--grey);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.shorts-teaser-card:hover .shorts-teaser-image img { transform: scale(1.05); }
+.shorts-teaser-image img { transition: transform var(--t-med) var(--ease); }
 
 /* ==========================================================================
    buttons / text links / fields
@@ -845,11 +1046,21 @@ main { flex: 1; width: 100%; max-width: 1440px; margin: 0 auto; padding: 0 clamp
   font-size: 13.5px;
 }
 .fb-ings li.need .fb-ing-name { color: var(--accent); }
-.fb-ing-name { display: inline-flex; align-items: baseline; gap: 8px; }
+.fb-ing-name { display: inline-flex; min-width: 0; align-items: baseline; gap: 8px; }
 .miss-mark { color: var(--accent); font-size: 9px; border: 1px solid var(--accent); padding: 1px 4px; }
 /* quieter than OUT: this one is information, not a warning */
 .opt-mark { color: var(--grey); font-size: 9px; border: 1px solid var(--line); padding: 1px 4px; margin-left: 8px; }
-.fb-ing-measure { font-family: var(--mono); font-size: 11px; color: var(--grey); white-space: nowrap; }
+.fb-ing-measure {
+  flex: 0 1 52%;
+  max-width: 52%;
+  font-family: var(--mono);
+  font-size: 11px;
+  line-height: 1.25;
+  color: var(--grey);
+  text-align: right;
+  white-space: normal;
+  overflow-wrap: anywhere;
+}
 .fb-method { font-size: 13.5px; color: var(--ink); margin: 14px 0 0; padding-right: 12px; }
 .fb-foot {
   flex: none;
@@ -1334,21 +1545,53 @@ main { flex: 1; width: 100%; max-width: 1440px; margin: 0 auto; padding: 0 clamp
 /* ==========================================================================
    responsive
    ========================================================================== */
-@media (max-width: 1023px) {
+/* Seven links plus the status/make controls need more room than a 1024px
+   viewport provides. The drawer keeps the desktop links from colliding while
+   leaving the full navigation at wide desktop sizes. */
+@media (max-width: 1180px) {
   .nav-status { display: none; }
-}
-
-@media (max-width: 860px) {
   .nav-links { display: none; }
   .nav-menu-btn { display: inline-flex; margin-left: 8px; }
   .nav-make { display: inline-flex; margin-left: auto; padding: 8px 10px; font-size: 10px; }
   .nav { gap: 8px; }
+}
+
+@media (max-width: 860px) {
   .brand { flex: none; }
   .wordmark { font-size: 22px; white-space: nowrap; }
 
   .hero-lower { grid-template-columns: 1fr; gap: 20px; }
+  .hero-copy { grid-column: 1; grid-row: 1; }
+  .hero-lower > .watch-teaser { grid-column: 1; grid-row: 2; }
+  .hero-lower > .shorts-teaser { grid-column: 1; grid-row: 3; }
+  .hero-lower > .hero-steps { grid-column: 1; grid-row: 4; }
   .hero-steps { border-top: none; }
+
+  .watch-teaser { margin-top: 0; }
+  .watch-teaser-head { margin-bottom: 8px; }
+  .watch-teaser-track { gap: 10px; padding-bottom: 6px; }
+  .watch-teaser-card {
+    grid-template-columns: minmax(112px, 38%) minmax(0, 1fr);
+    flex-basis: min(82%, 286px);
+    min-height: 112px;
+  }
+  .watch-teaser-media { min-height: 112px; }
+  .watch-teaser-play { left: 9px; bottom: 9px; width: 32px; height: 32px; }
+  .watch-teaser-copy { gap: 5px; padding: 10px 11px; }
+  .watch-teaser-copy strong { font-size: 15px; line-height: 1.06; -webkit-line-clamp: 2; }
+  .watch-teaser-open { font-size: 9px; }
   .hero-steps li { padding: 13px 0; }
+
+  .shorts-teaser { margin-top: 3px; }
+  .shorts-teaser-track { justify-content: flex-start; }
+  .shorts-teaser-card {
+    flex: 0 0 min(68%, 260px);
+    max-width: 260px;
+  }
+  /* Keep the complete mobile card (portrait, title, creator) compact enough
+     to scan as one unit while retaining a clearly portrait-oriented crop. */
+  .shorts-teaser-image { aspect-ratio: 9 / 10.5; }
+  .shorts-teaser-copy strong { font-size: 14px; }
 
   .shelf-grid { grid-template-columns: 1fr; }
   .shelf-col { padding-right: 0; }
@@ -1614,6 +1857,688 @@ button, a, .fc {
   margin-top: clamp(24px, 3.5vh, 36px);
 }
 .wv-foot { margin: clamp(28px, 4vh, 44px) 0 0; max-width: 60ch; }
+
+/* ==========================================================================
+   Shorts — immersive app viewport beneath the persistent navigation
+   ========================================================================== */
+.site.shorts-active {
+  height: 100vh;
+  height: 100dvh;
+  min-height: 0;
+  overflow: hidden;
+  overscroll-behavior: none;
+  background: #000;
+}
+.site.shorts-active .nav {
+  flex: 0 0 calc(58px + env(safe-area-inset-top));
+  height: calc(58px + env(safe-area-inset-top));
+  padding-top: env(safe-area-inset-top);
+  background: transparent;
+  border-bottom-color: rgba(236, 233, 224, 0.28);
+}
+.site.shorts-active .nav .brand,
+.site.shorts-active .nav .wordmark,
+.site.shorts-active .nav-link {
+  color: var(--paper);
+}
+.site.shorts-active .nav-link::after { background: var(--paper); }
+.site.shorts-active .nav-link.active { color: var(--accent); }
+.site.shorts-active .nav-link.active::after { background: var(--accent); }
+.site.shorts-active .nav-status { color: rgba(236, 233, 224, 0.58); }
+.site.shorts-active .nav-make {
+  background: transparent;
+  border: 1px solid rgba(236, 233, 224, 0.72);
+  color: var(--paper);
+}
+.site.shorts-active .nav-menu-btn {
+  border-color: rgba(236, 233, 224, 0.72);
+  color: var(--paper);
+}
+.site.shorts-active .nav :focus-visible { outline-color: var(--paper); }
+.site.shorts-active main {
+  flex: 1 1 auto;
+  min-height: 0;
+  width: 100%;
+  max-width: none;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  background: #000;
+}
+.shorts-route,
+.shorts-page,
+.shorts-feed {
+  height: 100%;
+  min-height: 0;
+}
+.shorts-page {
+  overflow: hidden;
+  background: #000;
+  color: var(--paper);
+}
+.shorts-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 24px;
+  text-align: center;
+}
+.shorts-state p { margin: 0; }
+.shorts-state .dim { color: rgba(236, 233, 224, 0.64); }
+.shorts-feed {
+  overflow-x: hidden;
+  overflow-y: auto;
+  overscroll-behavior-y: contain;
+  scroll-snap-type: y mandatory;
+  scroll-behavior: auto;
+  scrollbar-width: none;
+  outline: none;
+  touch-action: pan-y;
+  -webkit-overflow-scrolling: touch;
+}
+.shorts-feed::-webkit-scrollbar { display: none; }
+.shorts-feed:focus-visible { outline: 2px solid var(--paper); outline-offset: -2px; }
+.shorts-card {
+  position: relative;
+  height: 100%;
+  min-height: 100%;
+  overflow: hidden;
+  background: #000;
+  scroll-snap-align: start;
+  scroll-snap-stop: normal;
+}
+.shorts-card-placeholder { pointer-events: none; }
+.shorts-stage,
+.shorts-visual {
+  width: 100%;
+  height: 100%;
+  min-height: 0;
+}
+.shorts-stage { position: relative; }
+.shorts-visual {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  background: #000;
+}
+.shorts-media-backdrop {
+  display: none;
+  position: absolute;
+  z-index: 0;
+  inset: -24px;
+  background-image: var(--shorts-backdrop), linear-gradient(135deg, #242321, #050505);
+  background-position: center;
+  background-size: cover;
+  background-color: transparent;
+  filter: blur(24px) saturate(0.92);
+  opacity: 0.9;
+  transform: scale(1.08);
+  pointer-events: none;
+}
+.shorts-media-backdrop::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.38);
+}
+.shorts-player-frame {
+  position: relative;
+  z-index: 1;
+  height: min(100%, calc(100vw * 16 / 9));
+  width: auto;
+  max-width: 100%;
+  min-width: 200px;
+  min-height: 200px;
+  aspect-ratio: 9 / 16;
+  overflow: hidden;
+  background: #000;
+}
+.shorts-player,
+.shorts-facade {
+  display: block;
+  width: 100%;
+  height: 100%;
+  border: 0;
+}
+.shorts-facade {
+  position: relative;
+  padding: 0;
+  overflow: hidden;
+  background: #000;
+  color: var(--paper);
+  cursor: pointer;
+}
+.shorts-facade.is-waiting { cursor: default; }
+.shorts-facade.is-waiting img { opacity: 0.96; }
+.shorts-facade:disabled { cursor: default; }
+.shorts-facade img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 0.88;
+}
+.shorts-facade.is-offline img { opacity: 0.52; filter: grayscale(0.35); }
+.shorts-facade-play {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  display: inline-flex;
+  width: 58px;
+  height: 58px;
+  align-items: center;
+  justify-content: center;
+  transform: translate(-50%, -50%);
+  background: var(--paper);
+  color: var(--ink);
+  border: 1px solid var(--ink);
+  transition: background var(--t-fast) var(--ease), color var(--t-fast) var(--ease);
+}
+.shorts-facade:not(:disabled):hover .shorts-facade-play { background: var(--ink); color: var(--paper); }
+.shorts-tap {
+  position: absolute;
+  left: 50%;
+  bottom: 14px;
+  max-width: calc(100% - 24px);
+  padding: 5px 7px;
+  transform: translateX(-50%);
+  color: var(--paper);
+  background: rgba(22, 21, 18, 0.88);
+  text-align: center;
+  white-space: nowrap;
+}
+.shorts-top-overlay {
+  position: absolute;
+  z-index: 2;
+  top: max(14px, calc((100% - min(100%, calc(100vw * 16 / 9))) / 2 + 14px));
+  left: max(14px, calc((100% - min(100%, calc(100dvh * 9 / 16))) / 2 + 14px), env(safe-area-inset-left));
+  right: auto;
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  opacity: 0;
+  pointer-events: none;
+  transform: translateY(-6px);
+  transition: opacity var(--t-fast) var(--ease), transform var(--t-fast) var(--ease);
+}
+.shorts-card.is-active:hover .shorts-top-overlay,
+.shorts-top-overlay:focus-within,
+.shorts-feed:focus-visible .shorts-top-overlay,
+.shorts-card.is-active:hover .shorts-bottom-overlay,
+.shorts-bottom-overlay:focus-within,
+.shorts-feed:focus-visible .shorts-bottom-overlay {
+  opacity: 1;
+  pointer-events: auto;
+  transform: translateY(0);
+}
+.shorts-bottom-overlay {
+  position: absolute;
+  z-index: 2;
+  right: max(14px, env(safe-area-inset-right));
+  bottom: max(14px, env(safe-area-inset-bottom));
+  display: flex;
+  align-items: flex-end;
+  justify-content: flex-end;
+  opacity: 0;
+  pointer-events: none;
+  transform: translateY(6px);
+  transition: opacity var(--t-fast) var(--ease), transform var(--t-fast) var(--ease);
+}
+.shorts-overlay-action {
+  display: inline-flex;
+  width: 44px;
+  height: 44px;
+  min-width: 44px;
+  min-height: 44px;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  border: 1px solid transparent;
+  background: transparent;
+  color: var(--paper);
+  cursor: pointer;
+  filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.98)) drop-shadow(0 0 2px rgba(0, 0, 0, 0.88));
+  transition: color var(--t-fast) var(--ease), transform var(--t-fast) var(--ease), filter var(--t-fast) var(--ease);
+}
+.shorts-overlay-action:hover,
+.shorts-overlay-action:focus-visible {
+  border-color: transparent;
+  background: transparent;
+  color: var(--paper);
+  filter: drop-shadow(0 1px 3px rgba(0, 0, 0, 0.99)) drop-shadow(0 0 2px rgba(0, 0, 0, 0.92));
+  transform: scale(1.08);
+}
+.shorts-overlay-action:focus-visible {
+  outline: 2px solid var(--paper);
+  outline-offset: 2px;
+}
+.shorts-overlay-action.shorts-shared { border-color: transparent; color: #ff7848; }
+.shorts-actions {
+  position: absolute;
+  right: max(24px, env(safe-area-inset-right));
+  bottom: max(24px, env(safe-area-inset-bottom));
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 8px;
+  opacity: 0;
+  pointer-events: none;
+  transform: translateY(6px);
+  transition: opacity var(--t-fast) var(--ease), transform var(--t-fast) var(--ease);
+}
+.shorts-card.is-active:hover .shorts-actions,
+.shorts-actions:focus-within,
+.shorts-feed:focus-visible .shorts-actions {
+  opacity: 1;
+  pointer-events: auto;
+  transform: translateY(0);
+}
+.shorts-action {
+  display: inline-flex;
+  min-width: 44px;
+  min-height: 44px;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin: 0;
+  padding: 10px 13px;
+  border: 1px solid rgba(236, 233, 224, 0.56);
+  background: rgba(22, 21, 18, 0.9);
+  color: var(--paper);
+  font-family: var(--mono);
+  font-size: 10px;
+  line-height: 1;
+  letter-spacing: 0.08em;
+  text-align: center;
+  text-decoration: none;
+  text-transform: uppercase;
+  cursor: pointer;
+}
+.shorts-action:hover,
+.shorts-action:focus-visible { border-color: var(--paper); background: var(--paper); color: var(--ink); }
+.shorts-actions .shorts-shared { border-color: var(--accent); color: #ff7848; }
+.shorts-make { border-color: var(--accent); background: var(--accent); color: var(--paper); }
+
+/* ---------- pooled players + player-relative actions ---------- */
+.shorts-player-layer {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  background: #000;
+}
+.shorts-player-host {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  background: #000;
+  opacity: 0;
+  transition: opacity 180ms var(--ease);
+}
+.shorts-player-layer.is-revealed .shorts-player-host { opacity: 1; }
+.shorts-player-host iframe,
+.shorts-player-host > div {
+  display: block;
+  width: 100%;
+  height: 100%;
+  border: 0;
+}
+.shorts-player-layer .shorts-facade {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+}
+.shorts-player-layer .shorts-facade img { object-fit: cover; }
+.shorts-facade:disabled .shorts-tap { opacity: 0.86; }
+
+.shorts-player-rail {
+  position: absolute;
+  z-index: 4;
+  top: auto;
+  bottom: max(16px, calc((100% - min(100%, calc(100vw * 16 / 9))) / 2 + 16px), env(safe-area-inset-bottom));
+  left: calc(50% + min(50%, 28.125dvh) + 12px);
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 9px;
+  opacity: 0;
+  pointer-events: none;
+  transform: translateY(6px);
+  transition: opacity var(--t-fast) var(--ease), transform var(--t-fast) var(--ease);
+}
+.shorts-card.is-active:hover .shorts-player-rail,
+.shorts-player-rail:focus-within,
+.shorts-feed:focus-visible .shorts-player-rail {
+  opacity: 1;
+  pointer-events: auto;
+  transform: translateY(0);
+}
+.shorts-player-rail .shorts-make { white-space: nowrap; }
+.shorts-player-rail .shorts-make { order: -1; }
+
+/* Mobile's temporary speed gesture lives in the media-filled control band,
+   never on top of the YouTube iframe or its native controls. */
+.shorts-speed-hold {
+  display: none;
+  position: absolute;
+  z-index: 5;
+  top: max(10px, env(safe-area-inset-top));
+  right: max(10px, env(safe-area-inset-right));
+  width: 44px;
+  height: 44px;
+  min-width: 44px;
+  min-height: 44px;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  border: 1px solid transparent;
+  background: transparent;
+  color: var(--paper);
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.04em;
+  cursor: pointer;
+  touch-action: pan-y;
+  user-select: none;
+  -webkit-user-select: none;
+  filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.98));
+  opacity: 0.82;
+}
+.shorts-speed-hold.is-holding {
+  color: var(--accent);
+  opacity: 1;
+}
+.shorts-speed-hold:focus-visible {
+  outline: 2px solid var(--paper);
+  outline-offset: 2px;
+}
+
+.shorts-sound-prompt {
+  position: absolute;
+  z-index: 5;
+  left: calc(50% + min(50%, 28.125dvh) + 12px);
+  bottom: max(76px, env(safe-area-inset-bottom));
+  min-width: 44px;
+  min-height: 44px;
+  padding: 8px 10px;
+  border: 1px solid rgba(236, 233, 224, 0.72);
+  background: rgba(0, 0, 0, 0.34);
+  color: var(--paper);
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  cursor: pointer;
+  filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.96));
+}
+.shorts-sound-prompt:hover,
+.shorts-sound-prompt:focus-visible {
+  background: var(--paper);
+  color: var(--ink);
+}
+
+/* The player-relative rail owns Share and MAKE THIS at every breakpoint. */
+.shorts-actions { display: none; }
+
+/* ---------- recipe continuation overlay ---------- */
+.shorts-recipe-backdrop {
+  position: fixed;
+  z-index: 80;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: max(18px, env(safe-area-inset-top)) max(18px, env(safe-area-inset-right)) max(18px, env(safe-area-inset-bottom)) max(18px, env(safe-area-inset-left));
+  background: rgba(0, 0, 0, 0.72);
+  backdrop-filter: blur(13px);
+  -webkit-backdrop-filter: blur(13px);
+  overscroll-behavior: contain;
+}
+.shorts-recipe-dialog {
+  display: flex;
+  width: min(1060px, 100%);
+  max-height: min(760px, 100%);
+  flex-direction: column;
+  gap: 18px;
+  overflow: hidden;
+  padding: clamp(18px, 3vw, 30px);
+  border: 1px solid rgba(236, 233, 224, 0.6);
+  background: var(--paper);
+  color: var(--ink);
+  box-shadow: 12px 12px 0 rgba(0, 0, 0, 0.32);
+  touch-action: auto;
+}
+.shorts-recipe-dialog-head,
+.shorts-recipe-dialog-foot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  flex: none;
+}
+.shorts-recipe-dialog-head h2 {
+  margin: 3px 0 0;
+  font-size: clamp(25px, 4vw, 46px);
+  line-height: 0.96;
+  text-transform: uppercase;
+}
+.shorts-recipe-close {
+  display: inline-flex;
+  width: 44px;
+  height: 44px;
+  min-width: 44px;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--ink);
+  background: transparent;
+  color: var(--ink);
+  cursor: pointer;
+}
+.shorts-recipe-close:hover,
+.shorts-recipe-close:focus-visible { background: var(--ink); color: var(--paper); }
+.shorts-recipe-track {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 14px;
+  min-height: 0;
+  overflow: auto;
+  padding: 1px 2px 7px;
+  scrollbar-width: thin;
+}
+.shorts-recipe-card {
+  position: relative;
+  min-width: 0;
+  height: min(495px, 58vh);
+  perspective: 1200px;
+  cursor: pointer;
+  background: var(--paper-2);
+  border: 1px solid var(--line-strong);
+  outline: none;
+}
+.shorts-recipe-card-inner:focus-visible { outline: 2px solid var(--ink); outline-offset: -3px; }
+.shorts-recipe-card-inner {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  transform-style: preserve-3d;
+  transition: transform 0.5s var(--ease);
+}
+.shorts-recipe-card.is-flipped .shorts-recipe-card-inner { transform: rotateY(180deg); }
+.shorts-recipe-card-actions { z-index: 5; }
+.shorts-recipe-card-actions .act-btn { min-width: 44px; height: 44px; }
+.shorts-recipe-card.is-flipped .shorts-recipe-card-actions { flex-direction: row; align-items: center; }
+.shorts-recipe-face {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  background: var(--paper);
+}
+.shorts-recipe-back { transform: rotateY(180deg); padding: 16px; }
+.shorts-recipe-image { flex: 1; min-height: 0; overflow: hidden; border-bottom: 1px solid var(--line-strong); }
+.shorts-recipe-image img { width: 100%; height: 100%; object-fit: cover; }
+.shorts-recipe-copy { display: flex; flex-direction: column; gap: 7px; padding: 14px; }
+.shorts-recipe-copy h3,
+.shorts-recipe-back-head h3 { margin: 0; font-size: clamp(22px, 2.4vw, 32px); line-height: 0.98; text-transform: uppercase; }
+.shorts-recipe-back-head { flex: none; min-height: 44px; padding-right: 148px; }
+.shorts-recipe-back ul { flex: none; overflow: auto; list-style: none; margin: 14px 0 0; padding: 0; border-top: 1px solid var(--line-strong); }
+.shorts-recipe-back li { display: flex; justify-content: space-between; gap: 10px; padding: 7px 0; border-bottom: 1px solid var(--line); font-size: 12px; }
+.shorts-recipe-back li > span:first-child { min-width: 0; }
+.shorts-recipe-back li > .k-label { flex: 0 1 48%; max-width: 48%; line-height: 1.25; text-align: right; white-space: normal; overflow-wrap: anywhere; }
+.shorts-recipe-back p { flex: 1; overflow: auto; margin: 13px 0 0; padding-top: 12px; border-top: 1px solid var(--line-strong); font-size: 12.5px; line-height: 1.45; }
+.shorts-recipe-loading,
+.shorts-recipe-empty { display: flex; min-height: 260px; align-items: center; justify-content: center; gap: 7px; flex: 1; text-align: center; }
+.shorts-recipe-loading span { width: 9px; height: 9px; border-radius: 50%; background: var(--accent); animation: shorts-pulse 0.9s ease-in-out infinite alternate; }
+.shorts-recipe-loading span:nth-child(2) { animation-delay: 0.15s; }
+.shorts-recipe-loading span:nth-child(3) { animation-delay: 0.3s; }
+@keyframes shorts-pulse { to { opacity: 0.2; transform: translateY(-4px); } }
+.shorts-recipe-empty { flex-direction: column; gap: 8px; }
+.shorts-recipe-empty p { margin: 0; }
+.shorts-recipe-dialog-foot { align-items: flex-start; flex-wrap: wrap; }
+.shorts-recipe-dialog-foot .k-label { max-width: 45ch; }
+.shorts-config-toast {
+  position: fixed;
+  z-index: 20;
+  right: max(14px, env(safe-area-inset-right));
+  bottom: max(14px, env(safe-area-inset-bottom));
+  max-width: min(380px, calc(100% - 28px));
+  padding: 9px 11px;
+  color: var(--paper);
+  background: rgba(22, 21, 18, 0.88);
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.06em;
+}
+
+/* ---------- menu return affordance ---------- */
+.shorts-return-banner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin: 0 0 18px;
+  padding: 10px 12px;
+  border: 1px solid var(--line-strong);
+  background: var(--paper-2);
+}
+.shorts-return-banner > span { display: flex; align-items: baseline; gap: 10px; }
+.shorts-return-banner strong { font-size: 13px; text-transform: uppercase; }
+
+@media (max-width: 860px), (hover: none) {
+  /* Touch screens have no hover state, so keep both overlay controls discoverable. */
+  .site.shorts-active .nav { display: none; }
+  .site.shorts-active main {
+    flex: 1 1 100%;
+    height: 100dvh;
+  }
+  .shorts-route,
+  .shorts-page,
+  .shorts-feed,
+  .shorts-card { height: 100dvh; min-height: 100dvh; }
+  .shorts-media-backdrop { display: block; }
+  .shorts-visual { background: transparent; }
+  .shorts-speed-hold { display: inline-flex; }
+  .shorts-player-frame {
+    height: min(100%, calc(100dvw * 16 / 9));
+    width: min(100%, calc(100dvh * 9 / 16));
+    max-width: 100%;
+    max-height: 100%;
+  }
+  .shorts-top-overlay {
+    top: max(10px, env(safe-area-inset-top));
+    left: max(12px, env(safe-area-inset-left));
+    opacity: 1;
+    pointer-events: auto;
+    transform: none;
+  }
+  .shorts-bottom-overlay {
+    bottom: max(96px, calc(env(safe-area-inset-bottom) + 64px));
+    opacity: 1;
+    pointer-events: auto;
+    transform: none;
+  }
+  .shorts-player-rail {
+    top: auto;
+    left: auto;
+    right: max(12px, env(safe-area-inset-right));
+    bottom: max(12px, env(safe-area-inset-bottom));
+    flex-direction: row-reverse;
+    align-items: center;
+    gap: 10px;
+    opacity: 1;
+    pointer-events: auto;
+    transform: none;
+  }
+  .shorts-player-rail .shorts-make {
+    display: inline-flex;
+    min-width: 44px;
+    max-width: min(54vw, 190px);
+    padding: 10px 11px;
+  }
+  .shorts-player-rail .shorts-overlay-action { order: 0; }
+  .shorts-player-rail .shorts-make { order: 1; }
+  .shorts-sound-prompt {
+    left: max(12px, env(safe-area-inset-left));
+    bottom: max(12px, env(safe-area-inset-bottom));
+    background: rgba(0, 0, 0, 0.3);
+  }
+  .shorts-recipe-backdrop { align-items: flex-end; padding: max(12px, env(safe-area-inset-top)) max(10px, env(safe-area-inset-right)) max(10px, env(safe-area-inset-bottom)) max(10px, env(safe-area-inset-left)); }
+  .shorts-recipe-dialog { max-height: calc(100% - 4px); gap: 13px; padding: 15px 12px max(15px, env(safe-area-inset-bottom)); }
+  .shorts-recipe-dialog-head h2 { font-size: 27px; }
+  .shorts-recipe-track { display: flex; gap: 10px; margin: 0 -2px; padding: 1px 2px 8px; scroll-snap-type: x mandatory; }
+  .shorts-recipe-card { flex: 0 0 min(83vw, 300px); height: min(430px, 58vh); scroll-snap-align: start; }
+  .shorts-recipe-dialog-foot { display: grid; gap: 9px; }
+  .shorts-recipe-dialog-foot .btn { width: 100%; justify-content: center; }
+  .shorts-return-banner { align-items: flex-start; flex-direction: column; gap: 8px; }
+  .shorts-config-toast { bottom: max(72px, calc(env(safe-area-inset-bottom) + 64px)); }
+}
+
+/* Very short phones have no natural letterbox band. Reserve a small,
+   thumbnail-backed band so the PubCrawl controls stay outside native YouTube
+   controls while the portrait player remains completely uncropped. */
+@media (max-width: 860px) and (max-height: 680px) {
+  .shorts-visual {
+    --shorts-control-band: max(52px, calc(env(safe-area-inset-top) + 44px), calc(env(safe-area-inset-bottom) + 44px));
+  }
+  .shorts-player-frame {
+    height: min(calc(100% - (2 * var(--shorts-control-band))), calc(100dvw * 16 / 9));
+    width: min(100%, calc((100dvh - (2 * var(--shorts-control-band))) * 9 / 16));
+    max-height: calc(100% - (2 * var(--shorts-control-band)));
+  }
+  .shorts-speed-hold {
+    top: max(8px, env(safe-area-inset-top));
+  }
+  .shorts-player-rail {
+    bottom: max(8px, env(safe-area-inset-bottom));
+  }
+}
+
+/* In portrait tablets the uncropped player can fill the entire height while
+   leaving only narrow side gutters. Keep both PubCrawl actions in the right
+   media gutter rather than letting MAKE THIS cross the YouTube control area. */
+@media (min-width: 600px) and (max-width: 860px) {
+  .shorts-player-rail {
+    right: max(0px, env(safe-area-inset-right));
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 5px;
+  }
+  .shorts-player-rail .shorts-make {
+    order: -1;
+    width: min(100%, calc((100vw - min(100vw, 100dvh * 9 / 16)) / 2));
+    max-width: calc((100vw - min(100vw, 100dvh * 9 / 16)) / 2);
+    padding: 10px 3px;
+    font-size: 8px;
+    letter-spacing: 0.04em;
+    gap: 4px;
+    white-space: nowrap;
+  }
+}
 
 @media (max-width: 640px) {
   .wv-grid { grid-template-columns: 1fr; }

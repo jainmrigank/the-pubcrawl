@@ -181,6 +181,11 @@ export const ArrowRight = (p: P) => (
     <path d="M4 12 Q11 11.6 19 12M13 6l6 6-6 6" />
   </S>
 );
+export const ArrowLeft = (p: P) => (
+  <S {...p}>
+    <path d="M20 12 Q13 11.6 5 12M11 6l-6 6 6 6" />
+  </S>
+);
 export const ArrowDown = (p: P) => (
   <S {...p}>
     <path d="M12 4 Q11.6 11 12 19M6 13l6 6 6-6" />

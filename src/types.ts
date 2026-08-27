@@ -60,6 +60,7 @@ export interface Question {
 export interface Health {
   ok: boolean;
   cocktails: number;
+  catalogueCocktails?: number;
   ingredients: number;
   llm: string | null;
 }
@@ -84,6 +85,7 @@ export interface WatchVideo {
   movement: number;
   /** only set on the Climbing shelf: why it earned its place */
   why?: string;
+  landingFeatured?: boolean;
 }
 
 export interface WatchLane {
@@ -97,4 +99,48 @@ export interface WatchLibrary {
   lanes: WatchLane[];
   hasNumbers: boolean;
   updatedAt: number | null;
+}
+
+/** one reviewed vertical YouTube Short in the PubCrawl feed */
+export interface ShortVideo {
+  id: string;
+  title: string;
+  channel: string;
+  channelId: string;
+  lane: string;
+  rank: number;
+  addedAt: string;
+  publishedAt: string;
+  durationSeconds: number;
+  thumbnail: string;
+  recipeQuery?: string;
+  evergreen?: boolean;
+  /** populated by the API when the Monday stats refresh has run */
+  views?: number | null;
+  likes?: number | null;
+  movement?: number;
+}
+
+/** the reviewed Shorts catalogue plus the same four lanes used by Watch */
+export interface ShortLibrary {
+  shorts: ShortVideo[];
+  lanes: WatchLane[];
+  hasNumbers: boolean;
+  updatedAt: number | null;
+}
+
+/** In-memory snapshot used when MAKE THIS temporarily leaves the Shorts feed. */
+export interface ShortsReturnState {
+  /** versioned so a stale tab-scoped snapshot can be rejected safely */
+  version?: 2;
+  videoId: string;
+  title?: string;
+  order: string[];
+  currentTime: number;
+  wasPlaying: boolean;
+  /** semantic intent survives a transient CUED/BUFFERING state */
+  resumeIntent?: 'autoplay' | 'paused';
+  recipeQuery?: string;
+  muted: boolean;
+  volume: number;
 }
