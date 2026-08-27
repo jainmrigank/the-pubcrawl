@@ -16,9 +16,13 @@ export function transitionShortsController(state, event) {
       return { ...state, phase: 'idle', settledIndex: index, intentIndex: index, generation, lease: { index, generation } };
     }
     case 'scroll-start': return { ...state, phase: 'scrolling', direction, generation: state.generation + 1, lease: null };
-    case 'scroll-intent': return { ...state, phase: 'scrolling', intentIndex: Math.max(0, event.index), direction, lease: null };
+    case 'scroll-intent': {
+      if (state.phase !== 'scrolling') return state;
+      return { ...state, phase: 'scrolling', intentIndex: Math.max(0, event.index), direction, lease: null };
+    }
     case 'scroll-settle': {
       const index = Math.max(0, event.index);
+      if (state.phase === 'idle' && state.settledIndex === index && state.intentIndex === index && state.lease?.index === index) return state;
       const generation = state.generation + 1;
       return { ...state, phase: 'idle', settledIndex: index, intentIndex: index, generation, lease: { index, generation } };
     }

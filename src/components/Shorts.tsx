@@ -374,6 +374,7 @@ function ShortPlayerHost({
   const startupTimerRef = useRef<number | null>(null);
   const retryTimerRef = useRef<number | null>(null);
   const revealTimerRef = useRef<number | null>(null);
+  const confirmPlaybackRef = useRef<(player: YouTubePlayer, generation: number | null) => void>(() => {});
   const playRequestRef = useRef(false);
   const cueIssuedRef = useRef(false);
   const cuedRef = useRef(false);
@@ -443,6 +444,7 @@ function ShortPlayerHost({
         }
       }, STARTUP_REVEAL_DELAY_MS);
     };
+    confirmPlaybackRef.current = confirmPlayback;
 
     if (!enabled || !online || failed || !hostRef.current) {
       clearStartupTimer();
@@ -611,6 +613,7 @@ function ShortPlayerHost({
       if (playerRef.current === player) playerRef.current = null;
       initializationLeaseRef.current = null;
       if (mount.parentNode) mount.parentNode.removeChild(mount);
+      if (confirmPlaybackRef.current === confirmPlayback) confirmPlaybackRef.current = () => {};
     };
   }, [enabled, failed, index, online, short.id]);
 
@@ -663,7 +666,20 @@ function ShortPlayerHost({
     if (!cued) return;
     try {
       const state = player.getPlayerState();
-      if (state === YT_PLAYER_STATES.PLAYING || state === YT_PLAYER_STATES.BUFFERING) return;
+      if (state === YT_PLAYER_STATES.PLAYING) {
+        // A harmless lease refresh can happen while YouTube is already
+        // playing. Re-arm first-frame confirmation for the current generation
+        // instead of waiting for another PLAYING event that may never arrive.
+        if (playbackConfirmedRef.current) {
+          setPhase('playing');
+          setRevealed(true);
+        } else {
+          setPhase('confirming');
+          confirmPlaybackRef.current(player, generation);
+        }
+        return;
+      }
+      if (state === YT_PLAYER_STATES.BUFFERING) return;
       // A muted command is autoplay-safe; the parent applies the chosen
       // session sound once PLAYING is confirmed.
       player.setVolume(Math.max(0, Math.min(100, Math.round(volume))));
@@ -728,7 +744,12 @@ function ShortPlayerHost({
   const showPlayControl = interactiveFacade && !waitingForAutoplay && !failed;
 
   return (
-    <div className={`shorts-player-layer ${revealed ? 'is-revealed' : ''}`}>
+    <div
+      className={`shorts-player-layer ${revealed ? 'is-revealed' : ''}`}
+      data-player-phase={phase}
+      data-player-ready={ready ? 'true' : 'false'}
+      data-player-cued={cued ? 'true' : 'false'}
+    >
       {enabled && online && !failed && <div ref={hostRef} className="shorts-player-host" aria-hidden={!revealed} />}
       {!revealed && (
         <button
@@ -1824,6 +1845,7 @@ export function Shorts({
     if (!active || !root || !orderedShorts.length) return;
     let frame = 0;
     let lastTop = root.scrollTop;
+    let touchActive = false;
     const clearSettle = () => {
       if (settleTimerRef.current != null) {
         window.clearTimeout(settleTimerRef.current);
@@ -1916,18 +1938,47 @@ export function Shorts({
       frame = requestAnimationFrame(() => {
         frame = 0;
         updateIntent();
-        settle();
+        // Do not let the quiet-scroll fallback commit a temporary card while
+        // a finger is still down. Mobile browsers can pause scroll events for
+        // more than 100ms during a slow swipe, which previously minted a
+        // short-lived lease and broke the following autoplay handoff.
+        if (!touchActive) settle();
+        else {
+          // Some mobile engines omit the final touchend/touchcancel when a
+          // second fling begins before the first momentum scroll completes.
+          // Retain a longer scroll-quiet safety net so the controller cannot
+          // remain permanently in `scrolling` with every player paused.
+          clearSettle();
+          settleTimerRef.current = window.setTimeout(() => {
+            settleTimerRef.current = null;
+            settle();
+          }, 350);
+        }
       });
     };
     const onScrollEnd = () => {
-      if (!active || overlayRef.current || (typeof window !== 'undefined' && window.location.hash.includes('make=1'))) return;
+      if (touchActive || !active || overlayRef.current || (typeof window !== 'undefined' && window.location.hash.includes('make=1'))) return;
+      settle();
+    };
+    const onTouchStart = () => {
+      touchActive = true;
+      clearSettle();
+    };
+    const onTouchEnd = () => {
+      touchActive = false;
       settle();
     };
     root.addEventListener('scroll', onScroll, { passive: true });
     root.addEventListener('scrollend', onScrollEnd as EventListener, { passive: true });
+    root.addEventListener('touchstart', onTouchStart, { passive: true });
+    root.addEventListener('touchend', onTouchEnd, { passive: true });
+    root.addEventListener('touchcancel', onTouchEnd, { passive: true });
     return () => {
       root.removeEventListener('scroll', onScroll);
       root.removeEventListener('scrollend', onScrollEnd as EventListener);
+      root.removeEventListener('touchstart', onTouchStart);
+      root.removeEventListener('touchend', onTouchEnd);
+      root.removeEventListener('touchcancel', onTouchEnd);
       if (frame) cancelAnimationFrame(frame);
       clearSettle();
     };

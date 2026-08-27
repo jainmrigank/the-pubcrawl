@@ -75,6 +75,12 @@ export function transitionShortsController(
         lease: null,
       };
     case 'scroll-intent':
+      // Intent is meaningful only inside an acknowledged gesture. Mobile
+      // scroll snapping can emit a final sub-pixel correction after we have
+      // already settled; treating that correction as a new gesture revokes
+      // the freshly-issued play lease and leaves the thumbnail over a video
+      // that has already started.
+      if (state.phase !== 'scrolling') return state;
       return {
         ...state,
         phase: 'scrolling',
@@ -84,6 +90,16 @@ export function transitionShortsController(
       };
     case 'scroll-settle': {
       const index = Math.max(0, event.index);
+      // `scrollend` and the quiet-scroll fallback can both report the same
+      // destination (and programmatic initial positioning can do so too).
+      // Keep the existing lease so in-flight PLAYING/reveal callbacks remain
+      // valid instead of requiring a user tap to recover autoplay.
+      if (
+        state.phase === 'idle' &&
+        state.settledIndex === index &&
+        state.intentIndex === index &&
+        state.lease?.index === index
+      ) return state;
       const generation = state.generation + 1;
       return {
         ...state,

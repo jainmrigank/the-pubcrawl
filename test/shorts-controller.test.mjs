@@ -23,6 +23,21 @@ test('scroll start revokes the old lease and settle grants only the destination'
   assert.equal(leaseMatches(state, 4, oldGeneration), false);
 });
 
+test('duplicate mobile settle and late snap intent preserve the active autoplay lease', () => {
+  let state = transitionShortsController(createShortsControllerState(0), { type: 'route-enter', index: 0 });
+  const lease = state.lease;
+  const generation = state.generation;
+
+  state = transitionShortsController(state, { type: 'scroll-settle', index: 0 });
+  assert.equal(state.generation, generation);
+  assert.deepEqual(state.lease, lease);
+
+  state = transitionShortsController(state, { type: 'scroll-intent', index: 1, direction: 'forward' });
+  assert.equal(state.phase, 'idle');
+  assert.equal(state.generation, generation);
+  assert.deepEqual(state.lease, lease);
+});
+
 test('snap-back corrections do not change a committed destination', () => {
   let state = transitionShortsController(createShortsControllerState(2), { type: 'route-enter', index: 2 });
   state = transitionShortsController(state, { type: 'scroll-start', direction: 'forward' });
