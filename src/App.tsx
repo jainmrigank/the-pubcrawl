@@ -158,6 +158,7 @@ export default function App() {
   const [pantry, setPantry] = useState<Ingredient[]>([]);
   const [match, setMatch] = useState<MatchResult | null>(null);
   const [matching, setMatching] = useState(false);
+  const [barQ, setBarQ] = useState('');
   const [browse, setBrowse] = useState<Recipe[]>([]);
   const [browseQ, setBrowseQ] = useState(hashQuery);
   const [browseLimit, setBrowseLimit] = useState(12);
@@ -346,13 +347,13 @@ export default function App() {
     }
     setMatching(true);
     const t = setTimeout(() => {
-      matchRecipes(pantry.map((p) => p.name))
+      matchRecipes(pantry.map((p) => p.name), barQ)
         .then(setMatch)
         .catch(() => {})
         .finally(() => setMatching(false));
     }, 250);
     return () => clearTimeout(t);
-  }, [pantry]);
+  }, [pantry, barQ]);
 
   const addIngredient = useCallback((ing: Ingredient) => {
     setPantry((prev) =>
@@ -472,7 +473,7 @@ export default function App() {
         onClick={() => setValue(value === 'indian' ? '' : 'indian')}
       >
         <i className="swatch" />
-        INDIAN
+        INDIA
       </button>
     </div>
   );
@@ -629,20 +630,20 @@ export default function App() {
                         : loved
                           ? 'THE CROWD’S FAVOURITES FIRST'
                           : vibeFilter === 'indian'
-                            ? `${featured.length} FROM THE INDIAN BAR`
+                            ? `${featured.length} FROM THE INDIA COLLECTION`
                             : vibeFilter
                               ? `SHOWING ${featured.length} IN THIS MOOD`
-                              : `SHOWING ${featured.length} OF ${health?.cocktails ?? 611}`
+                              : `SHOWING ${featured.length} OF ${health?.cocktails ?? 684}`
                     }
-                    lead="Every drink we know. Search by name or ingredient, or filter by mood."
+                    lead="Every drink we know. Search by name, ingredient, lane, access tier, glass, place, mood or method."
                     loading={browseLoading}
                   />
                   <div className="field menu-search">
                     <input
                       value={browseQ}
                       onChange={(e) => setBrowseQ(e.target.value)}
-                      placeholder="SEARCH ANY DRINK… MOJITO, NEGRONI, RUM"
-                      aria-label="Search drinks"
+                      placeholder="SEARCH… PICANTE, REGIONAL, TIER 1, COUPE"
+                      aria-label="Search menu by name, ingredient, lane, access tier, glass, place, mood or method"
                     />
                   </div>
                   <div className="bar-controls">
@@ -679,7 +680,7 @@ export default function App() {
                   ) : featured.length === 0 && !browseLoading ? (
                     <div className="empty">
                       <p className="empty-big">NOTHING BY THAT NAME.</p>
-                      <p className="k-label dim">TRY “NEGRONI” OR “RUM”, OR CLEAR THE MOOD FILTER.</p>
+                      <p className="k-label dim">TRY “REGIONAL”, “TIER 1”, “HIGHBALL” OR “RUM”, OR CLEAR THE MOOD FILTER.</p>
                     </div>
                   ) : (
                     <>
@@ -690,7 +691,7 @@ export default function App() {
                             SHOW MORE <ArrowDown size={14} />
                           </button>
                           <span className="k-label dim">
-                            {browse.length} OF {health?.cocktails ?? 611} ON SHOW
+                            {browse.length} OF {health?.cocktails ?? 684} ON SHOW
                           </span>
                           <button className="text-btn" onClick={surpriseMe}>
                             OR SURPRISE ME <Shuffle size={12} />
@@ -764,6 +765,14 @@ export default function App() {
                   ) : (
                     <>
                       <div className="bar-controls">{moodRow(inventMood, setInventMood)}</div>
+                      <div className="field menu-search">
+                        <input
+                          value={barQ}
+                          onChange={(e) => setBarQ(e.target.value)}
+                          placeholder="FILTER YOUR POURS… HIGHBALL, TIER 1, REGIONAL"
+                          aria-label="Search matched drinks by name, ingredient, lane, access, glass or style"
+                        />
+                      </div>
                       <div className="invent-row">
                         <div className="invent-lead">
                           <span className="k-label">HOUSE SPECIALS</span>
@@ -966,9 +975,21 @@ function SectionHead({
 /* ---------- video modal ---------- */
 function VideoModal({ recipe, onClose }: { recipe: Recipe; onClose: () => void }) {
   const id = recipe.video.match(/(?:v=|youtu\.be\/)([\w-]{11})/)?.[1];
+  let searchQuery = recipe.videoSearch || recipe.name + ' cocktail recipe';
+  if (!id) {
+    try {
+      searchQuery = new URL(recipe.video).searchParams.get('search_query') || searchQuery;
+    } catch {}
+  }
   const src = id
-    ? `https://www.youtube.com/embed/${id}?autoplay=1`
-    : `https://www.youtube.com/embed?listType=search&list=${encodeURIComponent(`${recipe.name} cocktail recipe`)}`;
+    ? 'https://www.youtube.com/embed/' + id + '?autoplay=1'
+    : 'https://www.youtube.com/embed?listType=search&list=' + encodeURIComponent(searchQuery);
+  const videoLabel =
+    recipe.videoKind === 'technique'
+      ? 'WATCH THE TECHNIQUE'
+      : recipe.videoKind === 'search'
+        ? 'FIND A VIDEO'
+        : 'WATCH IT MADE';
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => e.key === 'Escape' && onClose();
     document.addEventListener('keydown', onKey);
@@ -994,7 +1015,7 @@ function VideoModal({ recipe, onClose }: { recipe: Recipe; onClose: () => void }
         transition={{ duration: 0.34, ease: EASE }}
       >
         <div className="modal-head">
-          <span className="k-label">{id ? 'WATCH IT MADE' : 'FINDING A VIDEO'}: {recipe.name.toUpperCase()}</span>
+          <span className="k-label">{videoLabel}: {recipe.name.toUpperCase()}</span>
           <button className="text-btn" onClick={onClose}>
             CLOSE <X size={12} />
           </button>

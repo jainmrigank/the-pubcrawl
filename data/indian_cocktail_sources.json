@@ -1,0 +1,223 @@
+{
+  "researchDate": "2026-08-27",
+  "methodology": "Evidence hierarchy: consumer and bar surveys, reported features, published recipes, then social/forum discovery.",
+  "sources": {
+    "BT2025": {
+      "title": "Business Today: Bacardi Cocktail Trends Report 2025, India findings",
+      "publisher": "Business Today",
+      "kind": "reported consumer survey",
+      "url": "https://www.businesstoday.in/lifestyle/report/story/cocktail-culture-booms-in-india-bacardi-report-predicts-bold-flavours-premium-choices-ai-personalisation-in-2025-456720-2024-12-09",
+      "use": "India preference data and the five reported go-to serves."
+    },
+    "WII2024": {
+      "title": "What India Is Drinking 2024",
+      "publisher": "30BestBarsIndia",
+      "kind": "bar-industry survey",
+      "url": "https://30bestbarsindia.in/wp-content/uploads/2024/09/What-India-is-Drinking-2024.pdf",
+      "use": "Classic-cocktail rankings from 116 leading Indian bars."
+    },
+    "WII2025": {
+      "title": "What India Is Drinking 2025 findings",
+      "publisher": "The Spirits Business",
+      "kind": "bar-industry survey reporting",
+      "url": "https://www.thespiritsbusiness.com/2025/12/which-whisky-is-the-most-popular-in-indias-bars/?edition=asia",
+      "use": "Current category leaders including Picante, Negroni, Espresso Martini, Daiquiri and Old Fashioned."
+    },
+    "IPSOS2025": {
+      "title": "Spirited Revelations: The Buzz in India Beverage Scene",
+      "publisher": "Ipsos India",
+      "kind": "market research",
+      "url": "https://www.ipsos.com/sites/default/files/ct/publication/documents/2025-05/Spirited%20Revelations%20-%20The%20Buzz%20in%20India%26%23039%3Bs%20Beverage%20Scene_0.pdf",
+      "use": "On-premise mix, youth behaviour, local craft spirits, RTDs and low/no alcohol."
+    },
+    "MC2026": {
+      "title": "How the craft cocktails story is maturing in India",
+      "publisher": "Moneycontrol",
+      "kind": "reported industry feature",
+      "url": "https://www.moneycontrol.com/lifestyle/food/mixing-business-and-pleasure-how-the-craft-cocktails-story-is-maturing-in-india-article-13949690.html",
+      "use": "Simple highballs, Gen Z moderation, Picante ubiquity and zero-proof context."
+    },
+    "PICANTE": {
+      "title": "Why India cannot get enough of the Picante",
+      "publisher": "Mint Lounge",
+      "kind": "reported trend feature",
+      "url": "https://www.livemint.com/mint-lounge/food/picante-cocktail-trend-india-2024-111713979631757.html",
+      "use": "Nationwide Picante demand, bar sales and common recipe structure."
+    },
+    "MINT_HOME": {
+      "title": "How to make pro-level cocktails at home",
+      "publisher": "Mint Lounge",
+      "kind": "bartender recipes",
+      "url": "https://www.livemint.com/mint-lounge/ideas/how-to-make-pro-level-cocktails-to-raise-the-bar-at-home-111624034449219.html",
+      "use": "Published Balle Balle Bloody Mary, curry-leaf G and T and Espresso Martini specs."
+    },
+    "MADIRA": {
+      "title": "Summer recipes from Madira",
+      "publisher": "Mint Lounge",
+      "kind": "book excerpt and recipes",
+      "url": "https://www.livemint.com/mint-lounge/food/bars-cocktails-diy-madira-book-summer-recipes-11777612021719.html",
+      "use": "Published Gondhoraj Gimlet, Toddy Cooler, Mango Daiquiri and Feni Coconut Cooler specs."
+    },
+    "HOMEGROWN": {
+      "title": "How to make a cocktail with home-grown ingredients",
+      "publisher": "Mint Lounge",
+      "kind": "reported recipe feature",
+      "url": "https://www.livemint.com/mint-lounge/food/how-to-make-a-cocktail-with-home-grown-ingredients-111638971514244.html",
+      "use": "Kokum, amla, curry leaf, feni and Tambde Roza evidence."
+    },
+    "MAHUA_FENI": {
+      "title": "Cocktails with mahua and feni",
+      "publisher": "Mint Lounge",
+      "kind": "reported recipe feature",
+      "url": "https://www.livemint.com/mint-lounge/ideas/on-diwali-try-cocktails-with-mahua-and-feni-111605014757041.html",
+      "use": "Mahua lemonade and feni with guava, tomato, spice and aerated mixers."
+    },
+    "HIGHBALL": {
+      "title": "Where to find the best whisky highball in India",
+      "publisher": "Mint Lounge",
+      "kind": "reported bar feature",
+      "url": "https://www.livemint.com/mint-lounge/food/where-to-find-the-best-whisky-highball-in-india-111683257046985.html",
+      "use": "Whisky-soda as a durable Indian order and modern highball context."
+    },
+    "LOCAL2026": {
+      "title": "The globalisation of cocktail culture and local innovation",
+      "publisher": "Mint Lounge",
+      "kind": "reported trend feature",
+      "url": "https://www.livemint.com/mint-lounge/food/globalisation-of-cocktail-culture-local-innovation-bar-takeovers-11769255386243.html",
+      "use": "Social video discovery, Picante and Old Fashioned momentum, and a move toward restraint."
+    },
+    "NDTV_GARDEN": {
+      "title": "From garden to glass: local flavours are shaking up cocktails",
+      "publisher": "NDTV Food",
+      "kind": "bartender recipes and trend reporting",
+      "url": "https://food.ndtv.com/food-drinks/from-garden-to-glass-how-local-flavours-are-shaking-up-cocktails-11600401",
+      "use": "Published Southern Twist recipe and evidence for curry leaf, tamarind and regional ingredients."
+    },
+    "NDTV_VOGUE": {
+      "title": "Indian cocktails in vogue",
+      "publisher": "NDTV Food",
+      "kind": "reported bar feature",
+      "url": "https://food.ndtv.com/food-drinks/indian-cocktails-in-vogue-right-now-1774178",
+      "use": "Aam panna, tamarind, kokum, chai, shikanji, jal-jeera, jamun, paan and spice trends."
+    },
+    "NDTV_SOUTH": {
+      "title": "South Indian inspired cocktail recipes",
+      "publisher": "NDTV Food",
+      "kind": "bartender recipes",
+      "url": "https://food.ndtv.com/food-drinks/4-south-indian-inspired-cocktail-recipes-to-beat-the-summer-heat-11281179",
+      "use": "Published filter-kaapi Martini and regional menu direction."
+    },
+    "NDTV_CURRY_MARG": {
+      "title": "DIY cocktail recipes with a South Indian twist",
+      "publisher": "NDTV Food",
+      "kind": "bartender recipes",
+      "url": "https://food.ndtv.com/food-drinks/5-diy-cocktail-recipes-with-a-south-indian-twist-2723260",
+      "use": "Published curry-leaf Margarita structure."
+    },
+    "NDTV_GUAVA": {
+      "title": "Desi Masala Cocktail",
+      "publisher": "NDTV Food",
+      "kind": "recipe",
+      "url": "https://food.ndtv.com/recipe-desi-masala-cocktail-135",
+      "use": "Guava, spirit, chilli, salt and lemon combination."
+    },
+    "NDTV_ZERO": {
+      "title": "Zero-proof cocktails that do not need alcohol",
+      "publisher": "NDTV Food",
+      "kind": "bartender recipes",
+      "url": "https://food.ndtv.com/food-drinks/10-zero-proof-cocktails-that-prove-you-dont-need-alcohol-to-have-a-good-time-9523448",
+      "use": "Indian zero-proof structures using kokum, saffron, coffee, turmeric, shrub and spice."
+    },
+    "CNT_ZERO": {
+      "title": "Zero-proof summer drinks picked by mixologists",
+      "publisher": "Condé Nast Traveller India",
+      "kind": "bartender roundup",
+      "url": "https://www.cntraveller.in/story/14-zero-proof-drinks-for-summer-as-picked-by-mixologists-and-experts/",
+      "use": "India bar examples using Darjeeling tea, jamun, guava, lychee, rose, kombucha, kokum and coconut."
+    },
+    "SOMMELIER": {
+      "title": "Cocktail classics get a local twist",
+      "publisher": "Sommelier India",
+      "kind": "reported bar feature",
+      "url": "https://www.sommelierindia.com/cocktail-classics-get-a-local-twist/",
+      "use": "Regional pantry and menu evidence for jamun, solkadhi, rasam, tea, feni and arrack."
+    },
+    "THEBAR": {
+      "title": "Indian drinks and cocktail trends reshaping nightlife",
+      "publisher": "The Bar India",
+      "kind": "industry trend feature",
+      "url": "https://www.thebar.com/en-in/articles/indian-drinks-and-the-cocktail-trends-that-reshaped-indian-nightlife",
+      "use": "Kokum, gondhoraj, curry leaf, jaggery, tamarind, cold brew, cacao and clarified/fermented directions."
+    },
+    "FERMENT": {
+      "title": "How fermentation is moving from the kitchen to the bar",
+      "publisher": "Restaurant India",
+      "kind": "industry feature",
+      "url": "https://www.restaurantindia.in/article/how-fermentation-is-moving-from-the-kitchen-to-the-bar.16998",
+      "use": "Kombucha, kanji, handia and toddy plus food-safety constraints."
+    },
+    "GUARDIAN": {
+      "title": "Jeejeebhoy arrack cocktail recipe",
+      "publisher": "The Guardian",
+      "kind": "published bar recipe",
+      "url": "https://www.theguardian.com/lifeandstyle/2014/nov/21/cocktail-arrack-jeejeebhoy-dishoom-recipe",
+      "use": "Published arrack, coconut water, syrup and orange bitters spec."
+    },
+    "SIX_BROTHERS": {
+      "title": "Mahua cocktail recipes",
+      "publisher": "Six Brothers Mahura",
+      "kind": "producer recipe",
+      "url": "https://sixbrothers.com/blog/six-brothers-recipes-indian-cocktails-mahua",
+      "use": "First-party Mahua Sour structure; treated as a producer source."
+    },
+    "YT_CURRY": {
+      "title": "Curry Leaf Gin and Tonic",
+      "publisher": "Times Food on YouTube",
+      "kind": "recipe video",
+      "url": "https://www.youtube.com/watch?v=l-cldHZbdwg",
+      "use": "Direct video evidence for the curry-leaf G and T family."
+    },
+    "REDDIT_FAV": {
+      "title": "Favourite cocktail discussion in r/ThirtiesIndia",
+      "publisher": "Reddit",
+      "kind": "anecdotal community thread",
+      "url": "https://www.reddit.com/r/ThirtiesIndia/comments/1vculj0/tell_me_your_favorite_cocktail/",
+      "use": "Discovery signal for Old Monk and Coke, G and T, Espresso Martini, Whisky Sour, Jägerbomb, LIIT and shandy."
+    },
+    "REDDIT_HOME": {
+      "title": "Home cocktail discussion in r/india",
+      "publisher": "Reddit",
+      "kind": "anecdotal community thread",
+      "url": "https://www.reddit.com/r/india/comments/cis6bt/",
+      "use": "Discovery signal for simple rum/vodka/whisky highballs, ginger, sugarcane, cumin and filter coffee."
+    },
+    "REDDIT_GOA": {
+      "title": "Favourite drinks from Goa discussion",
+      "publisher": "Reddit",
+      "kind": "anecdotal community thread",
+      "url": "https://www.reddit.com/r/Goa/comments/1orj1z2/drop_your_favourite_drink_from_goa/",
+      "use": "Local discovery signal for urrak with Limca, lime and split chilli."
+    },
+    "IBA": {
+      "title": "Official cocktail list and recipes",
+      "publisher": "International Bartenders Association",
+      "kind": "official recipe standard",
+      "url": "https://iba-world.com/cocktails/",
+      "use": "Canonical specs for global classics where CocktailDB recipes were incomplete."
+    },
+    "GEN_ALPHA": {
+      "title": "Generation Alpha definition",
+      "publisher": "Cambridge Dictionary",
+      "kind": "reference",
+      "url": "https://dictionary.cambridge.org/us/dictionary/english/generation-alpha",
+      "use": "Age-boundary check: this cohort is under legal drinking age in 2026."
+    },
+    "FSSAI_AGE": {
+      "title": "Legal drinking age varies across Indian states",
+      "publisher": "Food Safety and Standards Authority of India",
+      "kind": "government media compilation",
+      "url": "https://fssai.gov.in/upload/media/FSSAI_News_Alcholic_FNB_25_11_2019.pdf",
+      "use": "Responsible-service context; local law must be checked."
+    }
+  }
+}

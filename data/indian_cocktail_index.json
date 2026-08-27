@@ -1,0 +1,857 @@
+[
+  {
+    "id": "11000",
+    "tags": [
+      "India",
+      "Modern Indian Bar",
+      "Pantry Tier 1"
+    ],
+    "tagline": "India’s enduring mint-and-rum crowd-pleaser.",
+    "browseable": true,
+    "india": {
+      "lane": "modern-bar",
+      "pantryTier": 1,
+      "researchDate": "2026-08-27"
+    },
+    "evidence": [
+      "BT2025",
+      "WII2024",
+      "IBA"
+    ],
+    "ingredients": [
+      {
+        "name": "White Rum",
+        "measure": "45 ml"
+      },
+      {
+        "name": "Lime Juice",
+        "measure": "20 ml"
+      },
+      {
+        "name": "Mint Leaves",
+        "measure": "6"
+      },
+      {
+        "name": "Sugar",
+        "measure": "2 tsp"
+      },
+      {
+        "name": "Soda Water",
+        "measure": "top up"
+      }
+    ],
+    "instructions": "Stir lime and sugar in the glass, add mint and press very gently. Fill with crushed ice, add rum, top with soda, and lift once with a bar spoon."
+  },
+  {
+    "id": "17196",
+    "tags": [
+      "India",
+      "Modern Indian Bar",
+      "Pantry Tier 2"
+    ],
+    "tagline": "The polished vodka classic that remains on leading Indian bar lists.",
+    "browseable": true,
+    "india": {
+      "lane": "modern-bar",
+      "pantryTier": 2,
+      "researchDate": "2026-08-27"
+    },
+    "evidence": [
+      "WII2024",
+      "IBA"
+    ],
+    "ingredients": [
+      {
+        "name": "Citron Vodka",
+        "measure": "40 ml"
+      },
+      {
+        "name": "Cointreau",
+        "measure": "15 ml"
+      },
+      {
+        "name": "Lime Juice",
+        "measure": "15 ml"
+      },
+      {
+        "name": "Cranberry Juice",
+        "measure": "30 ml"
+      }
+    ],
+    "instructions": "Shake all ingredients hard with ice and double strain into a chilled coupe. Express orange peel over the surface if available."
+  },
+  {
+    "id": "11004",
+    "tags": [
+      "India",
+      "Modern Indian Bar",
+      "Pantry Tier 1"
+    ],
+    "tagline": "A top whisky classic across Indian bars and drinker discussions.",
+    "browseable": true,
+    "india": {
+      "lane": "modern-bar",
+      "pantryTier": 1,
+      "researchDate": "2026-08-27"
+    },
+    "evidence": [
+      "WII2024",
+      "WII2025",
+      "REDDIT_FAV",
+      "IBA"
+    ],
+    "ingredients": [
+      {
+        "name": "Bourbon Whiskey",
+        "measure": "45 ml"
+      },
+      {
+        "name": "Lemon Juice",
+        "measure": "25 ml"
+      },
+      {
+        "name": "Sugar Syrup",
+        "measure": "20 ml"
+      },
+      {
+        "name": "Pasteurised Egg White",
+        "measure": "20 ml",
+        "optional": true
+      }
+    ],
+    "instructions": "Dry shake first if using egg white, then shake hard with ice. Double strain into a chilled coupe or over fresh ice."
+  },
+  {
+    "id": "11003",
+    "tags": [
+      "India",
+      "Modern Indian Bar",
+      "Pantry Tier 2"
+    ],
+    "tagline": "The bitter red gin classic now leading its category in Indian bars.",
+    "browseable": true,
+    "india": {
+      "lane": "modern-bar",
+      "pantryTier": 2,
+      "researchDate": "2026-08-27"
+    },
+    "evidence": [
+      "WII2024",
+      "WII2025",
+      "IBA"
+    ],
+    "ingredients": [
+      {
+        "name": "Gin",
+        "measure": "30 ml"
+      },
+      {
+        "name": "Campari",
+        "measure": "30 ml"
+      },
+      {
+        "name": "Sweet Vermouth",
+        "measure": "30 ml"
+      }
+    ],
+    "instructions": "Stir all ingredients with ice until chilled and diluted. Strain over one large cube and express an orange peel."
+  },
+  {
+    "id": "11007",
+    "tags": [
+      "India",
+      "Modern Indian Bar",
+      "Pantry Tier 2"
+    ],
+    "tagline": "The evergreen agave classic beneath India’s Picante wave.",
+    "browseable": true,
+    "india": {
+      "lane": "modern-bar",
+      "pantryTier": 2,
+      "researchDate": "2026-08-27"
+    },
+    "evidence": [
+      "WII2024",
+      "WII2025",
+      "IBA"
+    ],
+    "ingredients": [
+      {
+        "name": "Tequila",
+        "measure": "50 ml"
+      },
+      {
+        "name": "Triple Sec",
+        "measure": "20 ml"
+      },
+      {
+        "name": "Lime Juice",
+        "measure": "15 ml"
+      },
+      {
+        "name": "Salt",
+        "measure": "1 pinch",
+        "optional": true
+      }
+    ],
+    "instructions": "Shake the liquids with ice and double strain into a chilled coupe. If using salt, apply it only to half the outside rim."
+  },
+  {
+    "id": "17212",
+    "tags": [
+      "India",
+      "Modern Indian Bar",
+      "Pantry Tier 2"
+    ],
+    "tagline": "The social-media-fuelled coffee cocktail that overtook the Cosmo in bar surveys.",
+    "browseable": true,
+    "india": {
+      "lane": "modern-bar",
+      "pantryTier": 2,
+      "researchDate": "2026-08-27"
+    },
+    "evidence": [
+      "WII2024",
+      "WII2025",
+      "MINT_HOME",
+      "REDDIT_FAV"
+    ],
+    "ingredients": [
+      {
+        "name": "Vodka",
+        "measure": "45 ml"
+      },
+      {
+        "name": "Fresh Espresso",
+        "measure": "30 ml"
+      },
+      {
+        "name": "Coffee Liqueur",
+        "measure": "20 ml"
+      },
+      {
+        "name": "Sugar Syrup",
+        "measure": "5 ml",
+        "optional": true
+      }
+    ],
+    "instructions": "Shake vodka, fresh espresso and coffee liqueur very hard with ice. Double strain into a chilled coupe; add syrup only if needed."
+  },
+  {
+    "id": "11001",
+    "tags": [
+      "India",
+      "Modern Indian Bar",
+      "Pantry Tier 1"
+    ],
+    "tagline": "The whisky classic that returned to the front of India’s bar conversation.",
+    "browseable": true,
+    "india": {
+      "lane": "modern-bar",
+      "pantryTier": 1,
+      "researchDate": "2026-08-27"
+    },
+    "evidence": [
+      "WII2025",
+      "LOCAL2026",
+      "IBA"
+    ],
+    "ingredients": [
+      {
+        "name": "Bourbon or Rye Whiskey",
+        "measure": "45 ml"
+      },
+      {
+        "name": "Sugar Cube",
+        "measure": "1"
+      },
+      {
+        "name": "Angostura Bitters",
+        "measure": "2 dashes"
+      },
+      {
+        "name": "Water",
+        "measure": "2 dashes"
+      }
+    ],
+    "instructions": "Dissolve sugar with bitters and water in the glass. Add whisky and a large cube, stir until silky, and express orange peel."
+  },
+  {
+    "id": "11006",
+    "tags": [
+      "India",
+      "Modern Indian Bar",
+      "Pantry Tier 1"
+    ],
+    "tagline": "The rum sour now outranking the Mojito in recent Indian bar data.",
+    "browseable": true,
+    "india": {
+      "lane": "modern-bar",
+      "pantryTier": 1,
+      "researchDate": "2026-08-27"
+    },
+    "evidence": [
+      "WII2025",
+      "IBA"
+    ],
+    "ingredients": [
+      {
+        "name": "White Rum",
+        "measure": "60 ml"
+      },
+      {
+        "name": "Lime Juice",
+        "measure": "20 ml"
+      },
+      {
+        "name": "Sugar Syrup",
+        "measure": "10 ml"
+      }
+    ],
+    "instructions": "Shake hard with ice and double strain into a chilled coupe. Adjust syrup slightly for the acidity of the lime."
+  },
+  {
+    "id": "178365",
+    "tags": [
+      "India",
+      "Modern Indian Bar",
+      "Pantry Tier 1"
+    ],
+    "tagline": "A default Indian white-spirit serve, from home bar to hotel bar.",
+    "browseable": true,
+    "india": {
+      "lane": "modern-bar",
+      "pantryTier": 1,
+      "researchDate": "2026-08-27"
+    },
+    "evidence": [
+      "WII2025",
+      "REDDIT_FAV",
+      "IBA"
+    ],
+    "ingredients": [
+      {
+        "name": "Gin",
+        "measure": "50 ml"
+      },
+      {
+        "name": "Tonic Water",
+        "measure": "100 ml"
+      },
+      {
+        "name": "Lime Wedge",
+        "measure": "1"
+      }
+    ],
+    "instructions": "Fill a chilled glass with hard ice, add gin, pour tonic slowly down the side, and squeeze in the lime. Stir once."
+  },
+  {
+    "id": "11113",
+    "tags": [
+      "India",
+      "Modern Indian Bar",
+      "Pantry Tier 2"
+    ],
+    "tagline": "The savoury vodka classic behind many masala and rasam riffs.",
+    "browseable": true,
+    "india": {
+      "lane": "modern-bar",
+      "pantryTier": 2,
+      "researchDate": "2026-08-27"
+    },
+    "evidence": [
+      "WII2025",
+      "MINT_HOME",
+      "IBA"
+    ],
+    "ingredients": [
+      {
+        "name": "Vodka",
+        "measure": "45 ml"
+      },
+      {
+        "name": "Tomato Juice",
+        "measure": "90 ml"
+      },
+      {
+        "name": "Lemon Juice",
+        "measure": "15 ml"
+      },
+      {
+        "name": "Worcestershire Sauce",
+        "measure": "2 dashes"
+      },
+      {
+        "name": "Tabasco",
+        "measure": "3 dashes"
+      },
+      {
+        "name": "Celery Salt",
+        "measure": "1 pinch"
+      },
+      {
+        "name": "Black Pepper",
+        "measure": "1 pinch"
+      }
+    ],
+    "instructions": "Roll all ingredients with ice between two glasses until cold; do not shake. Strain over fresh ice and adjust seasoning after tasting."
+  },
+  {
+    "id": "17204",
+    "tags": [
+      "India",
+      "Modern Indian Bar",
+      "Pantry Tier 2"
+    ],
+    "tagline": "The high-strength party classic still prominent in Indian drinker discussions.",
+    "browseable": true,
+    "india": {
+      "lane": "modern-bar",
+      "pantryTier": 2,
+      "researchDate": "2026-08-27"
+    },
+    "evidence": [
+      "REDDIT_FAV",
+      "IBA"
+    ],
+    "ingredients": [
+      {
+        "name": "Vodka",
+        "measure": "15 ml"
+      },
+      {
+        "name": "Tequila",
+        "measure": "15 ml"
+      },
+      {
+        "name": "White Rum",
+        "measure": "15 ml"
+      },
+      {
+        "name": "Gin",
+        "measure": "15 ml"
+      },
+      {
+        "name": "Cointreau",
+        "measure": "15 ml"
+      },
+      {
+        "name": "Lemon Juice",
+        "measure": "25 ml"
+      },
+      {
+        "name": "Sugar Syrup",
+        "measure": "30 ml"
+      },
+      {
+        "name": "Cola",
+        "measure": "top up"
+      }
+    ],
+    "instructions": "Add all ingredients except cola to an ice-filled highball and stir. Top with a short pour of cola. This is a high-strength serve: one is plenty."
+  },
+  {
+    "id": "11009",
+    "tags": [
+      "India",
+      "Modern Indian Bar",
+      "Pantry Tier 1"
+    ],
+    "tagline": "The familiar vodka-and-ginger classic holding its place on Indian menus.",
+    "browseable": true,
+    "india": {
+      "lane": "modern-bar",
+      "pantryTier": 1,
+      "researchDate": "2026-08-27"
+    },
+    "evidence": [
+      "WII2025",
+      "IBA"
+    ],
+    "ingredients": [
+      {
+        "name": "Vodka",
+        "measure": "45 ml"
+      },
+      {
+        "name": "Ginger Beer",
+        "measure": "120 ml"
+      },
+      {
+        "name": "Lime Juice",
+        "measure": "10 ml"
+      }
+    ],
+    "instructions": "Build over ice in a highball or mug, top with cold ginger beer, add lime, and stir once."
+  },
+  {
+    "id": "17207",
+    "tags": [
+      "India",
+      "Modern Indian Bar",
+      "Pantry Tier 2"
+    ],
+    "tagline": "A tropical rum staple with broad restaurant familiarity.",
+    "browseable": true,
+    "india": {
+      "lane": "modern-bar",
+      "pantryTier": 2,
+      "researchDate": "2026-08-27"
+    },
+    "evidence": [
+      "REDDIT_FAV",
+      "IBA"
+    ],
+    "ingredients": [
+      {
+        "name": "White Rum",
+        "measure": "50 ml"
+      },
+      {
+        "name": "Coconut Cream",
+        "measure": "30 ml"
+      },
+      {
+        "name": "Pineapple Juice",
+        "measure": "50 ml"
+      }
+    ],
+    "instructions": "Blend with crushed ice until smooth, or shake very hard and pour over crushed ice. Garnish with pineapple if available."
+  },
+  {
+    "id": "178314",
+    "tags": [
+      "India",
+      "Modern Indian Bar",
+      "Pantry Tier 2"
+    ],
+    "tagline": "A modern gin staple recorded among India’s favourite gin classics.",
+    "browseable": true,
+    "india": {
+      "lane": "modern-bar",
+      "pantryTier": 2,
+      "researchDate": "2026-08-27"
+    },
+    "evidence": [
+      "WII2024"
+    ],
+    "ingredients": [
+      {
+        "name": "Gin",
+        "measure": "60 ml"
+      },
+      {
+        "name": "Lemon Juice",
+        "measure": "30 ml"
+      },
+      {
+        "name": "Sugar Syrup",
+        "measure": "20 ml"
+      },
+      {
+        "name": "Basil Leaves",
+        "measure": "10"
+      }
+    ],
+    "instructions": "Muddle basil gently with syrup, add gin, lemon and ice, and shake hard. Double strain over fresh ice."
+  },
+  {
+    "id": "11288",
+    "tags": [
+      "India",
+      "Everyday India",
+      "Pantry Tier 1"
+    ],
+    "tagline": "The named classic form of India’s ubiquitous rum-and-cola order.",
+    "browseable": true,
+    "india": {
+      "lane": "everyday",
+      "pantryTier": 1,
+      "researchDate": "2026-08-27"
+    },
+    "evidence": [
+      "BT2025",
+      "IBA"
+    ],
+    "ingredients": [
+      {
+        "name": "White Rum",
+        "measure": "50 ml"
+      },
+      {
+        "name": "Cola",
+        "measure": "120 ml"
+      },
+      {
+        "name": "Lime Juice",
+        "measure": "10 ml"
+      }
+    ],
+    "instructions": "Build rum and lime over ice, top with cola, and stir once. Garnish with a lime wedge."
+  },
+  {
+    "id": "11728",
+    "tags": [
+      "India",
+      "Modern Indian Bar",
+      "Pantry Tier 2"
+    ],
+    "tagline": "The canonical spirit-forward gin order returning to Indian bar menus.",
+    "browseable": true,
+    "india": {
+      "lane": "modern-bar",
+      "pantryTier": 2,
+      "researchDate": "2026-08-27"
+    },
+    "evidence": [
+      "WII2025",
+      "IBA"
+    ],
+    "ingredients": [
+      {
+        "name": "Gin",
+        "measure": "60 ml"
+      },
+      {
+        "name": "Dry Vermouth",
+        "measure": "10 ml"
+      },
+      {
+        "name": "Olive or Lemon Peel",
+        "measure": "1"
+      }
+    ],
+    "instructions": "Stir gin and vermouth with ice until very cold. Strain into a chilled Martini glass and garnish with an olive or expressed lemon peel."
+  },
+  {
+    "id": "x-jagerbomb",
+    "tags": [
+      "India",
+      "Everyday India",
+      "Pantry Tier 2"
+    ],
+    "tagline": "A high-energy party serve repeatedly named in Indian drinker discussion.",
+    "browseable": true,
+    "india": {
+      "lane": "everyday",
+      "pantryTier": 2,
+      "researchDate": "2026-08-27"
+    },
+    "evidence": [
+      "REDDIT_FAV"
+    ],
+    "instructions": "Pour Jägermeister into an ice-filled glass, add the energy drink, and sip. Never drop or drink around a shot glass; caffeine can also mask perceived impairment."
+  },
+  {
+    "id": "x-monkcola",
+    "tags": [
+      "India",
+      "Everyday India",
+      "Pantry Tier 1"
+    ],
+    "tagline": "Old Monk and cola: the cult Indian home-party rum highball.",
+    "browseable": true,
+    "india": {
+      "lane": "everyday",
+      "pantryTier": 1,
+      "researchDate": "2026-08-27"
+    },
+    "evidence": [
+      "REDDIT_FAV",
+      "REDDIT_HOME"
+    ],
+    "thumb": "/images/india/x-monkcola.webp"
+  },
+  {
+    "id": "x-shandy",
+    "tags": [
+      "India",
+      "Everyday India",
+      "Pantry Tier 1"
+    ],
+    "tagline": "Beer and lemonade for a lighter, familiar long drink.",
+    "browseable": true,
+    "india": {
+      "lane": "everyday",
+      "pantryTier": 1,
+      "researchDate": "2026-08-27"
+    },
+    "evidence": [
+      "REDDIT_FAV",
+      "IPSOS2025"
+    ]
+  },
+  {
+    "id": "x-fenifizz",
+    "tags": [
+      "India",
+      "Regional and Cultural",
+      "Pantry Tier 3"
+    ],
+    "tagline": "Cashew feni, ginger and lime in an approachable Goan fizz.",
+    "browseable": true,
+    "india": {
+      "lane": "regional",
+      "pantryTier": 3,
+      "researchDate": "2026-08-27"
+    },
+    "evidence": [
+      "HOMEGROWN",
+      "MAHUA_FENI"
+    ],
+    "thumb": "/images/india/x-fenifizz.webp"
+  },
+  {
+    "id": "x-chaitoddy",
+    "tags": [
+      "India",
+      "Modern Indian Bar",
+      "Pantry Tier 1"
+    ],
+    "tagline": "Whisky lengthened with the masala-chai spice profile already known at home.",
+    "browseable": true,
+    "india": {
+      "lane": "modern-bar",
+      "pantryTier": 1,
+      "researchDate": "2026-08-27"
+    },
+    "evidence": [
+      "NDTV_VOGUE",
+      "THEBAR"
+    ],
+    "thumb": "/images/india/x-chaitoddy.webp"
+  },
+  {
+    "id": "x-nariyal",
+    "tags": [
+      "India",
+      "Modern Indian Bar",
+      "Pantry Tier 1"
+    ],
+    "tagline": "The Mojito recast with roadside-familiar coconut water.",
+    "browseable": true,
+    "india": {
+      "lane": "modern-bar",
+      "pantryTier": 1,
+      "researchDate": "2026-08-27"
+    },
+    "evidence": [
+      "CNT_ZERO",
+      "NDTV_VOGUE"
+    ],
+    "thumb": "/images/india/x-nariyal.webp"
+  },
+  {
+    "id": "x-gondhoraj",
+    "tags": [
+      "India",
+      "Regional and Cultural",
+      "Pantry Tier 3"
+    ],
+    "tagline": "A Bengali lime Gimlet with exceptionally aromatic citrus.",
+    "browseable": true,
+    "india": {
+      "lane": "regional",
+      "pantryTier": 3,
+      "researchDate": "2026-08-27"
+    },
+    "evidence": [
+      "MADIRA",
+      "THEBAR"
+    ],
+    "thumb": "/images/india/x-gondhoraj.webp"
+  },
+  {
+    "id": "x-shikanji",
+    "tags": [
+      "India",
+      "Zero-Proof and Gen Alpha Safe",
+      "Pantry Tier 1"
+    ],
+    "tagline": "The essential sweet-salt-sour North Indian summer cooler.",
+    "browseable": true,
+    "india": {
+      "lane": "zero-proof",
+      "pantryTier": 1,
+      "researchDate": "2026-08-27"
+    },
+    "evidence": [
+      "NDTV_VOGUE"
+    ]
+  },
+  {
+    "id": "x-jaljeera",
+    "tags": [
+      "India",
+      "Zero-Proof and Gen Alpha Safe",
+      "Pantry Tier 1"
+    ],
+    "tagline": "Cumin, mint and black salt in a savoury Indian refresher.",
+    "browseable": true,
+    "india": {
+      "lane": "zero-proof",
+      "pantryTier": 1,
+      "researchDate": "2026-08-27"
+    },
+    "evidence": [
+      "NDTV_VOGUE"
+    ]
+  },
+  {
+    "id": "x-aampanna",
+    "tags": [
+      "India",
+      "Zero-Proof and Gen Alpha Safe",
+      "Pantry Tier 1"
+    ],
+    "tagline": "Raw mango, cumin and mint: a cultural summer staple before it is a cocktail riff.",
+    "browseable": true,
+    "india": {
+      "lane": "zero-proof",
+      "pantryTier": 1,
+      "researchDate": "2026-08-27"
+    },
+    "evidence": [
+      "NDTV_VOGUE"
+    ]
+  },
+  {
+    "id": "x-chaas",
+    "tags": [
+      "India",
+      "Zero-Proof and Gen Alpha Safe",
+      "Pantry Tier 1"
+    ],
+    "tagline": "Spiced buttermilk gives the collection a genuinely everyday savoury lane.",
+    "browseable": true,
+    "india": {
+      "lane": "zero-proof",
+      "pantryTier": 1,
+      "researchDate": "2026-08-27"
+    },
+    "evidence": [
+      "NDTV_VOGUE"
+    ],
+    "thumb": "/images/india/x-chaas.webp"
+  },
+  {
+    "id": "x-kokum",
+    "tags": [
+      "India",
+      "Zero-Proof and Gen Alpha Safe",
+      "Pantry Tier 2"
+    ],
+    "tagline": "The Konkan cooler that anchors many modern kokum bar riffs.",
+    "browseable": true,
+    "india": {
+      "lane": "zero-proof",
+      "pantryTier": 2,
+      "researchDate": "2026-08-27"
+    },
+    "evidence": [
+      "HOMEGROWN",
+      "CNT_ZERO"
+    ],
+    "thumb": "/images/india/x-kokum.webp"
+  }
+]

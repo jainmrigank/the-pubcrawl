@@ -96,6 +96,7 @@ export function RecipeCard(props: Props) {
   const { recipe, vibe, index, onVideo } = props;
   const [flipped, setFlipped] = useState(false);
   const isAI = recipe.source === 'ai' || recipe.source === 'fallback';
+  const isIndia = (recipe.tags || []).includes('India');
   const missing = recipe.missing ?? [];
   const ready = recipe.total != null && missing.length === 0;
   const buttons = <RecipeCardActions {...props} />;
@@ -125,13 +126,13 @@ export function RecipeCard(props: Props) {
             </div>
           ) : (
             <div className="fc-img fc-img-ai">
-              <span className="fc-ai-mark">SPECIAL</span>
+              <span className="fc-ai-mark">{isIndia ? 'INDIA' : 'SPECIAL'}</span>
               <GlassIcon glass={recipe.glass} size={72} />
             </div>
           )}
           <div className="fc-strip">
             <div className="fc-toprow">
-              <span className="k-label">{isAI ? (recipe.source === 'ai' ? 'HOUSE SPECIAL' : 'OFF-MENU SPECIAL') : `Nº ${String(index + 1).padStart(3, '0')}`}</span>
+              <span className="k-label">{isAI ? (recipe.source === 'ai' ? 'HOUSE SPECIAL' : 'OFF-MENU SPECIAL') : isIndia ? 'INDIA COLLECTION' : `Nº ${String(index + 1).padStart(3, '0')}`}</span>
               <span className="fc-vibe">
                 <i className="swatch" />
                 {vibe.label}
@@ -158,7 +159,7 @@ export function RecipeCard(props: Props) {
         <div className="ff back">
           <div className="fb-head">
             <div className="fb-head-top">
-              <span className="k-label">{isAI ? 'HOUSE SPECIAL' : `Nº ${String(index + 1).padStart(3, '0')}`}</span>
+              <span className="k-label">{isAI ? 'HOUSE SPECIAL' : isIndia ? 'INDIA COLLECTION' : `Nº ${String(index + 1).padStart(3, '0')}`}</span>
               {flipped && <div className="fb-actions">{buttons}</div>}
             </div>
             <h3>{recipe.name}</h3>
@@ -192,7 +193,12 @@ export function RecipeCard(props: Props) {
                   onVideo(recipe);
                 }}
               >
-                WATCH IT MADE <Play size={11} />
+                {recipe.videoKind === 'technique'
+                  ? 'WATCH THE TECHNIQUE'
+                  : recipe.videoKind === 'search'
+                    ? 'FIND A VIDEO'
+                    : 'WATCH IT MADE'}{' '}
+                <Play size={11} />
               </button>
             )}
           </div>

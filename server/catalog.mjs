@@ -18,6 +18,7 @@ const CURATED = [
   // spirits of the world
   'Mezcal', 'Pisco', 'Cachaca', 'Soju', 'Shochu', 'Baijiu', 'Aquavit', 'Arrack',
   'Feni', 'Raki', 'Grappa', 'Armagnac', 'Calvados', 'Rhum Agricole', 'Genever',
+  'Urrak', 'Mahua Spirit', 'Fresh Toddy',
   'Moonshine', 'Umeshu', 'Sake', 'Makgeolli', 'Singani', 'Slivovitz', 'Palinka',
   // liqueurs & amari
   'Aperol', 'Campari', 'Fernet-Branca', 'Amaro Nonino', 'Amaro Montenegro', 'Averna',
@@ -49,17 +50,18 @@ const CURATED = [
   'Saffron Syrup', 'Cardamom Syrup', 'Jaggery Syrup', 'Aam Papad',
   'Masala Chai', 'Filter Coffee', 'Coconut Cream', 'Guava Puree',
   'Mango Puree', 'Pomegranate Juice', 'Raw Mango',
-  'Curry Leaves', 'Tulsi', 'Cumin', 'Black Salt',
+  'Curry Leaves', 'Tulsi', 'Cumin', 'Black Salt', 'Prepared Kanji',
+  'Ginger Kombucha', 'Prepared Solkadhi', 'Prepared Rasam',
 ];
 
 /* ---------- ingredient categorisation ---------- */
 const CATEGORY_RULES = [
-  ['Spirit', ['vodka', 'gin', 'rum', 'tequila', 'mezcal', 'whisky', 'whiskey', 'bourbon', 'scotch', 'rye', 'brandy', 'cognac', 'armagnac', 'pisco', 'cachaca', 'soju', 'shochu', 'baijiu', 'aquavit', 'arrack', 'feni', 'raki', 'ouzo', 'grappa', 'calvados', 'genever', 'moonshine', 'absinthe', 'everclear', 'singani', 'slivovitz', 'palinka', 'firewater', 'grain alcohol', 'applejack']],
+  ['Spirit', ['vodka', 'gin', 'rum', 'tequila', 'mezcal', 'whisky', 'whiskey', 'bourbon', 'scotch', 'rye', 'brandy', 'cognac', 'armagnac', 'pisco', 'cachaca', 'soju', 'shochu', 'baijiu', 'aquavit', 'arrack', 'feni', 'urrak', 'mahua spirit', 'toddy', 'raki', 'ouzo', 'grappa', 'calvados', 'genever', 'moonshine', 'absinthe', 'everclear', 'singani', 'slivovitz', 'palinka', 'firewater', 'grain alcohol', 'applejack']],
   ['Liqueur', ['liqueur', 'schnapps', 'curacao', 'triple sec', 'cointreau', 'grand marnier', 'amaretto', 'kahlua', 'baileys', 'irish cream', 'chartreuse', 'campari', 'aperol', 'fernet', 'amaro', 'averna', 'cynar', 'st germain', 'licor 43', 'limoncello', 'falernum', 'suze', 'italicus', 'ancho reyes', 'creme de', 'pimms', 'jagermeister', 'drambuie', 'frangelico', 'galliano', 'midori', 'sambuca', 'chambord', 'benedictine', 'advocaat', 'tia maria', 'southern comfort', 'malibu', 'passoa', 'aperitif']],
   ['Wine & Fortified', ['wine', 'champagne', 'prosecco', 'cava', 'vermouth', 'sherry', 'port', 'lillet', 'cocchi', 'dubonnet', 'sake', 'umeshu', 'makgeolli']],
   ['Bitters', ['bitters', 'angostura', 'peychaud', 'peychauds']],
   ['Juice', ['juice', 'nectar', 'puree']],
-  ['Soda & Mixer', ['soda', 'tonic', 'cola', 'coke', 'sprite', '7 up', 'ginger ale', 'ginger beer', 'lemonade', 'water', 'red bull', 'iced tea', 'coffee', 'espresso', 'tea', 'chai', 'coconut water']],
+  ['Soda & Mixer', ['soda', 'tonic', 'cola', 'coke', 'sprite', '7 up', 'ginger ale', 'ginger beer', 'lemonade', 'water', 'red bull', 'iced tea', 'coffee', 'espresso', 'tea', 'chai', 'coconut water', 'kombucha', 'kanji', 'solkadhi', 'rasam']],
   ['Beer & Cider', ['beer', 'lager', 'ale', 'stout', 'cider']],
   ['Syrup & Sweetener', ['syrup', 'honey', 'sugar', 'agave', 'grenadine', 'orgeat', 'molasses', 'jaggery', 'gur', 'gulkand', 'sweetener', 'cordial', 'thandai', 'khus']],
   ['Dairy & Egg', ['cream', 'milk', 'yoghurt', 'yogurt', 'butter', 'egg', 'aquafaba', 'ice cream']],
@@ -86,10 +88,11 @@ export function categorise(name) {
 export const isBoozeCategory = (cat) =>
   ['Spirit', 'Liqueur', 'Wine & Fortified', 'Beer & Cider'].includes(cat);
 
-/** A flashcard needs a real photograph; house recipes without one stay in the
- * matching catalogue but do not appear on the public browse shelf. */
+/** Whether a recipe has a real photograph. Kept separate from browse admission
+ * because researched house recipes use the card's honest illustration state. */
 export const hasRecipeImage = (recipe) => typeof recipe?.thumb === 'string' && recipe.thumb.trim().length > 0;
-export const visibleRecipes = (recipes) => (Array.isArray(recipes) ? recipes : []).filter(hasRecipeImage);
+export const isBrowseableRecipe = (recipe) => hasRecipeImage(recipe) || recipe?.browseable === true;
+export const visibleRecipes = (recipes) => (Array.isArray(recipes) ? recipes : []).filter(isBrowseableRecipe);
 
 /* ---------- normalisation + matching ---------- */
 export const norm = (s) =>
@@ -100,6 +103,66 @@ export const norm = (s) =>
     .replace(/[^a-z0-9 ]/g, ' ')
     .replace(/\s+/g, ' ')
     .trim();
+
+const INDIA_LANE_SEARCH = {
+  everyday: 'lane everyday india home household go-to familiar simple',
+  'modern-bar': 'lane modern indian bar restaurant contemporary new generation gen z trending',
+  regional: 'lane regional cultural local indigenous heritage specialty',
+  'zero-proof': 'lane zero proof non alcoholic alcohol free mocktail gen alpha safe',
+};
+
+const INDIA_ACCESS_SEARCH = {
+  1: 'access 1 access tier 1 common household standard restaurant bar easy available',
+  2: 'access 2 access tier 2 specialty purchase larger city simple preparation',
+  3: 'access 3 access tier 3 regional seasonal licensed source specialist hard to find',
+};
+
+const containsPhrase = (haystack, needle) => ` ${haystack} `.includes(` ${needle} `);
+
+/**
+ * Ranked recipe search shared by the menu and shelf results. Research metadata
+ * is intentionally first-class: "regional", "tier 1", "coupe", "zero proof",
+ * a vibe, a place in the tagline, or a preparation method can all find a drink.
+ */
+export function recipeSearchScore(recipe, query) {
+  const q = norm(String(query || ''));
+  if (!q) return 0;
+  const name = norm(recipe.name || '');
+  if (name === q) return 0;
+  if (name.startsWith(q)) return 1;
+  if (` ${name} `.includes(` ${q} `)) return 2;
+  if (name.includes(q)) return 3;
+
+  const ingredientText = norm((recipe.ingredients || []).map((ingredient) => ingredient.name).join(' '));
+  if (containsPhrase(ingredientText, q)) return 4;
+
+  const lane = recipe.india?.lane || '';
+  const tier = recipe.india?.pantryTier;
+  const metadata = norm([
+    recipe.category,
+    recipe.iba,
+    recipe.glass,
+    'glass ' + (recipe.glass || ''),
+    recipe.alcoholic,
+    recipe.vibe,
+    VIBES_SET[recipe.vibe]?.label,
+    recipe.tagline,
+    ...(recipe.tags || []),
+    lane,
+    INDIA_LANE_SEARCH[lane] || '',
+    tier ? INDIA_ACCESS_SEARCH[tier] : '',
+  ].join(' '));
+  if (containsPhrase(metadata, q)) return 5;
+
+  const words = q.split(' ').filter(Boolean);
+  if (words.length > 1 && words.every((word) =>
+    containsPhrase(metadata, word) || containsPhrase(ingredientText, word)
+  )) return 5;
+
+  const method = norm(recipe.instructions || '');
+  if (containsPhrase(method, q) || (words.length > 1 && words.every((word) => containsPhrase(method, word)))) return 6;
+  return -1;
+}
 
 // interchangeable families — pantry item matches recipe item if both hit the same group
 const ALIAS_GROUPS = [
@@ -157,9 +220,8 @@ export function loadCatalog() {
   const cocktails = JSON.parse(readFileSync(join(ROOT, 'data', 'cocktails.json'), 'utf8')).map(withVibe);
   const scraped = JSON.parse(readFileSync(join(ROOT, 'data', 'ingredients.json'), 'utf8'));
 
-  // hand-curated house additions the source database lacks: bombs and modern
-  // classics (extra_cocktails.json) plus 100 regional Indian drinks
-  // (indian_cocktails.json). A vibeHint pins the intended mood.
+  // Hand-curated additions the source database lacks, including the evidence-led
+  // India set. A vibeHint pins the intended mood where supplied.
   for (const file of ['extra_cocktails.json', 'indian_cocktails.json']) {
     const p = join(ROOT, 'data', file);
     if (!existsSync(p)) continue;
@@ -171,6 +233,21 @@ export function loadCatalog() {
     }
   }
 
+  // Add existing CocktailDB/house recipes to the India collection without
+  // duplicating them. The index can also repair an incomplete source recipe.
+  const indiaIndexPath = join(ROOT, 'data', 'indian_cocktail_index.json');
+  if (existsSync(indiaIndexPath)) {
+    const byId = new Map(cocktails.map((cocktail) => [cocktail.id, cocktail]));
+    for (const patch of JSON.parse(readFileSync(indiaIndexPath, 'utf8'))) {
+      const cocktail = byId.get(patch.id);
+      if (!cocktail) continue;
+      const tags = [...new Set([...(cocktail.tags || []), ...(patch.tags || [])])];
+      Object.assign(cocktail, patch, { tags });
+      withVibe(cocktail);
+      if (cocktail.vibeHint && Object.keys(VIBES_SET).includes(cocktail.vibeHint)) cocktail.vibe = cocktail.vibeHint;
+    }
+  }
+
   // videos.json is the audited source of truth (scripts/audit_videos.mjs):
   // an entry there wins over the drink's own link, and an explicit empty
   // string means "the found videos were wrong, show none"
@@ -179,6 +256,20 @@ export function loadCatalog() {
     const videos = JSON.parse(readFileSync(videosPath, 'utf8'));
     for (const c of cocktails)
       if (Object.prototype.hasOwnProperty.call(videos, c.id)) c.video = videos[c.id];
+  }
+
+  // India video audit adds human-readable titles and distinguishes an exact
+  // named recipe from a useful base-technique tutorial or search fallback.
+  const indiaVideoAuditPath = join(ROOT, 'data', 'indian_cocktail_video_audit.json');
+  if (existsSync(indiaVideoAuditPath)) {
+    const audited = JSON.parse(readFileSync(indiaVideoAuditPath, 'utf8'));
+    for (const cocktail of cocktails) {
+      const item = audited[cocktail.id];
+      if (!item?.url) continue;
+      cocktail.video = item.url;
+      cocktail.videoTitle = item.title || '';
+      cocktail.videoKind = item.kind || 'search';
+    }
   }
 
   // images.json (scripts/fetch_images.mjs): confident Wikipedia/Commons photos
@@ -243,14 +334,14 @@ export function searchIngredients(ingredients, q, limit = 12) {
 export function matchRecipes(cocktails, pantry) {
   const results = [];
   for (const c of cocktails) {
-    const required = c.ingredients.filter((i) => !isStaple(i.name));
+    const required = c.ingredients.filter((i) => !i.optional && !isStaple(i.name));
     if (!required.length) continue;
     const missing = [];
     let matched = 0;
     const detail = c.ingredients.map((i) => {
       const staple = isStaple(i.name);
       const have = staple || pantry.some((p) => ingredientMatches(p, i.name));
-      if (!staple) have ? matched++ : missing.push(i.name);
+      if (!staple && !i.optional) have ? matched++ : missing.push(i.name);
       return { ...i, have, staple };
     });
     if (matched === 0) continue;

@@ -6,7 +6,15 @@
 import './env.mjs'; // must run before store.mjs / push keys read process.env
 import express from 'express';
 import webpush from 'web-push';
-import { loadCatalog, searchIngredients, matchRecipes, categorise, norm, visibleRecipes } from './catalog.mjs';
+import {
+  loadCatalog,
+  searchIngredients,
+  matchRecipes,
+  recipeSearchScore,
+  categorise,
+  norm,
+  visibleRecipes,
+} from './catalog.mjs';
 import { VIBES, withVibe } from './vibes.mjs';
 import { chat, extractJson, llmAvailable, llmConfig } from './llm.mjs';
 import { generateFallback } from './generator.mjs';
@@ -160,20 +168,9 @@ export async function createApp() {
     // matches whole words — "lassi" must never surface every IBA cLASSIc.
     let rank = null;
     if (q) {
-      const scoreOf = (c) => {
-        const n = norm(c.name);
-        if (n === q) return 0;
-        if (n.startsWith(q)) return 1;
-        if (` ${n} `.includes(` ${q} `)) return 2;
-        if (n.includes(q)) return 3;
-        if (c.ingredients.some((i) => norm(i.name).includes(q))) return 4;
-        const meta = ` ${norm(c.category)} ${norm(c.iba || '')} ${(c.tags || []).map((t) => norm(t)).join(' ')} `;
-        if (meta.includes(` ${q} `)) return 5;
-        return -1;
-      };
       rank = new Map();
       list = list.filter((c) => {
-        const s = scoreOf(c);
+        const s = recipeSearchScore(c, q);
         if (s < 0) return false;
         rank.set(c.id, s);
         return true;
@@ -203,7 +200,14 @@ export async function createApp() {
   app.post('/api/recipes/match', (req, res) => {
     const pantry = Array.isArray(req.body?.ingredients) ? req.body.ingredients.map(String) : [];
     if (!pantry.length) return res.json({ canMake: [], almost: [] });
-    res.json(matchRecipes(cocktails, pantry));
+    const q = String(req.body?.q || '');
+    // Filter the full catalogue before the matcher's 24-card result cap. This
+    // lets a shelf search retrieve a matching lane/glass/access result even if
+    // it was not present in the unfiltered first page.
+    const candidates = q.trim()
+      ? cocktails.filter((recipe) => recipeSearchScore(recipe, q) >= 0)
+      : cocktails;
+    res.json(matchRecipes(candidates, pantry));
   });
 
   /* ---- identify ingredients in an uploaded photo (LLM vision) ---- */

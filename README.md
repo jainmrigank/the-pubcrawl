@@ -12,7 +12,9 @@ It is not positioned as production AI employment experience. It is a hands-on po
 
 ## What It Does
 
-- Searches a 611-cocktail catalogue by drink, ingredient, category, classic designation, or mood.
+- Searches a fully illustrated 684-entry cocktail catalogue by drink, ingredient, category, classic designation, mood, glass, India lane, pantry-access tier, place, or preparation method; every entry is browseable and available to pantry matching.
+- Includes an evidence-led, dated 80-drink India collection spanning everyday serves, restaurant-bar leaders, regional/cultural drinks, and zero-proof recipes.
+- Gives every browseable flashcard an image and every India recipe a reviewed direct YouTube tutorial: exact named builds where available, clearly labelled base-technique videos for original riffs.
 - Lets users maintain a home-bar shelf through ingredient typeahead or photo upload.
 - Scores what can be made now and what is one or two ingredients away.
 - Generates original house-special recipes from the exact shelf contents.
@@ -152,8 +154,12 @@ Data rebuilds:
 
 ```bash
 npm run scrape
+node scripts/build_indian_cocktails.mjs
+node scripts/fill_india_videos.mjs
 npm run videos
 ```
+
+The India build also regenerates `docs/india-cocktail-field-guide.md`, the existing-recipe index, and its machine-readable source ledger. The video pass validates direct YouTube links and records titles, match type, query, review notes, and check date in `data/indian_cocktail_video_audit.json`. The 59 new or previously unillustrated India recipes use distinct local 720×900 WebP card art under `public/images/india`; one remaining legacy house card is under `public/images/house`, and existing classics retain their established recipe photography.
 
 ## Environment
 

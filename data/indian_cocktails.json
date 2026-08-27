@@ -1,2012 +1,2557 @@
 [
- {
-  "id": "x-in-001",
-  "name": "Kokum Sour",
-  "category": "Cocktail",
-  "alcoholic": "Alcoholic",
-  "glass": "Coupe",
-  "instructions": "Dry shake without ice to build the foam, then shake again hard with ice. Double strain into a chilled coupe. The tart magenta fruit the Konkan coast cools itself with.",
-  "thumb": "",
-  "video": "",
-  "tags": [
-   "India",
-   "Konkan",
-   "Kokum"
-  ],
-  "iba": "",
-  "ingredients": [
-   {
-    "name": "Gin",
-    "measure": "60 ml"
-   },
-   {
-    "name": "Kokum Syrup",
-    "measure": "25 ml"
-   },
-   {
-    "name": "Sugar Syrup",
-    "measure": "15 ml"
-   },
-   {
-    "name": "Egg White",
-    "measure": "1"
-   }
-  ],
-  "vibeHint": "refreshing"
- },
- {
-  "id": "x-in-002",
-  "name": "Kokum Highball",
-  "category": "Cocktail",
-  "alcoholic": "Alcoholic",
-  "glass": "Highball glass",
-  "instructions": "Fill a tall glass with ice, add gin and kokum syrup, top with cold soda and stir once. The tart magenta fruit the Konkan coast cools itself with.",
-  "thumb": "",
-  "video": "",
-  "tags": [
-   "India",
-   "Konkan",
-   "Kokum"
-  ],
-  "iba": "",
-  "ingredients": [
-   {
-    "name": "Gin",
-    "measure": "45 ml"
-   },
-   {
-    "name": "Kokum Syrup",
-    "measure": "25 ml"
-   },
-   {
-    "name": "Soda Water",
-    "measure": "top up"
-   }
-  ],
-  "vibeHint": "refreshing"
- },
- {
-  "id": "x-in-003",
-  "name": "Kokum Spritz",
-  "category": "Cocktail",
-  "alcoholic": "Alcoholic",
-  "glass": "Wine glass",
-  "instructions": "Fill a wine glass with ice, add kokum syrup and gin, top with prosecco and a splash of soda, then stir gently once. The tart magenta fruit the Konkan coast cools itself with.",
-  "thumb": "",
-  "video": "",
-  "tags": [
-   "India",
-   "Konkan",
-   "Kokum"
-  ],
-  "iba": "",
-  "ingredients": [
-   {
-    "name": "Kokum Syrup",
-    "measure": "35 ml"
-   },
-   {
-    "name": "Gin",
-    "measure": "20 ml"
-   },
-   {
-    "name": "Prosecco",
-    "measure": "90 ml"
-   },
-   {
-    "name": "Soda Water",
-    "measure": "splash"
-   }
-  ],
-  "vibeHint": "refreshing"
- },
- {
-  "id": "x-in-004",
-  "name": "Gondhoraj Collins",
-  "category": "Cocktail",
-  "alcoholic": "Alcoholic",
-  "glass": "Collins glass",
-  "instructions": "Shake everything but the soda with ice, strain into an ice-filled collins glass and lengthen with soda. Bengal's wildly fragrant lime, closer to a lime leaf than a lime.",
-  "thumb": "",
-  "video": "",
-  "tags": [
-   "India",
-   "Kolkata",
-   "Gondhoraj"
-  ],
-  "iba": "",
-  "ingredients": [
-   {
-    "name": "Gin",
-    "measure": "45 ml"
-   },
-   {
-    "name": "Gondhoraj Lime",
-    "measure": "25 ml"
-   },
-   {
-    "name": "Sugar Syrup",
-    "measure": "15 ml"
-   },
-   {
-    "name": "Soda Water",
-    "measure": "top up"
-   }
-  ],
-  "vibeHint": "refreshing"
- },
- {
-  "id": "x-in-005",
-  "name": "Gondhoraj Highball",
-  "category": "Cocktail",
-  "alcoholic": "Alcoholic",
-  "glass": "Highball glass",
-  "instructions": "Fill a tall glass with ice, add gin and gondhoraj lime, top with cold soda and stir once. Bengal's wildly fragrant lime, closer to a lime leaf than a lime.",
-  "thumb": "",
-  "video": "",
-  "tags": [
-   "India",
-   "Kolkata",
-   "Gondhoraj"
-  ],
-  "iba": "",
-  "ingredients": [
-   {
-    "name": "Gin",
-    "measure": "45 ml"
-   },
-   {
-    "name": "Gondhoraj Lime",
-    "measure": "25 ml"
-   },
-   {
-    "name": "Soda Water",
-    "measure": "top up"
-   }
-  ],
-  "vibeHint": "refreshing"
- },
- {
-  "id": "x-in-006",
-  "name": "Gondhoraj Sour",
-  "category": "Cocktail",
-  "alcoholic": "Alcoholic",
-  "glass": "Coupe",
-  "instructions": "Dry shake without ice to build the foam, then shake again hard with ice. Double strain into a chilled coupe. Bengal's wildly fragrant lime, closer to a lime leaf than a lime.",
-  "thumb": "",
-  "video": "",
-  "tags": [
-   "India",
-   "Kolkata",
-   "Gondhoraj"
-  ],
-  "iba": "",
-  "ingredients": [
-   {
-    "name": "Gin",
-    "measure": "60 ml"
-   },
-   {
-    "name": "Gondhoraj Lime",
-    "measure": "25 ml"
-   },
-   {
-    "name": "Sugar Syrup",
-    "measure": "15 ml"
-   },
-   {
-    "name": "Egg White",
-    "measure": "1"
-   }
-  ],
-  "vibeHint": "refreshing"
- },
- {
-  "id": "x-in-007",
-  "name": "Imli Sour",
-  "category": "Cocktail",
-  "alcoholic": "Alcoholic",
-  "glass": "Coupe",
-  "instructions": "Dry shake without ice to build the foam, then shake again hard with ice. Double strain into a chilled coupe. Sweet-sour imli, the backbone of every plate of chaat.",
-  "thumb": "",
-  "video": "",
-  "tags": [
-   "India",
-   "North India",
-   "Imli"
-  ],
-  "iba": "",
-  "ingredients": [
-   {
-    "name": "Dark Rum",
-    "measure": "60 ml"
-   },
-   {
-    "name": "Tamarind Syrup",
-    "measure": "25 ml"
-   },
-   {
-    "name": "Sugar Syrup",
-    "measure": "15 ml"
-   },
-   {
-    "name": "Egg White",
-    "measure": "1"
-   }
-  ],
-  "vibeHint": "boozy"
- },
- {
-  "id": "x-in-008",
-  "name": "Imli Old Fashioned",
-  "category": "Cocktail",
-  "alcoholic": "Alcoholic",
-  "glass": "Old-fashioned glass",
-  "instructions": "Stir dark rum, tamarind syrup and the bitters over one large cube until cold and silky. Express an orange peel over the top. Sweet-sour imli, the backbone of every plate of chaat.",
-  "thumb": "",
-  "video": "",
-  "tags": [
-   "India",
-   "North India",
-   "Imli"
-  ],
-  "iba": "",
-  "ingredients": [
-   {
-    "name": "Dark Rum",
-    "measure": "60 ml"
-   },
-   {
-    "name": "Tamarind Syrup",
-    "measure": "15 ml"
-   },
-   {
-    "name": "Angostura Bitters",
-    "measure": "2 dashes"
-   }
-  ],
-  "vibeHint": "boozy"
- },
- {
-  "id": "x-in-009",
-  "name": "Imli Sling",
-  "category": "Cocktail",
-  "alcoholic": "Alcoholic",
-  "glass": "Hurricane glass",
-  "instructions": "Shake everything but the soda with ice, pour unstrained into a tall glass and lengthen with soda. Sweet-sour imli, the backbone of every plate of chaat.",
-  "thumb": "",
-  "video": "",
-  "tags": [
-   "India",
-   "North India",
-   "Imli"
-  ],
-  "iba": "",
-  "ingredients": [
-   {
-    "name": "Dark Rum",
-    "measure": "45 ml"
-   },
-   {
-    "name": "Lime Juice",
-    "measure": "20 ml"
-   },
-   {
-    "name": "Tamarind Syrup",
-    "measure": "25 ml"
-   },
-   {
-    "name": "Soda Water",
-    "measure": "top up"
-   }
-  ],
-  "vibeHint": "boozy"
- },
- {
-  "id": "x-in-010",
-  "name": "Khus Highball",
-  "category": "Cocktail",
-  "alcoholic": "Alcoholic",
-  "glass": "Highball glass",
-  "instructions": "Fill a tall glass with ice, add vodka and khus syrup, top with cold soda and stir once. Cooling vetiver root, the green sharbat of North Indian summers.",
-  "thumb": "",
-  "video": "",
-  "tags": [
-   "India",
-   "North India",
-   "Khus"
-  ],
-  "iba": "",
-  "ingredients": [
-   {
-    "name": "Vodka",
-    "measure": "45 ml"
-   },
-   {
-    "name": "Khus Syrup",
-    "measure": "25 ml"
-   },
-   {
-    "name": "Soda Water",
-    "measure": "top up"
-   }
-  ],
-  "vibeHint": "refreshing"
- },
- {
-  "id": "x-in-011",
-  "name": "Khus Collins",
-  "category": "Cocktail",
-  "alcoholic": "Alcoholic",
-  "glass": "Collins glass",
-  "instructions": "Shake everything but the soda with ice, strain into an ice-filled collins glass and lengthen with soda. Cooling vetiver root, the green sharbat of North Indian summers.",
-  "thumb": "",
-  "video": "",
-  "tags": [
-   "India",
-   "North India",
-   "Khus"
-  ],
-  "iba": "",
-  "ingredients": [
-   {
-    "name": "Vodka",
-    "measure": "45 ml"
-   },
-   {
-    "name": "Lemon Juice",
-    "measure": "25 ml"
-   },
-   {
-    "name": "Khus Syrup",
-    "measure": "15 ml"
-   },
-   {
-    "name": "Soda Water",
-    "measure": "top up"
-   }
-  ],
-  "vibeHint": "refreshing"
- },
- {
-  "id": "x-in-012",
-  "name": "Khus Spritz",
-  "category": "Cocktail",
-  "alcoholic": "Alcoholic",
-  "glass": "Wine glass",
-  "instructions": "Fill a wine glass with ice, add khus syrup and vodka, top with prosecco and a splash of soda, then stir gently once. Cooling vetiver root, the green sharbat of North Indian summers.",
-  "thumb": "",
-  "video": "",
-  "tags": [
-   "India",
-   "North India",
-   "Khus"
-  ],
-  "iba": "",
-  "ingredients": [
-   {
-    "name": "Khus Syrup",
-    "measure": "35 ml"
-   },
-   {
-    "name": "Vodka",
-    "measure": "20 ml"
-   },
-   {
-    "name": "Prosecco",
-    "measure": "90 ml"
-   },
-   {
-    "name": "Soda Water",
-    "measure": "splash"
-   }
-  ],
-  "vibeHint": "refreshing"
- },
- {
-  "id": "x-in-013",
-  "name": "Rose Thandai Flip",
-  "category": "Cocktail",
-  "alcoholic": "Alcoholic",
-  "glass": "Coupe",
-  "instructions": "Dry shake brandy, thandai syrup, sugar syrup and the whole egg until thick, then shake again with ice. Strain into a coupe and grate nutmeg over the top. The almond, saffron and rose milk poured at Holi.",
-  "thumb": "",
-  "video": "",
-  "tags": [
-   "India",
-   "North India",
-   "Rose Thandai"
-  ],
-  "iba": "",
-  "ingredients": [
-   {
-    "name": "Brandy",
-    "measure": "45 ml"
-   },
-   {
-    "name": "Thandai Syrup",
-    "measure": "30 ml"
-   },
-   {
-    "name": "Sugar Syrup",
-    "measure": "10 ml"
-   },
-   {
-    "name": "Whole Egg",
-    "measure": "1"
-   }
-  ],
-  "vibeHint": "sweet"
- },
- {
-  "id": "x-in-014",
-  "name": "Rose Thandai Old Fashioned",
-  "category": "Cocktail",
-  "alcoholic": "Alcoholic",
-  "glass": "Old-fashioned glass",
-  "instructions": "Stir brandy, thandai syrup and the bitters over one large cube until cold and silky. Express an orange peel over the top. The almond, saffron and rose milk poured at Holi.",
-  "thumb": "",
-  "video": "",
-  "tags": [
-   "India",
-   "North India",
-   "Rose Thandai"
-  ],
-  "iba": "",
-  "ingredients": [
-   {
-    "name": "Brandy",
-    "measure": "60 ml"
-   },
-   {
-    "name": "Thandai Syrup",
-    "measure": "15 ml"
-   },
-   {
-    "name": "Angostura Bitters",
-    "measure": "2 dashes"
-   }
-  ],
-  "vibeHint": "sweet"
- },
- {
-  "id": "x-in-015",
-  "name": "Filter Coffee Old Fashioned",
-  "category": "Cocktail",
-  "alcoholic": "Alcoholic",
-  "glass": "Old-fashioned glass",
-  "instructions": "Stir dark rum, filter coffee and the bitters over one large cube until cold and silky. Express an orange peel over the top. South Indian filter kaapi, pulled strong and bitter.",
-  "thumb": "",
-  "video": "",
-  "tags": [
-   "India",
-   "South India",
-   "Filter Coffee"
-  ],
-  "iba": "",
-  "ingredients": [
-   {
-    "name": "Dark Rum",
-    "measure": "60 ml"
-   },
-   {
-    "name": "Filter Coffee",
-    "measure": "15 ml"
-   },
-   {
-    "name": "Angostura Bitters",
-    "measure": "2 dashes"
-   }
-  ],
-  "vibeHint": "sweet"
- },
- {
-  "id": "x-in-016",
-  "name": "Filter Coffee Flip",
-  "category": "Cocktail",
-  "alcoholic": "Alcoholic",
-  "glass": "Coupe",
-  "instructions": "Dry shake dark rum, filter coffee, sugar syrup and the whole egg until thick, then shake again with ice. Strain into a coupe and grate nutmeg over the top. South Indian filter kaapi, pulled strong and bitter.",
-  "thumb": "",
-  "video": "",
-  "tags": [
-   "India",
-   "South India",
-   "Filter Coffee"
-  ],
-  "iba": "",
-  "ingredients": [
-   {
-    "name": "Dark Rum",
-    "measure": "45 ml"
-   },
-   {
-    "name": "Filter Coffee",
-    "measure": "30 ml"
-   },
-   {
-    "name": "Sugar Syrup",
-    "measure": "10 ml"
-   },
-   {
-    "name": "Whole Egg",
-    "measure": "1"
-   }
-  ],
-  "vibeHint": "sweet"
- },
- {
-  "id": "x-in-017",
-  "name": "Jamun Sour",
-  "category": "Cocktail",
-  "alcoholic": "Alcoholic",
-  "glass": "Coupe",
-  "instructions": "Dry shake without ice to build the foam, then shake again hard with ice. Double strain into a chilled coupe. The astringent purple berry that arrives with the monsoon.",
-  "thumb": "",
-  "video": "",
-  "tags": [
-   "India",
-   "North India",
-   "Jamun"
-  ],
-  "iba": "",
-  "ingredients": [
-   {
-    "name": "Gin",
-    "measure": "60 ml"
-   },
-   {
-    "name": "Lemon Juice",
-    "measure": "25 ml"
-   },
-   {
-    "name": "Jamun Syrup",
-    "measure": "20 ml"
-   },
-   {
-    "name": "Egg White",
-    "measure": "1"
-   }
-  ],
-  "vibeHint": "refreshing"
- },
- {
-  "id": "x-in-018",
-  "name": "Jamun Collins",
-  "category": "Cocktail",
-  "alcoholic": "Alcoholic",
-  "glass": "Collins glass",
-  "instructions": "Shake everything but the soda with ice, strain into an ice-filled collins glass and lengthen with soda. The astringent purple berry that arrives with the monsoon.",
-  "thumb": "",
-  "video": "",
-  "tags": [
-   "India",
-   "North India",
-   "Jamun"
-  ],
-  "iba": "",
-  "ingredients": [
-   {
-    "name": "Gin",
-    "measure": "45 ml"
-   },
-   {
-    "name": "Lemon Juice",
-    "measure": "25 ml"
-   },
-   {
-    "name": "Jamun Syrup",
-    "measure": "15 ml"
-   },
-   {
-    "name": "Soda Water",
-    "measure": "top up"
-   }
-  ],
-  "vibeHint": "refreshing"
- },
- {
-  "id": "x-in-019",
-  "name": "Jamun Spritz",
-  "category": "Cocktail",
-  "alcoholic": "Alcoholic",
-  "glass": "Wine glass",
-  "instructions": "Fill a wine glass with ice, add jamun syrup and gin, top with prosecco and a splash of soda, then stir gently once. The astringent purple berry that arrives with the monsoon.",
-  "thumb": "",
-  "video": "",
-  "tags": [
-   "India",
-   "North India",
-   "Jamun"
-  ],
-  "iba": "",
-  "ingredients": [
-   {
-    "name": "Jamun Syrup",
-    "measure": "35 ml"
-   },
-   {
-    "name": "Gin",
-    "measure": "20 ml"
-   },
-   {
-    "name": "Prosecco",
-    "measure": "90 ml"
-   },
-   {
-    "name": "Soda Water",
-    "measure": "splash"
-   }
-  ],
-  "vibeHint": "refreshing"
- },
- {
-  "id": "x-in-020",
-  "name": "Aam Papad Sour",
-  "category": "Cocktail",
-  "alcoholic": "Alcoholic",
-  "glass": "Coupe",
-  "instructions": "Dry shake without ice to build the foam, then shake again hard with ice. Double strain into a chilled coupe. Sun-dried mango leather, melted down into a thick sweet-sour syrup.",
-  "thumb": "",
-  "video": "",
-  "tags": [
-   "India",
-   "North India",
-   "Aam Papad"
-  ],
-  "iba": "",
-  "ingredients": [
-   {
-    "name": "White Rum",
-    "measure": "60 ml"
-   },
-   {
-    "name": "Lime Juice",
-    "measure": "25 ml"
-   },
-   {
-    "name": "Aam Papad",
-    "measure": "20 ml"
-   },
-   {
-    "name": "Egg White",
-    "measure": "1"
-   }
-  ],
-  "vibeHint": "tropical"
- },
- {
-  "id": "x-in-021",
-  "name": "Aam Papad Sling",
-  "category": "Cocktail",
-  "alcoholic": "Alcoholic",
-  "glass": "Hurricane glass",
-  "instructions": "Shake everything but the soda with ice, pour unstrained into a tall glass and lengthen with soda. Sun-dried mango leather, melted down into a thick sweet-sour syrup.",
-  "thumb": "",
-  "video": "",
-  "tags": [
-   "India",
-   "North India",
-   "Aam Papad"
-  ],
-  "iba": "",
-  "ingredients": [
-   {
-    "name": "White Rum",
-    "measure": "45 ml"
-   },
-   {
-    "name": "Lime Juice",
-    "measure": "20 ml"
-   },
-   {
-    "name": "Aam Papad",
-    "measure": "25 ml"
-   },
-   {
-    "name": "Soda Water",
-    "measure": "top up"
-   }
-  ],
-  "vibeHint": "tropical"
- },
- {
-  "id": "x-in-022",
-  "name": "Paan Martini",
-  "category": "Cocktail",
-  "alcoholic": "Alcoholic",
-  "glass": "Martini glass",
-  "instructions": "Stir vodka, dry vermouth and gulkand syrup over ice until very cold, then strain into a chilled martini glass. Gulkand and betel leaf, the after-dinner paan in a glass.",
-  "thumb": "",
-  "video": "",
-  "tags": [
-   "India",
-   "North India",
-   "Paan"
-  ],
-  "iba": "",
-  "ingredients": [
-   {
-    "name": "Vodka",
-    "measure": "60 ml"
-   },
-   {
-    "name": "Dry Vermouth",
-    "measure": "10 ml"
-   },
-   {
-    "name": "Gulkand Syrup",
-    "measure": "10 ml"
-   }
-  ],
-  "vibeHint": "sweet"
- },
- {
-  "id": "x-in-023",
-  "name": "Paan Fizz",
-  "category": "Cocktail",
-  "alcoholic": "Alcoholic",
-  "glass": "Highball glass",
-  "instructions": "Dry shake everything but the soda, then shake again with ice. Strain into a chilled glass and top with a splash of soda to lift the foam. Gulkand and betel leaf, the after-dinner paan in a glass.",
-  "thumb": "",
-  "video": "",
-  "tags": [
-   "India",
-   "North India",
-   "Paan"
-  ],
-  "iba": "",
-  "ingredients": [
-   {
-    "name": "Vodka",
-    "measure": "45 ml"
-   },
-   {
-    "name": "Lemon Juice",
-    "measure": "20 ml"
-   },
-   {
-    "name": "Gulkand Syrup",
-    "measure": "20 ml"
-   },
-   {
-    "name": "Egg White",
-    "measure": "1"
-   },
-   {
-    "name": "Soda Water",
-    "measure": "splash"
-   }
-  ],
-  "vibeHint": "sweet"
- },
- {
-  "id": "x-in-024",
-  "name": "Masala Chai Old Fashioned",
-  "category": "Cocktail",
-  "alcoholic": "Alcoholic",
-  "glass": "Old-fashioned glass",
-  "instructions": "Stir whisky, masala chai and the bitters over one large cube until cold and silky. Express an orange peel over the top. Cutting chai brewed triple strength, ginger and cardamom and all.",
-  "thumb": "",
-  "video": "",
-  "tags": [
-   "India",
-   "Pan-India",
-   "Masala Chai"
-  ],
-  "iba": "",
-  "ingredients": [
-   {
-    "name": "Whisky",
-    "measure": "60 ml"
-   },
-   {
-    "name": "Masala Chai",
-    "measure": "15 ml"
-   },
-   {
-    "name": "Angostura Bitters",
-    "measure": "2 dashes"
-   }
-  ],
-  "vibeHint": "cozy"
- },
- {
-  "id": "x-in-025",
-  "name": "Masala Chai Flip",
-  "category": "Cocktail",
-  "alcoholic": "Alcoholic",
-  "glass": "Coupe",
-  "instructions": "Dry shake whisky, masala chai, sugar syrup and the whole egg until thick, then shake again with ice. Strain into a coupe and grate nutmeg over the top. Cutting chai brewed triple strength, ginger and cardamom and all.",
-  "thumb": "",
-  "video": "",
-  "tags": [
-   "India",
-   "Pan-India",
-   "Masala Chai"
-  ],
-  "iba": "",
-  "ingredients": [
-   {
-    "name": "Whisky",
-    "measure": "45 ml"
-   },
-   {
-    "name": "Masala Chai",
-    "measure": "30 ml"
-   },
-   {
-    "name": "Sugar Syrup",
-    "measure": "10 ml"
-   },
-   {
-    "name": "Whole Egg",
-    "measure": "1"
-   }
-  ],
-  "vibeHint": "cozy"
- },
- {
-  "id": "x-in-026",
-  "name": "Masala Chai Sour",
-  "category": "Cocktail",
-  "alcoholic": "Alcoholic",
-  "glass": "Coupe",
-  "instructions": "Dry shake without ice to build the foam, then shake again hard with ice. Double strain into a chilled coupe. Cutting chai brewed triple strength, ginger and cardamom and all.",
-  "thumb": "",
-  "video": "",
-  "tags": [
-   "India",
-   "Pan-India",
-   "Masala Chai"
-  ],
-  "iba": "",
-  "ingredients": [
-   {
-    "name": "Whisky",
-    "measure": "60 ml"
-   },
-   {
-    "name": "Lemon Juice",
-    "measure": "25 ml"
-   },
-   {
-    "name": "Masala Chai",
-    "measure": "20 ml"
-   },
-   {
-    "name": "Egg White",
-    "measure": "1"
-   }
-  ],
-  "vibeHint": "cozy"
- },
- {
-  "id": "x-in-027",
-  "name": "Guava Chilli Sour",
-  "category": "Cocktail",
-  "alcoholic": "Alcoholic",
-  "glass": "Coupe",
-  "instructions": "Dry shake without ice to build the foam, then shake again hard with ice. Double strain into a chilled coupe. Street guava under a heavy dusting of chilli and black salt.",
-  "thumb": "",
-  "video": "",
-  "tags": [
-   "India",
-   "Pan-India",
-   "Guava Chilli"
-  ],
-  "iba": "",
-  "ingredients": [
-   {
-    "name": "Tequila",
-    "measure": "60 ml"
-   },
-   {
-    "name": "Lime Juice",
-    "measure": "25 ml"
-   },
-   {
-    "name": "Guava Puree",
-    "measure": "20 ml"
-   },
-   {
-    "name": "Egg White",
-    "measure": "1"
-   },
-   {
-    "name": "Chaat Masala",
-    "measure": "1 pinch"
-   }
-  ],
-  "vibeHint": "tropical"
- },
- {
-  "id": "x-in-028",
-  "name": "Guava Chilli Sling",
-  "category": "Cocktail",
-  "alcoholic": "Alcoholic",
-  "glass": "Hurricane glass",
-  "instructions": "Shake everything but the soda with ice, pour unstrained into a tall glass and lengthen with soda. Street guava under a heavy dusting of chilli and black salt.",
-  "thumb": "",
-  "video": "",
-  "tags": [
-   "India",
-   "Pan-India",
-   "Guava Chilli"
-  ],
-  "iba": "",
-  "ingredients": [
-   {
-    "name": "Tequila",
-    "measure": "45 ml"
-   },
-   {
-    "name": "Lime Juice",
-    "measure": "20 ml"
-   },
-   {
-    "name": "Guava Puree",
-    "measure": "25 ml"
-   },
-   {
-    "name": "Soda Water",
-    "measure": "top up"
-   },
-   {
-    "name": "Chaat Masala",
-    "measure": "1 pinch"
-   }
-  ],
-  "vibeHint": "tropical"
- },
- {
-  "id": "x-in-029",
-  "name": "Guava Chilli Highball",
-  "category": "Cocktail",
-  "alcoholic": "Alcoholic",
-  "glass": "Highball glass",
-  "instructions": "Fill a tall glass with ice, add tequila and guava puree, top with cold soda and stir once. Street guava under a heavy dusting of chilli and black salt.",
-  "thumb": "",
-  "video": "",
-  "tags": [
-   "India",
-   "Pan-India",
-   "Guava Chilli"
-  ],
-  "iba": "",
-  "ingredients": [
-   {
-    "name": "Tequila",
-    "measure": "45 ml"
-   },
-   {
-    "name": "Guava Puree",
-    "measure": "25 ml"
-   },
-   {
-    "name": "Soda Water",
-    "measure": "top up"
-   },
-   {
-    "name": "Chaat Masala",
-    "measure": "1 pinch"
-   }
-  ],
-  "vibeHint": "tropical"
- },
- {
-  "id": "x-in-030",
-  "name": "Kala Khatta Highball",
-  "category": "Cocktail",
-  "alcoholic": "Alcoholic",
-  "glass": "Highball glass",
-  "instructions": "Fill a tall glass with ice, add vodka and kala khatta syrup, top with cold soda and stir once. The black-salt jamun syrup off a Chowpatty gola cart.",
-  "thumb": "",
-  "video": "",
-  "tags": [
-   "India",
-   "Mumbai",
-   "Kala Khatta"
-  ],
-  "iba": "",
-  "ingredients": [
-   {
-    "name": "Vodka",
-    "measure": "45 ml"
-   },
-   {
-    "name": "Kala Khatta Syrup",
-    "measure": "25 ml"
-   },
-   {
-    "name": "Soda Water",
-    "measure": "top up"
-   }
-  ],
-  "vibeHint": "party"
- },
- {
-  "id": "x-in-031",
-  "name": "Kala Khatta Sling",
-  "category": "Cocktail",
-  "alcoholic": "Alcoholic",
-  "glass": "Hurricane glass",
-  "instructions": "Shake everything but the soda with ice, pour unstrained into a tall glass and lengthen with soda. The black-salt jamun syrup off a Chowpatty gola cart.",
-  "thumb": "",
-  "video": "",
-  "tags": [
-   "India",
-   "Mumbai",
-   "Kala Khatta"
-  ],
-  "iba": "",
-  "ingredients": [
-   {
-    "name": "Vodka",
-    "measure": "45 ml"
-   },
-   {
-    "name": "Lime Juice",
-    "measure": "20 ml"
-   },
-   {
-    "name": "Kala Khatta Syrup",
-    "measure": "25 ml"
-   },
-   {
-    "name": "Soda Water",
-    "measure": "top up"
-   }
-  ],
-  "vibeHint": "party"
- },
- {
-  "id": "x-in-032",
-  "name": "Kala Khatta Spritz",
-  "category": "Cocktail",
-  "alcoholic": "Alcoholic",
-  "glass": "Wine glass",
-  "instructions": "Fill a wine glass with ice, add kala khatta syrup and vodka, top with prosecco and a splash of soda, then stir gently once. The black-salt jamun syrup off a Chowpatty gola cart.",
-  "thumb": "",
-  "video": "",
-  "tags": [
-   "India",
-   "Mumbai",
-   "Kala Khatta"
-  ],
-  "iba": "",
-  "ingredients": [
-   {
-    "name": "Kala Khatta Syrup",
-    "measure": "35 ml"
-   },
-   {
-    "name": "Vodka",
-    "measure": "20 ml"
-   },
-   {
-    "name": "Prosecco",
-    "measure": "90 ml"
-   },
-   {
-    "name": "Soda Water",
-    "measure": "splash"
-   }
-  ],
-  "vibeHint": "party"
- },
- {
-  "id": "x-in-033",
-  "name": "Feni Sour",
-  "category": "Cocktail",
-  "alcoholic": "Alcoholic",
-  "glass": "Coupe",
-  "instructions": "Dry shake without ice to build the foam, then shake again hard with ice. Double strain into a chilled coupe. Goa's cashew spirit, funky and unapologetic.",
-  "thumb": "",
-  "video": "",
-  "tags": [
-   "India",
-   "Goa",
-   "Feni"
-  ],
-  "iba": "",
-  "ingredients": [
-   {
-    "name": "Feni",
-    "measure": "60 ml"
-   },
-   {
-    "name": "Lemon Juice",
-    "measure": "25 ml"
-   },
-   {
-    "name": "Sugar Syrup",
-    "measure": "20 ml"
-   },
-   {
-    "name": "Egg White",
-    "measure": "1"
-   }
-  ],
-  "vibeHint": "boozy"
- },
- {
-  "id": "x-in-034",
-  "name": "Feni Highball",
-  "category": "Cocktail",
-  "alcoholic": "Alcoholic",
-  "glass": "Highball glass",
-  "instructions": "Fill a tall glass with ice, add feni and lime, top with cold soda and stir once. Goa's cashew spirit, funky and unapologetic.",
-  "thumb": "",
-  "video": "",
-  "tags": [
-   "India",
-   "Goa",
-   "Feni"
-  ],
-  "iba": "",
-  "ingredients": [
-   {
-    "name": "Feni",
-    "measure": "45 ml"
-   },
-   {
-    "name": "Lime Juice",
-    "measure": "15 ml"
-   },
-   {
-    "name": "Soda Water",
-    "measure": "top up"
-   }
-  ],
-  "vibeHint": "boozy"
- },
- {
-  "id": "x-in-035",
-  "name": "Feni Collins",
-  "category": "Cocktail",
-  "alcoholic": "Alcoholic",
-  "glass": "Collins glass",
-  "instructions": "Shake everything but the soda with ice, strain into an ice-filled collins glass and lengthen with soda. Goa's cashew spirit, funky and unapologetic.",
-  "thumb": "",
-  "video": "",
-  "tags": [
-   "India",
-   "Goa",
-   "Feni"
-  ],
-  "iba": "",
-  "ingredients": [
-   {
-    "name": "Feni",
-    "measure": "45 ml"
-   },
-   {
-    "name": "Lemon Juice",
-    "measure": "25 ml"
-   },
-   {
-    "name": "Sugar Syrup",
-    "measure": "15 ml"
-   },
-   {
-    "name": "Soda Water",
-    "measure": "top up"
-   }
-  ],
-  "vibeHint": "boozy"
- },
- {
-  "id": "x-in-036",
-  "name": "Tender Coconut Highball",
-  "category": "Cocktail",
-  "alcoholic": "Alcoholic",
-  "glass": "Highball glass",
-  "instructions": "Fill a tall glass with ice, add white rum and coconut water, top with cold soda and stir once. Nariyal pani straight off the roadside cart.",
-  "thumb": "",
-  "video": "",
-  "tags": [
-   "India",
-   "Coastal",
-   "Tender Coconut"
-  ],
-  "iba": "",
-  "ingredients": [
-   {
-    "name": "White Rum",
-    "measure": "45 ml"
-   },
-   {
-    "name": "Coconut Water",
-    "measure": "25 ml"
-   },
-   {
-    "name": "Soda Water",
-    "measure": "top up"
-   }
-  ],
-  "vibeHint": "tropical"
- },
- {
-  "id": "x-in-037",
-  "name": "Tender Coconut Sling",
-  "category": "Cocktail",
-  "alcoholic": "Alcoholic",
-  "glass": "Hurricane glass",
-  "instructions": "Shake everything but the soda with ice, pour unstrained into a tall glass and lengthen with soda. Nariyal pani straight off the roadside cart.",
-  "thumb": "",
-  "video": "",
-  "tags": [
-   "India",
-   "Coastal",
-   "Tender Coconut"
-  ],
-  "iba": "",
-  "ingredients": [
-   {
-    "name": "White Rum",
-    "measure": "45 ml"
-   },
-   {
-    "name": "Lime Juice",
-    "measure": "20 ml"
-   },
-   {
-    "name": "Coconut Water",
-    "measure": "25 ml"
-   },
-   {
-    "name": "Soda Water",
-    "measure": "top up"
-   }
-  ],
-  "vibeHint": "tropical"
- },
- {
-  "id": "x-in-038",
-  "name": "Ginger Honey Toddy",
-  "category": "Cocktail",
-  "alcoholic": "Alcoholic",
-  "glass": "Mug",
-  "instructions": "Warm a mug, add whisky, ginger, honey and lemon, then top with hot water and stir until the honey dissolves. Adrak and shahad, the cold remedy every Indian mother swears by.",
-  "thumb": "",
-  "video": "",
-  "tags": [
-   "India",
-   "Pan-India",
-   "Ginger Honey"
-  ],
-  "iba": "",
-  "ingredients": [
-   {
-    "name": "Whisky",
-    "measure": "45 ml"
-   },
-   {
-    "name": "Ginger",
-    "measure": "3 slices"
-   },
-   {
-    "name": "Honey",
-    "measure": "15 ml"
-   },
-   {
-    "name": "Lemon Juice",
-    "measure": "10 ml"
-   },
-   {
-    "name": "Hot Water",
-    "measure": "top up"
-   }
-  ],
-  "vibeHint": "cozy"
- },
- {
-  "id": "x-in-039",
-  "name": "Ginger Honey Mule",
-  "category": "Cocktail",
-  "alcoholic": "Alcoholic",
-  "glass": "Mug",
-  "instructions": "Muddle the ginger in the base of a copper mug, then add ice, whisky and lime, top with cold ginger beer and give it one stir. Adrak and shahad, the cold remedy every Indian mother swears by.",
-  "thumb": "",
-  "video": "",
-  "tags": [
-   "India",
-   "Pan-India",
-   "Ginger Honey"
-  ],
-  "iba": "",
-  "ingredients": [
-   {
-    "name": "Whisky",
-    "measure": "50 ml"
-   },
-   {
-    "name": "Lime Juice",
-    "measure": "15 ml"
-   },
-   {
-    "name": "Ginger",
-    "measure": "3 slices"
-   },
-   {
-    "name": "Honey",
-    "measure": "15 ml"
-   },
-   {
-    "name": "Ginger Beer",
-    "measure": "top up"
-   }
-  ],
-  "vibeHint": "cozy"
- },
- {
-  "id": "x-in-040",
-  "name": "Ginger Honey Sour",
-  "category": "Cocktail",
-  "alcoholic": "Alcoholic",
-  "glass": "Coupe",
-  "instructions": "Muddle the ginger in the shaker first, then add everything else. Dry shake without ice to build the foam, then shake again hard with ice. Double strain into a chilled coupe. Adrak and shahad, the cold remedy every Indian mother swears by.",
-  "thumb": "",
-  "video": "",
-  "tags": [
-   "India",
-   "Pan-India",
-   "Ginger Honey"
-  ],
-  "iba": "",
-  "ingredients": [
-   {
-    "name": "Whisky",
-    "measure": "60 ml"
-   },
-   {
-    "name": "Lemon Juice",
-    "measure": "25 ml"
-   },
-   {
-    "name": "Honey",
-    "measure": "20 ml"
-   },
-   {
-    "name": "Ginger",
-    "measure": "3 slices"
-   },
-   {
-    "name": "Egg White",
-    "measure": "1"
-   }
-  ],
-  "vibeHint": "cozy"
- },
- {
-  "id": "x-in-041",
-  "name": "Saffron Martini",
-  "category": "Cocktail",
-  "alcoholic": "Alcoholic",
-  "glass": "Martini glass",
-  "instructions": "Stir gin, dry vermouth and saffron syrup over ice until very cold, then strain into a chilled martini glass. Kashmiri kesar, a pinch of which colours the whole glass.",
-  "thumb": "",
-  "video": "",
-  "tags": [
-   "India",
-   "Kashmir",
-   "Saffron"
-  ],
-  "iba": "",
-  "ingredients": [
-   {
-    "name": "Gin",
-    "measure": "60 ml"
-   },
-   {
-    "name": "Dry Vermouth",
-    "measure": "10 ml"
-   },
-   {
-    "name": "Saffron Syrup",
-    "measure": "10 ml"
-   }
-  ],
-  "vibeHint": "boozy"
- },
- {
-  "id": "x-in-042",
-  "name": "Saffron Sour",
-  "category": "Cocktail",
-  "alcoholic": "Alcoholic",
-  "glass": "Coupe",
-  "instructions": "Dry shake without ice to build the foam, then shake again hard with ice. Double strain into a chilled coupe. Kashmiri kesar, a pinch of which colours the whole glass.",
-  "thumb": "",
-  "video": "",
-  "tags": [
-   "India",
-   "Kashmir",
-   "Saffron"
-  ],
-  "iba": "",
-  "ingredients": [
-   {
-    "name": "Gin",
-    "measure": "60 ml"
-   },
-   {
-    "name": "Lemon Juice",
-    "measure": "25 ml"
-   },
-   {
-    "name": "Saffron Syrup",
-    "measure": "20 ml"
-   },
-   {
-    "name": "Egg White",
-    "measure": "1"
-   }
-  ],
-  "vibeHint": "boozy"
- },
- {
-  "id": "x-in-043",
-  "name": "Saffron Fizz",
-  "category": "Cocktail",
-  "alcoholic": "Alcoholic",
-  "glass": "Highball glass",
-  "instructions": "Dry shake everything but the soda, then shake again with ice. Strain into a chilled glass and top with a splash of soda to lift the foam. Kashmiri kesar, a pinch of which colours the whole glass.",
-  "thumb": "",
-  "video": "",
-  "tags": [
-   "India",
-   "Kashmir",
-   "Saffron"
-  ],
-  "iba": "",
-  "ingredients": [
-   {
-    "name": "Gin",
-    "measure": "45 ml"
-   },
-   {
-    "name": "Lemon Juice",
-    "measure": "20 ml"
-   },
-   {
-    "name": "Saffron Syrup",
-    "measure": "20 ml"
-   },
-   {
-    "name": "Egg White",
-    "measure": "1"
-   },
-   {
-    "name": "Soda Water",
-    "measure": "splash"
-   }
-  ],
-  "vibeHint": "boozy"
- },
- {
-  "id": "x-in-044",
-  "name": "Anardana Collins",
-  "category": "Cocktail",
-  "alcoholic": "Alcoholic",
-  "glass": "Collins glass",
-  "instructions": "Shake everything but the soda with ice, strain into an ice-filled collins glass and lengthen with soda. Tart anar, pressed rather than sweetened.",
-  "thumb": "",
-  "video": "",
-  "tags": [
-   "India",
-   "North India",
-   "Anardana"
-  ],
-  "iba": "",
-  "ingredients": [
-   {
-    "name": "Vodka",
-    "measure": "45 ml"
-   },
-   {
-    "name": "Pomegranate Juice",
-    "measure": "25 ml"
-   },
-   {
-    "name": "Sugar Syrup",
-    "measure": "15 ml"
-   },
-   {
-    "name": "Soda Water",
-    "measure": "top up"
-   }
-  ],
-  "vibeHint": "refreshing"
- },
- {
-  "id": "x-in-045",
-  "name": "Anardana Spritz",
-  "category": "Cocktail",
-  "alcoholic": "Alcoholic",
-  "glass": "Wine glass",
-  "instructions": "Fill a wine glass with ice, add pomegranate juice and vodka, top with prosecco and a splash of soda, then stir gently once. Tart anar, pressed rather than sweetened.",
-  "thumb": "",
-  "video": "",
-  "tags": [
-   "India",
-   "North India",
-   "Anardana"
-  ],
-  "iba": "",
-  "ingredients": [
-   {
-    "name": "Pomegranate Juice",
-    "measure": "35 ml"
-   },
-   {
-    "name": "Vodka",
-    "measure": "20 ml"
-   },
-   {
-    "name": "Prosecco",
-    "measure": "90 ml"
-   },
-   {
-    "name": "Soda Water",
-    "measure": "splash"
-   }
-  ],
-  "vibeHint": "refreshing"
- },
- {
-  "id": "x-in-046",
-  "name": "Anardana Sour",
-  "category": "Cocktail",
-  "alcoholic": "Alcoholic",
-  "glass": "Coupe",
-  "instructions": "Dry shake without ice to build the foam, then shake again hard with ice. Double strain into a chilled coupe. Tart anar, pressed rather than sweetened.",
-  "thumb": "",
-  "video": "",
-  "tags": [
-   "India",
-   "North India",
-   "Anardana"
-  ],
-  "iba": "",
-  "ingredients": [
-   {
-    "name": "Vodka",
-    "measure": "60 ml"
-   },
-   {
-    "name": "Pomegranate Juice",
-    "measure": "25 ml"
-   },
-   {
-    "name": "Sugar Syrup",
-    "measure": "15 ml"
-   },
-   {
-    "name": "Egg White",
-    "measure": "1"
-   }
-  ],
-  "vibeHint": "refreshing"
- },
- {
-  "id": "x-in-047",
-  "name": "Curry Leaf Martini",
-  "category": "Cocktail",
-  "alcoholic": "Alcoholic",
-  "glass": "Martini glass",
-  "instructions": "Muddle the curry leaves in the mixing glass, add gin and dry vermouth, stir hard over ice and double strain into a chilled martini glass. Kadi patta, slapped once to wake it up before it goes in.",
-  "thumb": "",
-  "video": "",
-  "tags": [
-   "India",
-   "South India",
-   "Curry Leaf"
-  ],
-  "iba": "",
-  "ingredients": [
-   {
-    "name": "Gin",
-    "measure": "60 ml"
-   },
-   {
-    "name": "Dry Vermouth",
-    "measure": "10 ml"
-   },
-   {
-    "name": "Curry Leaves",
-    "measure": "10 leaves"
-   }
-  ],
-  "vibeHint": "refreshing"
- },
- {
-  "id": "x-in-048",
-  "name": "Curry Leaf Sour",
-  "category": "Cocktail",
-  "alcoholic": "Alcoholic",
-  "glass": "Coupe",
-  "instructions": "Muddle the curry leaves in the shaker first, then add everything else. Dry shake without ice to build the foam, then shake again hard with ice. Double strain into a chilled coupe. Kadi patta, slapped once to wake it up before it goes in.",
-  "thumb": "",
-  "video": "",
-  "tags": [
-   "India",
-   "South India",
-   "Curry Leaf"
-  ],
-  "iba": "",
-  "ingredients": [
-   {
-    "name": "Gin",
-    "measure": "60 ml"
-   },
-   {
-    "name": "Lemon Juice",
-    "measure": "25 ml"
-   },
-   {
-    "name": "Sugar Syrup",
-    "measure": "20 ml"
-   },
-   {
-    "name": "Curry Leaves",
-    "measure": "6 leaves"
-   },
-   {
-    "name": "Egg White",
-    "measure": "1"
-   }
-  ],
-  "vibeHint": "refreshing"
- },
- {
-  "id": "x-in-049",
-  "name": "Curry Leaf Highball",
-  "category": "Cocktail",
-  "alcoholic": "Alcoholic",
-  "glass": "Highball glass",
-  "instructions": "Fill a tall glass with ice, add gin and curry leaves, top with cold soda and stir once. Kadi patta, slapped once to wake it up before it goes in.",
-  "thumb": "",
-  "video": "",
-  "tags": [
-   "India",
-   "South India",
-   "Curry Leaf"
-  ],
-  "iba": "",
-  "ingredients": [
-   {
-    "name": "Gin",
-    "measure": "45 ml"
-   },
-   {
-    "name": "Curry Leaves",
-    "measure": "8 leaves"
-   },
-   {
-    "name": "Lime Juice",
-    "measure": "15 ml"
-   },
-   {
-    "name": "Soda Water",
-    "measure": "top up"
-   }
-  ],
-  "vibeHint": "refreshing"
- },
- {
-  "id": "x-in-050",
-  "name": "Tulsi Collins",
-  "category": "Cocktail",
-  "alcoholic": "Alcoholic",
-  "glass": "Collins glass",
-  "instructions": "Shake everything but the soda with ice, strain into an ice-filled collins glass and lengthen with soda. Holy basil, off the pot outside every front door.",
-  "thumb": "",
-  "video": "",
-  "tags": [
-   "India",
-   "Pan-India",
-   "Tulsi"
-  ],
-  "iba": "",
-  "ingredients": [
-   {
-    "name": "Gin",
-    "measure": "45 ml"
-   },
-   {
-    "name": "Lemon Juice",
-    "measure": "25 ml"
-   },
-   {
-    "name": "Sugar Syrup",
-    "measure": "15 ml"
-   },
-   {
-    "name": "Tulsi",
-    "measure": "8 leaves"
-   },
-   {
-    "name": "Soda Water",
-    "measure": "top up"
-   }
-  ],
-  "vibeHint": "refreshing"
- },
- {
-  "id": "x-in-051",
-  "name": "Tulsi Sour",
-  "category": "Cocktail",
-  "alcoholic": "Alcoholic",
-  "glass": "Coupe",
-  "instructions": "Muddle the tulsi in the shaker first, then add everything else. Dry shake without ice to build the foam, then shake again hard with ice. Double strain into a chilled coupe. Holy basil, off the pot outside every front door.",
-  "thumb": "",
-  "video": "",
-  "tags": [
-   "India",
-   "Pan-India",
-   "Tulsi"
-  ],
-  "iba": "",
-  "ingredients": [
-   {
-    "name": "Gin",
-    "measure": "60 ml"
-   },
-   {
-    "name": "Lemon Juice",
-    "measure": "25 ml"
-   },
-   {
-    "name": "Sugar Syrup",
-    "measure": "20 ml"
-   },
-   {
-    "name": "Tulsi",
-    "measure": "6 leaves"
-   },
-   {
-    "name": "Egg White",
-    "measure": "1"
-   }
-  ],
-  "vibeHint": "refreshing"
- },
- {
-  "id": "x-in-052",
-  "name": "Tulsi Highball",
-  "category": "Cocktail",
-  "alcoholic": "Alcoholic",
-  "glass": "Highball glass",
-  "instructions": "Fill a tall glass with ice, add gin and tulsi, top with cold soda and stir once. Holy basil, off the pot outside every front door.",
-  "thumb": "",
-  "video": "",
-  "tags": [
-   "India",
-   "Pan-India",
-   "Tulsi"
-  ],
-  "iba": "",
-  "ingredients": [
-   {
-    "name": "Gin",
-    "measure": "45 ml"
-   },
-   {
-    "name": "Tulsi",
-    "measure": "8 leaves"
-   },
-   {
-    "name": "Lime Juice",
-    "measure": "15 ml"
-   },
-   {
-    "name": "Soda Water",
-    "measure": "top up"
-   }
-  ],
-  "vibeHint": "refreshing"
- },
- {
-  "id": "x-in-053",
-  "name": "Jaggery Old Fashioned",
-  "category": "Cocktail",
-  "alcoholic": "Alcoholic",
-  "glass": "Old-fashioned glass",
-  "instructions": "Stir dark rum, jaggery syrup and the bitters over one large cube until cold and silky. Express an orange peel over the top. Unrefined gur, all molasses and smoke.",
-  "thumb": "",
-  "video": "",
-  "tags": [
-   "India",
-   "Pan-India",
-   "Jaggery"
-  ],
-  "iba": "",
-  "ingredients": [
-   {
-    "name": "Dark Rum",
-    "measure": "60 ml"
-   },
-   {
-    "name": "Jaggery Syrup",
-    "measure": "15 ml"
-   },
-   {
-    "name": "Angostura Bitters",
-    "measure": "2 dashes"
-   }
-  ],
-  "vibeHint": "boozy"
- },
- {
-  "id": "x-in-054",
-  "name": "Jaggery Sour",
-  "category": "Cocktail",
-  "alcoholic": "Alcoholic",
-  "glass": "Coupe",
-  "instructions": "Dry shake without ice to build the foam, then shake again hard with ice. Double strain into a chilled coupe. Unrefined gur, all molasses and smoke.",
-  "thumb": "",
-  "video": "",
-  "tags": [
-   "India",
-   "Pan-India",
-   "Jaggery"
-  ],
-  "iba": "",
-  "ingredients": [
-   {
-    "name": "Dark Rum",
-    "measure": "60 ml"
-   },
-   {
-    "name": "Lime Juice",
-    "measure": "25 ml"
-   },
-   {
-    "name": "Jaggery Syrup",
-    "measure": "20 ml"
-   },
-   {
-    "name": "Egg White",
-    "measure": "1"
-   }
-  ],
-  "vibeHint": "boozy"
- },
- {
-  "id": "x-in-055",
-  "name": "Jaggery Mule",
-  "category": "Cocktail",
-  "alcoholic": "Alcoholic",
-  "glass": "Mug",
-  "instructions": "In a copper mug, add ice, dark rum and lime, top with cold ginger beer and give it one stir. Unrefined gur, all molasses and smoke.",
-  "thumb": "",
-  "video": "",
-  "tags": [
-   "India",
-   "Pan-India",
-   "Jaggery"
-  ],
-  "iba": "",
-  "ingredients": [
-   {
-    "name": "Dark Rum",
-    "measure": "50 ml"
-   },
-   {
-    "name": "Lime Juice",
-    "measure": "15 ml"
-   },
-   {
-    "name": "Jaggery Syrup",
-    "measure": "15 ml"
-   },
-   {
-    "name": "Ginger Beer",
-    "measure": "top up"
-   }
-  ],
-  "vibeHint": "boozy"
- },
- {
-  "id": "x-in-056",
-  "name": "Cardamom Old Fashioned",
-  "category": "Cocktail",
-  "alcoholic": "Alcoholic",
-  "glass": "Old-fashioned glass",
-  "instructions": "Stir gin, cardamom syrup and the bitters over one large cube until cold and silky. Express an orange peel over the top. Green elaichi off the Kerala hills.",
-  "thumb": "",
-  "video": "",
-  "tags": [
-   "India",
-   "Kerala",
-   "Cardamom"
-  ],
-  "iba": "",
-  "ingredients": [
-   {
-    "name": "Gin",
-    "measure": "60 ml"
-   },
-   {
-    "name": "Cardamom Syrup",
-    "measure": "15 ml"
-   },
-   {
-    "name": "Angostura Bitters",
-    "measure": "2 dashes"
-   }
-  ],
-  "vibeHint": "boozy"
- },
- {
-  "id": "x-in-057",
-  "name": "Cardamom Sour",
-  "category": "Cocktail",
-  "alcoholic": "Alcoholic",
-  "glass": "Coupe",
-  "instructions": "Dry shake without ice to build the foam, then shake again hard with ice. Double strain into a chilled coupe. Green elaichi off the Kerala hills.",
-  "thumb": "",
-  "video": "",
-  "tags": [
-   "India",
-   "Kerala",
-   "Cardamom"
-  ],
-  "iba": "",
-  "ingredients": [
-   {
-    "name": "Gin",
-    "measure": "60 ml"
-   },
-   {
-    "name": "Lemon Juice",
-    "measure": "25 ml"
-   },
-   {
-    "name": "Cardamom Syrup",
-    "measure": "20 ml"
-   },
-   {
-    "name": "Egg White",
-    "measure": "1"
-   }
-  ],
-  "vibeHint": "boozy"
- },
- {
-  "id": "x-in-058",
-  "name": "Cardamom Collins",
-  "category": "Cocktail",
-  "alcoholic": "Alcoholic",
-  "glass": "Collins glass",
-  "instructions": "Shake everything but the soda with ice, strain into an ice-filled collins glass and lengthen with soda. Green elaichi off the Kerala hills.",
-  "thumb": "",
-  "video": "",
-  "tags": [
-   "India",
-   "Kerala",
-   "Cardamom"
-  ],
-  "iba": "",
-  "ingredients": [
-   {
-    "name": "Gin",
-    "measure": "45 ml"
-   },
-   {
-    "name": "Lemon Juice",
-    "measure": "25 ml"
-   },
-   {
-    "name": "Cardamom Syrup",
-    "measure": "15 ml"
-   },
-   {
-    "name": "Soda Water",
-    "measure": "top up"
-   }
-  ],
-  "vibeHint": "boozy"
- }
+  {
+    "id": "x-in-001",
+    "name": "Vodka Soda",
+    "tagline": "One spirit, cold soda, lime: the no-friction Indian bar order.",
+    "category": "Cocktail",
+    "alcoholic": "Alcoholic",
+    "glass": "Highball glass",
+    "instructions": "Fill a tall glass with ice. Add vodka and cold soda, stir once, and squeeze in the lime.",
+    "thumb": "/images/india/x-in-001.webp",
+    "video": "",
+    "tags": [
+      "India",
+      "Everyday India",
+      "Pantry Tier 1"
+    ],
+    "iba": "",
+    "vibeHint": "refreshing",
+    "browseable": true,
+    "india": {
+      "lane": "everyday",
+      "pantryTier": 1,
+      "researchDate": "2026-08-27"
+    },
+    "evidence": [
+      "BT2025",
+      "MC2026"
+    ],
+    "ingredients": [
+      {
+        "name": "Vodka",
+        "measure": "45 ml"
+      },
+      {
+        "name": "Soda Water",
+        "measure": "120 ml"
+      },
+      {
+        "name": "Lime Wedge",
+        "measure": "1"
+      }
+    ],
+    "videoSearch": "vodka soda cocktail recipe"
+  },
+  {
+    "id": "x-in-002",
+    "name": "Whisky & Cola",
+    "tagline": "The familiar two-part serve found at house parties and restaurant tables.",
+    "category": "Cocktail",
+    "alcoholic": "Alcoholic",
+    "glass": "Highball glass",
+    "instructions": "Pour whisky over ice, top with cola, and give it one gentle stir. Add lime if wanted.",
+    "thumb": "/images/india/x-in-002.webp",
+    "video": "",
+    "tags": [
+      "India",
+      "Everyday India",
+      "Pantry Tier 1"
+    ],
+    "iba": "",
+    "vibeHint": "party",
+    "browseable": true,
+    "india": {
+      "lane": "everyday",
+      "pantryTier": 1,
+      "researchDate": "2026-08-27"
+    },
+    "evidence": [
+      "BT2025",
+      "MC2026",
+      "REDDIT_FAV"
+    ],
+    "ingredients": [
+      {
+        "name": "Whisky",
+        "measure": "45 ml"
+      },
+      {
+        "name": "Cola",
+        "measure": "120 ml"
+      },
+      {
+        "name": "Lime Wedge",
+        "measure": "1",
+        "optional": true
+      }
+    ],
+    "videoSearch": "whisky and coke cocktail recipe"
+  },
+  {
+    "id": "x-in-003",
+    "name": "Vodka Nimbu Soda",
+    "tagline": "Vodka lengthened with the sweet-salt-sour logic of nimbu pani.",
+    "category": "Cocktail",
+    "alcoholic": "Alcoholic",
+    "glass": "Highball glass",
+    "instructions": "Add vodka, lemon, syrup and black salt to an ice-filled glass. Top with soda and stir well.",
+    "thumb": "/images/india/x-in-003.webp",
+    "video": "",
+    "tags": [
+      "India",
+      "Everyday India",
+      "Pantry Tier 1"
+    ],
+    "iba": "",
+    "vibeHint": "refreshing",
+    "browseable": true,
+    "india": {
+      "lane": "everyday",
+      "pantryTier": 1,
+      "researchDate": "2026-08-27"
+    },
+    "evidence": [
+      "BT2025",
+      "NDTV_VOGUE",
+      "REDDIT_HOME"
+    ],
+    "ingredients": [
+      {
+        "name": "Vodka",
+        "measure": "45 ml"
+      },
+      {
+        "name": "Lemon Juice",
+        "measure": "25 ml"
+      },
+      {
+        "name": "Sugar Syrup",
+        "measure": "10 ml"
+      },
+      {
+        "name": "Black Salt",
+        "measure": "1 pinch"
+      },
+      {
+        "name": "Soda Water",
+        "measure": "120 ml"
+      }
+    ],
+    "videoSearch": "vodka lemon soda cocktail recipe"
+  },
+  {
+    "id": "x-in-004",
+    "name": "Whisky Soda Highball",
+    "tagline": "India’s long-running whisky-and-soda order, built extra cold.",
+    "category": "Cocktail",
+    "alcoholic": "Alcoholic",
+    "glass": "Highball glass",
+    "instructions": "Pack a chilled highball with hard ice, add whisky, then pour soda slowly down the side. Stir once.",
+    "thumb": "/images/india/x-in-004.webp",
+    "video": "",
+    "tags": [
+      "India",
+      "Everyday India",
+      "Pantry Tier 1"
+    ],
+    "iba": "",
+    "vibeHint": "refreshing",
+    "browseable": true,
+    "india": {
+      "lane": "everyday",
+      "pantryTier": 1,
+      "researchDate": "2026-08-27"
+    },
+    "evidence": [
+      "HIGHBALL",
+      "MC2026"
+    ],
+    "ingredients": [
+      {
+        "name": "Whisky",
+        "measure": "45 ml"
+      },
+      {
+        "name": "Soda Water",
+        "measure": "120 ml"
+      },
+      {
+        "name": "Lemon Peel",
+        "measure": "1",
+        "optional": true
+      }
+    ],
+    "videoSearch": "whisky highball recipe"
+  },
+  {
+    "id": "x-in-005",
+    "name": "Rum & Limca Highball",
+    "tagline": "Dark rum with the lemon-lime mixer common to Indian home bars.",
+    "category": "Cocktail",
+    "alcoholic": "Alcoholic",
+    "glass": "Highball glass",
+    "instructions": "Build over ice, squeeze the lime over the drink, and stir once.",
+    "thumb": "/images/india/x-in-005.webp",
+    "video": "",
+    "tags": [
+      "India",
+      "Everyday India",
+      "Pantry Tier 1"
+    ],
+    "iba": "",
+    "vibeHint": "party",
+    "browseable": true,
+    "india": {
+      "lane": "everyday",
+      "pantryTier": 1,
+      "researchDate": "2026-08-27"
+    },
+    "evidence": [
+      "BT2025",
+      "REDDIT_HOME",
+      "REDDIT_GOA"
+    ],
+    "ingredients": [
+      {
+        "name": "Dark Rum",
+        "measure": "45 ml"
+      },
+      {
+        "name": "Lemon-Lime Soda",
+        "measure": "120 ml"
+      },
+      {
+        "name": "Lime Wedge",
+        "measure": "1"
+      }
+    ],
+    "videoSearch": "rum lemon lime soda cocktail recipe"
+  },
+  {
+    "id": "x-in-006",
+    "name": "Vodka Guava Masala",
+    "tagline": "The roadside guava-and-masala flavour pattern in an easy long drink.",
+    "category": "Cocktail",
+    "alcoholic": "Alcoholic",
+    "glass": "Highball glass",
+    "instructions": "Shake vodka, guava and lime with ice. Pour into an ice-filled glass and finish with masala, salt and optional chilli.",
+    "thumb": "/images/india/x-in-006.webp",
+    "video": "",
+    "tags": [
+      "India",
+      "Everyday India",
+      "Pantry Tier 1"
+    ],
+    "iba": "",
+    "vibeHint": "tropical",
+    "browseable": true,
+    "india": {
+      "lane": "everyday",
+      "pantryTier": 1,
+      "researchDate": "2026-08-27"
+    },
+    "evidence": [
+      "NDTV_GUAVA",
+      "REDDIT_HOME"
+    ],
+    "ingredients": [
+      {
+        "name": "Vodka",
+        "measure": "45 ml"
+      },
+      {
+        "name": "Guava Juice",
+        "measure": "100 ml"
+      },
+      {
+        "name": "Lime Juice",
+        "measure": "15 ml"
+      },
+      {
+        "name": "Chaat Masala",
+        "measure": "1 pinch"
+      },
+      {
+        "name": "Black Salt",
+        "measure": "1 pinch"
+      },
+      {
+        "name": "Green Chilli",
+        "measure": "1 slit",
+        "optional": true
+      }
+    ],
+    "videoSearch": "guava vodka cocktail recipe"
+  },
+  {
+    "id": "x-in-007",
+    "name": "Adrak Whisky Highball",
+    "tagline": "Whisky, ginger, honey and lemon in a lighter highball frame.",
+    "category": "Cocktail",
+    "alcoholic": "Alcoholic",
+    "glass": "Highball glass",
+    "instructions": "Muddle ginger gently with honey and lemon. Add whisky and ice, top with soda, and stir.",
+    "thumb": "/images/india/x-in-007.webp",
+    "video": "",
+    "tags": [
+      "India",
+      "Everyday India",
+      "Pantry Tier 1"
+    ],
+    "iba": "",
+    "vibeHint": "cozy",
+    "browseable": true,
+    "india": {
+      "lane": "everyday",
+      "pantryTier": 1,
+      "researchDate": "2026-08-27"
+    },
+    "evidence": [
+      "REDDIT_HOME",
+      "THEBAR"
+    ],
+    "ingredients": [
+      {
+        "name": "Whisky",
+        "measure": "45 ml"
+      },
+      {
+        "name": "Fresh Ginger",
+        "measure": "3 thin slices"
+      },
+      {
+        "name": "Lemon Juice",
+        "measure": "15 ml"
+      },
+      {
+        "name": "Honey Syrup",
+        "measure": "10 ml"
+      },
+      {
+        "name": "Soda Water",
+        "measure": "100 ml"
+      }
+    ],
+    "videoSearch": "ginger whisky highball recipe"
+  },
+  {
+    "id": "x-in-008",
+    "name": "Picante",
+    "tagline": "The spicy tequila serve that has become a contemporary Indian-menu default.",
+    "category": "Cocktail",
+    "alcoholic": "Alcoholic",
+    "glass": "Old-fashioned glass",
+    "instructions": "Muddle coriander and chilli lightly. Add tequila, lime, agave and ice; shake hard and double strain over fresh ice.",
+    "thumb": "/images/india/x-in-008.webp",
+    "video": "",
+    "tags": [
+      "India",
+      "Modern Indian Bar",
+      "Pantry Tier 2"
+    ],
+    "iba": "",
+    "vibeHint": "party",
+    "browseable": true,
+    "india": {
+      "lane": "modern-bar",
+      "pantryTier": 2,
+      "researchDate": "2026-08-27"
+    },
+    "evidence": [
+      "PICANTE",
+      "WII2025",
+      "MC2026"
+    ],
+    "ingredients": [
+      {
+        "name": "Tequila",
+        "measure": "50 ml"
+      },
+      {
+        "name": "Lime Juice",
+        "measure": "25 ml"
+      },
+      {
+        "name": "Agave Syrup",
+        "measure": "15 ml"
+      },
+      {
+        "name": "Coriander Leaves",
+        "measure": "6"
+      },
+      {
+        "name": "Green Chilli",
+        "measure": "2 thin slices"
+      }
+    ],
+    "videoSearch": "picante cocktail recipe"
+  },
+  {
+    "id": "x-in-009",
+    "name": "Guava Picante",
+    "tagline": "A fruit-forward Picante using the guava, chilli and salt combination India already loves.",
+    "category": "Cocktail",
+    "alcoholic": "Alcoholic",
+    "glass": "Old-fashioned glass",
+    "instructions": "Shake everything with ice and double strain over fresh ice. Add a restrained black-salt rim.",
+    "thumb": "/images/india/x-in-009.webp",
+    "video": "",
+    "tags": [
+      "India",
+      "Modern Indian Bar",
+      "Pantry Tier 2"
+    ],
+    "iba": "",
+    "vibeHint": "tropical",
+    "browseable": true,
+    "india": {
+      "lane": "modern-bar",
+      "pantryTier": 2,
+      "researchDate": "2026-08-27"
+    },
+    "evidence": [
+      "PICANTE",
+      "NDTV_GUAVA"
+    ],
+    "ingredients": [
+      {
+        "name": "Tequila",
+        "measure": "45 ml"
+      },
+      {
+        "name": "Guava Puree",
+        "measure": "40 ml"
+      },
+      {
+        "name": "Lime Juice",
+        "measure": "20 ml"
+      },
+      {
+        "name": "Agave Syrup",
+        "measure": "10 ml"
+      },
+      {
+        "name": "Green Chilli",
+        "measure": "2 thin slices"
+      },
+      {
+        "name": "Black Salt",
+        "measure": "1 pinch"
+      }
+    ],
+    "videoSearch": "guava picante cocktail recipe"
+  },
+  {
+    "id": "x-in-010",
+    "name": "Southern Curry Leaf Picante",
+    "tagline": "A published reposado, chilli and curry-leaf variation.",
+    "category": "Cocktail",
+    "alcoholic": "Alcoholic",
+    "glass": "Old-fashioned glass",
+    "instructions": "Muddle chilli and curry leaves gently. Add the remaining ingredients and ice, shake, and double strain over fresh ice.",
+    "thumb": "/images/india/x-in-010.webp",
+    "video": "",
+    "tags": [
+      "India",
+      "Modern Indian Bar",
+      "Pantry Tier 2"
+    ],
+    "iba": "",
+    "vibeHint": "party",
+    "browseable": true,
+    "india": {
+      "lane": "modern-bar",
+      "pantryTier": 2,
+      "researchDate": "2026-08-27"
+    },
+    "evidence": [
+      "NDTV_GARDEN"
+    ],
+    "ingredients": [
+      {
+        "name": "Reposado Tequila",
+        "measure": "60 ml"
+      },
+      {
+        "name": "Honey Syrup",
+        "measure": "15 ml"
+      },
+      {
+        "name": "Lime Juice",
+        "measure": "20 ml"
+      },
+      {
+        "name": "Red Chilli",
+        "measure": "1 small"
+      },
+      {
+        "name": "Curry Leaves",
+        "measure": "8"
+      }
+    ],
+    "videoSearch": "curry leaf picante cocktail recipe"
+  },
+  {
+    "id": "x-in-011",
+    "name": "Cucumber Curry Leaf G&T",
+    "tagline": "A cooling G and T with familiar South Indian aromatics.",
+    "category": "Cocktail",
+    "alcoholic": "Alcoholic",
+    "glass": "Copa glass",
+    "instructions": "Slap the curry leaves and add them to an ice-filled glass with gin and cucumber. Top with tonic and squeeze in lime.",
+    "thumb": "/images/india/x-in-011.webp",
+    "video": "",
+    "tags": [
+      "India",
+      "Modern Indian Bar",
+      "Pantry Tier 2"
+    ],
+    "iba": "",
+    "vibeHint": "refreshing",
+    "browseable": true,
+    "india": {
+      "lane": "modern-bar",
+      "pantryTier": 2,
+      "researchDate": "2026-08-27"
+    },
+    "evidence": [
+      "MINT_HOME",
+      "YT_CURRY"
+    ],
+    "ingredients": [
+      {
+        "name": "Gin",
+        "measure": "60 ml"
+      },
+      {
+        "name": "Cucumber Juice",
+        "measure": "30 ml"
+      },
+      {
+        "name": "Curry Leaves",
+        "measure": "3"
+      },
+      {
+        "name": "Lime Wedge",
+        "measure": "1"
+      },
+      {
+        "name": "Tonic Water",
+        "measure": "120 ml"
+      }
+    ],
+    "videoSearch": "curry leaf gin tonic recipe"
+  },
+  {
+    "id": "x-in-012",
+    "name": "Balle Balle Bloody Mary",
+    "tagline": "A chaat-masala, chilli and coriander Bloody Mary published for Indian home bars.",
+    "category": "Cocktail",
+    "alcoholic": "Alcoholic",
+    "glass": "Highball glass",
+    "instructions": "Muddle chilli and coriander lightly. Add everything with ice and roll between two glasses several times; strain over fresh ice.",
+    "thumb": "/images/india/x-in-012.webp",
+    "video": "",
+    "tags": [
+      "India",
+      "Modern Indian Bar",
+      "Pantry Tier 2"
+    ],
+    "iba": "",
+    "vibeHint": "party",
+    "browseable": true,
+    "india": {
+      "lane": "modern-bar",
+      "pantryTier": 2,
+      "researchDate": "2026-08-27"
+    },
+    "evidence": [
+      "MINT_HOME"
+    ],
+    "ingredients": [
+      {
+        "name": "Vodka",
+        "measure": "60 ml"
+      },
+      {
+        "name": "Tomato Juice",
+        "measure": "100 ml"
+      },
+      {
+        "name": "Lime Juice",
+        "measure": "15 ml"
+      },
+      {
+        "name": "Tabasco",
+        "measure": "3 dashes"
+      },
+      {
+        "name": "Worcestershire Sauce",
+        "measure": "3 dashes"
+      },
+      {
+        "name": "Green Chilli",
+        "measure": "1/2"
+      },
+      {
+        "name": "Coriander Leaves",
+        "measure": "6"
+      },
+      {
+        "name": "Black Salt",
+        "measure": "1 pinch"
+      },
+      {
+        "name": "Chaat Masala",
+        "measure": "1 pinch"
+      },
+      {
+        "name": "Maggi Masala",
+        "measure": "1 pinch",
+        "optional": true
+      }
+    ],
+    "videoSearch": "spicy bloody mary Indian recipe"
+  },
+  {
+    "id": "x-in-013",
+    "name": "Filter Kaapi Martini",
+    "tagline": "A South Indian filter-coffee nightcap in the Espresso Martini family.",
+    "category": "Cocktail",
+    "alcoholic": "Alcoholic",
+    "glass": "Coupe",
+    "instructions": "Use freshly brewed, cooled filter coffee. Shake all ingredients very hard with ice and double strain into a chilled coupe.",
+    "thumb": "/images/india/x-in-013.webp",
+    "video": "",
+    "tags": [
+      "India",
+      "Modern Indian Bar",
+      "Pantry Tier 2"
+    ],
+    "iba": "",
+    "vibeHint": "sweet",
+    "browseable": true,
+    "india": {
+      "lane": "modern-bar",
+      "pantryTier": 2,
+      "researchDate": "2026-08-27"
+    },
+    "evidence": [
+      "NDTV_SOUTH",
+      "REDDIT_HOME"
+    ],
+    "ingredients": [
+      {
+        "name": "Irish Whisky",
+        "measure": "60 ml"
+      },
+      {
+        "name": "Coffee Liqueur",
+        "measure": "30 ml"
+      },
+      {
+        "name": "Filter Coffee",
+        "measure": "30 ml"
+      }
+    ],
+    "videoSearch": "filter coffee espresso martini recipe"
+  },
+  {
+    "id": "x-in-014",
+    "name": "Imli Whisky Sour",
+    "tagline": "Whisky Sour structure sharpened with the sweet-sour pull of tamarind.",
+    "category": "Cocktail",
+    "alcoholic": "Alcoholic",
+    "glass": "Coupe",
+    "instructions": "Dry shake first if using aquafaba. Add ice, shake hard, and double strain into a chilled coupe.",
+    "thumb": "/images/india/x-in-014.webp",
+    "video": "",
+    "tags": [
+      "India",
+      "Modern Indian Bar",
+      "Pantry Tier 2"
+    ],
+    "iba": "",
+    "vibeHint": "boozy",
+    "browseable": true,
+    "india": {
+      "lane": "modern-bar",
+      "pantryTier": 2,
+      "researchDate": "2026-08-27"
+    },
+    "evidence": [
+      "NDTV_VOGUE",
+      "NDTV_GARDEN",
+      "THEBAR"
+    ],
+    "ingredients": [
+      {
+        "name": "Whisky",
+        "measure": "50 ml"
+      },
+      {
+        "name": "Tamarind Syrup",
+        "measure": "20 ml"
+      },
+      {
+        "name": "Lime Juice",
+        "measure": "20 ml"
+      },
+      {
+        "name": "Aquafaba",
+        "measure": "20 ml",
+        "optional": true
+      }
+    ],
+    "videoSearch": "tamarind whisky sour recipe"
+  },
+  {
+    "id": "x-in-015",
+    "name": "Aam Panna Vodka Cooler",
+    "tagline": "The raw-mango summer cooler made bar-ready with vodka.",
+    "category": "Cocktail",
+    "alcoholic": "Alcoholic",
+    "glass": "Highball glass",
+    "instructions": "Add vodka and chilled aam panna to an ice-filled glass. Top with soda, stir, and garnish with slapped mint.",
+    "thumb": "/images/india/x-in-015.webp",
+    "video": "",
+    "tags": [
+      "India",
+      "Modern Indian Bar",
+      "Pantry Tier 1"
+    ],
+    "iba": "",
+    "vibeHint": "refreshing",
+    "browseable": true,
+    "india": {
+      "lane": "modern-bar",
+      "pantryTier": 1,
+      "researchDate": "2026-08-27"
+    },
+    "evidence": [
+      "NDTV_VOGUE"
+    ],
+    "ingredients": [
+      {
+        "name": "Vodka",
+        "measure": "45 ml"
+      },
+      {
+        "name": "Prepared Aam Panna",
+        "measure": "90 ml"
+      },
+      {
+        "name": "Soda Water",
+        "measure": "60 ml"
+      },
+      {
+        "name": "Mint Leaves",
+        "measure": "6"
+      },
+      {
+        "name": "Black Salt",
+        "measure": "1 pinch"
+      }
+    ],
+    "videoSearch": "aam panna vodka cocktail recipe"
+  },
+  {
+    "id": "x-in-016",
+    "name": "Kala Khatta Vodka Soda",
+    "tagline": "Mumbai gola nostalgia, black salt and fizz.",
+    "category": "Cocktail",
+    "alcoholic": "Alcoholic",
+    "glass": "Highball glass",
+    "instructions": "Build vodka, syrup and lime over ice. Add soda, stir, and finish with black salt.",
+    "thumb": "/images/india/x-in-016.webp",
+    "video": "",
+    "tags": [
+      "India",
+      "Modern Indian Bar",
+      "Pantry Tier 2"
+    ],
+    "iba": "",
+    "vibeHint": "party",
+    "browseable": true,
+    "india": {
+      "lane": "modern-bar",
+      "pantryTier": 2,
+      "researchDate": "2026-08-27"
+    },
+    "evidence": [
+      "NDTV_VOGUE"
+    ],
+    "ingredients": [
+      {
+        "name": "Vodka",
+        "measure": "45 ml"
+      },
+      {
+        "name": "Kala Khatta Syrup",
+        "measure": "30 ml"
+      },
+      {
+        "name": "Lime Juice",
+        "measure": "15 ml"
+      },
+      {
+        "name": "Soda Water",
+        "measure": "90 ml"
+      },
+      {
+        "name": "Black Salt",
+        "measure": "1 pinch"
+      }
+    ],
+    "videoSearch": "kala khatta vodka cocktail recipe"
+  },
+  {
+    "id": "x-in-017",
+    "name": "Jal-Jeera G&T",
+    "tagline": "A savoury, cumin-led G and T that stays light and familiar.",
+    "category": "Cocktail",
+    "alcoholic": "Alcoholic",
+    "glass": "Copa glass",
+    "instructions": "Fill the glass with ice. Add gin and chilled jal-jeera, top with tonic, and stir once.",
+    "thumb": "/images/india/x-in-017.webp",
+    "video": "",
+    "tags": [
+      "India",
+      "Modern Indian Bar",
+      "Pantry Tier 1"
+    ],
+    "iba": "",
+    "vibeHint": "refreshing",
+    "browseable": true,
+    "india": {
+      "lane": "modern-bar",
+      "pantryTier": 1,
+      "researchDate": "2026-08-27"
+    },
+    "evidence": [
+      "NDTV_VOGUE"
+    ],
+    "ingredients": [
+      {
+        "name": "Gin",
+        "measure": "45 ml"
+      },
+      {
+        "name": "Prepared Jal-Jeera",
+        "measure": "45 ml"
+      },
+      {
+        "name": "Tonic Water",
+        "measure": "90 ml"
+      },
+      {
+        "name": "Mint Leaves",
+        "measure": "4"
+      }
+    ],
+    "videoSearch": "jaljeera gin tonic cocktail recipe"
+  },
+  {
+    "id": "x-in-018",
+    "name": "Mango Saffron Daiquiri",
+    "tagline": "Mango, aged rum and saffron in a compact daiquiri.",
+    "category": "Cocktail",
+    "alcoholic": "Alcoholic",
+    "glass": "Coupe",
+    "instructions": "Shake hard with ice and double strain into a chilled coupe. Use the jaggery only if the mango needs sweetness.",
+    "thumb": "/images/india/x-in-018.webp",
+    "video": "",
+    "tags": [
+      "India",
+      "Modern Indian Bar",
+      "Pantry Tier 2"
+    ],
+    "iba": "",
+    "vibeHint": "tropical",
+    "browseable": true,
+    "india": {
+      "lane": "modern-bar",
+      "pantryTier": 2,
+      "researchDate": "2026-08-27"
+    },
+    "evidence": [
+      "MADIRA"
+    ],
+    "ingredients": [
+      {
+        "name": "Aged Rum",
+        "measure": "45 ml"
+      },
+      {
+        "name": "Mango Puree",
+        "measure": "30 ml"
+      },
+      {
+        "name": "Lime Juice",
+        "measure": "10 ml"
+      },
+      {
+        "name": "Saffron",
+        "measure": "2 threads"
+      },
+      {
+        "name": "Jaggery Syrup",
+        "measure": "5 ml",
+        "optional": true
+      }
+    ],
+    "videoSearch": "mango saffron daiquiri recipe"
+  },
+  {
+    "id": "x-in-019",
+    "name": "Curry Leaf Margarita",
+    "tagline": "Pineapple and curry leaf brighten a Margarita base.",
+    "category": "Cocktail",
+    "alcoholic": "Alcoholic",
+    "glass": "Coupe",
+    "instructions": "Muddle curry leaves gently, add the liquids and ice, shake, and double strain into a lightly salted chilled glass.",
+    "thumb": "/images/india/x-in-019.webp",
+    "video": "",
+    "tags": [
+      "India",
+      "Modern Indian Bar",
+      "Pantry Tier 2"
+    ],
+    "iba": "",
+    "vibeHint": "refreshing",
+    "browseable": true,
+    "india": {
+      "lane": "modern-bar",
+      "pantryTier": 2,
+      "researchDate": "2026-08-27"
+    },
+    "evidence": [
+      "NDTV_CURRY_MARG"
+    ],
+    "ingredients": [
+      {
+        "name": "Tequila",
+        "measure": "45 ml"
+      },
+      {
+        "name": "Lime Juice",
+        "measure": "15 ml"
+      },
+      {
+        "name": "Pineapple Juice",
+        "measure": "20 ml"
+      },
+      {
+        "name": "Curry Leaves",
+        "measure": "8"
+      },
+      {
+        "name": "Agave Syrup",
+        "measure": "10 ml"
+      },
+      {
+        "name": "Salt",
+        "measure": "1 pinch"
+      }
+    ],
+    "videoSearch": "curry leaf margarita recipe"
+  },
+  {
+    "id": "x-in-020",
+    "name": "Paan Martini",
+    "tagline": "Betel leaf and gulkand turn the after-dinner paan ritual into a short drink.",
+    "category": "Cocktail",
+    "alcoholic": "Alcoholic",
+    "glass": "Coupe",
+    "instructions": "Muddle the betel leaves gently with gulkand. Add vodka, lime, rose water and ice; shake and double strain.",
+    "thumb": "/images/india/x-in-020.webp",
+    "video": "",
+    "tags": [
+      "India",
+      "Modern Indian Bar",
+      "Pantry Tier 2"
+    ],
+    "iba": "",
+    "vibeHint": "sweet",
+    "browseable": true,
+    "india": {
+      "lane": "modern-bar",
+      "pantryTier": 2,
+      "researchDate": "2026-08-27"
+    },
+    "evidence": [
+      "NDTV_VOGUE"
+    ],
+    "ingredients": [
+      {
+        "name": "Vodka",
+        "measure": "45 ml"
+      },
+      {
+        "name": "Gulkand Syrup",
+        "measure": "15 ml"
+      },
+      {
+        "name": "Betel Leaves",
+        "measure": "2"
+      },
+      {
+        "name": "Lime Juice",
+        "measure": "10 ml"
+      },
+      {
+        "name": "Rose Water",
+        "measure": "2 drops"
+      }
+    ],
+    "videoSearch": "paan martini recipe"
+  },
+  {
+    "id": "x-in-021",
+    "name": "Thandai Rum Flip",
+    "tagline": "A cannabis-free Holi thandai folded into a rich rum flip.",
+    "category": "Cocktail",
+    "alcoholic": "Alcoholic",
+    "glass": "Coupe",
+    "instructions": "Dry shake with the pasteurised egg if using, then shake with ice. Double strain and grate a little nutmeg over the top.",
+    "thumb": "/images/india/x-in-021.webp",
+    "video": "",
+    "tags": [
+      "India",
+      "Modern Indian Bar",
+      "Pantry Tier 2"
+    ],
+    "iba": "",
+    "vibeHint": "cozy",
+    "browseable": true,
+    "india": {
+      "lane": "modern-bar",
+      "pantryTier": 2,
+      "researchDate": "2026-08-27"
+    },
+    "evidence": [
+      "NDTV_VOGUE"
+    ],
+    "ingredients": [
+      {
+        "name": "Dark Rum",
+        "measure": "45 ml"
+      },
+      {
+        "name": "Prepared Bhang-Free Thandai",
+        "measure": "90 ml"
+      },
+      {
+        "name": "Pasteurised Whole Egg",
+        "measure": "1",
+        "optional": true
+      },
+      {
+        "name": "Nutmeg",
+        "measure": "1 pinch"
+      }
+    ],
+    "videoSearch": "thandai rum cocktail recipe"
+  },
+  {
+    "id": "x-in-022",
+    "name": "Kokum Gin Sour",
+    "tagline": "Konkan kokum gives a gin sour colour, acid and a gentle tannic edge.",
+    "category": "Cocktail",
+    "alcoholic": "Alcoholic",
+    "glass": "Coupe",
+    "instructions": "Dry shake if using aquafaba. Shake again with ice and double strain into a chilled coupe.",
+    "thumb": "/images/india/x-in-022.webp",
+    "video": "",
+    "tags": [
+      "India",
+      "Modern Indian Bar",
+      "Pantry Tier 2"
+    ],
+    "iba": "",
+    "vibeHint": "refreshing",
+    "browseable": true,
+    "india": {
+      "lane": "modern-bar",
+      "pantryTier": 2,
+      "researchDate": "2026-08-27"
+    },
+    "evidence": [
+      "HOMEGROWN",
+      "THEBAR"
+    ],
+    "ingredients": [
+      {
+        "name": "Gin",
+        "measure": "50 ml"
+      },
+      {
+        "name": "Kokum Syrup",
+        "measure": "25 ml"
+      },
+      {
+        "name": "Lime Juice",
+        "measure": "15 ml"
+      },
+      {
+        "name": "Aquafaba",
+        "measure": "20 ml",
+        "optional": true
+      }
+    ],
+    "videoSearch": "kokum gin sour recipe"
+  },
+  {
+    "id": "x-in-023",
+    "name": "Jamun Gin Sour",
+    "tagline": "Monsoon jamun, gin and black salt in a vivid sour.",
+    "category": "Cocktail",
+    "alcoholic": "Alcoholic",
+    "glass": "Coupe",
+    "instructions": "Dry shake if using aquafaba, then shake with ice and double strain. Taste the jamun before adding all the syrup.",
+    "thumb": "/images/india/x-in-023.webp",
+    "video": "",
+    "tags": [
+      "India",
+      "Modern Indian Bar",
+      "Pantry Tier 2"
+    ],
+    "iba": "",
+    "vibeHint": "refreshing",
+    "browseable": true,
+    "india": {
+      "lane": "modern-bar",
+      "pantryTier": 2,
+      "researchDate": "2026-08-27"
+    },
+    "evidence": [
+      "NDTV_VOGUE",
+      "SOMMELIER",
+      "CNT_ZERO"
+    ],
+    "ingredients": [
+      {
+        "name": "Gin",
+        "measure": "50 ml"
+      },
+      {
+        "name": "Jamun Puree",
+        "measure": "30 ml"
+      },
+      {
+        "name": "Lime Juice",
+        "measure": "20 ml"
+      },
+      {
+        "name": "Sugar Syrup",
+        "measure": "10 ml"
+      },
+      {
+        "name": "Black Salt",
+        "measure": "1 pinch"
+      },
+      {
+        "name": "Aquafaba",
+        "measure": "20 ml",
+        "optional": true
+      }
+    ],
+    "videoSearch": "jamun gin sour recipe"
+  },
+  {
+    "id": "x-in-024",
+    "name": "Khus Vodka Collins",
+    "tagline": "Cooling vetiver sharbat stretched into a crisp Collins.",
+    "category": "Cocktail",
+    "alcoholic": "Alcoholic",
+    "glass": "Collins glass",
+    "instructions": "Shake vodka, khus and lemon with ice. Strain into an ice-filled glass, top with soda, and stir.",
+    "thumb": "/images/india/x-in-024.webp",
+    "video": "",
+    "tags": [
+      "India",
+      "Modern Indian Bar",
+      "Pantry Tier 2"
+    ],
+    "iba": "",
+    "vibeHint": "refreshing",
+    "browseable": true,
+    "india": {
+      "lane": "modern-bar",
+      "pantryTier": 2,
+      "researchDate": "2026-08-27"
+    },
+    "evidence": [
+      "NDTV_VOGUE"
+    ],
+    "ingredients": [
+      {
+        "name": "Vodka",
+        "measure": "45 ml"
+      },
+      {
+        "name": "Khus Syrup",
+        "measure": "20 ml"
+      },
+      {
+        "name": "Lemon Juice",
+        "measure": "20 ml"
+      },
+      {
+        "name": "Soda Water",
+        "measure": "100 ml"
+      }
+    ],
+    "videoSearch": "khus vodka cocktail recipe"
+  },
+  {
+    "id": "x-in-025",
+    "name": "Ganne Ka Ras Vodka Cooler",
+    "tagline": "Fresh sugarcane juice, cumin and lime with a clean vodka base.",
+    "category": "Cocktail",
+    "alcoholic": "Alcoholic",
+    "glass": "Highball glass",
+    "instructions": "Shake briefly with ice and strain over fresh ice. Use only freshly pressed, hygienically handled juice and serve immediately.",
+    "thumb": "/images/india/x-in-025.webp",
+    "video": "",
+    "tags": [
+      "India",
+      "Modern Indian Bar",
+      "Pantry Tier 2"
+    ],
+    "iba": "",
+    "vibeHint": "refreshing",
+    "browseable": true,
+    "india": {
+      "lane": "modern-bar",
+      "pantryTier": 2,
+      "researchDate": "2026-08-27"
+    },
+    "evidence": [
+      "NDTV_VOGUE",
+      "REDDIT_HOME"
+    ],
+    "ingredients": [
+      {
+        "name": "Vodka",
+        "measure": "45 ml"
+      },
+      {
+        "name": "Fresh Sugarcane Juice",
+        "measure": "100 ml"
+      },
+      {
+        "name": "Lime Juice",
+        "measure": "20 ml"
+      },
+      {
+        "name": "Roasted Cumin",
+        "measure": "1 pinch"
+      },
+      {
+        "name": "Black Salt",
+        "measure": "1 pinch"
+      }
+    ],
+    "videoSearch": "sugarcane vodka cocktail recipe"
+  },
+  {
+    "id": "x-in-026",
+    "name": "Tulsi Gin Smash",
+    "tagline": "The garden-pot herb makes a natural Indian answer to a basil smash.",
+    "category": "Cocktail",
+    "alcoholic": "Alcoholic",
+    "glass": "Old-fashioned glass",
+    "instructions": "Muddle tulsi very lightly, shake with the remaining ingredients and ice, and double strain over fresh ice.",
+    "thumb": "/images/india/x-in-026.webp",
+    "video": "",
+    "tags": [
+      "India",
+      "Modern Indian Bar",
+      "Pantry Tier 1"
+    ],
+    "iba": "",
+    "vibeHint": "refreshing",
+    "browseable": true,
+    "india": {
+      "lane": "modern-bar",
+      "pantryTier": 1,
+      "researchDate": "2026-08-27"
+    },
+    "evidence": [
+      "NDTV_VOGUE"
+    ],
+    "ingredients": [
+      {
+        "name": "Gin",
+        "measure": "50 ml"
+      },
+      {
+        "name": "Tulsi Leaves",
+        "measure": "8"
+      },
+      {
+        "name": "Lemon Juice",
+        "measure": "25 ml"
+      },
+      {
+        "name": "Sugar Syrup",
+        "measure": "15 ml"
+      }
+    ],
+    "videoSearch": "tulsi gin cocktail recipe"
+  },
+  {
+    "id": "x-in-027",
+    "name": "Elaichi Jaggery Old Fashioned",
+    "tagline": "Whisky, gur and smoky cardamom: Indian pantry, classic proportions.",
+    "category": "Cocktail",
+    "alcoholic": "Alcoholic",
+    "glass": "Old-fashioned glass",
+    "instructions": "Crack the cardamom without crushing it to powder. Stir everything over ice, strain onto a large cube, and remove the pod.",
+    "thumb": "/images/india/x-in-027.webp",
+    "video": "",
+    "tags": [
+      "India",
+      "Modern Indian Bar",
+      "Pantry Tier 2"
+    ],
+    "iba": "",
+    "vibeHint": "boozy",
+    "browseable": true,
+    "india": {
+      "lane": "modern-bar",
+      "pantryTier": 2,
+      "researchDate": "2026-08-27"
+    },
+    "evidence": [
+      "THEBAR"
+    ],
+    "ingredients": [
+      {
+        "name": "Whisky",
+        "measure": "60 ml"
+      },
+      {
+        "name": "Jaggery Syrup",
+        "measure": "10 ml"
+      },
+      {
+        "name": "Black Cardamom",
+        "measure": "1/2 pod"
+      },
+      {
+        "name": "Angostura Bitters",
+        "measure": "2 dashes"
+      }
+    ],
+    "videoSearch": "jaggery old fashioned cocktail recipe"
+  },
+  {
+    "id": "x-in-028",
+    "name": "Cold Brew Rum & Cacao",
+    "tagline": "Dark rum, coffee and cacao for the less-sweet new-wave bar palate.",
+    "category": "Cocktail",
+    "alcoholic": "Alcoholic",
+    "glass": "Old-fashioned glass",
+    "instructions": "Shake briefly with ice and strain over one large cube. Reduce syrup if the cold brew is naturally sweet.",
+    "thumb": "/images/india/x-in-028.webp",
+    "video": "",
+    "tags": [
+      "India",
+      "Modern Indian Bar",
+      "Pantry Tier 2"
+    ],
+    "iba": "",
+    "vibeHint": "boozy",
+    "browseable": true,
+    "india": {
+      "lane": "modern-bar",
+      "pantryTier": 2,
+      "researchDate": "2026-08-27"
+    },
+    "evidence": [
+      "THEBAR",
+      "LOCAL2026"
+    ],
+    "ingredients": [
+      {
+        "name": "Dark Rum",
+        "measure": "45 ml"
+      },
+      {
+        "name": "Cold Brew Coffee",
+        "measure": "45 ml"
+      },
+      {
+        "name": "Jaggery Syrup",
+        "measure": "10 ml"
+      },
+      {
+        "name": "Chocolate Bitters",
+        "measure": "2 dashes"
+      }
+    ],
+    "videoSearch": "rum cold brew coffee cocktail recipe"
+  },
+  {
+    "id": "x-in-029",
+    "name": "Darjeeling Whisky Highball",
+    "tagline": "Whisky and tea lengthened into a fragrant, low-sugar highball.",
+    "category": "Cocktail",
+    "alcoholic": "Alcoholic",
+    "glass": "Highball glass",
+    "instructions": "Chill the brewed tea completely. Build everything over ice, top with soda, and stir once.",
+    "thumb": "/images/india/x-in-029.webp",
+    "video": "",
+    "tags": [
+      "India",
+      "Modern Indian Bar",
+      "Pantry Tier 1"
+    ],
+    "iba": "",
+    "vibeHint": "refreshing",
+    "browseable": true,
+    "india": {
+      "lane": "modern-bar",
+      "pantryTier": 1,
+      "researchDate": "2026-08-27"
+    },
+    "evidence": [
+      "SOMMELIER",
+      "CNT_ZERO",
+      "LOCAL2026"
+    ],
+    "ingredients": [
+      {
+        "name": "Whisky",
+        "measure": "45 ml"
+      },
+      {
+        "name": "Strong Darjeeling Tea",
+        "measure": "90 ml"
+      },
+      {
+        "name": "Honey Syrup",
+        "measure": "10 ml"
+      },
+      {
+        "name": "Lemon Juice",
+        "measure": "15 ml"
+      },
+      {
+        "name": "Soda Water",
+        "measure": "30 ml"
+      }
+    ],
+    "videoSearch": "Darjeeling tea whisky highball recipe"
+  },
+  {
+    "id": "x-in-030",
+    "name": "Rasam Mary",
+    "tagline": "Tomato, pepper and prepared rasam make a savoury South Indian brunch drink.",
+    "category": "Cocktail",
+    "alcoholic": "Alcoholic",
+    "glass": "Highball glass",
+    "instructions": "Add all ingredients with ice and roll between two glasses until cold. Strain over fresh ice and adjust salt only after tasting the rasam.",
+    "thumb": "/images/india/x-in-030.webp",
+    "video": "",
+    "tags": [
+      "India",
+      "Modern Indian Bar",
+      "Pantry Tier 2"
+    ],
+    "iba": "",
+    "vibeHint": "party",
+    "browseable": true,
+    "india": {
+      "lane": "modern-bar",
+      "pantryTier": 2,
+      "researchDate": "2026-08-27"
+    },
+    "evidence": [
+      "SOMMELIER",
+      "NDTV_GARDEN"
+    ],
+    "ingredients": [
+      {
+        "name": "Vodka",
+        "measure": "45 ml"
+      },
+      {
+        "name": "Tomato Juice",
+        "measure": "90 ml"
+      },
+      {
+        "name": "Prepared Rasam",
+        "measure": "30 ml"
+      },
+      {
+        "name": "Lime Juice",
+        "measure": "10 ml"
+      },
+      {
+        "name": "Worcestershire Sauce",
+        "measure": "3 dashes"
+      },
+      {
+        "name": "Black Pepper",
+        "measure": "1 pinch"
+      }
+    ],
+    "videoSearch": "rasam bloody mary cocktail recipe"
+  },
+  {
+    "id": "x-in-031",
+    "name": "Solkadhi Gin Cooler",
+    "tagline": "Kokum-coconut solkadhi becomes a creamy-tart coastal cooler.",
+    "category": "Cocktail",
+    "alcoholic": "Alcoholic",
+    "glass": "Highball glass",
+    "instructions": "Shake briefly with ice and strain over fresh ice. Use chilled, fresh solkadhi and serve immediately.",
+    "thumb": "/images/india/x-in-031.webp",
+    "video": "",
+    "tags": [
+      "India",
+      "Modern Indian Bar",
+      "Pantry Tier 2"
+    ],
+    "iba": "",
+    "vibeHint": "refreshing",
+    "browseable": true,
+    "india": {
+      "lane": "modern-bar",
+      "pantryTier": 2,
+      "researchDate": "2026-08-27"
+    },
+    "evidence": [
+      "SOMMELIER"
+    ],
+    "ingredients": [
+      {
+        "name": "Gin",
+        "measure": "45 ml"
+      },
+      {
+        "name": "Prepared Solkadhi",
+        "measure": "75 ml"
+      },
+      {
+        "name": "Coconut Water",
+        "measure": "45 ml"
+      },
+      {
+        "name": "Lime Juice",
+        "measure": "10 ml"
+      }
+    ],
+    "videoSearch": "solkadhi gin cocktail recipe"
+  },
+  {
+    "id": "x-in-032",
+    "name": "Kanji Tequila Highball",
+    "tagline": "Fermented carrot kanji brings savoury acidity to an agave highball.",
+    "category": "Cocktail",
+    "alcoholic": "Alcoholic",
+    "glass": "Highball glass",
+    "instructions": "Build over ice and stir gently. Use a refrigerated, cleanly fermented kanji batch; discard it if smell, mould or pressure seems abnormal.",
+    "thumb": "/images/india/x-in-032.webp",
+    "video": "",
+    "tags": [
+      "India",
+      "Modern Indian Bar",
+      "Pantry Tier 2"
+    ],
+    "iba": "",
+    "vibeHint": "party",
+    "browseable": true,
+    "india": {
+      "lane": "modern-bar",
+      "pantryTier": 2,
+      "researchDate": "2026-08-27"
+    },
+    "evidence": [
+      "FERMENT",
+      "THEBAR"
+    ],
+    "ingredients": [
+      {
+        "name": "Tequila",
+        "measure": "45 ml"
+      },
+      {
+        "name": "Prepared Kanji",
+        "measure": "75 ml"
+      },
+      {
+        "name": "Grapefruit Soda",
+        "measure": "60 ml"
+      },
+      {
+        "name": "Black Salt",
+        "measure": "1 pinch"
+      }
+    ],
+    "videoSearch": "kanji tequila cocktail recipe"
+  },
+  {
+    "id": "x-in-033",
+    "name": "Kombucha Whisky Highball",
+    "tagline": "Bottled ginger kombucha supplies acid, fizz and fermentation complexity.",
+    "category": "Cocktail",
+    "alcoholic": "Alcoholic",
+    "glass": "Highball glass",
+    "instructions": "Pour whisky over ice, top slowly with cold commercial kombucha, and squeeze in the lemon.",
+    "thumb": "/images/india/x-in-033.webp",
+    "video": "",
+    "tags": [
+      "India",
+      "Modern Indian Bar",
+      "Pantry Tier 2"
+    ],
+    "iba": "",
+    "vibeHint": "refreshing",
+    "browseable": true,
+    "india": {
+      "lane": "modern-bar",
+      "pantryTier": 2,
+      "researchDate": "2026-08-27"
+    },
+    "evidence": [
+      "FERMENT",
+      "IPSOS2025",
+      "CNT_ZERO"
+    ],
+    "ingredients": [
+      {
+        "name": "Whisky",
+        "measure": "45 ml"
+      },
+      {
+        "name": "Ginger Kombucha",
+        "measure": "120 ml"
+      },
+      {
+        "name": "Lemon Wedge",
+        "measure": "1"
+      }
+    ],
+    "videoSearch": "kombucha whisky highball recipe"
+  },
+  {
+    "id": "x-in-034",
+    "name": "Urrak Lemonade & Chilli",
+    "tagline": "Goa’s seasonal first-distil cashew spirit with Limca, lime and a split chilli.",
+    "category": "Cocktail",
+    "alcoholic": "Alcoholic",
+    "glass": "Highball glass",
+    "instructions": "Build over ice and stir once. Urrak strength varies: buy from a reliable licensed source and adjust the pour accordingly.",
+    "thumb": "/images/india/x-in-034.webp",
+    "video": "",
+    "tags": [
+      "India",
+      "Regional and Cultural",
+      "Pantry Tier 3"
+    ],
+    "iba": "",
+    "vibeHint": "refreshing",
+    "browseable": true,
+    "india": {
+      "lane": "regional",
+      "pantryTier": 3,
+      "researchDate": "2026-08-27"
+    },
+    "evidence": [
+      "REDDIT_GOA"
+    ],
+    "ingredients": [
+      {
+        "name": "Urrak",
+        "measure": "60 ml"
+      },
+      {
+        "name": "Lemon-Lime Soda",
+        "measure": "120 ml"
+      },
+      {
+        "name": "Lime Juice",
+        "measure": "15 ml"
+      },
+      {
+        "name": "Green Chilli",
+        "measure": "1 slit"
+      }
+    ],
+    "videoSearch": "urrak limca cocktail Goa"
+  },
+  {
+    "id": "x-in-035",
+    "name": "Tambde Roza",
+    "tagline": "Cashew feni and brindao-style kokum in a bright Goan long drink.",
+    "category": "Cocktail",
+    "alcoholic": "Alcoholic",
+    "glass": "Highball glass",
+    "instructions": "Build over ice, top with soda and squeeze in lime. For a sweeter local-style version, replace half the soda with lemon-lime soda.",
+    "thumb": "/images/india/x-in-035.webp",
+    "video": "",
+    "tags": [
+      "India",
+      "Regional and Cultural",
+      "Pantry Tier 3"
+    ],
+    "iba": "",
+    "vibeHint": "refreshing",
+    "browseable": true,
+    "india": {
+      "lane": "regional",
+      "pantryTier": 3,
+      "researchDate": "2026-08-27"
+    },
+    "evidence": [
+      "HOMEGROWN"
+    ],
+    "ingredients": [
+      {
+        "name": "Feni",
+        "measure": "45 ml"
+      },
+      {
+        "name": "Kokum Syrup",
+        "measure": "25 ml"
+      },
+      {
+        "name": "Soda Water",
+        "measure": "90 ml"
+      },
+      {
+        "name": "Lime Wedge",
+        "measure": "1"
+      }
+    ],
+    "videoSearch": "feni kokum cocktail Goa"
+  },
+  {
+    "id": "x-in-036",
+    "name": "Feni Coconut Cooler",
+    "tagline": "A minimal no-shaker Goan serve that lets cashew feni stay visible.",
+    "category": "Cocktail",
+    "alcoholic": "Alcoholic",
+    "glass": "Highball glass",
+    "instructions": "Add everything to a chilled glass, stir, and serve without ice or over one large cube.",
+    "thumb": "/images/india/x-in-036.webp",
+    "video": "",
+    "tags": [
+      "India",
+      "Regional and Cultural",
+      "Pantry Tier 3"
+    ],
+    "iba": "",
+    "vibeHint": "tropical",
+    "browseable": true,
+    "india": {
+      "lane": "regional",
+      "pantryTier": 3,
+      "researchDate": "2026-08-27"
+    },
+    "evidence": [
+      "MADIRA"
+    ],
+    "ingredients": [
+      {
+        "name": "Feni",
+        "measure": "60 ml"
+      },
+      {
+        "name": "Coconut Water",
+        "measure": "120 ml"
+      },
+      {
+        "name": "Lime Juice",
+        "measure": "10 ml"
+      },
+      {
+        "name": "Salt",
+        "measure": "1 pinch"
+      },
+      {
+        "name": "Mint Leaves",
+        "measure": "4",
+        "optional": true
+      }
+    ],
+    "videoSearch": "feni coconut water cocktail recipe"
+  },
+  {
+    "id": "x-in-037",
+    "name": "Feni Guava Mary",
+    "tagline": "Goan feni meets guava, chilli sauce, citrus and black salt.",
+    "category": "Cocktail",
+    "alcoholic": "Alcoholic",
+    "glass": "Highball glass",
+    "instructions": "Roll all ingredients with ice between two glasses and strain over fresh ice.",
+    "thumb": "/images/india/x-in-037.webp",
+    "video": "",
+    "tags": [
+      "India",
+      "Regional and Cultural",
+      "Pantry Tier 3"
+    ],
+    "iba": "",
+    "vibeHint": "party",
+    "browseable": true,
+    "india": {
+      "lane": "regional",
+      "pantryTier": 3,
+      "researchDate": "2026-08-27"
+    },
+    "evidence": [
+      "MAHUA_FENI"
+    ],
+    "ingredients": [
+      {
+        "name": "Feni",
+        "measure": "45 ml"
+      },
+      {
+        "name": "Guava Juice",
+        "measure": "100 ml"
+      },
+      {
+        "name": "Lime Juice",
+        "measure": "15 ml"
+      },
+      {
+        "name": "Tabasco",
+        "measure": "3 dashes"
+      },
+      {
+        "name": "Black Salt",
+        "measure": "1 pinch"
+      }
+    ],
+    "videoSearch": "feni guava cocktail recipe"
+  },
+  {
+    "id": "x-in-038",
+    "name": "Mahua Lemonade Highball",
+    "tagline": "Floral mahua spirit in the approachable lemonade-and-mint format.",
+    "category": "Cocktail",
+    "alcoholic": "Alcoholic",
+    "glass": "Highball glass",
+    "instructions": "Build over ice, top with tonic, and stir once. Use a licensed bottled mahua spirit, not unverified distillate.",
+    "thumb": "/images/india/x-in-038.webp",
+    "video": "",
+    "tags": [
+      "India",
+      "Regional and Cultural",
+      "Pantry Tier 3"
+    ],
+    "iba": "",
+    "vibeHint": "refreshing",
+    "browseable": true,
+    "india": {
+      "lane": "regional",
+      "pantryTier": 3,
+      "researchDate": "2026-08-27"
+    },
+    "evidence": [
+      "MAHUA_FENI",
+      "IPSOS2025"
+    ],
+    "ingredients": [
+      {
+        "name": "Mahua Spirit",
+        "measure": "45 ml"
+      },
+      {
+        "name": "Lemonade",
+        "measure": "100 ml"
+      },
+      {
+        "name": "Tonic Water",
+        "measure": "50 ml"
+      },
+      {
+        "name": "Mint Leaves",
+        "measure": "6"
+      }
+    ],
+    "videoSearch": "mahua lemonade cocktail recipe"
+  },
+  {
+    "id": "x-in-039",
+    "name": "Mahua Sour",
+    "tagline": "A producer-published sour that keeps mahua at the centre.",
+    "category": "Cocktail",
+    "alcoholic": "Alcoholic",
+    "glass": "Coupe",
+    "instructions": "Dry shake if using egg white, then shake hard with ice and double strain into a chilled coupe.",
+    "thumb": "/images/india/x-in-039.webp",
+    "video": "",
+    "tags": [
+      "India",
+      "Regional and Cultural",
+      "Pantry Tier 3"
+    ],
+    "iba": "",
+    "vibeHint": "boozy",
+    "browseable": true,
+    "india": {
+      "lane": "regional",
+      "pantryTier": 3,
+      "researchDate": "2026-08-27"
+    },
+    "evidence": [
+      "SIX_BROTHERS"
+    ],
+    "ingredients": [
+      {
+        "name": "Mahua Spirit",
+        "measure": "60 ml"
+      },
+      {
+        "name": "Lemon Juice",
+        "measure": "30 ml"
+      },
+      {
+        "name": "Sugar Syrup",
+        "measure": "15 ml"
+      },
+      {
+        "name": "Egg White",
+        "measure": "20 ml",
+        "optional": true
+      }
+    ],
+    "videoSearch": "mahua sour cocktail recipe"
+  },
+  {
+    "id": "x-in-040",
+    "name": "Kerala Toddy Cooler",
+    "tagline": "Fresh toddy, coconut, lime, pepper, cumin and curry leaf.",
+    "category": "Cocktail",
+    "alcoholic": "Alcoholic",
+    "glass": "Highball glass",
+    "instructions": "Shake briefly with ice and strain over fresh ice. Toddy changes quickly: use only fresh product from a reliable licensed source and serve immediately.",
+    "thumb": "/images/india/x-in-040.webp",
+    "video": "",
+    "tags": [
+      "India",
+      "Regional and Cultural",
+      "Pantry Tier 3"
+    ],
+    "iba": "",
+    "vibeHint": "refreshing",
+    "browseable": true,
+    "india": {
+      "lane": "regional",
+      "pantryTier": 3,
+      "researchDate": "2026-08-27"
+    },
+    "evidence": [
+      "MADIRA",
+      "FERMENT"
+    ],
+    "ingredients": [
+      {
+        "name": "Fresh Toddy",
+        "measure": "90 ml"
+      },
+      {
+        "name": "Coconut Water",
+        "measure": "30 ml"
+      },
+      {
+        "name": "Sugar Syrup",
+        "measure": "15 ml"
+      },
+      {
+        "name": "Lime Juice",
+        "measure": "10 ml"
+      },
+      {
+        "name": "Black Pepper",
+        "measure": "1 pinch"
+      },
+      {
+        "name": "Roasted Cumin",
+        "measure": "1 pinch"
+      },
+      {
+        "name": "Curry Leaves",
+        "measure": "4"
+      }
+    ],
+    "videoSearch": "toddy coconut cocktail Kerala recipe"
+  },
+  {
+    "id": "x-in-041",
+    "name": "Arrack Coconut Old Fashioned",
+    "tagline": "Coconut water and bitters soften arrack without hiding it.",
+    "category": "Cocktail",
+    "alcoholic": "Alcoholic",
+    "glass": "Old-fashioned glass",
+    "instructions": "Stir everything with ice until cold and strain over one large cube.",
+    "thumb": "/images/india/x-in-041.webp",
+    "video": "",
+    "tags": [
+      "India",
+      "Regional and Cultural",
+      "Pantry Tier 3"
+    ],
+    "iba": "",
+    "vibeHint": "boozy",
+    "browseable": true,
+    "india": {
+      "lane": "regional",
+      "pantryTier": 3,
+      "researchDate": "2026-08-27"
+    },
+    "evidence": [
+      "GUARDIAN"
+    ],
+    "ingredients": [
+      {
+        "name": "Arrack",
+        "measure": "50 ml"
+      },
+      {
+        "name": "Coconut Water",
+        "measure": "25 ml"
+      },
+      {
+        "name": "Sugar Syrup",
+        "measure": "15 ml"
+      },
+      {
+        "name": "Orange Bitters",
+        "measure": "3 dashes"
+      }
+    ],
+    "videoSearch": "arrack coconut cocktail recipe"
+  },
+  {
+    "id": "x-in-042",
+    "name": "Kokum Curry Leaf Spritzer",
+    "tagline": "Tart kokum, curry leaf and black salt in an adult zero-proof build.",
+    "category": "Cocktail",
+    "alcoholic": "Non alcoholic",
+    "glass": "Highball glass",
+    "instructions": "Slap the curry leaves, add them with kokum and lime to an ice-filled glass, top with soda and stir.",
+    "thumb": "/images/india/x-in-042.webp",
+    "video": "",
+    "tags": [
+      "India",
+      "Zero-Proof and Gen Alpha Safe",
+      "Pantry Tier 2"
+    ],
+    "iba": "",
+    "vibeHint": "refreshing",
+    "browseable": true,
+    "india": {
+      "lane": "zero-proof",
+      "pantryTier": 2,
+      "researchDate": "2026-08-27"
+    },
+    "evidence": [
+      "NDTV_ZERO",
+      "CNT_ZERO"
+    ],
+    "ingredients": [
+      {
+        "name": "Kokum Syrup",
+        "measure": "30 ml"
+      },
+      {
+        "name": "Lime Juice",
+        "measure": "15 ml"
+      },
+      {
+        "name": "Curry Leaves",
+        "measure": "6"
+      },
+      {
+        "name": "Black Salt",
+        "measure": "1 pinch"
+      },
+      {
+        "name": "Soda Water",
+        "measure": "120 ml"
+      }
+    ],
+    "videoSearch": "kokum curry leaf mocktail recipe"
+  },
+  {
+    "id": "x-in-043",
+    "name": "Saffron Cardamom Fizz",
+    "tagline": "Kesar and elaichi made bright rather than milky.",
+    "category": "Cocktail",
+    "alcoholic": "Non alcoholic",
+    "glass": "Highball glass",
+    "instructions": "Make saffron water by steeping two threads in 40 ml hot water and chill it. Build everything over ice and stir.",
+    "thumb": "/images/india/x-in-043.webp",
+    "video": "",
+    "tags": [
+      "India",
+      "Zero-Proof and Gen Alpha Safe",
+      "Pantry Tier 2"
+    ],
+    "iba": "",
+    "vibeHint": "cozy",
+    "browseable": true,
+    "india": {
+      "lane": "zero-proof",
+      "pantryTier": 2,
+      "researchDate": "2026-08-27"
+    },
+    "evidence": [
+      "NDTV_ZERO"
+    ],
+    "ingredients": [
+      {
+        "name": "Saffron Water",
+        "measure": "40 ml"
+      },
+      {
+        "name": "Cardamom Syrup",
+        "measure": "15 ml"
+      },
+      {
+        "name": "Lemon Juice",
+        "measure": "15 ml"
+      },
+      {
+        "name": "Soda Water",
+        "measure": "120 ml"
+      }
+    ],
+    "videoSearch": "saffron cardamom mocktail recipe"
+  },
+  {
+    "id": "x-in-044",
+    "name": "Fennel Cold Brew Tonic",
+    "tagline": "Coffee bitterness, saunf and tonic give this alcohol-free drink real length.",
+    "category": "Cocktail",
+    "alcoholic": "Non alcoholic",
+    "glass": "Highball glass",
+    "instructions": "Build cold brew and fennel syrup over ice, top slowly with tonic, and garnish with star anise if wanted.",
+    "thumb": "/images/india/x-in-044.webp",
+    "video": "",
+    "tags": [
+      "India",
+      "Zero-Proof and Gen Alpha Safe",
+      "Pantry Tier 2"
+    ],
+    "iba": "",
+    "vibeHint": "cozy",
+    "browseable": true,
+    "india": {
+      "lane": "zero-proof",
+      "pantryTier": 2,
+      "researchDate": "2026-08-27"
+    },
+    "evidence": [
+      "NDTV_ZERO"
+    ],
+    "ingredients": [
+      {
+        "name": "Cold Brew Coffee",
+        "measure": "75 ml"
+      },
+      {
+        "name": "Fennel Syrup",
+        "measure": "15 ml"
+      },
+      {
+        "name": "Tonic Water",
+        "measure": "90 ml"
+      },
+      {
+        "name": "Star Anise",
+        "measure": "1",
+        "optional": true
+      }
+    ],
+    "videoSearch": "cold brew tonic mocktail recipe"
+  },
+  {
+    "id": "x-in-045",
+    "name": "Haldi Ginger Highball",
+    "tagline": "Turmeric, ginger, lime and soda with a dry pepper finish.",
+    "category": "Cocktail",
+    "alcoholic": "Non alcoholic",
+    "glass": "Highball glass",
+    "instructions": "Shake syrup, ginger and lime with ice, strain into an ice-filled glass, top with soda and add pepper.",
+    "thumb": "/images/india/x-in-045.webp",
+    "video": "",
+    "tags": [
+      "India",
+      "Zero-Proof and Gen Alpha Safe",
+      "Pantry Tier 1"
+    ],
+    "iba": "",
+    "vibeHint": "refreshing",
+    "browseable": true,
+    "india": {
+      "lane": "zero-proof",
+      "pantryTier": 1,
+      "researchDate": "2026-08-27"
+    },
+    "evidence": [
+      "NDTV_ZERO"
+    ],
+    "ingredients": [
+      {
+        "name": "Turmeric Syrup",
+        "measure": "15 ml"
+      },
+      {
+        "name": "Fresh Ginger Juice",
+        "measure": "10 ml"
+      },
+      {
+        "name": "Lime Juice",
+        "measure": "20 ml"
+      },
+      {
+        "name": "Soda Water",
+        "measure": "120 ml"
+      },
+      {
+        "name": "Black Pepper",
+        "measure": "1 pinch"
+      }
+    ],
+    "videoSearch": "turmeric ginger mocktail highball recipe"
+  },
+  {
+    "id": "x-in-046",
+    "name": "Anar Basil Shrub Soda",
+    "tagline": "A tart pomegranate shrub gives the complexity usually supplied by alcohol.",
+    "category": "Cocktail",
+    "alcoholic": "Non alcoholic",
+    "glass": "Highball glass",
+    "instructions": "Slap the basil and add it with shrub to an ice-filled glass. Top with soda and stir.",
+    "thumb": "/images/india/x-in-046.webp",
+    "video": "",
+    "tags": [
+      "India",
+      "Zero-Proof and Gen Alpha Safe",
+      "Pantry Tier 2"
+    ],
+    "iba": "",
+    "vibeHint": "refreshing",
+    "browseable": true,
+    "india": {
+      "lane": "zero-proof",
+      "pantryTier": 2,
+      "researchDate": "2026-08-27"
+    },
+    "evidence": [
+      "NDTV_ZERO"
+    ],
+    "ingredients": [
+      {
+        "name": "Pomegranate Shrub",
+        "measure": "45 ml"
+      },
+      {
+        "name": "Basil Leaves",
+        "measure": "6"
+      },
+      {
+        "name": "Soda Water",
+        "measure": "120 ml"
+      }
+    ],
+    "videoSearch": "pomegranate basil shrub soda recipe"
+  },
+  {
+    "id": "x-in-047",
+    "name": "Kanji Spritz",
+    "tagline": "North Indian carrot kanji becomes a savoury fermented spritz.",
+    "category": "Cocktail",
+    "alcoholic": "Non alcoholic",
+    "glass": "Wine glass",
+    "instructions": "Build over ice and stir gently. Keep kanji refrigerated and discard any batch with mould, an off smell or abnormal pressure.",
+    "thumb": "/images/india/x-in-047.webp",
+    "video": "",
+    "tags": [
+      "India",
+      "Zero-Proof and Gen Alpha Safe",
+      "Pantry Tier 2"
+    ],
+    "iba": "",
+    "vibeHint": "refreshing",
+    "browseable": true,
+    "india": {
+      "lane": "zero-proof",
+      "pantryTier": 2,
+      "researchDate": "2026-08-27"
+    },
+    "evidence": [
+      "FERMENT",
+      "THEBAR"
+    ],
+    "ingredients": [
+      {
+        "name": "Prepared Kanji",
+        "measure": "90 ml"
+      },
+      {
+        "name": "Soda Water",
+        "measure": "60 ml"
+      },
+      {
+        "name": "Orange Slice",
+        "measure": "1"
+      }
+    ],
+    "videoSearch": "kanji mocktail spritz recipe"
+  },
+  {
+    "id": "x-in-048",
+    "name": "Darjeeling Ginger Fizz",
+    "tagline": "Tea, honey, lime and ginger ale: familiar ingredients, grown-up balance.",
+    "category": "Cocktail",
+    "alcoholic": "Non alcoholic",
+    "glass": "Highball glass",
+    "instructions": "Chill the tea completely. Build tea, honey and lime over ice, top with ginger ale, and stir once.",
+    "thumb": "/images/india/x-in-048.webp",
+    "video": "",
+    "tags": [
+      "India",
+      "Zero-Proof and Gen Alpha Safe",
+      "Pantry Tier 1"
+    ],
+    "iba": "",
+    "vibeHint": "refreshing",
+    "browseable": true,
+    "india": {
+      "lane": "zero-proof",
+      "pantryTier": 1,
+      "researchDate": "2026-08-27"
+    },
+    "evidence": [
+      "CNT_ZERO",
+      "SOMMELIER"
+    ],
+    "ingredients": [
+      {
+        "name": "Strong Darjeeling Tea",
+        "measure": "90 ml"
+      },
+      {
+        "name": "Honey Syrup",
+        "measure": "15 ml"
+      },
+      {
+        "name": "Lime Juice",
+        "measure": "20 ml"
+      },
+      {
+        "name": "Ginger Ale",
+        "measure": "60 ml"
+      }
+    ],
+    "videoSearch": "Darjeeling tea ginger mocktail recipe"
+  },
+  {
+    "id": "x-in-049",
+    "name": "Guava Chilli Fizz",
+    "tagline": "Guava-cart flavour with chilli, salt, lime and a clean soda finish.",
+    "category": "Cocktail",
+    "alcoholic": "Non alcoholic",
+    "glass": "Highball glass",
+    "instructions": "Shake guava, lime, chilli and salt with ice. Strain over fresh ice, top with soda, and stir.",
+    "thumb": "/images/india/x-in-049.webp",
+    "video": "",
+    "tags": [
+      "India",
+      "Zero-Proof and Gen Alpha Safe",
+      "Pantry Tier 1"
+    ],
+    "iba": "",
+    "vibeHint": "tropical",
+    "browseable": true,
+    "india": {
+      "lane": "zero-proof",
+      "pantryTier": 1,
+      "researchDate": "2026-08-27"
+    },
+    "evidence": [
+      "NDTV_GUAVA",
+      "CNT_ZERO"
+    ],
+    "ingredients": [
+      {
+        "name": "Guava Juice",
+        "measure": "100 ml"
+      },
+      {
+        "name": "Lime Juice",
+        "measure": "15 ml"
+      },
+      {
+        "name": "Soda Water",
+        "measure": "60 ml"
+      },
+      {
+        "name": "Green Chilli",
+        "measure": "1 thin slice"
+      },
+      {
+        "name": "Black Salt",
+        "measure": "1 pinch"
+      }
+    ],
+    "videoSearch": "guava chilli mocktail recipe"
+  },
+  {
+    "id": "x-in-050",
+    "name": "Jamun Apple Jalapeño Fizz",
+    "tagline": "Jamun tartness, apple and a little green heat.",
+    "category": "Cocktail",
+    "alcoholic": "Non alcoholic",
+    "glass": "Highball glass",
+    "instructions": "Shake everything but soda with ice, double strain over fresh ice, top with soda, and stir.",
+    "thumb": "/images/india/x-in-050.webp",
+    "video": "",
+    "tags": [
+      "India",
+      "Zero-Proof and Gen Alpha Safe",
+      "Pantry Tier 2"
+    ],
+    "iba": "",
+    "vibeHint": "party",
+    "browseable": true,
+    "india": {
+      "lane": "zero-proof",
+      "pantryTier": 2,
+      "researchDate": "2026-08-27"
+    },
+    "evidence": [
+      "CNT_ZERO"
+    ],
+    "ingredients": [
+      {
+        "name": "Jamun Puree",
+        "measure": "30 ml"
+      },
+      {
+        "name": "Apple Juice",
+        "measure": "60 ml"
+      },
+      {
+        "name": "Lime Juice",
+        "measure": "15 ml"
+      },
+      {
+        "name": "Jalapeno",
+        "measure": "1 thin slice"
+      },
+      {
+        "name": "Soda Water",
+        "measure": "60 ml"
+      }
+    ],
+    "videoSearch": "jamun apple mocktail recipe"
+  },
+  {
+    "id": "x-in-051",
+    "name": "Rose Lychee Tonic",
+    "tagline": "Rose and lychee kept crisp with lime and tonic.",
+    "category": "Cocktail",
+    "alcoholic": "Non alcoholic",
+    "glass": "Copa glass",
+    "instructions": "Build over ice, top with tonic, and stir once. Rose water is potent; use drops, not a free pour.",
+    "thumb": "/images/india/x-in-051.webp",
+    "video": "",
+    "tags": [
+      "India",
+      "Zero-Proof and Gen Alpha Safe",
+      "Pantry Tier 2"
+    ],
+    "iba": "",
+    "vibeHint": "sweet",
+    "browseable": true,
+    "india": {
+      "lane": "zero-proof",
+      "pantryTier": 2,
+      "researchDate": "2026-08-27"
+    },
+    "evidence": [
+      "CNT_ZERO"
+    ],
+    "ingredients": [
+      {
+        "name": "Lychee Juice",
+        "measure": "75 ml"
+      },
+      {
+        "name": "Lime Juice",
+        "measure": "15 ml"
+      },
+      {
+        "name": "Rose Water",
+        "measure": "2 drops"
+      },
+      {
+        "name": "Tonic Water",
+        "measure": "90 ml"
+      }
+    ],
+    "videoSearch": "rose lychee mocktail recipe"
+  },
+  {
+    "id": "x-in-052",
+    "name": "Coconut Curry Leaf Fizz",
+    "tagline": "Nariyal pani and curry leaf in a dry, coastal zero-proof cooler.",
+    "category": "Cocktail",
+    "alcoholic": "Non alcoholic",
+    "glass": "Highball glass",
+    "instructions": "Slap the curry leaves, shake them with coconut water, lime, syrup and ice, strain over fresh ice, and top with soda.",
+    "thumb": "/images/india/x-in-052.webp",
+    "video": "",
+    "tags": [
+      "India",
+      "Zero-Proof and Gen Alpha Safe",
+      "Pantry Tier 1"
+    ],
+    "iba": "",
+    "vibeHint": "tropical",
+    "browseable": true,
+    "india": {
+      "lane": "zero-proof",
+      "pantryTier": 1,
+      "researchDate": "2026-08-27"
+    },
+    "evidence": [
+      "CNT_ZERO",
+      "NDTV_GARDEN"
+    ],
+    "ingredients": [
+      {
+        "name": "Coconut Water",
+        "measure": "120 ml"
+      },
+      {
+        "name": "Lime Juice",
+        "measure": "20 ml"
+      },
+      {
+        "name": "Sugar Syrup",
+        "measure": "10 ml"
+      },
+      {
+        "name": "Curry Leaves",
+        "measure": "6"
+      },
+      {
+        "name": "Soda Water",
+        "measure": "30 ml"
+      }
+    ],
+    "videoSearch": "coconut curry leaf mocktail recipe"
+  }
 ]

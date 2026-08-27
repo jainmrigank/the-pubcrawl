@@ -38,6 +38,18 @@ export interface Recipe {
   missing?: string[];
   total?: number;
   source?: 'ai' | 'fallback';
+  /** Explicit browse admission for researched recipes without stock photography. */
+  browseable?: boolean;
+  /** Evidence source ids from data/indian_cocktail_sources.json. */
+  evidence?: string[];
+  videoTitle?: string;
+  videoKind?: 'exact' | 'technique' | 'search';
+  videoSearch?: string;
+  india?: {
+    lane: 'everyday' | 'modern-bar' | 'regional' | 'zero-proof';
+    pantryTier: 1 | 2 | 3;
+    researchDate: string;
+  };
 }
 
 export interface MatchResult {

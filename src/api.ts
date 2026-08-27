@@ -86,8 +86,8 @@ export const fetchRecipes = (opts: { vibe?: string; q?: string; limit?: number; 
   return get<Recipe[]>(`/api/recipes?${p}`);
 };
 
-export const matchRecipes = (ingredients: string[]) =>
-  post<MatchResult>('/api/recipes/match', { ingredients }, true);
+export const matchRecipes = (ingredients: string[], q = '') =>
+  post<MatchResult>('/api/recipes/match', { ingredients, q }, true);
 
 export const identifyImage = (imageBase64: string, mimeType: string) =>
   post<{ detected: Ingredient[] }>('/api/identify', { imageBase64, mimeType }, false, 90000);
