@@ -162,6 +162,7 @@ export async function createApp() {
     let list = visibleRecipes(cocktails);
     if (vibe === 'zeroproof') list = list.filter((c) => (c.alcoholic || '').toLowerCase().includes('non'));
     else if (vibe === 'indian') list = list.filter((c) => (c.tags || []).includes('India'));
+    else if (vibe === 'house') list = list.filter((c) => c.houseOriginal === true);
     else if (vibe) list = list.filter((c) => c.vibe === vibe);
 
     // Ranked search: name beats ingredients beats metadata, and metadata only

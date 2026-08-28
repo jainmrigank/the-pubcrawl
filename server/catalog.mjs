@@ -65,7 +65,7 @@ const CATEGORY_RULES = [
   ['Beer & Cider', ['beer', 'lager', 'ale', 'stout', 'cider']],
   ['Syrup & Sweetener', ['syrup', 'honey', 'sugar', 'agave', 'grenadine', 'orgeat', 'molasses', 'jaggery', 'gur', 'gulkand', 'sweetener', 'cordial', 'thandai', 'khus']],
   ['Dairy & Egg', ['cream', 'milk', 'yoghurt', 'yogurt', 'butter', 'egg', 'aquafaba', 'ice cream']],
-  ['Fruit', ['lemon', 'lime', 'orange', 'grapefruit', 'pineapple', 'banana', 'berry', 'berries', 'cherry', 'apple', 'peach', 'mango', 'melon', 'kiwi', 'papaya', 'guava', 'lychee', 'passion fruit', 'dragon fruit', 'pomegranate', 'watermelon', 'olive', 'fruit', 'yuzu', 'calamansi', 'kumquat', 'grapes', 'fig', 'apricot', 'coconut', 'kokum']],
+  ['Fruit', ['lemon', 'lime', 'orange', 'grapefruit', 'pineapple', 'banana', 'berry', 'berries', 'cherry', 'apple', 'peach', 'plum', 'mango', 'melon', 'kiwi', 'papaya', 'guava', 'lychee', 'passion fruit', 'dragon fruit', 'pomegranate', 'watermelon', 'olive', 'fruit', 'yuzu', 'calamansi', 'kumquat', 'grapes', 'fig', 'date', 'dates', 'apricot', 'coconut', 'kokum']],
   ['Herb & Spice', ['mint', 'basil', 'rosemary', 'sage', 'dill', 'thyme', 'lemongrass', 'shiso', 'curry leaf', 'curry leaves', 'kaffir', 'cinnamon', 'nutmeg', 'clove', 'cloves', 'cardamom', 'anise', 'saffron', 'pepper', 'peppercorn', 'ginger', 'chilli', 'jalapeno', 'salt', 'masala', 'tajin', 'paprika', 'vanilla', 'matcha', 'hibiscus', 'butterfly pea', 'rose water', 'orange blossom', 'celery', 'cucumber', 'wormwood', 'lavender', 'cumin']],
 ];
 
@@ -167,6 +167,7 @@ export function recipeSearchScore(recipe, query) {
 // interchangeable families — pantry item matches recipe item if both hit the same group
 const ALIAS_GROUPS = [
   ['whiskey', 'whisky', 'bourbon', 'scotch', 'rye whiskey', 'blended whiskey', 'irish whiskey', 'tennessee whiskey'],
+  ['apple', 'fresh apple', 'apple juice'],
   ['white rum', 'light rum', 'silver rum'],
   ['dark rum', 'black rum'],
   ['gold rum', 'anejo rum', 'aged rum'],

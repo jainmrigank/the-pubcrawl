@@ -12,8 +12,9 @@ It is not positioned as production AI employment experience. It is a hands-on po
 
 ## What It Does
 
-- Searches a fully illustrated 684-entry cocktail catalogue by drink, ingredient, category, classic designation, mood, glass, India lane, pantry-access tier, place, or preparation method; every entry is browseable and available to pantry matching.
+- Searches a fully illustrated 691-entry cocktail catalogue by drink, ingredient, category, classic designation, mood, glass, India lane, pantry-access tier, place, or preparation method; every entry is browseable and available to pantry matching.
 - Includes an evidence-led, dated 80-drink India collection spanning everyday serves, restaurant-bar leaders, regional/cultural drinks, and zero-proof recipes.
+- Gives owner-made cocktails a dedicated House Specials collection, original photos, and normal menu and shelf matching.
 - Gives every browseable flashcard an image and every India recipe a reviewed direct YouTube tutorial: exact named builds where available, clearly labelled base-technique videos for original riffs.
 - Lets users maintain a home-bar shelf through ingredient typeahead or photo upload.
 - Scores what can be made now and what is one or two ingredients away.

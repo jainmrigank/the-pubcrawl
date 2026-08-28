@@ -373,5 +373,160 @@
    { "name": "Lemonade", "measure": "150 ml" },
    { "name": "Lemon", "measure": "1 wedge" }
   ]
+ },
+ {
+  "id": "x-house-mango-frozen-margarita",
+  "name": "Mango Frozen Margarita",
+  "tagline": "Mrigank's house-made frozen blend of fresh mango and vodka.",
+  "category": "House Special",
+  "alcoholic": "Alcoholic",
+  "glass": "Coupe glass",
+  "instructions": "Add the vodka, fresh mango, ice, sugar and 15 ml of the cold water to a blender. Blend until smooth and slushy. If the blades need help, add the remaining water a little at a time, keeping the drink thick. Taste before adding any more sugar, then pour into a coupe glass and serve immediately.",
+  "thumb": "/images/house/x-house-mango-frozen-margarita.webp",
+  "video": "",
+  "tags": ["House Special", "House Creation", "Original", "Frozen", "Mango", "Vodka"],
+  "iba": "",
+  "vibeHint": "tropical",
+  "houseOriginal": true,
+  "ingredients": [
+   { "name": "Vodka", "measure": "45 ml" },
+   { "name": "Fresh Mango", "measure": "120 g (about 1 cup), sliced" },
+   { "name": "Ice", "measure": "1 heaped cup" },
+   { "name": "Sugar", "measure": "1 tsp or less" },
+   { "name": "Water", "measure": "15-30 ml, cold" }
+  ]
+ },
+ {
+  "id": "x-house-mango-tequila-frozen-slushie",
+  "name": "Mango Tequila Frozen Slushie",
+  "tagline": "Mrigank's house-made thick, creamy blend of fresh mango and tequila.",
+  "category": "House Special",
+  "alcoholic": "Alcoholic",
+  "glass": "Coupe glass",
+  "instructions": "Add the tequila, fresh mango, ice and sugar to a blender. Blend until completely smooth, thick and creamy. Do not add water: stop and scrape down the blender if needed so the texture stays dense. Taste before adding any more sugar, then pour into a coupe glass and serve immediately.",
+  "thumb": "/images/house/x-house-mango-tequila-frozen-slushie.webp",
+  "video": "",
+  "tags": ["House Special", "House Creation", "Original", "Frozen", "Mango", "Tequila", "Slushie"],
+  "iba": "",
+  "vibeHint": "tropical",
+  "houseOriginal": true,
+  "ingredients": [
+   { "name": "Tequila", "measure": "45 ml" },
+   { "name": "Fresh Mango", "measure": "120 g (about 1 cup), sliced" },
+   { "name": "Ice", "measure": "1 heaped cup" },
+   { "name": "Sugar", "measure": "1 tsp or less" }
+  ]
+ },
+ {
+  "id": "x-house-blueberry-frozen-margarita",
+  "name": "Fresh Blueberry Frozen Margarita",
+  "tagline": "Mrigank's house-made frozen blend of fresh blueberries and vodka.",
+  "category": "House Special",
+  "alcoholic": "Alcoholic",
+  "glass": "Coupe glass",
+  "instructions": "Add the vodka, fresh blueberries, ice, sugar and 15 ml of the cold water to a blender. Blend until smooth and slushy. If the blades need help, add the remaining water a little at a time, keeping the drink thick. Taste before adding any more sugar, then pour into a coupe glass and serve immediately.",
+  "thumb": "/images/house/x-house-blueberry-frozen-margarita.webp",
+  "video": "",
+  "tags": ["House Special", "House Creation", "Original", "Frozen", "Blueberry", "Vodka"],
+  "iba": "",
+  "vibeHint": "refreshing",
+  "houseOriginal": true,
+  "ingredients": [
+   { "name": "Vodka", "measure": "45 ml" },
+   { "name": "Fresh Blueberries", "measure": "120 g (about 1 cup)" },
+   { "name": "Ice", "measure": "1 heaped cup" },
+   { "name": "Sugar", "measure": "1 tsp or less" },
+   { "name": "Water", "measure": "15-30 ml, cold" }
+  ]
+ },
+ {
+  "id": "x-house-date-rum-smash",
+  "name": "Date Rum Smash",
+  "tagline": "Mrigank's house-made white-rum smash sweetened with fresh dates.",
+  "category": "House Special",
+  "alcoholic": "Alcoholic",
+  "glass": "Coupe glass",
+  "instructions": "Pit and roughly chop the dates. Muddle them thoroughly with the water and sugar in a shaker until pulpy. Add the white rum and ice, then shake hard for 15 seconds. Fine-strain into a coupe glass filled with fresh ice and serve immediately.",
+  "thumb": "/images/house/x-house-date-rum-smash.webp",
+  "video": "",
+  "tags": ["House Special", "House Creation", "Original", "Date", "Rum", "Smash"],
+  "iba": "",
+  "vibeHint": "refreshing",
+  "houseOriginal": true,
+  "ingredients": [
+   { "name": "White Rum", "measure": "45 ml" },
+   { "name": "Fresh Dates", "measure": "2, pitted and chopped" },
+   { "name": "Water", "measure": "30 ml" },
+   { "name": "Sugar", "measure": "1 tsp, or to taste" },
+   { "name": "Ice", "measure": "for shaking and serving" }
+  ]
+ },
+ {
+  "id": "x-house-plum-kala-namak-margarita",
+  "name": "Plum Kala Namak Margarita",
+  "tagline": "Mrigank's house-made pulpy plum blend with tequila, dark rum and kala namak.",
+  "category": "House Special",
+  "alcoholic": "Alcoholic",
+  "glass": "Coupe glass",
+  "instructions": "Lightly wet the rim of a coupe glass with water and coat it with 1 teaspoon of kala namak. Add the tequila, dark rum, fresh plum, remaining pinch of kala namak, sugar, ice and 20 ml water to a blender. Blend until slushy, then pour into the rimmed glass without straining so the plum pulp stays in the drink. Serve immediately.",
+  "thumb": "/images/house/x-house-plum-kala-namak-margarita.webp",
+  "video": "",
+  "tags": ["House Special", "House Creation", "Original", "Plum", "Kala Namak", "Tequila", "Dark Rum", "Pulp-Forward"],
+  "iba": "",
+  "vibeHint": "refreshing",
+  "houseOriginal": true,
+  "ingredients": [
+   { "name": "Tequila", "measure": "30 ml" },
+   { "name": "Dark Rum", "measure": "30 ml" },
+   { "name": "Fresh Plum", "measure": "1 large, pitted and chopped" },
+   { "name": "Kala Namak", "measure": "1 tsp for the rim, plus 1 pinch" },
+   { "name": "Sugar", "measure": "1 tsp, or to taste" },
+   { "name": "Ice", "measure": "1 heaped cup" },
+   { "name": "Water", "measure": "20 ml, plus a little for the rim" }
+  ]
+ },
+ {
+  "id": "x-house-spiced-apple-whiskey",
+  "name": "Spiced Apple Whiskey",
+  "tagline": "Mrigank's house-made apple-and-cinnamon whiskey cooler.",
+  "category": "House Special",
+  "alcoholic": "Alcoholic",
+  "glass": "Old-fashioned glass",
+  "instructions": "Add the whiskey, fresh apple or apple juice, cinnamon powder, sugar, ice and water to a blender. Blend until thoroughly combined, then fine-strain into an old-fashioned glass filled with fresh ice. Serve immediately.",
+  "thumb": "/images/house/x-house-spiced-apple-whiskey.webp",
+  "video": "",
+  "tags": ["House Special", "House Creation", "Original", "Apple", "Cinnamon", "Whiskey", "Blended", "Strained"],
+  "iba": "",
+  "vibeHint": "refreshing",
+  "houseOriginal": true,
+  "ingredients": [
+   { "name": "Whiskey", "measure": "45 ml" },
+   { "name": "Fresh Apple", "measure": "1/2 small, chopped, or 90 ml apple juice" },
+   { "name": "Cinnamon Powder", "measure": "1 small pinch" },
+   { "name": "Sugar", "measure": "1 tsp, or to taste" },
+   { "name": "Ice", "measure": "for blending and serving" },
+   { "name": "Water", "measure": "30 ml" }
+  ]
+ },
+ {
+  "id": "x-house-apple-mimosa",
+  "name": "Apple Mimosa",
+  "tagline": "Mrigank's house-made apple-and-vodka flute serve.",
+  "category": "House Special",
+  "alcoholic": "Alcoholic",
+  "glass": "Champagne flute",
+  "instructions": "Add the vodka, apple juice and optional sugar to a shaker. Fill with ice and shake hard for 10-12 seconds until thoroughly chilled. Fine-strain into a chilled champagne flute and serve immediately.",
+  "thumb": "/images/house/x-house-apple-mimosa.webp",
+  "video": "",
+  "tags": ["House Special", "House Creation", "Original", "Apple", "Vodka", "Shaken", "Strained", "Flute Serve"],
+  "iba": "",
+  "vibeHint": "refreshing",
+  "houseOriginal": true,
+  "ingredients": [
+   { "name": "Vodka", "measure": "45 ml" },
+   { "name": "Apple Juice", "measure": "90 ml" },
+   { "name": "Sugar", "measure": "1 tsp, or to taste", "optional": true },
+   { "name": "Ice", "measure": "for shaking" }
+  ]
  }
 ]

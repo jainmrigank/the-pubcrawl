@@ -442,8 +442,8 @@ export default function App() {
 
   // one mood row, two homes: the menu (filters the list) and the bar page
   // (filters the pour lists AND steers the house-special prompt)
-  const moodRow = (value: string, setValue: (v: string) => void) => (
-    <div className="vibe-bar" role="group" aria-label="Filter by mood">
+  const moodRow = (value: string, setValue: (v: string) => void, showHouse = false) => (
+    <div className="vibe-bar" role="group" aria-label={showHouse ? 'Filter by mood or collection' : 'Filter by mood'}>
       <span className="k-label dim">MOOD</span>
       <button className={`vibe-chip ${value === '' ? 'on' : ''}`} onClick={() => setValue('')}>
         ALL
@@ -475,6 +475,16 @@ export default function App() {
         <i className="swatch" />
         INDIA
       </button>
+      {showHouse && (
+        <button
+          className={`vibe-chip ${value === 'house' ? 'on' : ''}`}
+          style={{ ['--vc' as string]: '#9B4E32' }}
+          onClick={() => setValue(value === 'house' ? '' : 'house')}
+        >
+          <i className="swatch" />
+          HOUSE SPECIALS
+        </button>
+      )}
     </div>
   );
 
@@ -629,11 +639,13 @@ export default function App() {
                         ? `${featured.length} FOR “${browseQ.toUpperCase()}”`
                         : loved
                           ? 'THE CROWD’S FAVOURITES FIRST'
-                          : vibeFilter === 'indian'
-                            ? `${featured.length} FROM THE INDIA COLLECTION`
-                            : vibeFilter
-                              ? `SHOWING ${featured.length} IN THIS MOOD`
-                              : `SHOWING ${featured.length} OF ${health?.cocktails ?? 684}`
+                          : vibeFilter === 'house'
+                            ? `${featured.length} HOUSE SPECIALS`
+                            : vibeFilter === 'indian'
+                              ? `${featured.length} FROM THE INDIA COLLECTION`
+                              : vibeFilter
+                                ? `SHOWING ${featured.length} IN THIS MOOD`
+                                : `SHOWING ${featured.length} OF ${health?.cocktails ?? 691}`
                     }
                     lead="Every drink we know. Search by name, ingredient, lane, access tier, glass, place, mood or method."
                     loading={browseLoading}
@@ -647,7 +659,7 @@ export default function App() {
                     />
                   </div>
                   <div className="bar-controls">
-                    {moodRow(vibeFilter, setVibeFilter)}
+                    {moodRow(vibeFilter, setVibeFilter, true)}
                     <div className="menu-actions">
                       <button
                         className={`text-btn ${loved ? 'loved-on' : ''}`}
@@ -691,7 +703,7 @@ export default function App() {
                             SHOW MORE <ArrowDown size={14} />
                           </button>
                           <span className="k-label dim">
-                            {browse.length} OF {health?.cocktails ?? 684} ON SHOW
+                            {browse.length} OF {health?.cocktails ?? 691} ON SHOW
                           </span>
                           <button className="text-btn" onClick={surpriseMe}>
                             OR SURPRISE ME <Shuffle size={12} />
@@ -920,7 +932,7 @@ export default function App() {
             </div>
             <div className="foot-meta">
               <span className="k-label">RECIPES FROM THECOCKTAILDB</span>
-              <span className="k-label">HOUSE SPECIALS ARE ROBOT-MADE. TASTE BEFORE SERVING.</span>
+              <span className="k-label">HOUSE SPECIALS MAY BE ORIGINAL OR ROBOT-MADE. TASTE BEFORE SERVING.</span>
               <span className="k-label">THE PUBCRAWL © 2026</span>
             </div>
           </footer>

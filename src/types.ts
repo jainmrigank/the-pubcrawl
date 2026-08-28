@@ -38,6 +38,8 @@ export interface Recipe {
   missing?: string[];
   total?: number;
   source?: 'ai' | 'fallback';
+  /** A real house recipe created by the owner, rather than an AI invention. */
+  houseOriginal?: boolean;
   /** Explicit browse admission for researched recipes without stock photography. */
   browseable?: boolean;
   /** Evidence source ids from data/indian_cocktail_sources.json. */

@@ -4,6 +4,7 @@ import { existsSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import {
+  categorise,
   loadCatalog,
   hasRecipeImage,
   isBrowseableRecipe,
@@ -17,19 +18,19 @@ const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
 test('every catalogue entry is a browseable flashcard with an image', () => {
   const { cocktails } = loadCatalog();
   const photographed = cocktails.filter(hasRecipeImage);
-  assert.equal(cocktails.length, 684);
-  assert.equal(photographed.length, 684);
+  assert.equal(cocktails.length, 691);
+  assert.equal(photographed.length, 691);
   assert.equal(visibleRecipes(cocktails).length, cocktails.length);
   assert.ok(visibleRecipes(cocktails).every(hasRecipeImage));
   const localImages = photographed.filter((recipe) => recipe.thumb.startsWith('/images/'));
-  assert.equal(localImages.length, 60);
+  assert.equal(localImages.length, 67);
   assert.ok(localImages.every((recipe) => existsSync(join(ROOT, 'public', recipe.thumb))));
 });
 
 test('the GET /api/recipes admission boundary requires a photo or explicit browse admission', () => {
   const { cocktails } = loadCatalog();
   const recipes = visibleRecipes(cocktails);
-  assert.equal(recipes.length, 684);
+  assert.equal(recipes.length, 691);
   assert.ok(recipes.every(isBrowseableRecipe));
   assert.ok(recipes.every(hasRecipeImage));
 });
@@ -97,4 +98,66 @@ test('recipe search indexes research lane, access, glass, vibe, place, ingredien
   assert.ok(find('goa').some((recipe) => recipe.name === 'Urrak Lemonade & Chilli'));
   assert.ok(find('tamarind').some((recipe) => recipe.name === 'Imli Whisky Sour'));
   assert.ok(find('double strain').some((recipe) => recipe.name === 'Picante'));
+});
+
+test('Mrigank house originals keep their recipes, supplied photos and shelf access', () => {
+  const { cocktails } = loadCatalog();
+  const expected = [
+    ['x-house-mango-frozen-margarita', 'Vodka', 'Fresh Mango', 'Coupe glass'],
+    ['x-house-blueberry-frozen-margarita', 'Vodka', 'Fresh Blueberries', 'Coupe glass'],
+    ['x-house-date-rum-smash', 'White Rum', 'Fresh Dates', 'Coupe glass'],
+    ['x-house-mango-tequila-frozen-slushie', 'Tequila', 'Fresh Mango', 'Coupe glass'],
+    ['x-house-plum-kala-namak-margarita', 'Dark Rum', 'Fresh Plum', 'Coupe glass'],
+    ['x-house-spiced-apple-whiskey', 'Whiskey', 'Fresh Apple', 'Old-fashioned glass'],
+    ['x-house-apple-mimosa', 'Vodka', 'Apple Juice', 'Champagne flute'],
+  ];
+  const originals = cocktails.filter((recipe) => recipe.houseOriginal === true);
+  assert.equal(originals.length, expected.length);
+
+  for (const [id, spirit, fruit, glass] of expected) {
+    const recipe = cocktails.find((candidate) => candidate.id === id);
+    assert.ok(recipe, `missing ${id}`);
+    assert.equal(recipe.category, 'House Special');
+    assert.equal(recipe.glass, glass);
+    assert.equal(recipe.houseOriginal, true);
+    assert.ok(recipe.tags.includes('House Special'));
+    assert.ok(recipe.ingredients.some((ingredient) => ingredient.name === spirit));
+    assert.ok(recipe.ingredients.some((ingredient) => ingredient.name === fruit));
+    assert.match(recipe.tagline, /Mrigank's house-made/i);
+    assert.match(recipe.thumb, /^\/images\/house\//);
+    assert.ok(existsSync(join(ROOT, 'public', recipe.thumb)));
+    assert.ok(recipeSearchScore(recipe, 'house special') >= 0);
+    assert.ok(recipeSearchScore(recipe, glass.replace(/ glass$/i, '')) >= 0);
+
+    const pantry = recipe.ingredients.map((ingredient) => ingredient.name);
+    const candidates = cocktails.filter((candidate) => recipeSearchScore(candidate, recipe.name) >= 0);
+    assert.ok(matchRecipes(candidates, pantry).canMake.some((candidate) => candidate.id === recipe.id));
+  }
+
+  const mangoVodka = cocktails.find((recipe) => recipe.id === 'x-house-mango-frozen-margarita');
+  const blueberry = cocktails.find((recipe) => recipe.id === 'x-house-blueberry-frozen-margarita');
+  const dateSmash = cocktails.find((recipe) => recipe.id === 'x-house-date-rum-smash');
+  const mangoTequila = cocktails.find((recipe) => recipe.id === 'x-house-mango-tequila-frozen-slushie');
+  const plum = cocktails.find((recipe) => recipe.id === 'x-house-plum-kala-namak-margarita');
+  const apple = cocktails.find((recipe) => recipe.id === 'x-house-spiced-apple-whiskey');
+  const appleMimosa = cocktails.find((recipe) => recipe.id === 'x-house-apple-mimosa');
+  assert.match(mangoVodka.instructions, /blender/i);
+  assert.match(blueberry.instructions, /blender/i);
+  assert.match(dateSmash.instructions, /fine-strain/i);
+  assert.match(mangoTequila.instructions, /do not add water/i);
+  assert.ok(!mangoTequila.ingredients.some((ingredient) => ingredient.name === 'Water'));
+  assert.ok(plum.ingredients.some((ingredient) => ingredient.name === 'Tequila'));
+  assert.ok(plum.ingredients.some((ingredient) => ingredient.name === 'Kala Namak'));
+  assert.match(plum.instructions, /without straining/i);
+  assert.match(plum.instructions, /pulp stays/i);
+  assert.equal(apple.glass, 'Old-fashioned glass');
+  assert.ok(apple.ingredients.some((ingredient) => ingredient.name === 'Cinnamon Powder'));
+  assert.match(apple.instructions, /fine-strain/i);
+  const appleWithJuice = matchRecipes([apple], ['Whiskey', 'Apple Juice', 'Cinnamon Powder']);
+  assert.ok(appleWithJuice.canMake.some((recipe) => recipe.id === apple.id));
+  assert.match(appleMimosa.instructions, /shake hard/i);
+  assert.match(appleMimosa.instructions, /fine-strain/i);
+  assert.equal(appleMimosa.ingredients.find((ingredient) => ingredient.name === 'Sugar')?.optional, true);
+  assert.equal(categorise('Fresh Dates'), 'Fruit');
+  assert.equal(categorise('Fresh Plum'), 'Fruit');
 });
