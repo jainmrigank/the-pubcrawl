@@ -39,7 +39,7 @@ function shuffled(arr, rand) {
 
 const WINDOW = 25; // questions per rung of the ladder
 const RAMP = [
-  [3, 6],
+  [3, 5],
   [4, 7],
   [5, 8],
   [6, 9],
@@ -49,10 +49,10 @@ const STEADY = [6, 9]; // where it stays once the ladder runs out
 /**
  * One endless run, no question twice.
  *
- * Difficulty climbs in blocks of 25 rather than by strict tier, so the first
- * question can already be a 6 and the run bites long before the old version
- * did (reaching a 9 used to take 301 correct answers, which nobody was ever
- * going to do). Each block draws at random from a sliding band — 3–6, then
+ * Difficulty climbs in blocks of 25 rather than by strict tier. The opening
+ * block stays within 3–5, while the later bands still bite long before the old
+ * version did (reaching a 9 used to take 301 correct answers, which nobody was
+ * ever going to do). Each block draws at random from a sliding band — 3–5, then
  * 4–7, 5–8, 6–9 — and past 100 it holds at 6–9 until that band is spent. Only
  * then do the easy questions nobody happened to draw come back, so a run that
  * goes all the way ends on the whole bank rather than a subset.
