@@ -1,4 +1,17 @@
-import type { HallMember, Health, Ingredient, MatchResult, Question, Recipe, ShortLibrary, Vibe, WatchLibrary } from './types';
+import type {
+  CollectionId,
+  HallMember,
+  Health,
+  Ingredient,
+  MatchResult,
+  Question,
+  Recipe,
+  RecipePage,
+  ShortLibrary,
+  Vibe,
+  VibeId,
+  WatchLibrary,
+} from './types';
 
 /**
  * Where the API lives. Empty (default) means same origin — the dev server
@@ -30,16 +43,39 @@ const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
  * request during an outage, retries piling up) silently starve every later
  * fetch, freezing the whole app until a refresh.
  */
-async function get<T>(url: string, tries = 4): Promise<T> {
+async function get<T>(url: string, tries = 4, externalSignal?: AbortSignal): Promise<T> {
   let lastErr: unknown;
   for (let i = 0; i < tries; i++) {
+    let timeoutId: ReturnType<typeof setTimeout> | undefined;
+    let requestSignal: AbortSignal | undefined;
+    let detachExternal: (() => void) | undefined;
     try {
-      const res = await fetch(API_BASE + url, { headers: HEADERS, signal: AbortSignal.timeout(12000) });
+      // Keep request replacement and timeout cancellation independent of the
+      // browser's optional AbortSignal.any/timeout implementations. The
+      // component-owned signal always wins and is never retried.
+      const controller = new AbortController();
+      requestSignal = controller.signal;
+      timeoutId = setTimeout(() => controller.abort(), 12000);
+      const abortFromOwner = () => controller.abort(externalSignal?.reason);
+      if (externalSignal) {
+        if (externalSignal.aborted) abortFromOwner();
+        else {
+          externalSignal.addEventListener('abort', abortFromOwner, { once: true });
+          detachExternal = () => externalSignal.removeEventListener('abort', abortFromOwner);
+        }
+      }
+      const res = await fetch(API_BASE + url, { headers: HEADERS, signal: requestSignal });
       if (res.ok) return res.json();
       if (res.status < 500) throw new Error(`${url} → ${res.status}`);
       lastErr = new Error(`${url} → ${res.status}`);
     } catch (err) {
+      // A component-owned abort is a normal request replacement, not a
+      // network failure. Never retry it or surface it as an error state.
+      if (externalSignal?.aborted) throw err;
       lastErr = err;
+    } finally {
+      if (timeoutId !== undefined) clearTimeout(timeoutId);
+      detachExternal?.();
     }
     if (i < tries - 1) await sleep(1500 * (i + 1));
   }
@@ -76,14 +112,29 @@ export const searchIngredients = (q: string) =>
 
 export const fetchVibes = () => get<Vibe[]>('/api/vibes');
 
-export const fetchRecipes = (opts: { vibe?: string; q?: string; limit?: number; seed?: string; sort?: string }) => {
+export interface RecipeQueryOptions {
+  vibe?: string;
+  category?: VibeId;
+  collection?: CollectionId;
+  q?: string;
+  offset?: number;
+  limit?: number;
+  seed?: string;
+  sort?: string;
+  signal?: AbortSignal;
+}
+
+export const fetchRecipes = (opts: RecipeQueryOptions = {}) => {
   const p = new URLSearchParams();
   if (opts.vibe) p.set('vibe', opts.vibe);
+  if (opts.category) p.set('category', opts.category);
+  if (opts.collection) p.set('collection', opts.collection);
   if (opts.q) p.set('q', opts.q);
+  if (opts.offset != null) p.set('offset', String(opts.offset));
   if (opts.limit) p.set('limit', String(opts.limit));
   if (opts.seed) p.set('seed', opts.seed);
   if (opts.sort) p.set('sort', opts.sort);
-  return get<Recipe[]>(`/api/recipes?${p}`);
+  return get<RecipePage>(`/api/recipes?${p}`, 4, opts.signal);
 };
 
 export const matchRecipes = (ingredients: string[], q = '') =>

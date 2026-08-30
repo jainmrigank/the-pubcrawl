@@ -14,7 +14,7 @@
  * contains. A drink with no photo falls back to its glass glyph, which is the
  * honest outcome.
  *
- * Run: node scripts/audit_images.mjs [--dry]
+ * Run: node scripts/audit_images.mjs
  */
 import { readFileSync, writeFileSync, existsSync } from 'node:fs';
 import { dirname, join } from 'node:path';
@@ -22,7 +22,7 @@ import { fileURLToPath } from 'node:url';
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
 const OUT = join(ROOT, 'data', 'images.json');
-const DRY = process.argv.includes('--dry');
+const CANDIDATE_OUT = join(ROOT, 'data', 'image_audit_candidates.json');
 const UA = { 'user-agent': 'PubCrawl/1.0 (personal cocktail app; https://github.com/jainmrigank/the-pubcrawl)' };
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 
@@ -33,6 +33,7 @@ for (const f of ['extra_cocktails.json', 'indian_cocktails.json']) {
 }
 const byId = new Map(cocktails.map((c) => [c.id, c]));
 const images = JSON.parse(readFileSync(OUT, 'utf8'));
+const candidates = {};
 
 /** drink words, on word boundaries this time */
 const DRINK =
@@ -145,15 +146,22 @@ for (const [id, url] of Object.entries(images)) {
     await sleep(220);
     if (v && !v.ok) {
       removed.push({ name: drink.name, article: 'commons categories', why: v.cats });
-      delete images[id];
-    } else if (v) kept.push(drink.name);
-    else unresolved.push(drink.name);
+      candidates[id] = { status: 'remove', current: url, source: 'commons categories', note: v.cats };
+    } else if (v) {
+      kept.push(drink.name);
+      candidates[id] = { status: 'available', current: url, source: 'commons categories', note: 'Availability only; recipe-specific visual review still required.' };
+    } else {
+      unresolved.push(drink.name);
+      candidates[id] = { status: 'needs-review', current: url, note: 'Source could not be re-resolved automatically.' };
+    }
     continue;
   }
-  if (isDrink(source)) kept.push(drink.name);
-  else {
+  if (isDrink(source)) {
+    kept.push(drink.name);
+    candidates[id] = { status: 'available', current: url, source: source.title, note: 'Availability/source match only; recipe-specific visual review still required.' };
+  } else {
     removed.push({ name: drink.name, article: source.title, why: source.description || '(no description)' });
-    delete images[id];
+    candidates[id] = { status: 'remove', current: url, source: source.title, note: source.description || '(no description)' };
   }
   if (n % 20 === 0) process.stdout.write(`\r  checked ${n}/${TOTAL}   `);
 }
@@ -165,8 +173,5 @@ if (removed.length) {
 }
 if (unresolved.length) console.log(`\nnot re-resolvable, left as they were: ${unresolved.join(', ')}`);
 
-if (DRY) console.log('\n--dry: images.json not written');
-else {
-  writeFileSync(OUT, JSON.stringify(images, null, 1));
-  console.log(`\nWrote ${Object.keys(images).length} images.`);
-}
+writeFileSync(CANDIDATE_OUT, JSON.stringify({ generatedAt: new Date().toISOString().slice(0, 10), entries: candidates }, null, 1));
+console.log(`\nWrote ${Object.keys(candidates).length} image candidates to ${CANDIDATE_OUT}; images.json was not modified.`);

@@ -95,6 +95,7 @@ export function RecipeCardActions({
 export function RecipeCard(props: Props) {
   const { recipe, vibe, index, onVideo } = props;
   const [flipped, setFlipped] = useState(false);
+  const [imageFailed, setImageFailed] = useState(false);
   const isAI = recipe.source === 'ai' || recipe.source === 'fallback';
   const isHouseOriginal = recipe.houseOriginal === true;
   const isIndia = (recipe.tags || []).includes('India');
@@ -125,13 +126,19 @@ export function RecipeCard(props: Props) {
         {/* ---------- front ---------- */}
         <div className="ff front">
           {!flipped && <div className="card-actions">{buttons}</div>}
-          {recipe.thumb ? (
+          {recipe.thumb && !imageFailed ? (
             <div className="fc-img">
-              <img src={recipe.thumb} alt={recipe.name} loading="lazy" decoding="async" />
+              <img
+                src={recipe.thumb}
+                alt={recipe.name}
+                loading="lazy"
+                decoding="async"
+                onError={() => setImageFailed(true)}
+              />
             </div>
           ) : (
-            <div className="fc-img fc-img-ai">
-              <span className="fc-ai-mark">{isIndia ? 'INDIA' : isHouseOriginal ? 'HOUSE' : 'SPECIAL'}</span>
+            <div className="fc-img fc-img-ai" role="img" aria-label="No verified photo available">
+              <span className="fc-ai-mark">NO PHOTO</span>
               <GlassIcon glass={recipe.glass} size={72} />
             </div>
           )}
@@ -150,7 +157,6 @@ export function RecipeCard(props: Props) {
                 {recipe.glass || 'Any glass'}
               </span>
               {recipe.iba && <span className="k-label dim">CLASSIC</span>}
-              {(recipe.alcoholic || '').toLowerCase().includes('non') && <span className="k-label dim">ZERO-ALCOHOL</span>}
             </div>
             {recipe.total != null && (
               <div className={`fc-status ${ready ? 'ready' : ''}`}>
@@ -198,11 +204,7 @@ export function RecipeCard(props: Props) {
                   onVideo(recipe);
                 }}
               >
-                {recipe.videoKind === 'technique'
-                  ? 'WATCH THE TECHNIQUE'
-                  : recipe.videoKind === 'search'
-                    ? 'FIND A VIDEO'
-                    : 'WATCH IT MADE'}{' '}
+                WATCH IT MADE{' '}
                 <Play size={11} />
               </button>
             )}

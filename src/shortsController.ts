@@ -189,6 +189,30 @@ export function shortsPreparationPriority(
   return 10 + Math.abs(index - intentIndex);
 }
 
+/** Fixed-height shells can be prepared five cards either side of the active
+ * card without creating any players. This keeps native snap geometry stable
+ * while the iframe pool remains much smaller. */
+export function shortsContentWindow(activeIndex: number, length: number, radius = 5): number[] {
+  if (!Number.isInteger(length) || length <= 0) return [];
+  if (!Number.isInteger(activeIndex) || activeIndex < 0 || activeIndex >= length) return [];
+  const span = Math.max(0, Math.floor(radius));
+  const start = Math.max(0, activeIndex - span);
+  const end = Math.min(length - 1, activeIndex + span);
+  return Array.from({ length: end - start + 1 }, (_, offset) => start + offset);
+}
+
+/** Live iframe slots are intentionally capped at five (active ±2). */
+export function shortsPlayerWindow(activeIndex: number, length: number, maxPlayers = 5): number[] {
+  if (!Number.isInteger(length) || length <= 0) return [];
+  if (!Number.isInteger(activeIndex) || activeIndex < 0 || activeIndex >= length) return [];
+  const cap = Math.max(1, Math.floor(maxPlayers));
+  const radius = Math.floor((cap - 1) / 2);
+  const candidates = shortsContentWindow(activeIndex, length, radius);
+  if (candidates.length <= cap) return candidates;
+  const start = Math.max(0, Math.min(activeIndex - radius, length - cap));
+  return Array.from({ length: cap }, (_, offset) => start + offset);
+}
+
 export function leaseMatches(
   state: ShortsControllerState,
   index: number,
@@ -216,4 +240,118 @@ export function nearestShortIndex(cardTops: readonly number[], feedTop: number):
     }
   }
   return best;
+}
+
+/*
+ * Canonical feed reducer contract.
+ *
+ * The original controller exports the lower-case event vocabulary used by the
+ * current Shorts host. These aliases intentionally expose the product
+ * specification's public, upper-case vocabulary as a small pure reducer too.
+ * Keeping this boundary independent means future hosts cannot accidentally
+ * reintroduce a second playback owner while the existing adapter migrates.
+ */
+export type ShortsFeedPhase = 'inactive' | 'settled' | 'scrolling' | 'overlay' | 'hidden';
+export type ScrollDirection = 'forward' | 'backward';
+
+export interface ShortsFeedState {
+  phase: ShortsFeedPhase;
+  activeIndex: number;
+  intentIndex: number;
+  direction: ScrollDirection;
+  generation: number;
+  lease: PlayerLease | null;
+}
+
+export type ShortsFeedEvent =
+  | { type: 'ROUTE_ENTER'; index: number }
+  | { type: 'SCROLL_START'; direction: ScrollDirection }
+  | { type: 'SCROLL_INTENT'; index: number; direction: ScrollDirection }
+  | { type: 'SCROLL_SETTLE'; index: number }
+  | { type: 'OVERLAY_OPEN' }
+  | { type: 'OVERLAY_CLOSE'; resume: boolean }
+  | { type: 'VISIBILITY_HIDDEN' }
+  | { type: 'VISIBILITY_VISIBLE'; resume: boolean }
+  | { type: 'ROUTE_LEAVE' };
+
+export function createShortsFeedState(index = 0): ShortsFeedState {
+  const safe = Number.isInteger(index) && index >= 0 ? index : 0;
+  return {
+    phase: 'inactive',
+    activeIndex: safe,
+    intentIndex: safe,
+    direction: 'forward',
+    generation: 0,
+    lease: null,
+  };
+}
+
+/** Pure reducer used by the feed host: only settle/visibility/route entry can mint a lease. */
+export function shortsFeedReducer(state: ShortsFeedState, event: ShortsFeedEvent): ShortsFeedState {
+  switch (event.type) {
+    case 'ROUTE_ENTER': {
+      const index = Number.isInteger(event.index) && event.index >= 0 ? event.index : state.activeIndex;
+      const generation = state.generation + 1;
+      return { ...state, phase: 'settled', activeIndex: index, intentIndex: index, generation, lease: { index, generation } };
+    }
+    case 'SCROLL_START':
+      return { ...state, phase: 'scrolling', direction: event.direction, generation: state.generation + 1, lease: null };
+    case 'SCROLL_INTENT':
+      // A late IntersectionObserver/scroll correction cannot revoke a settled
+      // lease. Intent is advisory until the one settle event commits it.
+      if (state.phase !== 'scrolling') return state;
+      return { ...state, phase: 'scrolling', intentIndex: Math.max(0, event.index), direction: event.direction, lease: null };
+    case 'SCROLL_SETTLE': {
+      const index = Math.max(0, event.index);
+      if (
+        state.phase === 'settled' &&
+        state.activeIndex === index &&
+        state.intentIndex === index &&
+        state.lease?.index === index
+      ) return state;
+      const generation = state.generation + 1;
+      return { ...state, phase: 'settled', activeIndex: index, intentIndex: index, generation, lease: { index, generation } };
+    }
+    case 'OVERLAY_OPEN':
+      return { ...state, phase: 'overlay', generation: state.generation + 1, lease: null };
+    case 'OVERLAY_CLOSE': {
+      const generation = state.generation + 1;
+      return {
+        ...state,
+        phase: 'settled',
+        generation,
+        lease: event.resume ? { index: state.activeIndex, generation } : null,
+      };
+    }
+    case 'VISIBILITY_HIDDEN':
+      return { ...state, phase: 'hidden', generation: state.generation + 1, lease: null };
+    case 'VISIBILITY_VISIBLE': {
+      if (state.phase !== 'hidden') return state;
+      const generation = state.generation + 1;
+      return {
+        ...state,
+        phase: 'settled',
+        generation,
+        lease: event.resume ? { index: state.activeIndex, generation } : null,
+      };
+    }
+    case 'ROUTE_LEAVE':
+      return { ...state, phase: 'inactive', generation: state.generation + 1, lease: null };
+    default:
+      return state;
+  }
+}
+
+export function shortsFeedLeaseMatches(
+  state: ShortsFeedState,
+  index: number,
+  generation: number | null | undefined
+): boolean {
+  return Boolean(
+    generation != null &&
+    state.phase === 'settled' &&
+    state.lease?.index === index &&
+    state.lease?.generation === generation &&
+    state.activeIndex === index
+  );
 }

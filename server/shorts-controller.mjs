@@ -73,6 +73,24 @@ export function shortsPreparationPriority(index, settledIndex, intentIndex, dire
   return 10 + Math.abs(index - intentIndex);
 }
 
+export function shortsContentWindow(activeIndex, length, radius = 5) {
+  if (!Number.isInteger(length) || length <= 0 || !Number.isInteger(activeIndex) || activeIndex < 0 || activeIndex >= length) return [];
+  const span = Math.max(0, Math.floor(radius));
+  const start = Math.max(0, activeIndex - span);
+  const end = Math.min(length - 1, activeIndex + span);
+  return Array.from({ length: end - start + 1 }, (_, offset) => start + offset);
+}
+
+export function shortsPlayerWindow(activeIndex, length, maxPlayers = 5) {
+  if (!Number.isInteger(length) || length <= 0 || !Number.isInteger(activeIndex) || activeIndex < 0 || activeIndex >= length) return [];
+  const cap = Math.max(1, Math.floor(maxPlayers));
+  const radius = Math.floor((cap - 1) / 2);
+  const candidates = shortsContentWindow(activeIndex, length, radius);
+  if (candidates.length <= cap) return candidates;
+  const start = Math.max(0, Math.min(activeIndex - radius, length - cap));
+  return Array.from({ length: cap }, (_, offset) => start + offset);
+}
+
 export function leaseMatches(state, index, generation) {
   return generation != null && state.phase === 'idle' && state.lease?.index === index && state.lease?.generation === generation;
 }

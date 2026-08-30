@@ -89,10 +89,85 @@ export const isBoozeCategory = (cat) =>
   ['Spirit', 'Liqueur', 'Wine & Fortified', 'Beer & Cider'].includes(cat);
 
 /** Whether a recipe has a real photograph. Kept separate from browse admission
- * because researched house recipes use the card's honest illustration state. */
+ * so media review decisions never make a valid recipe disappear. */
 export const hasRecipeImage = (recipe) => typeof recipe?.thumb === 'string' && recipe.thumb.trim().length > 0;
-export const isBrowseableRecipe = (recipe) => hasRecipeImage(recipe) || recipe?.browseable === true;
+export const isBrowseableRecipe = (recipe) => Boolean(
+  recipe?.browseable === true &&
+  typeof recipe.id === 'string' && recipe.id.trim() &&
+  typeof recipe.name === 'string' && recipe.name.trim() &&
+  typeof recipe.instructions === 'string' && recipe.instructions.trim() &&
+  Array.isArray(recipe.ingredients) && recipe.ingredients.length > 0
+);
 export const visibleRecipes = (recipes) => (Array.isArray(recipes) ? recipes : []).filter(isBrowseableRecipe);
+
+const VALID_VIBE_IDS = new Set(Object.keys(VIBES_SET));
+
+function validateAuditEntry(id, entry) {
+  if (!entry || typeof entry !== 'object') throw new Error(`catalog audit entry ${id} is missing`);
+  if (!VALID_VIBE_IDS.has(entry.primaryCategory)) throw new Error(`catalog audit ${id} has invalid category`);
+  if (typeof entry.categoryNote !== 'string' || !entry.categoryNote.trim()) throw new Error(`catalog audit ${id} needs a category note`);
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(entry.reviewedAt || '')) throw new Error(`catalog audit ${id} needs a review date`);
+  if (!entry.image || !['exact', 'none'].includes(entry.image.status)) throw new Error(`catalog audit ${id} has invalid image status`);
+  if (entry.image.status === 'exact') {
+    if (!entry.image.displayUrl || !entry.image.sourceUrl || !entry.image.note) throw new Error(`catalog audit ${id} exact image is incomplete`);
+  } else if (entry.image.displayUrl || entry.image.sourceUrl) {
+    throw new Error(`catalog audit ${id} none image must not expose a URL`);
+  }
+  if (!entry.video || !['exact', 'none'].includes(entry.video.status)) throw new Error(`catalog audit ${id} has invalid video status`);
+  if (entry.video.status === 'exact') {
+    if (!/^https:\/\/(?:www\.)?youtube\.com\/watch\?v=[\w-]{11}$/.test(entry.video.url || '')) throw new Error(`catalog audit ${id} exact video URL is not direct`);
+    if (!entry.video.title || !entry.video.note || !entry.video.transcriptEvidence) throw new Error(`catalog audit ${id} exact video is incomplete`);
+    const evidence = entry.video.transcriptEvidence;
+    if (!['youtube-captions', 'publisher-transcript'].includes(evidence.source) || !evidence.sourceUrl || !/^\d{4}-\d{2}-\d{2}$/.test(evidence.checkedAt || '') || !evidence.note) throw new Error(`catalog audit ${id} transcript evidence is incomplete`);
+  } else if (entry.video.url || entry.video.title || entry.video.transcriptEvidence) {
+    throw new Error(`catalog audit ${id} none video must not expose metadata`);
+  }
+}
+
+function readCatalogAudit(cocktails) {
+  const auditPath = join(ROOT, 'data', 'catalog_audit.json');
+  if (!existsSync(auditPath)) throw new Error('Missing data/catalog_audit.json; reviewed catalogue decisions are required');
+  let audit;
+  try { audit = JSON.parse(readFileSync(auditPath, 'utf8')); } catch (error) { throw new Error(`Invalid data/catalog_audit.json: ${error.message}`); }
+  const ids = cocktails.map((cocktail) => cocktail.id);
+  if (audit.schemaVersion !== 1 || audit.catalogueCount !== ids.length || audit.catalogueCount !== 691 || !audit.entries || typeof audit.entries !== 'object') {
+    throw new Error(`Catalog audit count/schema mismatch (expected 691, got ${audit.catalogueCount})`);
+  }
+  const catalogueIds = new Set(ids);
+  const auditIds = Object.keys(audit.entries);
+  if (auditIds.length !== ids.length || auditIds.some((id) => !catalogueIds.has(id)) || ids.some((id) => !Object.prototype.hasOwnProperty.call(audit.entries, id))) {
+    throw new Error('Catalog audit IDs do not exactly match the assembled catalogue');
+  }
+  for (const id of ids) validateAuditEntry(id, audit.entries[id]);
+  return audit;
+}
+
+function applyCatalogAudit(cocktails) {
+  const audit = readCatalogAudit(cocktails);
+  for (const cocktail of cocktails) {
+    const entry = audit.entries[cocktail.id];
+    cocktail.vibe = entry.primaryCategory;
+    cocktail.browseable = true;
+    // Keep the catalogue's pre-audit image overlay/base thumbnail intact. The
+    // audit's image decision remains available for review and validation, but
+    // it must not blank the established drink photography while the image set
+    // is being reconsidered. Recipes without a legacy image still use the
+    // card's honest glass fallback.
+    // Search/technique candidates from legacy data are never served. The
+    // reviewed manifest is the only source of an actionable media URL.
+    delete cocktail.videoSearch;
+    if (entry.video.status === 'exact') {
+      cocktail.video = entry.video.url;
+      cocktail.videoTitle = entry.video.title;
+      cocktail.videoKind = 'exact';
+    } else {
+      cocktail.video = '';
+      delete cocktail.videoTitle;
+      delete cocktail.videoKind;
+    }
+  }
+  return cocktails;
+}
 
 /* ---------- normalisation + matching ---------- */
 export const norm = (s) =>
@@ -217,7 +292,7 @@ export function ingredientMatches(pantryName, recipeName) {
 export const isStaple = (name) => STAPLES.has(norm(name));
 
 /* ---------- catalog construction ---------- */
-export function loadCatalog() {
+export function loadCatalog(options = {}) {
   const cocktails = JSON.parse(readFileSync(join(ROOT, 'data', 'cocktails.json'), 'utf8')).map(withVibe);
   const scraped = JSON.parse(readFileSync(join(ROOT, 'data', 'ingredients.json'), 'utf8'));
 
@@ -294,6 +369,12 @@ export function loadCatalog() {
         if (!c.ingredients.some((i) => norm(i.name) === norm(ing.name))) c.ingredients.push({ ...ing });
     }
   }
+
+  // The reviewed manifest is the final authority for categories and actionable
+  // videos. It runs after every legacy media overlay and automatic vibe
+  // candidate; legacy thumbnails intentionally remain in place until a new
+  // image set is separately approved.
+  if (options.applyAudit !== false) applyCatalogAudit(cocktails);
 
   const seen = new Map(); // norm -> entry
   const add = (name) => {

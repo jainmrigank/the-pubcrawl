@@ -12,16 +12,17 @@ import {
   recipeSearchScore,
   visibleRecipes,
 } from '../server/catalog.mjs';
+import { classifyVibe, VIBES } from '../server/vibes.mjs';
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
 
-test('every catalogue entry is a browseable flashcard with an image', () => {
+test('every catalogue entry restores the pre-audit browseable image set', () => {
   const { cocktails } = loadCatalog();
   const photographed = cocktails.filter(hasRecipeImage);
   assert.equal(cocktails.length, 691);
   assert.equal(photographed.length, 691);
   assert.equal(visibleRecipes(cocktails).length, cocktails.length);
-  assert.ok(visibleRecipes(cocktails).every(hasRecipeImage));
+  assert.ok(visibleRecipes(cocktails).every((recipe) => isBrowseableRecipe(recipe) && hasRecipeImage(recipe)));
   const localImages = photographed.filter((recipe) => recipe.thumb.startsWith('/images/'));
   assert.equal(localImages.length, 67);
   assert.ok(localImages.every((recipe) => existsSync(join(ROOT, 'public', recipe.thumb))));
@@ -47,9 +48,8 @@ test('the India collection is unique, complete, dated and entirely browseable', 
   assert.ok(india.every((recipe) => recipe.evidence?.length));
   assert.ok(india.every((recipe) => recipe.india?.researchDate === '2026-08-27'));
   assert.ok(india.every(hasRecipeImage));
-  assert.ok(india.every((recipe) => /^https:\/\/(?:www\.)?youtube\.com\/watch\?v=[\w-]{11}(?:&|$)/.test(recipe.video || '')));
-  assert.ok(india.every((recipe) => recipe.videoTitle?.trim()));
-  assert.ok(india.every((recipe) => ['exact', 'technique'].includes(recipe.videoKind)));
+  assert.ok(india.every((recipe) => !recipe.video || /^https:\/\/(?:www\.)?youtube\.com\/watch\?v=[\w-]{11}$/.test(recipe.video)));
+  assert.ok(india.every((recipe) => recipe.video ? recipe.videoKind === 'exact' && recipe.videoTitle?.trim() : !recipe.videoTitle && !recipe.videoKind));
   assert.deepEqual(
     new Set(india.map((recipe) => recipe.india?.lane)),
     new Set(['everyday', 'modern-bar', 'regional', 'zero-proof'])
@@ -82,8 +82,9 @@ test('India index repairs incomplete source specs without duplicate classics', (
   assert.ok(longIsland.ingredients.some((ingredient) => ingredient.name === 'Cointreau'));
   assert.ok(longIsland.ingredients.some((ingredient) => ingredient.name === 'Lemon Juice'));
   assert.doesNotMatch(jagerbomb.instructions, /drop the (full )?shot glass/i);
-  assert.match(jagerbomb.videoTitle, /highball/i);
-  assert.doesNotMatch(jagerbomb.videoTitle, /bomb/i);
+  assert.equal(jagerbomb.video, '');
+  assert.equal(jagerbomb.videoTitle, undefined);
+  assert.equal(jagerbomb.videoKind, undefined);
   assert.equal(cocktails.filter((recipe) => recipe.name === 'Mojito').length, 1);
 });
 
@@ -98,6 +99,20 @@ test('recipe search indexes research lane, access, glass, vibe, place, ingredien
   assert.ok(find('goa').some((recipe) => recipe.name === 'Urrak Lemonade & Chilli'));
   assert.ok(find('tamarind').some((recipe) => recipe.name === 'Imli Whisky Sour'));
   assert.ok(find('double strain').some((recipe) => recipe.name === 'Picante'));
+});
+
+test('Zero Proof wins classification precedence and stays exclusive', () => {
+  assert.deepEqual(Object.keys(VIBES), ['tropical', 'refreshing', 'boozy', 'sweet', 'cozy', 'party', 'zeroproof']);
+  assert.equal(classifyVibe({ name: 'Masala Chai', category: 'Coffee / Tea', alcoholic: 'Non alcoholic', glass: 'Coffee Mug', instructions: 'Boil and serve hot.', ingredients: [{ name: 'Tea' }, { name: 'Milk' }] }), 'zeroproof');
+  assert.equal(classifyVibe({ name: 'Masala Chai Toddy', category: 'Coffee / Tea', alcoholic: 'Alcoholic', glass: 'Coffee Mug', instructions: 'Serve hot.', ingredients: [{ name: 'Whisky' }, { name: 'Masala Chai' }] }), 'cozy');
+  const { cocktails } = loadCatalog();
+  const masala = cocktails.find((recipe) => recipe.name === 'Masala Chai');
+  const toddy = cocktails.find((recipe) => recipe.name === 'Masala Chai Toddy');
+  assert.equal(masala?.vibe, 'zeroproof');
+  assert.notEqual(masala?.vibe, 'sweet');
+  assert.equal(toddy?.alcoholic, 'Alcoholic');
+  assert.notEqual(toddy?.vibe, 'zeroproof');
+  assert.ok(cocktails.filter((recipe) => /non\s*alcohol/i.test(recipe.alcoholic)).every((recipe) => recipe.vibe === 'zeroproof'));
 });
 
 test('Mrigank house originals keep their recipes, supplied photos and shelf access', () => {

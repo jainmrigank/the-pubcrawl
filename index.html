@@ -10,11 +10,29 @@
     <meta name="referrer" content="strict-origin-when-cross-origin" />
     <title>The PubCrawl — what's your poison?</title>
     <meta name="description" content="What's your poison? Every cocktail you can make with what's on your shelf." />
-    <meta name="theme-color" content="#ECE9E0" />
+    <meta name="theme-color" content="#141310" />
     <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
-    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
     <meta name="apple-mobile-web-app-title" content="PubCrawl" />
+    <script>
+      (() => {
+        const key = 'pubcrawl.theme';
+        let stored = null;
+        try { stored = localStorage.getItem(key); } catch (_) {}
+        const valid = stored === 'light' || stored === 'dark';
+        // Dark is the product default. Only a previously saved explicit
+        // choice can select light before React mounts.
+        const dark = valid ? stored === 'dark' : true;
+        const theme = dark ? 'dark' : 'light';
+        document.documentElement.dataset.theme = theme;
+        document.documentElement.style.colorScheme = theme;
+        const meta = document.querySelector('meta[name="theme-color"]');
+        if (meta) meta.content = theme === 'dark' ? '#141310' : '#ECE9E0';
+        const apple = document.querySelector('meta[name="apple-mobile-web-app-status-bar-style"]');
+        if (apple) apple.content = theme === 'dark' ? 'black-translucent' : 'default';
+      })();
+    </script>
     <link rel="preconnect" href="https://www.youtube-nocookie.com" />
     <link rel="preconnect" href="https://www.youtube.com" />
     <link rel="preconnect" href="https://i.ytimg.com" crossorigin />

@@ -16,8 +16,9 @@ import {
   visibleRecipes,
 } from './catalog.mjs';
 import { VIBES, withVibe } from './vibes.mjs';
+import { recipePage, RecipeQueryError } from './recipe-query.mjs';
 import { chat, extractJson, llmAvailable, llmConfig } from './llm.mjs';
-import { generateFallback } from './generator.mjs';
+import { generateFallback, generateZeroProofFallback } from './generator.mjs';
 import { buildNudge, buildDailyQuestionNudge, WELCOME } from './push.mjs';
 import { playlistSlice, questionOfDay, QUESTIONS } from './quiz.mjs';
 import { buildLibrary, VIDEOS } from './videos.mjs';
@@ -125,6 +126,11 @@ export async function createApp() {
         source: r.source === 'fallback' ? 'fallback' : 'ai',
         house: true,
         kept: true,
+        // Kept AI/fallback drinks are legitimate browseable recipes even when
+        // they have no verified photograph. The final catalogue audit only
+        // governs the fixed 691 records; this explicit admission keeps the
+        // user's saved special visible without inventing media.
+        browseable: true,
       };
       withVibe(drink);
       if (r.vibe && Object.keys(VIBES).includes(r.vibe)) drink.vibe = r.vibe;
@@ -156,45 +162,12 @@ export async function createApp() {
 
   /* ---- browse / featured ---- */
   app.get('/api/recipes', (req, res) => {
-    const vibe = String(req.query.vibe || '');
-    const q = norm(String(req.query.q || ''));
-    const limit = Math.min(Number(req.query.limit) || 12, 120);
-    let list = visibleRecipes(cocktails);
-    if (vibe === 'zeroproof') list = list.filter((c) => (c.alcoholic || '').toLowerCase().includes('non'));
-    else if (vibe === 'indian') list = list.filter((c) => (c.tags || []).includes('India'));
-    else if (vibe === 'house') list = list.filter((c) => c.houseOriginal === true);
-    else if (vibe) list = list.filter((c) => c.vibe === vibe);
-
-    // Ranked search: name beats ingredients beats metadata, and metadata only
-    // matches whole words — "lassi" must never surface every IBA cLASSIc.
-    let rank = null;
-    if (q) {
-      rank = new Map();
-      list = list.filter((c) => {
-        const s = recipeSearchScore(c, q);
-        if (s < 0) return false;
-        rank.set(c.id, s);
-        return true;
-      });
+    try {
+      res.json(recipePage(cocktails, getLikes(), req.query));
+    } catch (error) {
+      if (error instanceof RecipeQueryError) return res.status(400).json({ error: error.message });
+      throw error;
     }
-
-    const seedStr = String(req.query.seed || 'x');
-    let seed = 0;
-    for (const ch of seedStr) seed = (seed * 31 + ch.charCodeAt(0)) >>> 0;
-    // id-string hash (house extras have non-numeric ids)
-    const idNum = (c) => {
-      let h = 7;
-      for (const ch of String(c.id)) h = (h * 33 + ch.charCodeAt(0)) >>> 0;
-      return h;
-    };
-    const hash = (c) => ((idNum(c) + seed) * 2654435761) >>> 0;
-    const ordered =
-      String(req.query.sort || '') === 'likes'
-        ? [...list].sort((a, b) => (likes[b.id] || 0) - (likes[a.id] || 0) || hash(a) - hash(b))
-        : rank
-          ? [...list].sort((a, b) => rank.get(a.id) - rank.get(b.id) || hash(a) - hash(b))
-          : [...list].sort((a, b) => hash(a) - hash(b));
-    res.json(ordered.slice(0, limit));
   });
 
   /* ---- match pantry -> recipes ---- */
@@ -257,6 +230,12 @@ export async function createApp() {
     const taste = Array.isArray(req.body?.taste) ? req.body.taste.map(String).slice(0, 8) : [];
     if (!pantry.length) return res.status(400).json({ error: 'ingredients required' });
 
+    const knownIngredientNames = new Set(ingredients.map((ingredient) => norm(ingredient.name)));
+    const zeroProofIngredients = (items) => items.every((ingredient) => {
+      const name = String(ingredient.name || '').trim();
+      return name && knownIngredientNames.has(norm(name)) && !['Spirit', 'Liqueur', 'Wine & Fortified', 'Beer & Cider'].includes(categorise(name));
+    });
+
     const MOODS = {
       tropical: 'tropical and sunny',
       refreshing: 'fresh, citrusy and light',
@@ -269,7 +248,10 @@ export async function createApp() {
     };
 
     if (llmAvailable()) {
-      try {
+      let lastError;
+      const attempts = vibe === 'zeroproof' ? 2 : 1;
+      for (let attempt = 0; attempt < attempts; attempt += 1) {
+        try {
         const cue = ['bitter-forward', 'herbal', 'silky', 'effervescent', 'smoky', 'bright and tart', 'aromatic', 'bone-dry', 'lightly sweet', 'savoury'][Math.floor(Math.random() * 10)];
         const reply = await chat(
           [
@@ -298,12 +280,19 @@ RULES:
 - Give it a creative, evocative name that is not an existing cocktail, and clear step-by-step instructions.
 
 Respond with JSON exactly like:
-{"name": "...", "tagline": "one poetic sentence", "vibe": "tropical|refreshing|boozy|sweet|cozy|party", "glass": "...", "ingredients": [{"name": "...", "measure": "..."}], "instructions": "...", "garnish": "..."}`,
+{"name": "...", "tagline": "one poetic sentence", "vibe": "tropical|refreshing|boozy|sweet|cozy|party|zeroproof", "glass": "...", "ingredients": [{"name": "...", "measure": "..."}], "instructions": "...", "garnish": "..."}`,
             },
           ],
           { temperature: 0.95 }
         );
         const r = extractJson(reply);
+        const generatedIngredients = (Array.isArray(r.ingredients) ? r.ingredients : []).map((i) => ({
+          name: String(i.name || '').trim(),
+          measure: String(i.measure || ''),
+        })).filter((i) => i.name);
+        if (vibe === 'zeroproof' && (!generatedIngredients.length || !zeroProofIngredients(generatedIngredients))) {
+          throw new Error('Generated Zero Proof recipe contained an unknown or alcoholic ingredient');
+        }
         const drink = {
           id: `custom-${Date.now()}`,
           name: String(r.name || 'The Unnamed'),
@@ -316,20 +305,21 @@ Respond with JSON exactly like:
           video: '',
           tags: ['AI Original'],
           iba: '',
-          ingredients: (Array.isArray(r.ingredients) ? r.ingredients : []).map((i) => ({
-            name: String(i.name || ''),
-            measure: String(i.measure || ''),
-          })),
+          ingredients: generatedIngredients,
           source: 'ai',
         };
-        if (Object.keys(VIBES).includes(r.vibe)) drink.vibe = r.vibe;
+        if (vibe === 'zeroproof') drink.vibe = 'zeroproof';
+        else if (Object.keys(VIBES).includes(r.vibe)) drink.vibe = r.vibe;
         else withVibe(drink);
         return res.json(drink);
-      } catch (err) {
-        console.error('[generate] LLM failed, falling back:', err.message);
+        } catch (err) {
+          lastError = err;
+          if (attempt + 1 < attempts) continue;
+        }
       }
+      if (lastError) console.error('[generate] LLM failed, falling back:', lastError.message);
     }
-    res.json(generateFallback(pantry, avoid));
+    res.json(vibe === 'zeroproof' ? generateZeroProofFallback(pantry, ingredients) : generateFallback(pantry, avoid));
   });
 
   /* ================= last orders (the quiz) ================= */

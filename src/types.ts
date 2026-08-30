@@ -1,5 +1,23 @@
+export type VibeId =
+  | 'tropical'
+  | 'refreshing'
+  | 'boozy'
+  | 'sweet'
+  | 'cozy'
+  | 'party'
+  | 'zeroproof';
+
+export type CollectionId = 'india' | 'house';
+
+export type Theme = 'light' | 'dark';
+
+export type BrowseFilter =
+  | { kind: 'all' }
+  | { kind: 'category'; id: VibeId }
+  | { kind: 'collection'; id: CollectionId };
+
 export interface Vibe {
-  id: string;
+  id: VibeId;
   label: string;
   color: string;
 }
@@ -33,7 +51,7 @@ export interface Recipe {
   tags: string[];
   iba: string;
   ingredients: RecipeIngredient[];
-  vibe: string;
+  vibe: VibeId;
   matched?: number;
   missing?: string[];
   total?: number;
@@ -45,13 +63,21 @@ export interface Recipe {
   /** Evidence source ids from data/indian_cocktail_sources.json. */
   evidence?: string[];
   videoTitle?: string;
-  videoKind?: 'exact' | 'technique' | 'search';
+  videoKind?: 'exact';
   videoSearch?: string;
   india?: {
     lane: 'everyday' | 'modern-bar' | 'regional' | 'zero-proof';
     pantryTier: 1 | 2 | 3;
     researchDate: string;
   };
+}
+
+export interface RecipePage {
+  recipes: Recipe[];
+  total: number;
+  offset: number;
+  limit: number;
+  hasMore: boolean;
 }
 
 export interface MatchResult {

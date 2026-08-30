@@ -3,7 +3,7 @@ import { fetchVideos, postWatchEvent } from '../api';
 import type { WatchLane, WatchLibrary, WatchVideo } from '../types';
 import { ArrowRight, Check, Play, Search, Share, Shuffle, X } from '../icons';
 import { shareContent, videoShareText } from '../share';
-import { LANDING_WATCH_SEED, WATCH_CATALOGUE_COUNT, thumbnailForWatch, watchLaneLabel } from '../watchData';
+import { LANDING_WATCH_SEED, WATCH_BOOTSTRAP_LIBRARY, WATCH_CATALOGUE_COUNT, thumbnailForWatch, watchLaneLabel } from '../watchData';
 
 type Tab = 'watched' | 'new' | 'surprise';
 
@@ -229,44 +229,56 @@ function eventSource(source: string): 'landing' | 'nav' | 'deep-link' | 'direct'
 }
 
 export function Watch({ active = true, initialId = '', source = 'direct' }: WatchProps) {
-  const [data, setData] = useState<WatchLibrary | null>(null);
+  // A tiny reviewed bootstrap renders immediately. The complete curated
+  // watchlist remains a lazy chunk, while the API response is optional live
+  // enrichment; neither slow dependency can leave Watch on an empty spinner.
+  const [data, setData] = useState<WatchLibrary | null>(WATCH_BOOTSTRAP_LIBRARY);
   const [error, setError] = useState(false);
   const loadStartedRef = useRef(false);
-  const mountedRef = useRef(true);
-
-  useEffect(() => () => {
-    mountedRef.current = false;
-  }, []);
+  const dataSourceRef = useRef<'bootstrap' | 'static' | 'api'>('bootstrap');
 
   useEffect(() => {
-    if (!active || loadStartedRef.current) return;
+    if (!active) {
+      loadStartedRef.current = false;
+      return;
+    }
+    if (loadStartedRef.current) return;
     loadStartedRef.current = true;
-    let usable = false;
-    let pending = 2;
+    let cancelled = false;
 
-    const reject = () => {
-      pending -= 1;
-      if (mountedRef.current && pending === 0 && !usable) setError(true);
-    };
-    const accept = (library: WatchLibrary) => {
+    const accept = (library: WatchLibrary, source: 'static' | 'api') => {
       if (!Array.isArray(library?.videos) || library.videos.length === 0) {
-        reject();
         return;
       }
-      usable = true;
-      pending -= 1;
-      if (!mountedRef.current) return;
+      if (cancelled) return;
+      // API data includes the health sweep's unavailable-video removals and
+      // must not be replaced by a slower static-chunk response.
+      if (source === 'static' && dataSourceRef.current === 'api') return;
+      dataSourceRef.current = source;
       setError(false);
       setData(library);
     };
 
-    // The reviewed catalogue and live statistics are independent. The local
-    // chunk renders first on a cold/offline API; a later API response enriches
-    // it and removes anything the weekly health sweep marked dead.
+    // The local catalogue and live statistics are independent. Whichever
+    // complete source arrives first replaces the bootstrap; a stalled request
+    // can never leave Watch stuck behind an indefinite loading state.
     import('../watchLibrary')
-      .then(({ STATIC_WATCH_LIBRARY }) => accept(STATIC_WATCH_LIBRARY))
-      .catch(reject);
-    fetchVideos().then(accept).catch(reject);
+      .then(({ STATIC_WATCH_LIBRARY }) => accept(STATIC_WATCH_LIBRARY, 'static'))
+      .catch(() => {});
+    fetchVideos()
+      .then((library) => accept(library, 'api'))
+      .catch(() => {
+        if (cancelled) return;
+        // Keep the local bootstrap visible on API failure; show the error only
+        // if a future build ever ships without any bundled cards.
+        if (!WATCH_BOOTSTRAP_LIBRARY.videos.length) setError(true);
+      });
+
+    return () => {
+      cancelled = true;
+      // A later route visit gets a fresh chance to refresh API statistics.
+      loadStartedRef.current = false;
+    };
   }, [active]);
 
   if (error && !data)
@@ -427,20 +439,33 @@ function WatchShelf({ data, active, initialId, source }: WatchShelfProps) {
 
       <div className="wv-filters">
         <span className="k-label dim wv-filters-label">KIND</span>
-        <button className={`vibe-chip ${lane === '' ? 'on' : ''}`} onClick={() => setLane('')}>
-          ALL
-        </button>
-        {data.lanes.map((l) => (
-          <button
-            key={l.id}
-            className={`vibe-chip ${lane === l.id ? 'on' : ''}`}
-            style={{ ['--vc' as string]: l.color }}
-            onClick={() => setLane(lane === l.id ? '' : l.id)}
-          >
-            <i className="swatch" />
-            {l.label.toUpperCase()}
+        <select
+          className="wv-kind-select"
+          value={lane}
+          aria-label="Filter videos by kind"
+          onChange={(event) => setLane(event.target.value)}
+        >
+          <option value="">All</option>
+          {data.lanes.map((l) => (
+            <option key={l.id} value={l.id}>{l.label}</option>
+          ))}
+        </select>
+        <div className="wv-kind-pills" aria-label="Filter videos by kind">
+          <button className={`vibe-chip ${lane === '' ? 'on' : ''}`} onClick={() => setLane('')}>
+            ALL
           </button>
-        ))}
+          {data.lanes.map((l) => (
+            <button
+              key={l.id}
+              className={`vibe-chip ${lane === l.id ? 'on' : ''}`}
+              style={{ ['--vc' as string]: l.color }}
+              onClick={() => setLane(lane === l.id ? '' : l.id)}
+            >
+              <i className="swatch" />
+              {l.label.toUpperCase()}
+            </button>
+          ))}
+        </div>
       </div>
 
       <div className="wv-tabs" role="tablist">

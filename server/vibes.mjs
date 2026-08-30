@@ -7,6 +7,7 @@ export const VIBES = {
   sweet: { id: 'sweet', label: 'Dessert', color: '#8E4A5B' },
   cozy: { id: 'cozy', label: 'Warm', color: '#A3492B' },
   party: { id: 'party', label: 'Party & Shots', color: '#4A4E7A' },
+  zeroproof: { id: 'zeroproof', label: 'Zero Proof', color: '#6B7A6E' },
 };
 
 const has = (haystack, words) => words.some((w) => haystack.includes(w));
@@ -19,6 +20,11 @@ export function classifyVibe(drink) {
   const instructions = (drink.instructions || '').toLowerCase();
   const ing = drink.ingredients.map((i) => i.name.toLowerCase()).join(' | ');
   const all = `${name} | ${ing}`;
+
+  // Zero Proof is an exclusive primary category. Check the source alcohol
+  // status before coffee/tea, hot, dessert, or refreshing heuristics so a
+  // drink such as Masala Chai cannot be presented as Dessert as well.
+  if ((drink.alcoholic || '').toLowerCase().includes('non')) return 'zeroproof';
 
   if (
     /\b(hot|toddy|mulled|warmed?|boiling|steamed?)\b/.test(`${name} ${instructions}`) ||
@@ -61,7 +67,6 @@ export function classifyVibe(drink) {
   )
     return 'refreshing';
 
-  if ((drink.alcoholic || '').toLowerCase().includes('non')) return 'refreshing';
   return 'boozy';
 }
 

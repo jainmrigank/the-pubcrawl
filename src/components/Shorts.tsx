@@ -2,7 +2,7 @@ import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState, typ
 import { fetchRecipes, fetchShorts, postShortSession } from '../api';
 import type { Recipe, ShortLibrary, ShortsReturnState, ShortVideo, Vibe, WatchLane } from '../types';
 import { applySound, createYouTubePlayer, YT_PLAYER_STATES, type YouTubePlayer } from '../shortsPlayer';
-import { ArrowLeft, ArrowRight, Check, Play, Share, X } from '../icons';
+import { ArrowLeft, ArrowRight, Check, GlassIcon, Play, Share, X } from '../icons';
 import { shareContent, shortShareText } from '../share';
 import { formatMeasure } from '../measure';
 import { SHORTS_SEED, thumbnailForShort } from '../shortsData';
@@ -11,7 +11,8 @@ import {
   createShortsControllerState,
   leaseMatches,
   shortsPreparationPriority,
-  shortsPreparationWindow,
+  shortsContentWindow,
+  shortsPlayerWindow,
   transitionShortsController,
   type PlayerLease,
   type ShortsControllerPhase,
@@ -127,17 +128,6 @@ function preferredPlaybackMode(): ShortsPlaybackMode {
   return connection?.effectiveType === '3g' ? 'balanced' : 'pool';
 }
 
-/** Keep the preparation policy local to the browser bundle and test it in isolation on the server. */
-function shortsPoolWindow(
-  activeIndex: number,
-  length: number,
-  mode: ShortsPlaybackMode,
-  direction: ShortsScrollDirection,
-  focusIndex = activeIndex
-) {
-  return shortsPreparationWindow(activeIndex, focusIndex, length, mode, direction);
-}
-
 /** Initialization order for the bounded iframe bootstrap queue. */
 function shortsInitPriority(index: number, activeIndex: number, focusIndex: number, direction: ShortsScrollDirection): number {
   return shortsPreparationPriority(index, activeIndex, focusIndex, direction);
@@ -239,6 +229,7 @@ interface ShortRecipeCardProps {
 
 function ShortRecipeCard({ recipe, index, vibe, onToggleTab, inTab, likes, liked, onToggleLike, onKeep }: ShortRecipeCardProps) {
   const [flipped, setFlipped] = useState(false);
+  const [imageFailed, setImageFailed] = useState(false);
   return (
     <article className={`shorts-recipe-card ${flipped ? 'is-flipped' : ''}`}>
       <div
@@ -255,9 +246,16 @@ function ShortRecipeCard({ recipe, index, vibe, onToggleTab, inTab, likes, liked
         }}
       >
         <div className="shorts-recipe-face shorts-recipe-front">
-          <div className="shorts-recipe-image">
-            <img src={recipe.thumb} alt={recipe.name} loading={index < 2 ? 'eager' : 'lazy'} decoding="async" />
-          </div>
+          {recipe.thumb && !imageFailed ? (
+            <div className="shorts-recipe-image">
+              <img src={recipe.thumb} alt={recipe.name} loading={index < 2 ? 'eager' : 'lazy'} decoding="async" onError={() => setImageFailed(true)} />
+            </div>
+          ) : (
+            <div className="shorts-recipe-image shorts-recipe-image-fallback" role="img" aria-label="No verified photo available">
+              <span className="k-label">NO PHOTO</span>
+              <GlassIcon glass={recipe.glass} size={56} />
+            </div>
+          )}
           <div className="shorts-recipe-copy">
             <span className="k-label">{recipe.glass || 'ANY GLASS'}</span>
             <h3>{recipe.name}</h3>
@@ -553,6 +551,12 @@ function ShortPlayerHost({
               setCued(true);
               setPhase('cued');
               onCuedRef.current(index, leaseGenerationRef.current, player);
+            } else if (state === YT_PLAYER_STATES.PAUSED && !shouldPlayRef.current) {
+              // YouTube can emit PAUSED after the parent has already revoked
+              // a lease. Keep the DOM phase honest so a stopped neighbour is
+              // never mistaken for a second concurrently playing player.
+              setPhase(cuedRef.current ? 'cued' : 'initializing');
+              setRevealed(false);
             } else if (state === YT_PLAYER_STATES.ENDED && shouldPlayRef.current && leaseGenerationRef.current != null && cuedRef.current) {
               player.seekTo(0, true);
               player.playVideo();
@@ -637,6 +641,7 @@ function ShortPlayerHost({
     try {
       playerRef.current?.pauseVideo();
     } catch {}
+    setPhase(cuedRef.current ? 'cued' : 'initializing');
   }, [playLeaseGeneration]);
 
   useEffect(() => {
@@ -655,6 +660,7 @@ function ShortPlayerHost({
       setRevealed(false);
       playbackConfirmedRef.current = false;
       playRequestRef.current = false;
+      setPhase(cuedRef.current ? 'cued' : 'initializing');
       return;
     }
     const generation = playLeaseGeneration;
@@ -994,9 +1000,13 @@ export function Shorts({
     return next.map((id) => byId.get(id)).filter((short): short is ShortVideo => Boolean(short));
   }, [data.shorts, orderRevision, orderSeed]);
 
-  const preparedIndices = useMemo(
-    () => new Set(shortsPoolWindow(activeIndex, orderedShorts.length, playbackMode, scrollDirection, prepareIndex)),
-    [activeIndex, orderedShorts.length, playbackMode, prepareIndex, scrollDirection]
+  const contentIndices = useMemo(
+    () => new Set(shortsContentWindow(activeIndex, orderedShorts.length, 5)),
+    [activeIndex, orderedShorts.length]
+  );
+  const playerIndices = useMemo(
+    () => new Set(shortsPlayerWindow(activeIndex, orderedShorts.length, playbackMode === 'manual' ? 1 : 5)),
+    [activeIndex, orderedShorts.length, playbackMode]
   );
 
   const transitionController = useCallback((event: Parameters<typeof transitionShortsController>[1]) => {
@@ -1539,7 +1549,7 @@ export function Shorts({
         try { window.sessionStorage.setItem(SHORTS_SNAPSHOT_KEY, JSON.stringify(snapshot)); } catch {}
       }
       fetchRecipes({ q: short.recipeQuery, limit: 3, seed: short.id })
-        .then((result) => setRecipes(result.filter((recipe) => typeof recipe.thumb === 'string' && recipe.thumb.trim())))
+        .then((result) => setRecipes(result.recipes))
         .catch(() => setRecipesError(true))
         .finally(() => {
           openingOverlayRef.current = false;
@@ -1767,7 +1777,7 @@ export function Shorts({
     setRecipesLoading(true);
     setRecipesError(false);
     fetchRecipes({ q: short.recipeQuery || short.title, limit: 3, seed: short.id })
-      .then((result) => setRecipes(result.filter((recipe) => typeof recipe.thumb === 'string' && recipe.thumb.trim())))
+      .then((result) => setRecipes(result.recipes))
       .catch(() => setRecipesError(true))
       .finally(() => setRecipesLoading(false));
   }, [active, data.shorts, orderedShorts, recipeOverlay, transitionController]);
@@ -2113,11 +2123,11 @@ export function Shorts({
         {orderedShorts.map((short, index) => {
           const isVisible = controllerPhase === 'idle' && activeLease?.index === index && visibleIndex === index && activeIndex === index;
           const failed = failureVersion >= 0 && failedIdsRef.current.has(short.id);
-          const renderContent = isVisible || preparedIndices.has(index) || Math.abs(index - activeIndex) <= 1;
+          const renderContent = contentIndices.has(index);
           if (!renderContent) {
             return <article className="shorts-card shorts-card-placeholder" data-short-index={index} key={short.id} aria-hidden="true" />;
           }
-          const enabled = active && online && !failed && (playbackMode === 'manual' ? manualIndex === index : preparedIndices.has(index));
+          const enabled = active && online && !failed && playerIndices.has(index);
           const shouldPlay = active && isVisible && activeLease?.index === index && !recipeOverlay && overlayResumeRef.current !== false && online && !failed && (playbackMode !== 'manual' || manualIndex === index) && blockedIndex !== index;
           const playLeaseGeneration = shouldPlay && activeLease?.index === index ? activeLease.generation : null;
           return (
@@ -2282,7 +2292,7 @@ export function Shorts({
               </div>
             ) : (
               <div className="shorts-recipe-empty">
-                <p className="empty-big">NO PHOTO YET.</p>
+                <p className="empty-big">NO MATCHES YET.</p>
                 <p className="k-label dim">THE FULL BAR MAY HAVE A POUR FOR THIS SHORT.</p>
               </div>
             )}

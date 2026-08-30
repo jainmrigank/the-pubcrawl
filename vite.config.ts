@@ -25,8 +25,8 @@ export default defineConfig({
         start_url: '/',
         display: 'standalone',
         orientation: 'portrait',
-        background_color: '#ECE9E0',
-        theme_color: '#ECE9E0',
+        background_color: '#141310',
+        theme_color: '#141310',
         categories: ['food', 'lifestyle', 'entertainment'],
         icons: [
           { src: 'icon-192.png', sizes: '192x192', type: 'image/png' },

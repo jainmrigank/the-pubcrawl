@@ -3,8 +3,9 @@
  * (oEmbed, no key needed) and checks it actually relates to the drink.
  * Dead or irrelevant links (e.g. a first-aid video for "Bleeding Surgeon")
  * are re-searched with a title-aware picker; drinks with no link get one
- * found the same way. Fixes land in data/videos.json, which the catalog
- * prefers at load time.
+ * found the same way. Results are written to a candidate queue only: a human
+ * must inspect the recipe transcript before promoting any URL to the reviewed
+ * catalogue manifest.
  *
  * Run: node scripts/audit_videos.mjs
  */
@@ -20,6 +21,7 @@ const extrasPath = join(ROOT, 'data', 'extra_cocktails.json');
 if (existsSync(extrasPath)) cocktails.push(...JSON.parse(readFileSync(extrasPath, 'utf8')));
 const videosPath = join(ROOT, 'data', 'videos.json');
 const videos = existsSync(videosPath) ? JSON.parse(readFileSync(videosPath, 'utf8')) : {};
+const candidates = {};
 
 const STOP = new Set(['the', 'a', 'an', 'of', 'and', 'with', 'on', 'in', 'to', 'no', 'la', 'de', 'el']);
 const clean = (s) =>
@@ -91,10 +93,8 @@ for (const c of cocktails) {
   const current = Object.prototype.hasOwnProperty.call(videos, c.id) ? videos[c.id] : c.video || '';
   if (!current) {
     const found = await searchBest(c.name);
-    if (found) {
-      videos[c.id] = found;
-      filled++;
-    }
+    candidates[c.id] = { status: found ? 'candidate' : 'none', current: '', candidate: found || '', note: 'Requires transcript-based exactness review before promotion.' };
+    if (found) filled++;
     await sleep(700);
     continue;
   }
@@ -102,25 +102,20 @@ for (const c of cocktails) {
   checked++;
   if (title && relevant(c.name, title)) {
     good++;
+    candidates[c.id] = { status: 'available', current, title, note: 'Title availability only; transcript review still required.' };
   } else {
     flagged.push(`${c.name} :: ${title || 'DEAD LINK'}`);
     const found = await searchBest(c.name);
-    if (found) {
-      videos[c.id] = found;
-      fixed++;
-    } else {
-      videos[c.id] = ''; // explicit blank beats a wrong video
-      removed++;
-    }
+    candidates[c.id] = { status: found ? 'candidate' : 'none', current, title: title || '', candidate: found || '', note: 'Previous URL failed title/availability check; transcript review required.' };
+    if (found) fixed++; else removed++;
     await sleep(700);
   }
   if (checked % 25 === 0) {
-    writeFileSync(videosPath, JSON.stringify(videos, null, 1));
     process.stdout.write(`${checked} checked, ${good} good, ${fixed} fixed, ${removed} removed, ${filled} filled\n`);
   }
   await sleep(130);
 }
 
-writeFileSync(videosPath, JSON.stringify(videos, null, 1));
+writeFileSync(join(ROOT, 'data', 'video_audit_candidates.json'), JSON.stringify({ generatedAt: new Date().toISOString().slice(0, 10), entries: candidates }, null, 1));
 console.log(`\nDone. checked:${checked} good:${good} fixed:${fixed} removed:${removed} filled:${filled}`);
 console.log('Flagged:\n' + flagged.map((f) => `  - ${f}`).join('\n'));

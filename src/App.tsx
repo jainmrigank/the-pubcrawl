@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import { AnimatePresence, motion, MotionConfig } from 'framer-motion';
 import { fetchHealth, fetchLikes, fetchRecipes, fetchVibes, generateRecipe, keepRecipe, matchRecipes, postLike } from './api';
-import type { Health, Ingredient, MatchResult, Recipe, ShortsReturnState, Vibe } from './types';
+import type { BrowseFilter, Health, Ingredient, MatchResult, Recipe, ShortsReturnState, Theme, Vibe, VibeId } from './types';
 import { Typeahead } from './components/Typeahead';
 import { UploadZone } from './components/UploadZone';
 import { RecipeCard } from './components/RecipeCard';
@@ -14,15 +14,18 @@ import { NudgePrompt } from './components/NudgePrompt';
 import { Quiz } from './components/Quiz';
 import { Watch, WatchTeaser } from './components/Watch';
 import { Shorts, ShortsTeaser } from './components/Shorts';
+import { CategoryFilter } from './components/CategoryFilter';
+import { MobileNavigation, MobileTopActions } from './components/MobileNavigation';
 import { DailyQuestion } from './components/DailyQuestion';
 import { EASE, Lines, LOADED_HIDDEN, Reveal } from './motion';
-import { ArrowDown, ArrowRight, Burger, Check, Heart, PubGlyph, Share, Shuffle, SketchDefs, X } from './icons';
+import { ArrowDown, ArrowRight, Burger, Check, Heart, PubGlyph, Share, Shuffle, SketchDefs, ToolIcon, X } from './icons';
 import { shareContent, tabShareText } from './share';
+import { applyTheme, currentTheme, persistTheme } from './theme';
+import type { Route } from './navigation';
 import './App.css';
 
 const FALLBACK_VIBE: Vibe = { id: 'boozy', label: 'Spirit-Forward', color: '#8A5A24' };
 
-type Route = 'menu' | 'bar' | 'basics' | 'tab' | 'quiz' | 'watch' | 'shorts';
 const ROUTES: Route[] = ['menu', 'bar', 'basics', 'tab', 'quiz', 'watch', 'shorts'];
 const NAV: { route: Route; label: string }[] = [
   { route: 'menu', label: 'THE MENU' },
@@ -147,8 +150,6 @@ function useRoute(): { route: Route; landing: boolean } {
   return view;
 }
 
-const MENU_MAX = 120;
-
 export default function App() {
   const { route, landing } = useRoute();
   const shortsActive = route === 'shorts';
@@ -161,11 +162,17 @@ export default function App() {
   const [barQ, setBarQ] = useState('');
   const [browse, setBrowse] = useState<Recipe[]>([]);
   const [browseQ, setBrowseQ] = useState(hashQuery);
-  const [browseLimit, setBrowseLimit] = useState(12);
+  const [browseLimit] = useState(12);
+  const [browseTotal, setBrowseTotal] = useState(0);
+  const [browseHasMore, setBrowseHasMore] = useState(false);
   const [browseLoading, setBrowseLoading] = useState(true);
   const [browseError, setBrowseError] = useState(false);
+  const [browseAppending, setBrowseAppending] = useState(false);
+  const [browseAppendError, setBrowseAppendError] = useState(false);
+  const browseControllerRef = useRef<AbortController | null>(null);
+  const browseRequestIdRef = useRef(0);
   const [aiDrinks, setAiDrinks] = useState<Recipe[]>([]);
-  const [vibeFilter, setVibeFilter] = useState<string>('');
+  const [browseFilter, setBrowseFilter] = useState<BrowseFilter>({ kind: 'all' });
   const [generating, setGenerating] = useState(false);
   const [genError, setGenError] = useState('');
   const [video, setVideo] = useState<Recipe | null>(null);
@@ -188,12 +195,14 @@ export default function App() {
     }
   });
   const [loved, setLoved] = useState(false);
+  const [lovedRefresh, setLovedRefresh] = useState(0);
   const [inventMood, setInventMood] = useState('');
   const [dailyForced, setDailyForced] = useState(wantsDaily);
   const [shortsReturn, setShortsReturn] = useState<ShortsReturnState | null>(null);
+  const [theme, setTheme] = useState<Theme>(() => currentTheme());
 
   const vibeOf = useCallback(
-    (id: string) => vibes.find((v) => v.id === id) ?? FALLBACK_VIBE,
+    (id: VibeId) => vibes.find((v) => v.id === id) ?? FALLBACK_VIBE,
     [vibes]
   );
 
@@ -201,6 +210,19 @@ export default function App() {
     fetchVibes().then(setVibes).catch(() => {});
     fetchHealth().then(setHealth).catch(() => {});
     fetchLikes().then(setLikes).catch(() => {});
+  }, []);
+
+  useEffect(() => {
+    applyTheme(theme);
+  }, [theme]);
+
+  const toggleTheme = useCallback(() => {
+    setTheme((current) => {
+      const next = current === 'dark' ? 'light' : 'dark';
+      persistTheme(next);
+      applyTheme(next);
+      return next;
+    });
   }, []);
 
   // a tapped nudge lands on #/menu?q=<drink>; if the app was already open,
@@ -313,28 +335,95 @@ export default function App() {
       postLike(r.id, wasLiked ? 'unlike' : 'like')
         .then((res) => setLikes((prev) => ({ ...prev, [res.id]: res.likes })))
         .catch(() => {});
+      if (loved) setLovedRefresh((value) => value + 1);
     },
-    [likedIds, keepDrink]
+    [likedIds, keepDrink, loved]
   );
 
   /* menu search / browse. Mood + search both apply server-side over the full catalogue,
      so a mood is never silently filtering a search down to nothing. */
   useEffect(() => {
+    browseControllerRef.current?.abort();
+    const controller = new AbortController();
+    const requestId = ++browseRequestIdRef.current;
+    browseControllerRef.current = controller;
     setBrowseLoading(true);
     setBrowseError(false);
-    const t = setTimeout(() => {
-      fetchRecipes({ q: browseQ, vibe: vibeFilter, limit: browseLimit, seed: browseSeed, sort: loved ? 'likes' : undefined })
-        .then(setBrowse)
-        .catch(() => setBrowseError(true))
-        .finally(() => setBrowseLoading(false));
+    setBrowseAppending(false);
+    setBrowseAppendError(false);
+    setBrowse([]);
+    setBrowseTotal(0);
+    setBrowseHasMore(false);
+    const timer = setTimeout(() => {
+      const query: Parameters<typeof fetchRecipes>[0] = {
+        q: browseQ,
+        limit: browseLimit,
+        offset: 0,
+        seed: browseSeed,
+        sort: loved ? 'likes' : undefined,
+        category: browseFilter.kind === 'category' ? browseFilter.id : undefined,
+        collection: browseFilter.kind === 'collection' ? browseFilter.id : undefined,
+        signal: controller.signal,
+      };
+      fetchRecipes(query)
+        .then((page) => {
+          if (controller.signal.aborted || requestId !== browseRequestIdRef.current) return;
+          setBrowse(page.recipes);
+          setBrowseTotal(page.total);
+          setBrowseHasMore(page.hasMore);
+        })
+        .catch((err) => {
+          if (!controller.signal.aborted && requestId === browseRequestIdRef.current && (err as Error)?.name !== 'AbortError') setBrowseError(true);
+        })
+        .finally(() => {
+          if (!controller.signal.aborted && requestId === browseRequestIdRef.current) setBrowseLoading(false);
+        });
     }, browseQ ? 220 : 0);
-    return () => clearTimeout(t);
-  }, [browseQ, browseLimit, browseSeed, vibeFilter, loved]);
+    return () => {
+      clearTimeout(timer);
+      controller.abort();
+      if (browseControllerRef.current === controller) browseControllerRef.current = null;
+    };
+  }, [browseQ, browseLimit, browseSeed, browseFilter, loved, lovedRefresh]);
+
+  const loadMore = useCallback(() => {
+    if (browseLoading || browseAppending || !browseHasMore) return;
+    browseControllerRef.current?.abort();
+    const controller = new AbortController();
+    const requestId = ++browseRequestIdRef.current;
+    browseControllerRef.current = controller;
+    setBrowseAppending(true);
+    setBrowseAppendError(false);
+    fetchRecipes({
+      q: browseQ,
+      limit: browseLimit,
+      offset: browse.length,
+      seed: browseSeed,
+      sort: loved ? 'likes' : undefined,
+      category: browseFilter.kind === 'category' ? browseFilter.id : undefined,
+      collection: browseFilter.kind === 'collection' ? browseFilter.id : undefined,
+      signal: controller.signal,
+    })
+      .then((page) => {
+        if (controller.signal.aborted || requestId !== browseRequestIdRef.current) return;
+        setBrowse((prev) => {
+          const ids = new Set(prev.map((recipe) => recipe.id));
+          return [...prev, ...page.recipes.filter((recipe) => !ids.has(recipe.id))];
+        });
+        setBrowseTotal(page.total);
+        setBrowseHasMore(page.hasMore);
+      })
+      .catch((err) => {
+        if (!controller.signal.aborted && requestId === browseRequestIdRef.current && (err as Error)?.name !== 'AbortError') setBrowseAppendError(true);
+      })
+      .finally(() => {
+        if (!controller.signal.aborted && requestId === browseRequestIdRef.current) setBrowseAppending(false);
+      });
+  }, [browse, browseAppending, browseFilter, browseLoading, browseHasMore, browseQ, browseLimit, browseSeed, loved]);
 
   /* fresh random dozen */
   const surpriseMe = () => {
     setBrowseQ('');
-    setBrowseLimit(12);
     setLoved(false);
     setBrowseSeed(String(Math.random()));
   };
@@ -400,8 +489,7 @@ export default function App() {
   const byBarMood = useCallback(
     (list: Recipe[]) => {
       if (!inventMood) return list;
-      if (inventMood === 'zeroproof')
-        return list.filter((r) => (r.alcoholic || '').toLowerCase().includes('non'));
+      if (inventMood === 'zeroproof') return list.filter((r) => r.vibe === 'zeroproof');
       if (inventMood === 'indian') return list.filter((r) => (r.tags || []).includes('India'));
       return list.filter((r) => r.vibe === inventMood);
     },
@@ -409,19 +497,32 @@ export default function App() {
   );
   const canMake = useMemo(() => byBarMood(match?.canMake ?? []), [match, byBarMood]);
   const almost = useMemo(() => byBarMood(match?.almost ?? []), [match, byBarMood]);
-  // mood + search are server-filtered; in the Most Loved view also sort here
-  // with the same counts the hearts display, so order always matches them
-  const featured = useMemo(
-    () => (loved ? [...browse].sort((a, b) => (likes[b.id] || 0) - (likes[a.id] || 0)) : browse),
-    [browse, loved, likes]
-  );
+  const featured = browse;
   // freshly drafted specials always show, whatever mood is selected — they were
   // just made for this drinker, so filtering them out felt like they vanished
   const inventions = aiDrinks;
   const hasPantry = pantry.length > 0;
   // the landing view is 'home', so no nav item is lit until you're in a section
   const active = landing ? null : route;
-  const moreLeft = browse.length >= browseLimit && browseLimit < MENU_MAX;
+  const moreLeft = browseHasMore;
+
+  const barFilter: BrowseFilter =
+    inventMood === 'indian'
+      ? { kind: 'collection', id: 'india' }
+      : inventMood === 'house'
+        ? { kind: 'collection', id: 'house' }
+        : inventMood
+          ? { kind: 'category', id: inventMood as VibeId }
+          : { kind: 'all' };
+  const onBarFilter = useCallback((value: BrowseFilter) => {
+    setInventMood(value.kind === 'all' ? '' : value.id);
+  }, []);
+  const browseContext = browseFilter.kind === 'category'
+    ? vibes.find((v) => v.id === browseFilter.id)?.label.toUpperCase()
+    : browseFilter.kind === 'collection'
+      ? browseFilter.id === 'india' ? 'INDIA' : 'HOUSE SPECIALS'
+      : loved ? 'MOST LOVED' : browseQ ? `“${browseQ.toUpperCase()}”` : '';
+  const browseNote = `SHOWING ${featured.length} OF ${browseTotal}${browseContext ? ` · ${browseContext}` : ''}`;
 
   const card = (r: Recipe, i: number, removeMode = false) => (
     <RecipeCard
@@ -438,54 +539,6 @@ export default function App() {
       onToggleLike={toggleLike}
       onKeep={keepDrink}
     />
-  );
-
-  // one mood row, two homes: the menu (filters the list) and the bar page
-  // (filters the pour lists AND steers the house-special prompt)
-  const moodRow = (value: string, setValue: (v: string) => void, showHouse = false) => (
-    <div className="vibe-bar" role="group" aria-label={showHouse ? 'Filter by mood or collection' : 'Filter by mood'}>
-      <span className="k-label dim">MOOD</span>
-      <button className={`vibe-chip ${value === '' ? 'on' : ''}`} onClick={() => setValue('')}>
-        ALL
-      </button>
-      {vibes.map((v) => (
-        <button
-          key={v.id}
-          className={`vibe-chip ${value === v.id ? 'on' : ''}`}
-          style={{ ['--vc' as string]: v.color }}
-          onClick={() => setValue(value === v.id ? '' : v.id)}
-        >
-          <i className="swatch" />
-          {v.label.toUpperCase()}
-        </button>
-      ))}
-      <button
-        className={`vibe-chip ${value === 'zeroproof' ? 'on' : ''}`}
-        style={{ ['--vc' as string]: '#6B7A6E' }}
-        onClick={() => setValue(value === 'zeroproof' ? '' : 'zeroproof')}
-      >
-        <i className="swatch" />
-        ZERO-ALCOHOL
-      </button>
-      <button
-        className={`vibe-chip ${value === 'indian' ? 'on' : ''}`}
-        style={{ ['--vc' as string]: '#B0722E' }}
-        onClick={() => setValue(value === 'indian' ? '' : 'indian')}
-      >
-        <i className="swatch" />
-        INDIA
-      </button>
-      {showHouse && (
-        <button
-          className={`vibe-chip ${value === 'house' ? 'on' : ''}`}
-          style={{ ['--vc' as string]: '#9B4E32' }}
-          onClick={() => setValue(value === 'house' ? '' : 'house')}
-        >
-          <i className="swatch" />
-          HOUSE SPECIALS
-        </button>
-      )}
-    </div>
   );
 
   return (
@@ -515,6 +568,17 @@ export default function App() {
               </a>
             ))}
           </nav>
+          <button
+            className="desktop-theme-toggle text-btn header-icon-action"
+            type="button"
+            onClick={toggleTheme}
+            aria-pressed={theme === 'dark'}
+            aria-label={theme === 'dark' ? 'Switch to light theme' : 'Switch to dark theme'}
+            title={theme === 'dark' ? 'Switch to light theme' : 'Switch to dark theme'}
+            data-tip={theme === 'dark' ? 'Switch to light theme' : 'Switch to dark theme'}
+          >
+            <ToolIcon id="citrus" size={18} />
+          </button>
           <span className="nav-status k-label dim">
             {health ? `${health.cocktails} DRINKS ON TAP` : '…'}
           </span>
@@ -524,6 +588,7 @@ export default function App() {
           <button className="nav-menu-btn" onClick={() => setMenuOpen(true)} aria-label="Open menu">
             <Burger size={22} />
           </button>
+          <MobileTopActions active={active} theme={theme} onToggleTheme={toggleTheme} tabCount={tab.length} />
         </header>
 
         {/* ================= mobile drawer ================= */}
@@ -565,6 +630,8 @@ export default function App() {
             </motion.div>
           )}
         </AnimatePresence>
+
+        <MobileNavigation active={active} tabCount={tab.length} theme={theme} onToggleTheme={toggleTheme} />
 
         <main>
           {/* every page stays mounted (hidden when inactive) so lists, search,
@@ -634,19 +701,7 @@ export default function App() {
                   <SectionHead
                     index="01"
                     title="THE MENU"
-                    note={
-                      browseQ
-                        ? `${featured.length} FOR “${browseQ.toUpperCase()}”`
-                        : loved
-                          ? 'THE CROWD’S FAVOURITES FIRST'
-                          : vibeFilter === 'house'
-                            ? `${featured.length} HOUSE SPECIALS`
-                            : vibeFilter === 'indian'
-                              ? `${featured.length} FROM THE INDIA COLLECTION`
-                              : vibeFilter
-                                ? `SHOWING ${featured.length} IN THIS MOOD`
-                                : `SHOWING ${featured.length} OF ${health?.cocktails ?? 691}`
-                    }
+                    note={browseNote}
                     lead="Every drink we know. Search by name, ingredient, lane, access tier, glass, place, mood or method."
                     loading={browseLoading}
                   />
@@ -659,7 +714,14 @@ export default function App() {
                     />
                   </div>
                   <div className="bar-controls">
-                    {moodRow(vibeFilter, setVibeFilter, true)}
+                    <CategoryFilter
+                      value={browseFilter}
+                      vibes={vibes}
+                      includeIndia
+                      includeHouse
+                      onChange={setBrowseFilter}
+                      label="Filter menu by category or collection"
+                    />
                     <div className="menu-actions">
                       <button
                         className={`text-btn ${loved ? 'loved-on' : ''}`}
@@ -699,12 +761,13 @@ export default function App() {
                       <div className={`grid ${browseLoading ? 'is-loading' : ''}`}>{featured.map((r, i) => card(r, i))}</div>
                       {moreLeft && !browseLoading && (
                         <div className="more-row">
-                          <button className="btn" onClick={() => setBrowseLimit((l) => l + 12)}>
-                            SHOW MORE <ArrowDown size={14} />
+                          <button className="btn" onClick={loadMore} disabled={browseAppending}>
+                            {browseAppending ? 'LOADING…' : browseAppendError ? 'RETRY' : 'SHOW MORE'} {!browseAppending && <ArrowDown size={14} />}
                           </button>
                           <span className="k-label dim">
-                            {browse.length} OF {health?.cocktails ?? 691} ON SHOW
+                            {browse.length} OF {browseTotal} ON SHOW
                           </span>
+                          {browseAppendError && <span className="k-label err-inline" role="status">LOAD FAILED — TRY AGAIN</span>}
                           <button className="text-btn" onClick={surpriseMe}>
                             OR SURPRISE ME <Shuffle size={12} />
                           </button>
@@ -776,7 +839,16 @@ export default function App() {
                     </div>
                   ) : (
                     <>
-                      <div className="bar-controls">{moodRow(inventMood, setInventMood)}</div>
+                      <div className="bar-controls">
+                        <CategoryFilter
+                          value={barFilter}
+                          vibes={vibes}
+                          includeIndia
+                          includeHouse={false}
+                          onChange={onBarFilter}
+                          label="Filter your pours by category or collection"
+                        />
+                      </div>
                       <div className="field menu-search">
                         <input
                           value={barQ}
@@ -986,22 +1058,9 @@ function SectionHead({
 
 /* ---------- video modal ---------- */
 function VideoModal({ recipe, onClose }: { recipe: Recipe; onClose: () => void }) {
-  const id = recipe.video.match(/(?:v=|youtu\.be\/)([\w-]{11})/)?.[1];
-  let searchQuery = recipe.videoSearch || recipe.name + ' cocktail recipe';
-  if (!id) {
-    try {
-      searchQuery = new URL(recipe.video).searchParams.get('search_query') || searchQuery;
-    } catch {}
-  }
-  const src = id
-    ? 'https://www.youtube.com/embed/' + id + '?autoplay=1'
-    : 'https://www.youtube.com/embed?listType=search&list=' + encodeURIComponent(searchQuery);
-  const videoLabel =
-    recipe.videoKind === 'technique'
-      ? 'WATCH THE TECHNIQUE'
-      : recipe.videoKind === 'search'
-        ? 'FIND A VIDEO'
-        : 'WATCH IT MADE';
+  const id = recipe.video.match(/(?:v=|youtu\.be\/|embed\/)([\w-]{11})/)?.[1];
+  const src = id ? `https://www.youtube.com/embed/${id}?autoplay=1` : '';
+  const videoLabel = 'WATCH IT MADE';
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => e.key === 'Escape' && onClose();
     document.addEventListener('keydown', onKey);
@@ -1032,12 +1091,16 @@ function VideoModal({ recipe, onClose }: { recipe: Recipe; onClose: () => void }
             CLOSE <X size={12} />
           </button>
         </div>
-        <iframe
-          src={src}
-          title={recipe.name}
-          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-          allowFullScreen
-        />
+        {src ? (
+          <iframe
+            src={src}
+            title={recipe.name}
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+            allowFullScreen
+          />
+        ) : (
+          <div className="modal-empty" role="status">NO VERIFIED VIDEO AVAILABLE.</div>
+        )}
       </motion.div>
     </motion.div>
   );

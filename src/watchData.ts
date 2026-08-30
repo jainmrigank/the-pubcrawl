@@ -1,4 +1,4 @@
-import type { WatchVideo } from './types';
+import type { WatchLane, WatchLibrary, WatchVideo } from './types';
 
 /** The twelve reviewed landing candidates: three from each Watch lane. */
 export const LANDING_FEATURED_IDS = [
@@ -27,6 +27,26 @@ export const LANDING_WATCH_SEED: WatchVideo[] = [
 export const WATCH_CATALOGUE_COUNT = 694;
 export const thumbnailForWatch = (video: Pick<WatchVideo, 'id'>) =>
   `https://i.ytimg.com/vi/${video.id}/hqdefault.jpg`;
+
+/** Shared lane metadata for the immediate, statistics-free Watch bootstrap. */
+export const WATCH_LANES: WatchLane[] = [
+  { id: 'craft', label: 'The Craft', color: '#8A5A24' },
+  { id: 'education', label: 'Learn It', color: '#5C7A3B' },
+  { id: 'comedy', label: 'For The Laugh', color: '#4A4E7A' },
+  { id: 'people', label: 'People & Drink', color: '#8E4A5B' },
+];
+
+/**
+ * A tiny local first paint for Watch. The full reviewed watchlist remains a
+ * lazy chunk, but these known-good cards make a slow module/API request
+ * impossible to turn into an empty loading screen.
+ */
+export const WATCH_BOOTSTRAP_LIBRARY: WatchLibrary = {
+  videos: [...LANDING_WATCH_SEED],
+  lanes: WATCH_LANES,
+  hasNumbers: false,
+  updatedAt: null,
+};
 
 export const watchLaneLabel: Record<string, string> = {
   craft: 'THE CRAFT',

@@ -1,12 +1,8 @@
 import raw from '../data/watchlist.json?raw';
 import type { WatchLane, WatchLibrary, WatchVideo } from './types';
+import { WATCH_LANES } from './watchData';
 
-export const STATIC_WATCH_LANES: WatchLane[] = [
-  { id: 'craft', label: 'The Craft', color: '#8A5A24' },
-  { id: 'education', label: 'Learn It', color: '#5C7A3B' },
-  { id: 'comedy', label: 'For The Laugh', color: '#4A4E7A' },
-  { id: 'people', label: 'People & Drink', color: '#8E4A5B' },
-];
+export const STATIC_WATCH_LANES: WatchLane[] = WATCH_LANES;
 
 const LANE_IDS = new Set(STATIC_WATCH_LANES.map((lane) => lane.id));
 

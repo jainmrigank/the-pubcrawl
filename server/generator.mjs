@@ -69,3 +69,35 @@ export function generateFallback(pantry, avoid = []) {
     source: 'fallback',
   });
 }
+
+/** Deterministic safe fallback for an explicitly requested zero-proof pour. */
+export function generateZeroProofFallback(pantry = [], knownIngredients = []) {
+  const safe = pantry
+    .map((name) => String(name).trim())
+    .filter(Boolean)
+    .filter((name) => !isBoozeCategory(categorise(name)));
+  const known = new Set(knownIngredients.map((ingredient) => norm(ingredient.name || ingredient)));
+  const defaults = ['Lime Juice', 'Soda Water', 'Simple Syrup'];
+  const chosen = [...safe, ...defaults.filter((name) => !safe.some((item) => norm(item) === norm(name)))]
+    .filter((name) => !known.size || known.has(norm(name)))
+    .slice(0, 3);
+  const ingredients = chosen.length
+    ? chosen.map((name, index) => ({ name, measure: index === 0 ? '30 ml' : index === 1 ? 'top up' : '15 ml' }))
+    : [{ name: 'Soda Water', measure: 'top up' }];
+  return withVibe({
+    id: `custom-${Date.now()}`,
+    name: 'The Clear Pour',
+    tagline: 'Bright, balanced and entirely alcohol-free.',
+    category: 'Zero Proof Original',
+    alcoholic: 'Non alcoholic',
+    glass: 'Highball glass',
+    instructions: 'Build over ice in a highball glass, stir gently and serve cold.',
+    thumb: '',
+    video: '',
+    tags: ['AI Original', 'Zero Proof'],
+    iba: '',
+    ingredients,
+    source: 'fallback',
+    vibe: 'zeroproof',
+  });
+}
