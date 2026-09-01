@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import { AnimatePresence, motion, MotionConfig } from 'framer-motion';
-import { fetchHealth, fetchLikes, fetchRecipes, fetchVibes, generateRecipe, keepRecipe, matchRecipes, postLike } from './api';
+import { fetchHealth, fetchKeptRecipes, fetchLikes, fetchRecipes, fetchVibes, generateRecipe, keepRecipe, matchRecipes, postLike } from './api';
 import type { BrowseFilter, Health, Ingredient, MatchResult, Recipe, ShortsReturnState, Theme, Vibe, VibeId } from './types';
 import { Typeahead } from './components/Typeahead';
 import { UploadZone } from './components/UploadZone';
@@ -12,19 +12,25 @@ import { InstallBanner } from './components/InstallBanner';
 import { NudgeToggle } from './components/NudgeToggle';
 import { NudgePrompt } from './components/NudgePrompt';
 import { Quiz } from './components/Quiz';
-import { Watch, WatchTeaser } from './components/Watch';
-import { Shorts, ShortsTeaser } from './components/Shorts';
+import { Watch } from './components/Watch';
+import { Shorts } from './components/Shorts';
 import { CategoryFilter } from './components/CategoryFilter';
 import { MobileNavigation, MobileTopActions } from './components/MobileNavigation';
 import { DailyQuestion } from './components/DailyQuestion';
+import { GuidedTour } from './components/GuidedTour';
+import { ShelfResults } from './components/ShelfResults';
 import { EASE, Lines, LOADED_HIDDEN, Reveal } from './motion';
 import { ArrowDown, ArrowRight, Burger, Check, Heart, PubGlyph, Share, Shuffle, SketchDefs, ToolIcon, X } from './icons';
 import { shareContent, tabShareText } from './share';
 import { applyTheme, currentTheme, persistTheme } from './theme';
+import { loadLocalCatalogue, matchLocalRecipes, queryLocalRecipes } from './localData';
 import type { Route } from './navigation';
+import { requestTourReplay } from './tutorial';
+import { OVERLAY_PRIORITY, overlayGate, setBackgroundInert } from './overlayGate';
 import './App.css';
 
 const FALLBACK_VIBE: Vibe = { id: 'boozy', label: 'Spirit-Forward', color: '#8A5A24' };
+const VIDEO_MODAL_GATE_ID = 'recipe-video';
 
 const ROUTES: Route[] = ['menu', 'bar', 'basics', 'tab', 'quiz', 'watch', 'shorts'];
 const NAV: { route: Route; label: string }[] = [
@@ -172,10 +178,12 @@ export default function App() {
   const browseControllerRef = useRef<AbortController | null>(null);
   const browseRequestIdRef = useRef(0);
   const [aiDrinks, setAiDrinks] = useState<Recipe[]>([]);
+  const [keptRecipes, setKeptRecipes] = useState<Recipe[]>([]);
   const [browseFilter, setBrowseFilter] = useState<BrowseFilter>({ kind: 'all' });
   const [generating, setGenerating] = useState(false);
   const [genError, setGenError] = useState('');
   const [video, setVideo] = useState<Recipe | null>(null);
+  const videoOpenerRef = useRef<HTMLElement | null>(null);
   const [menuOpen, setMenuOpen] = useState(false);
   const [tab, setTab] = useState<Recipe[]>(() => {
     try {
@@ -197,19 +205,49 @@ export default function App() {
   const [loved, setLoved] = useState(false);
   const [lovedRefresh, setLovedRefresh] = useState(0);
   const [inventMood, setInventMood] = useState('');
+  const [barFiltersExpanded, setBarFiltersExpanded] = useState(false);
+  const [barVisible, setBarVisible] = useState(12);
+  const barMatchRequestIdRef = useRef(0);
   const [dailyForced, setDailyForced] = useState(wantsDaily);
   const [shortsReturn, setShortsReturn] = useState<ShortsReturnState | null>(null);
   const [theme, setTheme] = useState<Theme>(() => currentTheme());
+  // Most Loved is the only browse view whose ordering depends on likes. Keep
+  // a stable null dependency for every other view so a background likes
+  // refresh never clears/reorders the normal menu mid-scroll.
+  const lovedLikes = loved ? likes : null;
 
   const vibeOf = useCallback(
     (id: VibeId) => vibes.find((v) => v.id === id) ?? FALLBACK_VIBE,
     [vibes]
   );
 
+  const openVideo = useCallback((recipe: Recipe) => {
+    if (!overlayGate.acquire(VIDEO_MODAL_GATE_ID, OVERLAY_PRIORITY.recipeVideo)) return;
+    videoOpenerRef.current = document.activeElement instanceof HTMLElement ? document.activeElement : null;
+    setVideo(recipe);
+  }, []);
+
+  const closeVideo = useCallback(() => {
+    setVideo(null);
+    overlayGate.release(VIDEO_MODAL_GATE_ID);
+    window.requestAnimationFrame(() => videoOpenerRef.current?.focus());
+  }, []);
+
   useEffect(() => {
-    fetchVibes().then(setVibes).catch(() => {});
+    // Vibes and the immutable catalogue are bundled locally. Keep the API
+    // call as a compatibility fallback for an older/stale build, but do not
+    // make first paint wait for a sleeping Render service.
+    loadLocalCatalogue()
+      .then((bundle) => setVibes(bundle.vibes))
+      .catch(() => fetchVibes().then(setVibes).catch(() => {}));
     fetchHealth().then(setHealth).catch(() => {});
     fetchLikes().then(setLikes).catch(() => {});
+    // Kept AI specials are dynamic extensions to the local catalogue. Fetch
+    // them opportunistically; a store outage must never hide the 691 audited
+    // recipes that are already available offline.
+    fetchKeptRecipes().then((recipes) => {
+      if (Array.isArray(recipes)) setKeptRecipes(recipes);
+    }).catch(() => {});
   }, []);
 
   useEffect(() => {
@@ -237,21 +275,27 @@ export default function App() {
     return () => window.removeEventListener('hashchange', onHash);
   }, []);
 
-  // The page behind the mobile drawer and the immersive Shorts feed should
-  // never scroll. Shorts owns its own full-height snap-scrolling surface.
+  // The legacy drawer (desktop/compact breakpoint) owns body locking. Shorts
+  // uses its own fixed viewport surface and must not mutate document overflow:
+  // iOS PWAs otherwise detach the fixed navigation from the visual viewport.
   useEffect(() => {
-    const root = document.documentElement;
-    document.body.style.overflow = menuOpen || shortsActive ? 'hidden' : '';
-    document.body.style.overscrollBehavior = shortsActive ? 'none' : '';
-    root.style.overflow = shortsActive ? 'hidden' : '';
-    root.style.overscrollBehavior = shortsActive ? 'none' : '';
+    document.body.style.overflow = menuOpen ? 'hidden' : '';
+    document.body.style.overscrollBehavior = menuOpen ? 'none' : '';
     return () => {
       document.body.style.overflow = '';
       document.body.style.overscrollBehavior = '';
-      root.style.overflow = '';
-      root.style.overscrollBehavior = '';
     };
-  }, [menuOpen, shortsActive]);
+  }, [menuOpen]);
+
+  // Route-aware styling is kept on the root so the portalled mobile
+  // navigation can react without relying on a transformed `.site` ancestor.
+  useEffect(() => {
+    const root = document.documentElement;
+    root.dataset.route = route;
+    return () => {
+      if (root.dataset.route === route) delete root.dataset.route;
+    };
+  }, [route]);
 
   // Remember where an in-app Shorts visit began. Direct deep links have no
   // prior PubCrawl screen, so BACK safely falls home instead of leaving the app.
@@ -310,6 +354,10 @@ export default function App() {
     try {
       const kept = await keepRecipe(recipe);
       setAiDrinks((prev) => prev.map((d) => (d.id === recipe.id ? kept : d)));
+      setKeptRecipes((prev) => {
+        const withoutEphemeral = prev.filter((drink) => drink.id !== recipe.id && drink.id !== kept.id);
+        return [kept, ...withoutEphemeral];
+      });
       setTab((prev) => prev.map((d) => (d.id === recipe.id ? kept : d)));
       setLikedIds((prev) =>
         prev.has(recipe.id) ? new Set([...prev].map((id) => (id === recipe.id ? kept.id : id))) : prev
@@ -365,7 +413,16 @@ export default function App() {
         collection: browseFilter.kind === 'collection' ? browseFilter.id : undefined,
         signal: controller.signal,
       };
-      fetchRecipes(query)
+      queryLocalRecipes({
+        q: query.q,
+        offset: query.offset,
+        limit: query.limit,
+        seed: query.seed,
+        sort: query.sort,
+        filter: browseFilter,
+        likes: lovedLikes || undefined,
+        extraRecipes: keptRecipes,
+      })
         .then((page) => {
           if (controller.signal.aborted || requestId !== browseRequestIdRef.current) return;
           setBrowse(page.recipes);
@@ -373,7 +430,20 @@ export default function App() {
           setBrowseHasMore(page.hasMore);
         })
         .catch((err) => {
-          if (!controller.signal.aborted && requestId === browseRequestIdRef.current && (err as Error)?.name !== 'AbortError') setBrowseError(true);
+          if (controller.signal.aborted || requestId !== browseRequestIdRef.current || (err as Error)?.name === 'AbortError') return;
+          // An old installed build may not contain the generated chunk. One
+          // compatibility request keeps that build usable without reviving the
+          // long free-host retry loop in the normal path.
+          return fetchRecipes(query)
+            .then((page) => {
+              if (controller.signal.aborted || requestId !== browseRequestIdRef.current) return;
+              setBrowse(page.recipes);
+              setBrowseTotal(page.total);
+              setBrowseHasMore(page.hasMore);
+            })
+            .catch((fallbackError) => {
+              if (!controller.signal.aborted && requestId === browseRequestIdRef.current && (fallbackError as Error)?.name !== 'AbortError') setBrowseError(true);
+            });
         })
         .finally(() => {
           if (!controller.signal.aborted && requestId === browseRequestIdRef.current) setBrowseLoading(false);
@@ -384,7 +454,7 @@ export default function App() {
       controller.abort();
       if (browseControllerRef.current === controller) browseControllerRef.current = null;
     };
-  }, [browseQ, browseLimit, browseSeed, browseFilter, loved, lovedRefresh]);
+  }, [browseQ, browseLimit, browseSeed, browseFilter, loved, lovedLikes, lovedRefresh, keptRecipes]);
 
   const loadMore = useCallback(() => {
     if (browseLoading || browseAppending || !browseHasMore) return;
@@ -394,7 +464,7 @@ export default function App() {
     browseControllerRef.current = controller;
     setBrowseAppending(true);
     setBrowseAppendError(false);
-    fetchRecipes({
+    const query: Parameters<typeof fetchRecipes>[0] = {
       q: browseQ,
       limit: browseLimit,
       offset: browse.length,
@@ -403,6 +473,16 @@ export default function App() {
       category: browseFilter.kind === 'category' ? browseFilter.id : undefined,
       collection: browseFilter.kind === 'collection' ? browseFilter.id : undefined,
       signal: controller.signal,
+    };
+    queryLocalRecipes({
+      q: query.q,
+      offset: query.offset,
+      limit: query.limit,
+      seed: query.seed,
+      sort: query.sort,
+      filter: browseFilter,
+      likes,
+      extraRecipes: keptRecipes,
     })
       .then((page) => {
         if (controller.signal.aborted || requestId !== browseRequestIdRef.current) return;
@@ -414,12 +494,25 @@ export default function App() {
         setBrowseHasMore(page.hasMore);
       })
       .catch((err) => {
-        if (!controller.signal.aborted && requestId === browseRequestIdRef.current && (err as Error)?.name !== 'AbortError') setBrowseAppendError(true);
+        if (controller.signal.aborted || requestId !== browseRequestIdRef.current || (err as Error)?.name === 'AbortError') return;
+        return fetchRecipes(query)
+          .then((page) => {
+            if (controller.signal.aborted || requestId !== browseRequestIdRef.current) return;
+            setBrowse((prev) => {
+              const ids = new Set(prev.map((recipe) => recipe.id));
+              return [...prev, ...page.recipes.filter((recipe) => !ids.has(recipe.id))];
+            });
+            setBrowseTotal(page.total);
+            setBrowseHasMore(page.hasMore);
+          })
+          .catch((fallbackError) => {
+            if (!controller.signal.aborted && requestId === browseRequestIdRef.current && (fallbackError as Error)?.name !== 'AbortError') setBrowseAppendError(true);
+          });
       })
       .finally(() => {
         if (!controller.signal.aborted && requestId === browseRequestIdRef.current) setBrowseAppending(false);
       });
-  }, [browse, browseAppending, browseFilter, browseLoading, browseHasMore, browseQ, browseLimit, browseSeed, loved]);
+  }, [browse, browseAppending, browseFilter, browseLoading, browseHasMore, browseQ, browseLimit, browseSeed, loved, likes, keptRecipes]);
 
   /* fresh random dozen */
   const surpriseMe = () => {
@@ -428,21 +521,44 @@ export default function App() {
     setBrowseSeed(String(Math.random()));
   };
 
+  const barFilter: BrowseFilter =
+    inventMood === 'indian'
+      ? { kind: 'collection', id: 'india' }
+      : inventMood === 'house'
+        ? { kind: 'collection', id: 'house' }
+        : inventMood
+          ? { kind: 'category', id: inventMood as VibeId }
+          : { kind: 'all' };
+
   /* shelf matching */
   useEffect(() => {
+    const requestId = ++barMatchRequestIdRef.current;
     if (!pantry.length) {
       setMatch(null);
+      setMatching(false);
       return;
     }
     setMatching(true);
     const t = setTimeout(() => {
-      matchRecipes(pantry.map((p) => p.name), barQ)
-        .then(setMatch)
-        .catch(() => {})
-        .finally(() => setMatching(false));
-    }, 250);
+      matchLocalRecipes({ pantry: pantry.map((p) => p.name), q: barQ, filter: barFilter, extraRecipes: keptRecipes })
+        .then((recipes) => {
+          if (requestId !== barMatchRequestIdRef.current) return;
+          setMatch({
+            canMake: recipes.filter((recipe) => recipe.missingCount === 0),
+            almost: recipes.filter((recipe) => recipe.missingCount > 0),
+          });
+        })
+        .catch(() => matchRecipes(pantry.map((p) => p.name), barQ, barFilter)
+          .then((next) => {
+            if (requestId === barMatchRequestIdRef.current) setMatch(next);
+          })
+          .catch(() => {}))
+        .finally(() => {
+          if (requestId === barMatchRequestIdRef.current) setMatching(false);
+        });
+    }, 150);
     return () => clearTimeout(t);
-  }, [pantry, barQ]);
+  }, [pantry, barQ, inventMood, keptRecipes]);
 
   const addIngredient = useCallback((ing: Ingredient) => {
     setPantry((prev) =>
@@ -477,6 +593,13 @@ export default function App() {
         tab.slice(-6).map((r) => `${r.name}: ${r.ingredients.slice(0, 4).map((i) => i.name).join(', ')}`)
       );
       setAiDrinks((prev) => [drink, ...prev].slice(0, 6));
+      window.requestAnimationFrame(() => window.requestAnimationFrame(() => {
+        const cardElement = document.querySelector<HTMLElement>(`[data-recipe-id="${CSS.escape(drink.id)}"]`);
+        if (!cardElement) return;
+        const bounds = cardElement.getBoundingClientRect();
+        if (bounds.top < 0 || bounds.bottom > window.innerHeight) cardElement.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+        cardElement.querySelector<HTMLElement>('[data-recipe-heading]')?.focus({ preventScroll: true });
+      }));
     } catch (err) {
       setGenError(err instanceof Error ? err.message : 'That did not work. Try again.');
     } finally {
@@ -501,19 +624,22 @@ export default function App() {
   // freshly drafted specials always show, whatever mood is selected — they were
   // just made for this drinker, so filtering them out felt like they vanished
   const inventions = aiDrinks;
+  const barResults = useMemo(() => {
+    const seen = new Set<string>();
+    return [...inventions, ...canMake, ...almost].filter((recipe) => {
+      if (seen.has(recipe.id)) return false;
+      seen.add(recipe.id);
+      return true;
+    });
+  }, [inventions, canMake, almost]);
+  useEffect(() => {
+    setBarVisible(12);
+  }, [pantry, barQ, inventMood]);
   const hasPantry = pantry.length > 0;
   // the landing view is 'home', so no nav item is lit until you're in a section
   const active = landing ? null : route;
   const moreLeft = browseHasMore;
 
-  const barFilter: BrowseFilter =
-    inventMood === 'indian'
-      ? { kind: 'collection', id: 'india' }
-      : inventMood === 'house'
-        ? { kind: 'collection', id: 'house' }
-        : inventMood
-          ? { kind: 'category', id: inventMood as VibeId }
-          : { kind: 'all' };
   const onBarFilter = useCallback((value: BrowseFilter) => {
     setInventMood(value.kind === 'all' ? '' : value.id);
   }, []);
@@ -530,7 +656,7 @@ export default function App() {
       recipe={r}
       vibe={vibeOf(r.vibe)}
       index={i}
-      onVideo={setVideo}
+      onVideo={openVideo}
       onToggleTab={toggleTab}
       inTab={tabIds.has(r.id)}
       removeMode={removeMode}
@@ -548,6 +674,8 @@ export default function App() {
         {!shortsActive && <DailyQuestion force={dailyForced} />}
         {!shortsActive && <InstallBanner />}
         {!shortsActive && <NudgePrompt />}
+        <GuidedTour id="bar" active={route === 'bar'} />
+        <GuidedTour id="shorts" active={route === 'shorts'} />
 
         {/* ================= nav ================= */}
         <header className="nav">
@@ -674,8 +802,6 @@ export default function App() {
                         </button>
                       </div>
                     </Reveal>
-                    <WatchTeaser active={landing} />
-                    <ShortsTeaser active={landing} />
                     <ol className="hero-steps" aria-label="How it works">
                       <li>
                         <span className="k-label dim">01</span>
@@ -741,7 +867,7 @@ export default function App() {
                   {featured.length === 0 && browseLoading ? (
                     <div className="empty">
                       <p className="empty-big">OPENING THE BAR…</p>
-                      <p className="k-label dim">FIRST VISIT OF THE DAY CAN TAKE HALF A MINUTE WHILE THE KITCHEN WAKES.</p>
+                      <p className="k-label dim">LOADING THE LOCAL MENU…</p>
                     </div>
                   ) : featured.length === 0 && browseError ? (
                     <div className="empty">
@@ -790,7 +916,8 @@ export default function App() {
                     lead="Tell us what’s on your shelf and we’ll find the drinks you can pour. Type each thing, or snap one photo of your bottles."
                   />
                   <BarTalk />
-                  <div className="shelf-grid">
+                  <button type="button" className="text-btn tour-replay" onClick={() => requestTourReplay('bar')}>SHOW ME HOW</button>
+                  <div className="shelf-grid" data-tour="shelf-entry">
                     <div className="shelf-col">
                       <span className="k-label field-label">WHAT HAVE YOU GOT?</span>
                       <Typeahead onAdd={addIngredient} />
@@ -825,75 +952,81 @@ export default function App() {
                   )}
                 </section>
 
-                <section className="sec" id="pour">
+                <section className="sec" id="pour" data-tour="shelf-results">
                   <SectionHead
                     index="02"
-                    title="POUR TONIGHT"
-                    note={hasPantry ? `${canMake.length} READY, NO SHOPPING NEEDED` : 'WAITING ON YOUR SHELF'}
+                    title="DRINKS FOR YOUR SHELF"
+                    note={hasPantry ? `${barResults.length} MATCHES` : 'WAITING ON YOUR SHELF'}
                     loading={matching}
                   />
+                  <div className="shelf-results-head">
+                    <div>
+                      <span className="k-label shelf-result-count">{Math.min(barVisible, barResults.length)} OF {barResults.length}</span>
+                      <p className="k-label dim invent-note">BEST MATCHES FIRST · USES WHAT’S ON YOUR SHELF</p>
+                    </div>
+                    <button
+                      type="button"
+                      className="btn btn-solid"
+                      data-tour="invent-drink"
+                      onClick={invent}
+                      disabled={generating || !hasPantry}
+                    >
+                      {generating ? 'INVENTING…' : 'INVENT A DRINK'} <ArrowRight size={14} />
+                    </button>
+                  </div>
+                  {genError && <p className="err" role="alert">{genError}</p>}
                   {!hasPantry ? (
-                    <div className="empty">
-                      <p className="empty-big">YOUR SHELF’S EMPTY.</p>
-                      <p className="k-label dim">ADD A FEW BOTTLES ABOVE. WE’LL DO THE REST.</p>
+                    <div className="empty shelf-empty">
+                      <p className="empty-big">ADD SOMETHING TO YOUR SHELF</p>
+                      <p className="k-label dim">TYPE AN INGREDIENT OR SNAP A PHOTO TO SEE YOUR COCKTAILS.</p>
                     </div>
                   ) : (
                     <>
-                      <div className="bar-controls">
-                        <CategoryFilter
-                          value={barFilter}
-                          vibes={vibes}
-                          includeIndia
-                          includeHouse={false}
-                          onChange={onBarFilter}
-                          label="Filter your pours by category or collection"
+                      {barResults.length > 0 ? (
+                        <ShelfResults
+                          recipes={barResults}
+                          visible={barVisible}
+                          matching={matching}
+                          onLoadMore={() => setBarVisible((visible) => Math.min(visible + 12, barResults.length))}
+                          renderCard={card}
                         />
-                      </div>
-                      <div className="field menu-search">
-                        <input
-                          value={barQ}
-                          onChange={(e) => setBarQ(e.target.value)}
-                          placeholder="FILTER YOUR POURS… HIGHBALL, TIER 1, REGIONAL"
-                          aria-label="Search matched drinks by name, ingredient, lane, access, glass or style"
-                        />
-                      </div>
-                      <div className="invent-row">
-                        <div className="invent-lead">
-                          <span className="k-label">HOUSE SPECIALS</span>
-                          <p className="invent-note">
-                            A brand-new drink, dreamed up from exactly what you’ve got. The mood above
-                            steers it and the list below; drinks on your tab tune the bartender’s taste.
-                          </p>
-                        </div>
-                        <button className="btn btn-solid" onClick={invent} disabled={generating}>
-                          {generating ? 'MIXING…' : 'MIX ME SOMETHING NEW'} <ArrowRight size={14} />
-                        </button>
-                      </div>
-                      {genError && <p className="err" role="alert">{genError}</p>}
-
-                      {(inventions.length > 0 || canMake.length > 0) ? (
-                        <div className="grid">
-                          {inventions.map((r, i) => card(r, i))}
-                          {canMake.map((r, i) => card(r, i))}
-                        </div>
                       ) : (
                         !matching && (
                           <div className="empty">
-                            <p className="empty-big">NOTHING POURS CLEAN YET.</p>
-                            <p className="k-label dim">
-                              {inventMood
-                                ? 'NOTHING IN THIS MOOD. TRY ANOTHER, OR SEE “SO CLOSE” BELOW.'
-                                : 'ONE OR TWO MORE BOTTLES AND YOU’RE THERE. SEE “SO CLOSE” BELOW.'}
-                            </p>
+                            <p className="empty-big">NO MATCHES YET</p>
+                            <p className="k-label dim">TRY ADDING ANOTHER BOTTLE, MIXER OR FRESH INGREDIENT.</p>
                           </div>
                         )
                       )}
-
-                      {almost.length > 0 && (
-                        <>
-                          <SectionHead index="03" title="SO CLOSE" note="ONE BOTTLE SHORT" sub />
-                          <div className="grid">{almost.map((r, i) => card(r, i))}</div>
-                        </>
+                      <button
+                        type="button"
+                        className="text-btn shelf-filter-toggle"
+                        aria-expanded={barFiltersExpanded}
+                        onClick={() => setBarFiltersExpanded((expanded) => !expanded)}
+                      >
+                        {barFiltersExpanded ? 'HIDE FILTERS' : 'FILTER RESULTS'} <ArrowDown size={12} />
+                      </button>
+                      {barFiltersExpanded && (
+                        <div className="shelf-filters">
+                          <div className="bar-controls">
+                            <CategoryFilter
+                              value={barFilter}
+                              vibes={vibes}
+                              includeIndia
+                              includeHouse={false}
+                              onChange={onBarFilter}
+                              label="Filter your pours by category or collection"
+                            />
+                          </div>
+                          <div className="field menu-search">
+                            <input
+                              value={barQ}
+                              onChange={(e) => setBarQ(e.target.value)}
+                              placeholder="SEARCH YOUR SHELF… HIGHBALL, TIER 1, REGIONAL"
+                              aria-label="Search matched drinks by name, ingredient, lane, access, glass or style"
+                            />
+                          </div>
+                        </div>
                       )}
                     </>
                   )}
@@ -1012,7 +1145,7 @@ export default function App() {
 
         {/* ================= video modal ================= */}
         <AnimatePresence>
-          {video && <VideoModal recipe={video} onClose={() => setVideo(null)} />}
+          {video && <VideoModal recipe={video} onClose={closeVideo} />}
         </AnimatePresence>
       </div>
     </MotionConfig>
@@ -1061,10 +1194,27 @@ function VideoModal({ recipe, onClose }: { recipe: Recipe; onClose: () => void }
   const id = recipe.video.match(/(?:v=|youtu\.be\/|embed\/)([\w-]{11})/)?.[1];
   const src = id ? `https://www.youtube.com/embed/${id}?autoplay=1` : '';
   const videoLabel = 'WATCH IT MADE';
+  const dialogRef = useRef<HTMLDivElement>(null);
+  const closeRef = useRef<HTMLButtonElement>(null);
   useEffect(() => {
-    const onKey = (e: KeyboardEvent) => e.key === 'Escape' && onClose();
+    const restoreInert = setBackgroundInert(true, '.modal-backdrop');
+    closeRef.current?.focus();
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') { e.preventDefault(); onClose(); return; }
+      if (e.key !== 'Tab') return;
+      const focusable = Array.from(dialogRef.current?.querySelectorAll<HTMLElement>('button, a, iframe, [tabindex]:not([tabindex="-1"])') || []);
+      if (!focusable.length) return;
+      const first = focusable[0];
+      const last = focusable[focusable.length - 1];
+      if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
+      else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
+    };
     document.addEventListener('keydown', onKey);
-    return () => document.removeEventListener('keydown', onKey);
+    return () => {
+      document.removeEventListener('keydown', onKey);
+      restoreInert();
+      overlayGate.release(VIDEO_MODAL_GATE_ID);
+    };
   }, [onClose]);
   return (
     <motion.div
@@ -1077,7 +1227,9 @@ function VideoModal({ recipe, onClose }: { recipe: Recipe; onClose: () => void }
     >
       <motion.div
         className="modal"
+        ref={dialogRef}
         role="dialog"
+        aria-modal="true"
         aria-label={`${recipe.name} video`}
         onClick={(e) => e.stopPropagation()}
         initial={{ y: 26, opacity: 0 }}
@@ -1087,7 +1239,7 @@ function VideoModal({ recipe, onClose }: { recipe: Recipe; onClose: () => void }
       >
         <div className="modal-head">
           <span className="k-label">{videoLabel}: {recipe.name.toUpperCase()}</span>
-          <button className="text-btn" onClick={onClose}>
+          <button ref={closeRef} className="text-btn" onClick={onClose}>
             CLOSE <X size={12} />
           </button>
         </div>

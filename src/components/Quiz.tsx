@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { fetchHighScore, fetchQuizBatch, joinHall, submitHighScore } from '../api';
+import { localQuizSlice } from '../localData';
 import type { HallMember, Question } from '../types';
 import { ArrowRight, Check, X } from '../icons';
 import { EASE, LOADED_HIDDEN } from '../motion';
@@ -74,7 +75,7 @@ export function Quiz() {
     const from = served.current;
     const p = (async () => {
       try {
-        const { questions, total } = await fetchQuizBatch(seed.current, from, BATCH);
+        const { questions, total } = await localQuizSlice(seed.current, from, BATCH).catch(() => fetchQuizBatch(seed.current, from, BATCH));
         served.current = from + questions.length;
         if (served.current >= total || questions.length === 0) setExhausted(true);
         // a question this run has already served never comes round again
@@ -105,13 +106,12 @@ export function Quiz() {
     setSigned(false);
     setName('');
     try {
-      const { questions, total, high } = await fetchQuizBatch(seed.current, 0, BATCH);
+      const { questions, total } = await localQuizSlice(seed.current, 0, BATCH).catch(() => fetchQuizBatch(seed.current, 0, BATCH));
       if (!questions.length) throw new Error('empty');
       served.current = questions.length;
       for (const q of questions) servedIds.current.add(q.id);
       setBank(total);
       if (served.current >= total) setExhausted(true);
-      setHigh((h) => Math.max(h, high));
       setCurrent(questions[0]);
       setQueue(questions.slice(1));
       setScore(0);
@@ -327,6 +327,9 @@ export function Quiz() {
                 key={i}
                 className={`quiz-opt ${state}`}
                 onClick={() => choose(i)}
+                onPointerDown={(event) => {
+                  if (event.pointerType === 'touch' || event.pointerType === 'pen') event.currentTarget.blur();
+                }}
                 disabled={answered}
               >
                 <span className="quiz-opt-letter k-label">{'ABCD'[i]}</span>

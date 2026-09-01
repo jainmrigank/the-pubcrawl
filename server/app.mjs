@@ -10,7 +10,6 @@ import {
   loadCatalog,
   searchIngredients,
   matchRecipes,
-  recipeSearchScore,
   categorise,
   norm,
   visibleRecipes,
@@ -28,9 +27,9 @@ import { validateWatchEvent } from './watch-schema.mjs';
 import { classifyVideoStatus } from './youtube-health.mjs';
 import {
   initStore,
+  storeReady,
   storeMode,
   getLikes,
-  saveLikes,
   getKept,
   addKept,
   getSubs,
@@ -47,18 +46,36 @@ import {
   recordWatchEvent,
   getHighScore,
   submitScore,
+  updateLike,
 } from './store.mjs';
 
 export async function createApp() {
-  await initStore();
+  // Catalogue/health routes are available immediately. Durable state is
+  // loaded in the background and awaited only by handlers that need it.
   const app = express();
   const PUSH_SECRET = process.env.PUSH_SECRET || '';
   app.use(express.json({ limit: '15mb' }));
 
-  // CORS: the frontend may be served from another origin (Vercel) while the
-  // API runs here. Wide-open is fine for a public read-mostly menu API.
+  const configuredOrigins = String(process.env.FRONTEND_ORIGIN || '')
+    .split(',')
+    .map((origin) => origin.trim().replace(/\/$/, ''))
+    .filter(Boolean);
+  const allowedOrigins = new Set([
+    'https://the-pubcrawl.vercel.app',
+    'http://127.0.0.1:5175',
+    'http://localhost:5175',
+    'http://127.0.0.1:4173',
+    'http://localhost:4173',
+    ...configuredOrigins,
+  ]);
+  // CORS is explicit. Reflecting arbitrary origins made it possible for an
+  // unrelated site to drive browser requests against the public API.
   app.use((req, res, next) => {
-    res.setHeader('Access-Control-Allow-Origin', req.headers.origin || '*');
+    const origin = req.headers.origin;
+    const forwardedProtocol = String(req.headers['x-forwarded-proto'] || '').split(',')[0].trim();
+    const ownOrigin = `${forwardedProtocol || req.protocol}://${req.get('host')}`;
+    if (origin && origin !== ownOrigin && !allowedOrigins.has(origin)) return res.status(403).json({ error: 'origin not allowed' });
+    if (origin) res.setHeader('Access-Control-Allow-Origin', origin);
     res.setHeader('Vary', 'Origin');
     res.setHeader('Access-Control-Allow-Methods', 'GET,POST,OPTIONS');
     res.setHeader('Access-Control-Allow-Headers', 'content-type, x-push-secret, ngrok-skip-browser-warning');
@@ -69,30 +86,81 @@ export async function createApp() {
   const { cocktails, ingredients } = loadCatalog();
   const validIds = new Set(cocktails.map((c) => c.id));
 
-  // fold in drinks visitors have kept from house specials, so they persist in
-  // the menu across restarts
-  for (const d of getKept()) {
-    if (!validIds.has(d.id)) {
+  // Fold in drinks visitors have kept from House Specials. Store hydration is
+  // intentionally lazy, so this function is called once synchronously for the
+  // local-file fast path and again by dynamic handlers after storeReady().
+  const mergeKept = () => {
+    for (const d of getKept()) {
+      if (!d?.id || validIds.has(d.id)) continue;
       d.house = true;
+      d.browseable = true;
       cocktails.push(d);
       validIds.add(d.id);
     }
-  }
+    return cocktails;
+  };
+
+  const ensureStore = async (res, { merge = false } = {}) => {
+    try {
+      await storeReady();
+      if (merge) mergeKept();
+      return true;
+    } catch {
+      res.status(503).json({ error: 'saved PubCrawl data is temporarily unavailable' });
+      return false;
+    }
+  };
+
+  const stateBackedPath = (path) => (
+    path === '/api/likes' || path.startsWith('/api/likes/') ||
+    path === '/api/keep' || path === '/api/kept' ||
+    path === '/api/quiz/high' || path === '/api/quiz/hall' ||
+    path === '/api/videos/refresh' ||
+    path.startsWith('/api/watch/') || path.startsWith('/api/shorts/') ||
+    (path.startsWith('/api/push/') && path !== '/api/push/key')
+  );
+
+  // Health, taxonomy, ingredient search, catalogue queries, Daily Question,
+  // Watch, Shorts, and the AI adapters remain available without Redis. Only
+  // routes whose contract is explicitly durable wait for the one hydration
+  // promise before touching in-memory state.
+  app.use(async (req, res, next) => {
+    if (!stateBackedPath(req.path)) return next();
+    const merge = req.path === '/api/recipes' || req.path === '/api/recipes/match' || req.path === '/api/keep' || req.path.startsWith('/api/likes/');
+    if (!(await ensureStore(res, { merge }))) return;
+    next();
+  });
+  mergeKept();
+  // Hydration remains off the request critical path, but once it completes
+  // fold any saved House Specials into the in-memory catalogue so subsequent
+  // catalogue reads can see them without waiting for Redis themselves.
+  void initStore()
+    .then(() => mergeKept())
+    .catch((error) => console.error('[store] background init:', error.message));
   console.log(`[cocktail-api] ${cocktails.length} cocktails (${getKept().length} kept), ${ingredients.length} ingredients, LLM: ${llmAvailable() ? llmConfig.model : 'offline fallback'}, store: ${storeMode()}`);
 
   /* ---- public likes (shared across every visitor, durable via the store) ---- */
-  app.get('/api/likes', (_req, res) => res.json(getLikes()));
+  app.get('/api/likes', async (_req, res) => {
+    try {
+      await storeReady();
+      res.setHeader('Cache-Control', 'no-store');
+      res.json(getLikes());
+    } catch {
+      res.status(503).json({ error: 'likes temporarily unavailable' });
+    }
+  });
 
-  app.post('/api/likes/:id', (req, res) => {
+  app.post('/api/likes/:id', async (req, res) => {
     const { id } = req.params;
+    if (!(await ensureStore(res, { merge: true }))) return;
     if (!validIds.has(id)) return res.status(404).json({ error: 'Unknown drink' });
-    const likes = { ...getLikes() };
     const delta = req.body?.action === 'unlike' ? -1 : 1;
-    const next = Math.max(0, (likes[id] || 0) + delta);
-    if (next === 0) delete likes[id];
-    else likes[id] = next;
-    saveLikes(likes);
-    res.json({ id, likes: next });
+    try {
+      const next = await updateLike(id, delta);
+      res.json({ id, likes: next });
+    } catch (error) {
+      res.status(503).json({ error: 'likes temporarily unavailable' });
+    }
   });
 
   /* ---- keep a house special: give it a stable id and add it to the menu ---- */
@@ -103,7 +171,13 @@ export async function createApp() {
     return `kept-${h.toString(36)}`;
   }
 
-  app.post('/api/keep', (req, res) => {
+  app.post('/api/keep', async (req, res) => {
+    try {
+      await storeReady();
+    } catch {
+      return res.status(503).json({ error: 'kept recipes temporarily unavailable' });
+    }
+    mergeKept();
     const r = req.body?.recipe || req.body;
     if (!r?.name || !Array.isArray(r.ingredients) || !r.ingredients.length)
       return res.status(400).json({ error: 'recipe required' });
@@ -138,50 +212,78 @@ export async function createApp() {
       validIds.add(id);
       addKept(drink);
     }
+    res.setHeader('Cache-Control', 'no-store');
     res.json(drink);
   });
 
-  app.get('/api/health', (_req, res) =>
-    res.json({
+  app.get('/api/health', (_req, res) => {
+    res.setHeader('Cache-Control', 'no-store');
+    return res.json({
       ok: true,
+      runtime: 'render',
       cocktails: visibleRecipes(cocktails).length,
       catalogueCocktails: cocktails.length,
       ingredients: ingredients.length,
       llm: llmAvailable() ? llmConfig.model : null,
-    })
-  );
+    });
+  });
 
-  app.get('/api/vibes', (_req, res) => res.json(Object.values(VIBES)));
+  app.get('/api/vibes', (_req, res) => {
+    res.setHeader('Cache-Control', 'public, max-age=300, s-maxage=3600, stale-while-revalidate=86400');
+    res.json(Object.values(VIBES));
+  });
+
+  app.get('/api/kept', async (_req, res) => {
+    try {
+      await storeReady();
+      res.setHeader('Cache-Control', 'no-store');
+      res.json(getKept());
+    } catch {
+      res.status(503).json({ error: 'kept recipes temporarily unavailable' });
+    }
+  });
 
   /* ---- dedicated typeahead API ---- */
   app.get('/api/ingredients/search', (req, res) => {
     const q = String(req.query.q || '');
     const limit = Math.min(Number(req.query.limit) || 12, 30);
+    res.setHeader('Cache-Control', 'public, max-age=300, s-maxage=3600, stale-while-revalidate=86400');
     res.json(searchIngredients(ingredients, q, limit));
   });
 
   /* ---- browse / featured ---- */
-  app.get('/api/recipes', (req, res) => {
+  app.get('/api/recipes', async (req, res) => {
     try {
-      res.json(recipePage(cocktails, getLikes(), req.query));
+      // Catalogue filtering is pure and local. Do not hold this compatibility
+      // response behind Redis hydration: the browser's static-first path and
+      // sleeping Render fallback should both return the base menu immediately.
+      mergeKept();
+      const page = recipePage(cocktails, getLikes(), req.query);
+      // Kept recipes and likes are shared mutable overlays. Compatibility
+      // responses must never be cached as immutable catalogue data.
+      res.setHeader('Cache-Control', 'no-store');
+      res.json(page);
     } catch (error) {
       if (error instanceof RecipeQueryError) return res.status(400).json({ error: error.message });
-      throw error;
+      res.status(503).json({ error: 'recipe catalogue temporarily unavailable' });
     }
   });
 
   /* ---- match pantry -> recipes ---- */
-  app.post('/api/recipes/match', (req, res) => {
+  app.post('/api/recipes/match', async (req, res) => {
+    // Shelf matching is pure catalogue work. Kept drinks join once background
+    // hydration completes, but a cold/unavailable store must not delay a match.
+    mergeKept();
     const pantry = Array.isArray(req.body?.ingredients) ? req.body.ingredients.map(String) : [];
     if (!pantry.length) return res.json({ canMake: [], almost: [] });
     const q = String(req.body?.q || '');
-    // Filter the full catalogue before the matcher's 24-card result cap. This
-    // lets a shelf search retrieve a matching lane/glass/access result even if
-    // it was not present in the unfiltered first page.
-    const candidates = q.trim()
-      ? cocktails.filter((recipe) => recipeSearchScore(recipe, q) >= 0)
-      : cocktails;
-    res.json(matchRecipes(candidates, pantry));
+    const category = String(req.body?.category || '');
+    const collection = String(req.body?.collection || '');
+    if (category && !Object.prototype.hasOwnProperty.call(VIBES, category)) return res.status(400).json({ error: 'invalid category' });
+    if (collection && !['india', 'house'].includes(collection)) return res.status(400).json({ error: 'invalid collection' });
+    // The server adapter and local browser engine now share the same complete
+    // matcher. Filtering happens before the legacy 24-card compatibility cap.
+    res.json(matchRecipes(cocktails, pantry, { query: q, category, collection }));
   });
 
   /* ---- identify ingredients in an uploaded photo (LLM vision) ---- */
@@ -329,6 +431,7 @@ Respond with JSON exactly like:
     const from = Math.max(Number(req.query.from) || 0, 0);
     const count = Math.min(Math.max(Number(req.query.count) || 20, 1), 50);
     const { questions, total } = playlistSlice(seed, from, count);
+    res.setHeader('Cache-Control', 'no-store');
     res.json({ questions, total, high: getHighScore().score });
   });
 
@@ -363,7 +466,10 @@ Respond with JSON exactly like:
 
 
   /* ================= the watch shelf ================= */
-  app.get('/api/videos', (_req, res) => res.json(buildLibrary(getVideoStats())));
+  app.get('/api/videos', (_req, res) => {
+    res.setHeader('Cache-Control', 'no-store');
+    res.json(buildLibrary(getVideoStats()));
+  });
 
   /** Anonymous Watch discovery counters: no video id, user, or device data. */
   app.post('/api/watch/event', (req, res) => {
@@ -389,7 +495,10 @@ Respond with JSON exactly like:
   });
 
   /* ================= the Shorts shelf ================= */
-  app.get('/api/shorts', (_req, res) => res.json(buildShortLibrary(getVideoStats())));
+  app.get('/api/shorts', (_req, res) => {
+    res.setHeader('Cache-Control', 'no-store');
+    res.json(buildShortLibrary(getVideoStats()));
+  });
 
   /** Anonymous, capped counters only. No account, device, or viewing history is accepted. */
   app.post('/api/shorts/session', (req, res) => {

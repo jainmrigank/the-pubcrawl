@@ -1,8 +1,11 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { currentSubscription, isStandalone, pushSupported, subscribeToNudges } from '../push';
 import { ArrowRight, Check, X } from '../icons';
 import { EASE } from '../motion';
+import { OVERLAY_PRIORITY, overlayGate, setBackgroundInert } from '../overlayGate';
+
+const NUDGE_GATE_ID = 'notification-prompt';
 
 /**
  * Asks for notifications with a card over the app, the bar blurred behind it —
@@ -18,6 +21,18 @@ export function NudgePrompt() {
   const [busy, setBusy] = useState(false);
   const [done, setDone] = useState(false);
   const [blocked, setBlocked] = useState(false);
+  const [shouldOffer, setShouldOffer] = useState(false);
+  const dialogRef = useRef<HTMLDivElement>(null);
+  const openerRef = useRef<HTMLElement | null>(null);
+  const dismissedRef = useRef(false);
+
+  const close = useCallback(() => {
+    dismissedRef.current = true;
+    setShouldOffer(false);
+    setOpen(false);
+    overlayGate.release(NUDGE_GATE_ID);
+    openerRef.current?.focus();
+  }, []);
 
   useEffect(() => {
     if (!pushSupported() || !isStandalone()) return;
@@ -27,16 +42,8 @@ export function NudgePrompt() {
       .then((sub) => {
         if (cancelled || sub) return; // already subscribed: nothing to ask
         if (Notification.permission === 'denied') setBlocked(true);
-        // let the question of the day have the screen first
-        const show = () => {
-          if (cancelled) return;
-          if (document.querySelector('.daily-backdrop')) {
-            setTimeout(show, 700);
-            return;
-          }
-          setOpen(true);
-        };
-        show();
+        dismissedRef.current = false;
+        setShouldOffer(true);
       })
       .catch(() => {});
 
@@ -45,22 +52,51 @@ export function NudgePrompt() {
     };
   }, []);
 
+  useEffect(() => {
+    if (!shouldOffer || open) return;
+    const tryOpen = () => {
+      if (dismissedRef.current) return;
+      if (!overlayGate.acquire(NUDGE_GATE_ID, OVERLAY_PRIORITY.prompt)) return;
+      openerRef.current = document.activeElement instanceof HTMLElement ? document.activeElement : null;
+      setOpen(true);
+    };
+    tryOpen();
+    return overlayGate.subscribe(tryOpen);
+  }, [open, shouldOffer]);
+
+  useEffect(() => overlayGate.subscribe(() => {
+    if (open && overlayGate.active !== NUDGE_GATE_ID) setOpen(false);
+  }), [open]);
+
   // hold the page still while the card is up
   useEffect(() => {
     if (!open) return;
     const prev = document.body.style.overflow;
     document.body.style.overflow = 'hidden';
+    const restoreInert = setBackgroundInert(true, '.nudge-backdrop');
     return () => {
       document.body.style.overflow = prev;
+      restoreInert();
+      overlayGate.release(NUDGE_GATE_ID);
     };
   }, [open]);
 
   useEffect(() => {
     if (!open) return;
-    const onKey = (e: KeyboardEvent) => e.key === 'Escape' && setOpen(false);
+    dialogRef.current?.querySelector<HTMLElement>('button')?.focus();
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') { e.preventDefault(); close(); return; }
+      if (e.key !== 'Tab') return;
+      const focusable = Array.from(dialogRef.current?.querySelectorAll<HTMLElement>('button, a, input, [tabindex]:not([tabindex="-1"])') || []);
+      if (!focusable.length) return;
+      const first = focusable[0];
+      const last = focusable[focusable.length - 1];
+      if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
+      else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
+    };
     document.addEventListener('keydown', onKey);
     return () => document.removeEventListener('keydown', onKey);
-  }, [open]);
+  }, [close, open]);
 
   async function turnOn() {
     setBusy(true);
@@ -68,7 +104,7 @@ export function NudgePrompt() {
     setBusy(false);
     if (result === 'subscribed') {
       setDone(true);
-      setTimeout(() => setOpen(false), 1800);
+      setTimeout(close, 1800);
     } else {
       setBlocked(true);
     }
@@ -78,8 +114,8 @@ export function NudgePrompt() {
     <AnimatePresence>
       {open && (
         <motion.div
-          className="daily-backdrop"
-          onClick={() => setOpen(false)}
+          className="daily-backdrop nudge-backdrop"
+          onClick={close}
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
@@ -87,6 +123,7 @@ export function NudgePrompt() {
         >
           <motion.div
             className="daily nudge-modal"
+            ref={dialogRef}
             role="dialog"
             aria-modal="true"
             aria-label="Turn on notifications"
@@ -98,7 +135,7 @@ export function NudgePrompt() {
           >
             <div className="daily-head">
               <span className="k-label">FROM THE BAR</span>
-              <button className="chip-x" onClick={() => setOpen(false)} aria-label="Close">
+              <button className="chip-x" onClick={close} aria-label="Close">
                 <X size={12} />
               </button>
             </div>
@@ -124,7 +161,7 @@ export function NudgePrompt() {
                   </button>
                 )}
                 <div className="daily-skip">
-                  <button className="text-btn" onClick={() => setOpen(false)}>
+                  <button className="text-btn" onClick={close}>
                     {blocked ? 'CLOSE' : 'NOT NOW'}
                   </button>
                 </div>

@@ -1,9 +1,9 @@
-import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { fetchVideos, postWatchEvent } from '../api';
 import type { WatchLane, WatchLibrary, WatchVideo } from '../types';
-import { ArrowRight, Check, Play, Search, Share, Shuffle, X } from '../icons';
+import { Check, Play, Search, Share, Shuffle, X } from '../icons';
 import { shareContent, videoShareText } from '../share';
-import { LANDING_WATCH_SEED, WATCH_BOOTSTRAP_LIBRARY, WATCH_CATALOGUE_COUNT, thumbnailForWatch, watchLaneLabel } from '../watchData';
+import { WATCH_BOOTSTRAP_LIBRARY } from '../watchData';
 
 type Tab = 'watched' | 'new' | 'surprise';
 
@@ -25,97 +25,6 @@ function short(n: number | null, unit: string): string | null {
 }
 
 const norm = (s: string) => s.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '');
-
-function randomIndex(length: number) {
-  if (!length) return 0;
-  if (typeof crypto !== 'undefined' && typeof crypto.getRandomValues === 'function') {
-    return crypto.getRandomValues(new Uint32Array(1))[0] % length;
-  }
-  return Math.floor(Math.random() * length);
-}
-
-function randomFeaturedVideos(count = 6): WatchVideo[] {
-  const pool = [...LANDING_WATCH_SEED];
-  for (let index = pool.length - 1; index > 0; index -= 1) {
-    const swapIndex = randomIndex(index + 1);
-    [pool[index], pool[swapIndex]] = [pool[swapIndex], pool[index]];
-  }
-  return pool.slice(0, Math.min(count, pool.length));
-}
-
-interface WatchTeaserProps {
-  active?: boolean;
-  catalogueCount?: number;
-}
-
-/** Static landing facade: no API request and no iframe until the visitor opens Watch. */
-export function WatchTeaser({ active = true, catalogueCount = WATCH_CATALOGUE_COUNT }: WatchTeaserProps) {
-  const [featured, setFeatured] = useState(() => randomFeaturedVideos());
-  const wasActive = useRef(active);
-  const impressionSent = useRef(false);
-  const teaserRef = useRef<HTMLElement>(null);
-  const trackRef = useRef<HTMLDivElement>(null);
-
-  useLayoutEffect(() => {
-    if (active && !wasActive.current) {
-      setFeatured(randomFeaturedVideos());
-      trackRef.current?.scrollTo({ left: 0, behavior: 'auto' });
-    }
-    wasActive.current = active;
-  }, [active]);
-
-  useEffect(() => {
-    impressionSent.current = false;
-    if (!active || !featured || !teaserRef.current) return;
-    const send = () => {
-      if (impressionSent.current) return;
-      impressionSent.current = true;
-      postWatchEvent({ type: 'preview-impression' }).catch(() => {});
-    };
-    if (!('IntersectionObserver' in window)) {
-      send();
-      return;
-    }
-    const observer = new IntersectionObserver((entries) => {
-      if (entries.some((entry) => entry.isIntersecting && entry.intersectionRatio >= 0.5)) send();
-    }, { threshold: [0.5] });
-    observer.observe(teaserRef.current);
-    return () => observer.disconnect();
-  }, [active, featured]);
-
-  if (!featured.length) return null;
-  return (
-    <section className="watch-teaser" ref={teaserRef} aria-labelledby="watch-teaser-title">
-      <div className="watch-teaser-head">
-        <span id="watch-teaser-title" className="k-label">WATCH / THE BAR ON FILM</span>
-        <span className="k-label dim">6 PICKS · {catalogueCount} VIDEOS</span>
-      </div>
-      <div ref={trackRef} className="watch-teaser-track" aria-label="Featured Watch videos">
-        {featured.map((video, index) => {
-          const lane = watchLaneLabel[video.lane] || video.lane.toUpperCase();
-          return (
-            <a
-              key={video.id}
-              className="watch-teaser-card"
-              href={`#/watch?v=${encodeURIComponent(video.id)}&src=landing`}
-            >
-              <span className="watch-teaser-media">
-                <img src={thumbnailForWatch(video)} alt="" loading={index < 2 ? 'eager' : 'lazy'} decoding="async" />
-                <span className="watch-teaser-play" aria-hidden="true"><Play size={16} /></span>
-              </span>
-              <span className="watch-teaser-copy">
-                <span className="k-label watch-teaser-lane">{lane}</span>
-                <strong>{video.title}</strong>
-                <span className="k-label dim">{video.channel}</span>
-                <span className="watch-teaser-open">OPEN WATCH <ArrowRight size={12} /></span>
-              </span>
-            </a>
-          );
-        })}
-      </div>
-    </section>
-  );
-}
 
 /**
  * One video. The still is a facade: YouTube's player, and everything it drags
@@ -451,13 +360,20 @@ function WatchShelf({ data, active, initialId, source }: WatchShelfProps) {
           ))}
         </select>
         <div className="wv-kind-pills" aria-label="Filter videos by kind">
-          <button className={`vibe-chip ${lane === '' ? 'on' : ''}`} onClick={() => setLane('')}>
+          <button
+            type="button"
+            className={`vibe-chip ${lane === '' ? 'on' : ''}`}
+            aria-pressed={lane === ''}
+            onClick={() => setLane('')}
+          >
             ALL
           </button>
           {data.lanes.map((l) => (
             <button
               key={l.id}
+              type="button"
               className={`vibe-chip ${lane === l.id ? 'on' : ''}`}
+              aria-pressed={lane === l.id}
               style={{ ['--vc' as string]: l.color }}
               onClick={() => setLane(lane === l.id ? '' : l.id)}
             >

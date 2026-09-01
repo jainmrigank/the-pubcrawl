@@ -1,0 +1,9 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "pubcrawl-api",
+  "main": "index.ts",
+  "compatibility_date": "2026-08-31",
+  "vars": {
+    "FRONTEND_ORIGIN": "https://the-pubcrawl.vercel.app"
+  }
+}

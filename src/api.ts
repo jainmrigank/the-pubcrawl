@@ -1,5 +1,6 @@
 import type {
   CollectionId,
+  BrowseFilter,
   HallMember,
   Health,
   Ingredient,
@@ -33,9 +34,9 @@ const HEADERS: Record<string, string> = API_BASE.includes('ngrok')
 const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
 
 /**
- * Reads retry with backoff: a free-tier API host sleeps when idle and the
- * first request of a visit can hit it mid-wake (network error or 5xx).
- * 4xx responses are real answers and are never retried.
+ * Reads use a short timeout and one bounded retry. The Worker is the normal
+ * host; the retry is only for a transient network/5xx response and must not
+ * recreate the old four-attempt Render wake-up delay.
  */
 /**
  * Every request carries a timeout: a hung call would otherwise occupy one of
@@ -43,19 +44,24 @@ const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
  * request during an outage, retries piling up) silently starve every later
  * fetch, freezing the whole app until a refresh.
  */
-async function get<T>(url: string, tries = 4, externalSignal?: AbortSignal): Promise<T> {
+async function get<T>(url: string, tries = 2, externalSignal?: AbortSignal): Promise<T> {
   let lastErr: unknown;
-  for (let i = 0; i < tries; i++) {
+  const attempts = Math.min(Math.max(tries, 1), 2);
+  for (let i = 0; i < attempts; i++) {
     let timeoutId: ReturnType<typeof setTimeout> | undefined;
     let requestSignal: AbortSignal | undefined;
     let detachExternal: (() => void) | undefined;
+    let timedOut = false;
     try {
       // Keep request replacement and timeout cancellation independent of the
       // browser's optional AbortSignal.any/timeout implementations. The
       // component-owned signal always wins and is never retried.
       const controller = new AbortController();
       requestSignal = controller.signal;
-      timeoutId = setTimeout(() => controller.abort(), 12000);
+      timeoutId = setTimeout(() => {
+        timedOut = true;
+        controller.abort(new DOMException('Request timed out', 'TimeoutError'));
+      }, 5000);
       const abortFromOwner = () => controller.abort(externalSignal?.reason);
       if (externalSignal) {
         if (externalSignal.aborted) abortFromOwner();
@@ -66,18 +72,27 @@ async function get<T>(url: string, tries = 4, externalSignal?: AbortSignal): Pro
       }
       const res = await fetch(API_BASE + url, { headers: HEADERS, signal: requestSignal });
       if (res.ok) return res.json();
-      if (res.status < 500) throw new Error(`${url} → ${res.status}`);
+      if (res.status < 500) {
+        const error = new Error(`${url} → ${res.status}`) as Error & { status?: number };
+        error.status = res.status;
+        throw error;
+      }
       lastErr = new Error(`${url} → ${res.status}`);
     } catch (err) {
       // A component-owned abort is a normal request replacement, not a
       // network failure. Never retry it or surface it as an error state.
-      if (externalSignal?.aborted) throw err;
+      // An AbortError caused by our timeout is different: it is a transient
+      // network failure and receives the single bounded retry below.
+      if (externalSignal?.aborted || ((err instanceof DOMException && err.name === 'AbortError') && !timedOut)) throw err;
+      // Client errors are deterministic (bad input, unauthorized, not found)
+      // and retrying them only adds latency and duplicate work.
+      if (Number((err as { status?: unknown })?.status) < 500) throw err;
       lastErr = err;
     } finally {
       if (timeoutId !== undefined) clearTimeout(timeoutId);
       detachExternal?.();
     }
-    if (i < tries - 1) await sleep(1500 * (i + 1));
+    if (i < attempts - 1) await sleep(250 + Math.floor(Math.random() * 251));
   }
   throw lastErr;
 }
@@ -95,9 +110,15 @@ async function post<T>(url: string, body: unknown, retryable = false, timeoutMs 
       const json = await res.json().catch(() => ({}));
       if (res.ok) return json as T;
       const msg = (json as { error?: string }).error || `${url} → ${res.status}`;
-      if (res.status < 500) throw new Error(msg);
+      if (res.status < 500) {
+        const error = new Error(msg) as Error & { status?: number };
+        error.status = res.status;
+        throw error;
+      }
       lastErr = new Error(msg);
     } catch (err) {
+      // Do not retry a request the server has already rejected as invalid.
+      if (Number((err as { status?: unknown })?.status) < 500) throw err;
       lastErr = err;
     }
     if (retryable && i < 2) await sleep(1500 * (i + 1));
@@ -134,11 +155,16 @@ export const fetchRecipes = (opts: RecipeQueryOptions = {}) => {
   if (opts.limit) p.set('limit', String(opts.limit));
   if (opts.seed) p.set('seed', opts.seed);
   if (opts.sort) p.set('sort', opts.sort);
-  return get<RecipePage>(`/api/recipes?${p}`, 4, opts.signal);
+  return get<RecipePage>(`/api/recipes?${p}`, 2, opts.signal);
 };
 
-export const matchRecipes = (ingredients: string[], q = '') =>
-  post<MatchResult>('/api/recipes/match', { ingredients, q }, true);
+export const matchRecipes = (ingredients: string[], q = '', filter?: BrowseFilter) =>
+  post<MatchResult>('/api/recipes/match', {
+    ingredients,
+    q,
+    category: filter?.kind === 'category' ? filter.id : undefined,
+    collection: filter?.kind === 'collection' ? filter.id : undefined,
+  }, true);
 
 export const identifyImage = (imageBase64: string, mimeType: string) =>
   post<{ detected: Ingredient[] }>('/api/identify', { imageBase64, mimeType }, false, 90000);
@@ -147,6 +173,8 @@ export const generateRecipe = (ingredients: string[], vibe?: string, avoid?: str
   post<Recipe>('/api/generate', { ingredients, vibe, avoid, taste }, false, 90000);
 
 export const fetchLikes = () => get<Record<string, number>>('/api/likes');
+
+export const fetchKeptRecipes = () => get<Recipe[]>('/api/kept');
 
 export const postLike = (id: string, action: 'like' | 'unlike') =>
   post<{ id: string; likes: number }>(`/api/likes/${id}`, { action });

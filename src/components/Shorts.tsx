@@ -1,18 +1,21 @@
-import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState, type CSSProperties, type PointerEvent } from 'react';
+import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState, type PointerEvent } from 'react';
 import { fetchRecipes, fetchShorts, postShortSession } from '../api';
 import type { Recipe, ShortLibrary, ShortsReturnState, ShortVideo, Vibe, WatchLane } from '../types';
 import { applySound, createYouTubePlayer, YT_PLAYER_STATES, type YouTubePlayer } from '../shortsPlayer';
 import { ArrowLeft, ArrowRight, Check, GlassIcon, Play, Share, X } from '../icons';
 import { shareContent, shortShareText } from '../share';
 import { formatMeasure } from '../measure';
-import { SHORTS_SEED, thumbnailForShort } from '../shortsData';
+import { SHORTS_SEED } from '../shortsData';
 import { RecipeCardActions } from './RecipeCard';
+import { requestTourReplay } from '../tutorial';
+import { OVERLAY_PRIORITY, overlayGate, setBackgroundInert } from '../overlayGate';
+import { queryLocalRecipes } from '../localData';
 import {
   createShortsControllerState,
   leaseMatches,
   shortsPreparationPriority,
   shortsContentWindow,
-  shortsPlayerWindow,
+  shortsDirectionalPlayerWindow,
   transitionShortsController,
   type PlayerLease,
   type ShortsControllerPhase,
@@ -62,14 +65,9 @@ function sourceLabel(source: string): 'landing' | 'nav' | 'deep-link' | 'direct'
   return source === 'landing' || source === 'nav' || source === 'deep-link' ? source : 'direct';
 }
 
-function shortLabel(duration: number) {
-  const mins = Math.floor(duration / 60);
-  const secs = Math.round(duration % 60).toString().padStart(2, '0');
-  return mins ? `${mins}:${secs}` : `0:${secs}`;
-}
-
 const SHORTS_SNAPSHOT_VERSION = 2 as const;
 const SHORTS_SNAPSHOT_KEY = 'pubcrawl.shorts.overlay.v2';
+const SHORTS_RECIPE_GATE_ID = 'shorts-recipe-overlay';
 
 function isShortsReturnState(value: unknown): value is ShortsReturnState {
   if (!value || typeof value !== 'object') return false;
@@ -131,49 +129,6 @@ function preferredPlaybackMode(): ShortsPlaybackMode {
 /** Initialization order for the bounded iframe bootstrap queue. */
 function shortsInitPriority(index: number, activeIndex: number, focusIndex: number, direction: ShortsScrollDirection): number {
   return shortsPreparationPriority(index, activeIndex, focusIndex, direction);
-}
-
-interface ShortsTeaserProps {
-  active?: boolean;
-}
-
-/** Six randomized build-time facades for the landing page; never creates an iframe. */
-export function ShortsTeaser({ active = true }: ShortsTeaserProps) {
-  const [seed, setSeed] = useState(randomSeed);
-  const wasActive = useRef(active);
-  const trackRef = useRef<HTMLDivElement>(null);
-  useLayoutEffect(() => {
-    if (active && !wasActive.current) setSeed(randomSeed());
-    wasActive.current = active;
-  }, [active]);
-  useLayoutEffect(() => {
-    trackRef.current?.scrollTo({ left: 0, behavior: 'auto' });
-  }, [seed]);
-  const picks = useMemo(() => shuffleWithSeed(SHORTS_SEED, seed).slice(0, 6), [seed]);
-  if (!picks.length) return null;
-  return (
-    <section className="shorts-teaser" aria-labelledby="shorts-teaser-title">
-      <div className="shorts-teaser-head">
-        <span id="shorts-teaser-title" className="k-label">SHORTS / QUICK POURS</span>
-        <a className="text-btn" href="#/shorts?src=landing">SEE ALL <ArrowRight size={12} /></a>
-      </div>
-      <div className="shorts-teaser-track" ref={trackRef}>
-        {picks.map((short, index) => (
-          <a className="shorts-teaser-card" href={`#/shorts?v=${encodeURIComponent(short.id)}&src=landing`} key={short.id}>
-            <span className="shorts-teaser-image">
-              <img src={thumbnailForShort(short)} alt="" loading={index < 2 ? 'eager' : 'lazy'} decoding="async" />
-              <span className="shorts-teaser-play" aria-hidden="true"><Play size={16} /></span>
-              <span className="k-label shorts-teaser-duration">{shortLabel(short.durationSeconds)}</span>
-            </span>
-            <span className="shorts-teaser-copy">
-              <strong>{short.title}</strong>
-              <span className="k-label dim">{short.channel}</span>
-            </span>
-          </a>
-        ))}
-      </div>
-    </section>
-  );
 }
 
 interface SessionCounters {
@@ -370,6 +325,7 @@ function ShortPlayerHost({
   const onRequestInitializeRef = useRef(onRequestInitialize);
   const requestStartedAt = useRef<number | null>(null);
   const startupTimerRef = useRef<number | null>(null);
+  const loadingCopyTimerRef = useRef<number | null>(null);
   const retryTimerRef = useRef<number | null>(null);
   const revealTimerRef = useRef<number | null>(null);
   const confirmPlaybackRef = useRef<(player: YouTubePlayer, generation: number | null) => void>(() => {});
@@ -382,6 +338,7 @@ function ShortPlayerHost({
   const [revealed, setRevealed] = useState(false);
   const [autoplayBlocked, setAutoplayBlocked] = useState(false);
   const [phase, setPhase] = useState<ShortPlayerPhase>('initializing');
+  const [showLoadingCopy, setShowLoadingCopy] = useState(false);
 
   shouldPlayRef.current = shouldPlay;
   leaseGenerationRef.current = playLeaseGeneration;
@@ -407,6 +364,12 @@ function ShortPlayerHost({
       if (startupTimerRef.current != null) {
         window.clearTimeout(startupTimerRef.current);
         startupTimerRef.current = null;
+      }
+    };
+    const clearLoadingCopyTimer = () => {
+      if (loadingCopyTimerRef.current != null) {
+        window.clearTimeout(loadingCopyTimerRef.current);
+        loadingCopyTimerRef.current = null;
       }
     };
     const clearRetryTimer = () => {
@@ -446,6 +409,7 @@ function ShortPlayerHost({
 
     if (!enabled || !online || failed || !hostRef.current) {
       clearStartupTimer();
+      clearLoadingCopyTimer();
       clearRetryTimer();
       clearRevealTimer();
       const old = playerRef.current;
@@ -457,6 +421,7 @@ function ShortPlayerHost({
       setReady(false);
       setCued(false);
       setRevealed(false);
+      setShowLoadingCopy(false);
       setPhase('initializing');
       playRequestRef.current = false;
       cueIssuedRef.current = false;
@@ -476,6 +441,7 @@ function ShortPlayerHost({
     setReady(false);
     setCued(false);
     setRevealed(false);
+    setShowLoadingCopy(false);
     setAutoplayBlocked(false);
     setPhase('initializing');
     playRequestRef.current = false;
@@ -606,6 +572,7 @@ function ShortPlayerHost({
       cancelQueued?.();
       releaseInitialization();
       clearStartupTimer();
+      clearLoadingCopyTimer();
       clearRetryTimer();
       clearRevealTimer();
       playRequestRef.current = false;
@@ -630,6 +597,11 @@ function ShortPlayerHost({
       window.clearTimeout(startupTimerRef.current);
       startupTimerRef.current = null;
     }
+    if (loadingCopyTimerRef.current != null) {
+      window.clearTimeout(loadingCopyTimerRef.current);
+      loadingCopyTimerRef.current = null;
+    }
+    setShowLoadingCopy(false);
     if (retryTimerRef.current != null) {
       window.clearTimeout(retryTimerRef.current);
       retryTimerRef.current = null;
@@ -658,6 +630,7 @@ function ShortPlayerHost({
     if (!shouldPlay || playLeaseGeneration == null) {
       player.pauseVideo();
       setRevealed(false);
+      setShowLoadingCopy(false);
       playbackConfirmedRef.current = false;
       playRequestRef.current = false;
       setPhase(cuedRef.current ? 'cued' : 'initializing');
@@ -693,6 +666,17 @@ function ShortPlayerHost({
     } catch {}
     requestStartedAt.current = performance.now();
     setPhase('starting');
+    if (loadingCopyTimerRef.current != null) {
+      window.clearTimeout(loadingCopyTimerRef.current);
+      loadingCopyTimerRef.current = null;
+    }
+    setShowLoadingCopy(false);
+    loadingCopyTimerRef.current = window.setTimeout(() => {
+      loadingCopyTimerRef.current = null;
+      if (leaseGenerationRef.current === generation && shouldPlayRef.current && !revealed) {
+        setShowLoadingCopy(true);
+      }
+    }, 700);
     player.playVideo();
     retryTimerRef.current = window.setTimeout(() => {
       retryTimerRef.current = null;
@@ -723,6 +707,11 @@ function ShortPlayerHost({
         window.clearTimeout(startupTimerRef.current);
         startupTimerRef.current = null;
       }
+      if (loadingCopyTimerRef.current != null) {
+        window.clearTimeout(loadingCopyTimerRef.current);
+        loadingCopyTimerRef.current = null;
+      }
+      setShowLoadingCopy(false);
       if (retryTimerRef.current != null) {
         window.clearTimeout(retryTimerRef.current);
         retryTimerRef.current = null;
@@ -764,8 +753,9 @@ function ShortPlayerHost({
           aria-label={online && !failed ? (waitingForAutoplay ? short.title : `Play ${short.title}`) : `${short.title}. ${facadeLabel}`}
           disabled={!online || failed}
         >
-          <img src={thumbnailForShort(short)} alt="" loading="eager" decoding="async" />
+          <span className="shorts-startup-surface" aria-hidden="true" />
           {showPlayControl && <span className="shorts-facade-play"><Play size={24} /></span>}
+          {showLoadingCopy && <span className="k-label shorts-loading-copy" role="status">LOADING VIDEO…</span>}
           {facadeLabel && <span className="k-label shorts-tap">{facadeLabel}</span>}
         </button>
       )}
@@ -936,6 +926,7 @@ export function Shorts({
   const [recipesError, setRecipesError] = useState(false);
   const feedRef = useRef<HTMLDivElement>(null);
   const recipeCloseRef = useRef<HTMLButtonElement>(null);
+  const recipeOpenerRef = useRef<HTMLElement | null>(null);
   const activeRef = useRef(active);
   const activeIndexRef = useRef(0);
   const prepareIndexRef = useRef(0);
@@ -1005,8 +996,8 @@ export function Shorts({
     [activeIndex, orderedShorts.length]
   );
   const playerIndices = useMemo(
-    () => new Set(shortsPlayerWindow(activeIndex, orderedShorts.length, playbackMode === 'manual' ? 1 : 5)),
-    [activeIndex, orderedShorts.length, playbackMode]
+    () => new Set(shortsDirectionalPlayerWindow(activeIndex, orderedShorts.length, scrollDirection, playbackMode === 'manual' ? 1 : 5)),
+    [activeIndex, orderedShorts.length, playbackMode, scrollDirection]
   );
 
   const transitionController = useCallback((event: Parameters<typeof transitionShortsController>[1]) => {
@@ -1527,7 +1518,9 @@ export function Shorts({
   const openRecipeOverlay = useCallback(
     (short: ShortVideo) => {
       if (!activeRef.current || !short.recipeQuery || openingOverlayRef.current || overlayRef.current) return;
+      if (!overlayGate.acquire(SHORTS_RECIPE_GATE_ID, OVERLAY_PRIORITY.shortsRecipe)) return;
       openingOverlayRef.current = true;
+      recipeOpenerRef.current = document.activeElement instanceof HTMLElement ? document.activeElement : null;
       const snapshot = captureSnapshot(short);
       const baseHash = typeof window !== 'undefined' ? window.location.hash.replace(/[?&]make=1(?=&|$)/, '').replace(/[?&]$/, '') : '';
       overlayBaseHash.current = baseHash;
@@ -1548,7 +1541,8 @@ export function Shorts({
         window.history.pushState({ ...currentState, pubcrawlShortsOverlay: snapshot }, '', nextHash);
         try { window.sessionStorage.setItem(SHORTS_SNAPSHOT_KEY, JSON.stringify(snapshot)); } catch {}
       }
-      fetchRecipes({ q: short.recipeQuery, limit: 3, seed: short.id })
+      queryLocalRecipes({ q: short.recipeQuery, limit: 3, seed: short.id })
+        .catch(() => fetchRecipes({ q: short.recipeQuery!, limit: 3, seed: short.id }))
         .then((result) => setRecipes(result.recipes))
         .catch(() => setRecipesError(true))
         .finally(() => {
@@ -1565,6 +1559,7 @@ export function Shorts({
     overlayRestoredRef.current = true;
     openingOverlayRef.current = false;
     setRecipeOverlay(null);
+    overlayGate.release(SHORTS_RECIPE_GATE_ID);
     clearShortsOverlaySnapshot();
     if (typeof window !== 'undefined' && window.location.hash.includes('make=1')) {
       const rest = window.history.state && typeof window.history.state === 'object' ? { ...(window.history.state as Record<string, unknown>) } : {};
@@ -1572,6 +1567,7 @@ export function Shorts({
       window.history.replaceState(rest, '', overlayBaseHash.current || window.location.hash.replace(/[?&]make=1(?=&|$)/, '').replace(/[?&]$/, ''));
     }
     restoreSnapshot(snapshot);
+    recipeOpenerRef.current?.focus();
     window.setTimeout(() => { overlayRestoredRef.current = false; }, 0);
   }, [restoreSnapshot]);
 
@@ -1582,6 +1578,7 @@ export function Shorts({
     setRecipeOverlay(null);
     openingOverlayRef.current = false;
     overlayRestoredRef.current = true;
+    overlayGate.release(SHORTS_RECIPE_GATE_ID);
     clearShortsOverlaySnapshot();
     if (typeof window !== 'undefined') {
       const baseHash = overlayBaseHash.current || window.location.hash.replace(/&make=1$/, '');
@@ -1714,6 +1711,13 @@ export function Shorts({
     if (active) return;
     visitStarted.current = false;
     overlayLoadedRef.current = false;
+    if (overlayRef.current) {
+      setRecipeOverlay(null);
+      openingOverlayRef.current = false;
+      overlayRestoredRef.current = true;
+      overlayGate.release(SHORTS_RECIPE_GATE_ID);
+      clearShortsOverlaySnapshot();
+    }
     transitionController({ type: 'route-inactive' });
     pausePlayersExcept(null);
     flushSession();
@@ -1767,6 +1771,7 @@ export function Shorts({
     setActiveIndex(index);
     setPrepareIndex(index);
     setVisibleIndex(-1);
+    if (!overlayGate.acquire(SHORTS_RECIPE_GATE_ID, OVERLAY_PRIORITY.shortsRecipe)) return;
     transitionController({ type: 'overlay-open' });
     overlayBaseHash.current = window.location.hash.replace(/[?&]make=1(?=&|$)/, '').replace(/[?&]$/, '');
     pendingRestoreRef.current = snapshot;
@@ -1776,7 +1781,8 @@ export function Shorts({
     setRecipes([]);
     setRecipesLoading(true);
     setRecipesError(false);
-    fetchRecipes({ q: short.recipeQuery || short.title, limit: 3, seed: short.id })
+    queryLocalRecipes({ q: short.recipeQuery || short.title, limit: 3, seed: short.id })
+      .catch(() => fetchRecipes({ q: short.recipeQuery || short.title, limit: 3, seed: short.id }))
       .then((result) => setRecipes(result.recipes))
       .catch(() => setRecipesError(true))
       .finally(() => setRecipesLoading(false));
@@ -1849,7 +1855,7 @@ export function Shorts({
 
   // One scroll state machine owns activation. A meaningful movement revokes
   // the current lease in the same task and pauses every player; only the
-  // nearest card after scrollend (or 100ms of quiet) receives a new lease.
+  // nearest card after scrollend (or 120ms of quiet) receives a new lease.
   useEffect(() => {
     const root = feedRef.current;
     if (!active || !root || !orderedShorts.length) return;
@@ -1937,7 +1943,7 @@ export function Shorts({
           setVisibleIndex(finalTarget);
         }
         gestureStartTopRef.current = null;
-      }, 100);
+      }, 120);
     };
     const onScroll = () => {
       if (!active || overlayRef.current || (typeof window !== 'undefined' && window.location.hash.includes('make=1'))) {
@@ -2073,8 +2079,29 @@ export function Shorts({
 
   useEffect(() => {
     if (!recipeOverlay) return;
+    const restoreInert = setBackgroundInert(true, '.shorts-recipe-backdrop');
+    const onKey = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        event.preventDefault();
+        closeRecipeOverlay();
+        return;
+      }
+      if (event.key !== 'Tab') return;
+      const dialog = document.querySelector<HTMLElement>('.shorts-recipe-dialog');
+      const focusable = Array.from(dialog?.querySelectorAll<HTMLElement>('button, a, input, [tabindex]:not([tabindex="-1"])') || []).filter((element) => !element.hasAttribute('disabled'));
+      if (!focusable.length) return;
+      const first = focusable[0];
+      const last = focusable[focusable.length - 1];
+      if (event.shiftKey && document.activeElement === first) { event.preventDefault(); last.focus(); }
+      else if (!event.shiftKey && document.activeElement === last) { event.preventDefault(); first.focus(); }
+    };
+    document.addEventListener('keydown', onKey);
     recipeCloseRef.current?.focus();
-  }, [recipeOverlay]);
+    return () => {
+      document.removeEventListener('keydown', onKey);
+      restoreInert();
+    };
+  }, [closeRecipeOverlay, recipeOverlay]);
 
   if (error)
     return (
@@ -2100,6 +2127,7 @@ export function Shorts({
         className="shorts-feed"
         tabIndex={0}
         aria-label="Shorts feed. Scroll vertically for the next video."
+        data-tour="shorts-feed"
         data-controller-phase={controllerPhase}
         data-controller-active={activeIndex}
         data-controller-visible={visibleIndex}
@@ -2133,11 +2161,7 @@ export function Shorts({
           return (
             <article className={`shorts-card ${isVisible ? 'is-active' : ''}`} data-short-index={index} key={short.id}>
               <div className={`shorts-stage ${short.recipeQuery ? 'has-recipe' : ''}`}>
-                <div
-                  className="shorts-visual"
-                  style={isVisible ? { '--shorts-backdrop': `url("${thumbnailForShort(short)}")` } as CSSProperties : undefined}
-                >
-                  {isVisible && <div className="shorts-media-backdrop" aria-hidden="true" />}
+                <div className="shorts-visual">
                   <div className="shorts-player-frame">
                     <ShortPlayerHost
                       index={index}
@@ -2177,6 +2201,9 @@ export function Shorts({
                       <button type="button" className="shorts-overlay-action" onClick={onBack} aria-label="Back" title="Back">
                         <ArrowLeft size={20} />
                       </button>
+                      <button type="button" className="shorts-overlay-action shorts-help" onClick={() => requestTourReplay('shorts')} aria-label="Show Shorts help" title="Help">
+                        ?
+                      </button>
                     </div>
                   )}
                   {isVisible && (
@@ -2199,7 +2226,7 @@ export function Shorts({
                     </button>
                   )}
                   {isVisible && (
-                    <div className="shorts-player-rail" aria-label="Short actions">
+                    <div className="shorts-player-rail" aria-label="Short actions" data-tour="shorts-actions">
                       <button
                         type="button"
                         className={`shorts-overlay-action ${shared !== 'idle' ? 'shorts-shared' : ''}`}

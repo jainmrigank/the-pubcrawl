@@ -1,4 +1,5 @@
 import type { Route } from '../navigation';
+import { createPortal } from 'react-dom';
 import { Camera, Play, PubGlyph, ToolIcon } from '../icons';
 import type { Theme } from '../types';
 
@@ -65,7 +66,8 @@ export function MobileTopActions({ theme, onToggleTheme, tabCount, active }: Mob
 }
 
 export function MobileNavigation({ active }: MobileNavigationProps) {
-  return (
+  if (typeof document === 'undefined') return null;
+  return createPortal((
     <nav className="mobile-bottom-nav" aria-label="Primary">
       {items.map((item) => (
         <a
@@ -79,5 +81,5 @@ export function MobileNavigation({ active }: MobileNavigationProps) {
         </a>
       ))}
     </nav>
-  );
+  ), document.body);
 }

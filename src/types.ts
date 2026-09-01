@@ -85,6 +85,71 @@ export interface MatchResult {
   almost: Recipe[];
 }
 
+export interface ShelfIngredient extends RecipeIngredient {
+  have: boolean;
+  staple: boolean;
+}
+
+export interface ShelfRecipe extends Omit<Recipe, 'ingredients'> {
+  ingredients: ShelfIngredient[];
+  missing: string[];
+  matched: number;
+  requiredTotal: number;
+  missingCount: number;
+  matchRatio: number;
+}
+
+export interface ShelfResultPage {
+  recipes: ShelfRecipe[];
+  total: number;
+  visible: number;
+  hasMore: boolean;
+}
+
+export interface ShelfFilter {
+  query: string;
+  category: BrowseFilter;
+  expanded: boolean;
+}
+
+export type TourId = 'bar' | 'shorts';
+export type TourOutcome = 'completed' | 'skipped';
+
+export interface TourStep {
+  id: string;
+  target: string;
+  label: string;
+  body: string;
+  preferredSide: 'top' | 'right' | 'bottom' | 'left';
+}
+
+export interface TourDefinition {
+  id: TourId;
+  storageKey: string;
+  steps: TourStep[];
+}
+
+export interface ClientCatalogueBundle {
+  schemaVersion: 1;
+  dataVersion: string;
+  recipes: Recipe[];
+  ingredients: Ingredient[];
+  vibes: Vibe[];
+  health: {
+    cocktails: number;
+    catalogueCocktails: number;
+    ingredients: number;
+  };
+}
+
+export interface ClientDataManifest {
+  schemaVersion: 1;
+  dataVersion: string;
+  catalogueCount: number;
+  ingredientCount: number;
+  quizCount: number;
+}
+
 export interface Question {
   id: string;
   q: string;
@@ -103,6 +168,9 @@ export interface Health {
   catalogueCocktails?: number;
   ingredients: number;
   llm: string | null;
+  runtime?: 'cloudflare-worker' | 'render' | string;
+  dataVersion?: string;
+  store?: 'upstash' | 'unconfigured' | string;
 }
 
 /** someone who answered every question in the bank without a miss */

@@ -1,11 +1,11 @@
 /**
- * Canonical recipe browse query and pagination logic.
- *
- * Keeping this pure makes the API contract testable without starting an HTTP
- * listener and ensures every caller computes `total` before slicing a page.
+ * Render compatibility adapter for the runtime-neutral recipe query engine.
+ * Keeping the actual filtering, ordering and pagination in ../shared means the
+ * browser's static catalogue, Cloudflare Worker, and Express fallback agree.
  */
-import { norm, recipeSearchScore, visibleRecipes } from './catalog.mjs';
+import { norm, queryRecipes } from '../shared/catalog-engine.mjs';
 import { VIBES } from './vibes.mjs';
+import { visibleRecipes } from './catalog.mjs';
 
 export const VALID_COLLECTIONS = new Set(['india', 'house']);
 export const VALID_SORTS = new Set(['likes']);
@@ -64,52 +64,11 @@ export function normaliseRecipeQuery(query = {}) {
   };
 }
 
-function stableHash(value, seed) {
-  let idHash = 7;
-  for (const character of String(value.id)) idHash = (idHash * 33 + character.charCodeAt(0)) >>> 0;
-  return ((idHash + seed) * 2654435761) >>> 0;
-}
-
-function seedNumber(seedString) {
-  let seed = 0;
-  for (const character of seedString) seed = (seed * 31 + character.charCodeAt(0)) >>> 0;
-  return seed;
-}
-
 /**
  * Build the response object for GET /api/recipes.
  * `likes` is injected so the function stays deterministic in tests.
  */
 export function recipePage(cocktails, likes = {}, rawQuery = {}) {
   const query = normaliseRecipeQuery(rawQuery);
-  let list = visibleRecipes(cocktails);
-  if (query.category) list = list.filter((recipe) => recipe.vibe === query.category);
-  if (query.collection === 'india') list = list.filter((recipe) => (recipe.tags || []).includes('India'));
-  if (query.collection === 'house') list = list.filter((recipe) => recipe.houseOriginal === true);
-
-  const scores = new Map();
-  if (query.q) {
-    list = list.filter((recipe) => {
-      const score = recipeSearchScore(recipe, query.q);
-      if (score < 0) return false;
-      scores.set(recipe.id, score);
-      return true;
-    });
-  }
-
-  const hashSeed = seedNumber(query.seed);
-  const hash = (recipe) => stableHash(recipe, hashSeed);
-  const ordered = query.sort === 'likes'
-    ? [...list].sort((a, b) => (likes[b.id] || 0) - (likes[a.id] || 0) || hash(a) - hash(b))
-    : query.q
-      ? [...list].sort((a, b) => scores.get(a.id) - scores.get(b.id) || hash(a) - hash(b))
-      : [...list].sort((a, b) => hash(a) - hash(b));
-  const recipes = ordered.slice(query.offset, query.offset + query.limit);
-  return {
-    recipes,
-    total: ordered.length,
-    offset: query.offset,
-    limit: query.limit,
-    hasMore: query.offset + recipes.length < ordered.length,
-  };
+  return queryRecipes(visibleRecipes(cocktails), { ...query, likes, vibes: VIBES });
 }

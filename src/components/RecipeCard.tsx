@@ -103,8 +103,6 @@ export function RecipeCard(props: Props) {
   if (isIndia) cardLabel = 'INDIA COLLECTION';
   if (isHouseOriginal) cardLabel = 'HOUSE SPECIAL';
   if (isAI) cardLabel = recipe.source === 'ai' ? 'HOUSE SPECIAL' : 'OFF-MENU SPECIAL';
-  const missing = recipe.missing ?? [];
-  const ready = recipe.total != null && missing.length === 0;
   const buttons = <RecipeCardActions {...props} />;
 
   return (
@@ -120,6 +118,7 @@ export function RecipeCard(props: Props) {
       }}
       role="button"
       tabIndex={0}
+      data-recipe-id={recipe.id}
       aria-label={`${recipe.name}. Flip for the recipe`}
     >
       <div className="fc-inner">
@@ -150,7 +149,7 @@ export function RecipeCard(props: Props) {
                 {vibe.label}
               </span>
             </div>
-            <h3 className="fc-name">{recipe.name}</h3>
+            <h3 className="fc-name" data-recipe-heading tabIndex={-1}>{recipe.name}</h3>
             <div className="fc-botrow">
               <span className="fc-glass">
                 <GlassIcon glass={recipe.glass} size={16} />
@@ -158,11 +157,6 @@ export function RecipeCard(props: Props) {
               </span>
               {recipe.iba && <span className="k-label dim">CLASSIC</span>}
             </div>
-            {recipe.total != null && (
-              <div className={`fc-status ${ready ? 'ready' : ''}`}>
-                {ready ? <>READY TO POUR</> : <>NEEDS {missing.join(', ').toUpperCase()}</>}
-              </div>
-            )}
           </div>
         </div>
 

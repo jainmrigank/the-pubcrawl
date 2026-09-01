@@ -8,6 +8,7 @@ import { readFileSync, existsSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { withVibe, VIBES } from './vibes.mjs';
+import { shelfMatchRecipes } from '../shared/catalog-engine.mjs';
 
 const VIBES_SET = VIBES;
 
@@ -413,28 +414,17 @@ export function searchIngredients(ingredients, q, limit = 12) {
 }
 
 /** Score every cocktail against the pantry. */
-export function matchRecipes(cocktails, pantry) {
-  const results = [];
-  for (const c of cocktails) {
-    const required = c.ingredients.filter((i) => !i.optional && !isStaple(i.name));
-    if (!required.length) continue;
-    const missing = [];
-    let matched = 0;
-    const detail = c.ingredients.map((i) => {
-      const staple = isStaple(i.name);
-      const have = staple || pantry.some((p) => ingredientMatches(p, i.name));
-      if (!staple && !i.optional) have ? matched++ : missing.push(i.name);
-      return { ...i, have, staple };
-    });
-    if (matched === 0) continue;
-    results.push({ ...c, ingredients: detail, matched, missing, total: required.length });
-  }
-  const canMake = results
-    .filter((r) => r.missing.length === 0)
-    .sort((a, b) => b.total - a.total);
-  const almost = results
-    .filter((r) => r.missing.length > 0 && r.missing.length <= 2)
-    .sort((a, b) => a.missing.length - b.missing.length || b.matched - a.matched)
-    .slice(0, 24);
-  return { canMake: canMake.slice(0, 24), almost };
+export function matchRecipes(cocktails, pantry, options = {}) {
+  const results = shelfMatchRecipes(cocktails, pantry, {
+    query: options.query || '',
+    category: options.category || '',
+    collection: options.collection || '',
+    vibes: VIBES,
+  });
+  // The compatibility response retains the historical two-lane shape and
+  // 24-card cap. New callers use the complete shared result list directly.
+  return {
+    canMake: results.filter((recipe) => recipe.missingCount === 0).slice(0, 24),
+    almost: results.filter((recipe) => recipe.missingCount > 0).slice(0, 24),
+  };
 }

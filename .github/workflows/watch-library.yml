@@ -62,21 +62,14 @@ jobs:
         run: node scripts/discover_shorts.mjs --queries 20 --max 12
 
       # Health must run before pruning so the review PR contains confirmed
-      # removals from both catalogues. The endpoint preserves prior state when
-      # YouTube or Render is temporarily unavailable.
+      # removals from both catalogues. This runs as a standalone job rather
+      # than waking the Render compatibility server through an HTTP endpoint.
       - name: Refresh live Watch and Shorts health before pruning
         env:
-          API_BASE: ${{ secrets.API_BASE }}
-          PUSH_SECRET: ${{ secrets.PUSH_SECRET }}
-        run: |
-          code=$(curl -s -o /tmp/pubcrawl-refresh.json -w '%{http_code}' -X POST \
-            -H "x-push-secret: $PUSH_SECRET" \
-            -H 'content-type: application/json' \
-            --max-time 300 \
-            "$API_BASE/api/videos/refresh")
-          echo "HTTP $code"
-          cat /tmp/pubcrawl-refresh.json
-          test "$code" = "200"
+          YOUTUBE_API_KEY: ${{ secrets.YOUTUBE_API_KEY }}
+          KV_REST_API_URL: ${{ secrets.KV_REST_API_URL }}
+          KV_REST_API_TOKEN: ${{ secrets.KV_REST_API_TOKEN }}
+        run: node scripts/refresh_video_stats.mjs
 
       - name: Prune the dead and the stagnant
         env:

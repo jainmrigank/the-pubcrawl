@@ -213,6 +213,34 @@ export function shortsPlayerWindow(activeIndex: number, length: number, maxPlaye
   return Array.from({ length: cap }, (_, offset) => start + offset);
 }
 
+/** Direction-aware five-player runway used by the feed host. The legacy
+ * shortsPlayerWindow contract remains centred for compatibility tests and
+ * older callers; this helper keeps one previous card and prioritises up to
+ * three cards in the current travel direction. */
+export function shortsDirectionalPlayerWindow(
+  activeIndex: number,
+  length: number,
+  direction: ShortsControllerDirection = 'forward',
+  maxPlayers = 5,
+): number[] {
+  if (!Number.isInteger(length) || length <= 0 || !Number.isInteger(activeIndex) || activeIndex < 0 || activeIndex >= length) return [];
+  const cap = Math.max(1, Math.floor(maxPlayers));
+  if (cap === 1) return [activeIndex];
+  const step = direction === 'backward' ? -1 : 1;
+  const wanted = [activeIndex - step, activeIndex, activeIndex + step, activeIndex + step * 2, activeIndex + step * 3];
+  const unique: number[] = [];
+  for (const index of wanted) if (index >= 0 && index < length && !unique.includes(index)) unique.push(index);
+  // At the ends, fill spare slots from the opposite side while retaining the
+  // active lease and never exceeding the hard cap.
+  for (let distance = 2; unique.length < cap && distance < length + 2; distance += 1) {
+    for (const index of [activeIndex - distance, activeIndex + distance]) {
+      if (index >= 0 && index < length && !unique.includes(index)) unique.push(index);
+      if (unique.length >= cap) break;
+    }
+  }
+  return unique.slice(0, cap).sort((a, b) => a - b);
+}
+
 export function leaseMatches(
   state: ShortsControllerState,
   index: number,

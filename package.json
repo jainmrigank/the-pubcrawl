@@ -12,8 +12,13 @@
     "images": "node scripts/fetch_images.mjs",
     "dev": "vite",
     "serve": "node server/index.mjs",
-    "build": "tsc -b && vite build",
-    "test:e2e": "node scripts/e2e_smoke.mjs",
+    "generate:client-data": "node scripts/build_client_data.mjs --write",
+    "check:client-data": "node scripts/build_client_data.mjs --check",
+    "build": "npm run check:client-data && tsc -b && vite build",
+    "test:e2e": "npm run build && playwright test",
+    "worker:dry-run": "WRANGLER_LOG_PATH=/tmp/pubcrawl-wrangler.log WRANGLER_SEND_METRICS=false wrangler deploy --dry-run --config worker/wrangler.jsonc --outdir /tmp/pubcrawl-worker-dry-run",
+    "test:worker": "node --experimental-strip-types --test test/worker-api.test.mjs",
+    "perf:local": "node scripts/perf_probe.mjs",
     "test": "node --experimental-strip-types --test test/*.test.mjs",
     "preview": "vite preview"
   },
@@ -25,6 +30,7 @@
     "web-push": "^3.6.7"
   },
   "devDependencies": {
+    "@playwright/test": "^1.62.1",
     "@types/express": "^4.17.21",
     "@types/react": "^18.3.12",
     "@types/react-dom": "^18.3.1",
@@ -37,6 +43,7 @@
     "workbox-expiration": "^7.4.1",
     "workbox-precaching": "^7.4.1",
     "workbox-routing": "^7.4.1",
-    "workbox-strategies": "^7.4.1"
+    "workbox-strategies": "^7.4.1",
+    "wrangler": "^4.127.1"
   }
 }

@@ -32,11 +32,15 @@ async function kvCmd(args) {
 }
 
 async function readBlob(key, file, fallback) {
+  // A remote store failure is not equivalent to an empty store. Propagate it
+  // so state-backed routes can return 503 instead of overwriting durable data
+  // from in-memory defaults. Local development still treats a missing file as
+  // an empty initial store.
+  if (useKV) {
+    const value = await kvCmd(['GET', key]);
+    return value ? JSON.parse(value) : fallback;
+  }
   try {
-    if (useKV) {
-      const v = await kvCmd(['GET', key]);
-      return v ? JSON.parse(v) : fallback;
-    }
     if (existsSync(dataFile(file))) return JSON.parse(readFileSync(dataFile(file), 'utf8'));
   } catch (err) {
     console.error(`[store] read ${key}:`, err.message);
@@ -65,20 +69,41 @@ let hall = []; // everyone who has cleared the whole bank: { name, score, at }
 let videoStats = {}; // youtube id -> { views, likes, dead, checkedAt, history: [{at, views}] }
 let shortMetrics = emptyShortMetrics();
 let watchMetrics = emptyWatchMetrics();
+let initPromise = null;
 
 export async function initStore() {
-  likes = await readBlob('pubcrawl:likes', 'likes.json', {});
-  kept = await readBlob('pubcrawl:kept', 'kept_cocktails.json', []);
-  subs = await readBlob('pubcrawl:subs', 'push_subs.json', []);
-  highScore = await readBlob('pubcrawl:highscore', 'high_score.json', { score: 0, at: 0 });
-  hall = await readBlob('pubcrawl:hall', 'hall_of_fame.json', []);
-  videoStats = await readBlob('pubcrawl:videostats', 'video_stats.json', {});
-  shortMetrics = { ...emptyShortMetrics(), ...(await readBlob('pubcrawl:shortmetrics', 'short_metrics.json', {})) };
-  watchMetrics = { ...emptyWatchMetrics(), ...(await readBlob('pubcrawl:watchmetrics', 'watch_metrics.json', {})) };
-  console.log(
-    `[store] ${useKV ? 'Upstash KV' : 'local file'} — ${Object.keys(likes).length} liked, ${kept.length} kept, ${subs.length} subscribed, high score ${highScore.score}, ${hall.length} in the hall`
-  );
+  if (initPromise) return initPromise;
+  // Reads are independent. Parallelising them removes the eight-RTT startup
+  // chain that made a sleeping Render process look even slower.
+  initPromise = Promise.all([
+    readBlob('pubcrawl:likes', 'likes.json', {}),
+    readBlob('pubcrawl:kept', 'kept_cocktails.json', []),
+    readBlob('pubcrawl:subs', 'push_subs.json', []),
+    readBlob('pubcrawl:highscore', 'high_score.json', { score: 0, at: 0 }),
+    readBlob('pubcrawl:hall', 'hall_of_fame.json', []),
+    readBlob('pubcrawl:videostats', 'video_stats.json', {}),
+    readBlob('pubcrawl:shortmetrics', 'short_metrics.json', {}),
+    readBlob('pubcrawl:watchmetrics', 'watch_metrics.json', {}),
+  ]).then(([nextLikes, nextKept, nextSubs, nextHighScore, nextHall, nextVideoStats, nextShortMetrics, nextWatchMetrics]) => {
+    likes = nextLikes;
+    kept = nextKept;
+    subs = nextSubs;
+    highScore = nextHighScore;
+    hall = nextHall;
+    videoStats = nextVideoStats;
+    shortMetrics = { ...emptyShortMetrics(), ...nextShortMetrics };
+    watchMetrics = { ...emptyWatchMetrics(), ...nextWatchMetrics };
+    console.log(
+      `[store] ${useKV ? 'Upstash KV' : 'local file'} — ${Object.keys(likes).length} liked, ${kept.length} kept, ${subs.length} subscribed, high score ${highScore.score}, ${hall.length} in the hall`
+    );
+  }).catch((error) => {
+    initPromise = null;
+    throw error;
+  });
+  return initPromise;
 }
+
+export const storeReady = () => initStore();
 
 export const getHighScore = () => highScore;
 
@@ -188,6 +213,21 @@ export const getSubs = () => subs;
 export function saveLikes(next) {
   likes = next;
   writeBlob('pubcrawl:likes', 'likes.json', likes);
+}
+
+/** Atomic shared like mutation when Upstash is configured. */
+export async function updateLike(id, delta) {
+  const amount = Number(delta) < 0 ? -1 : 1;
+  if (useKV) {
+    const lua = `local raw=redis.call('GET',KEYS[1]); local values={}; if raw then values=cjson.decode(raw) end; local id=ARGV[1]; local delta=tonumber(ARGV[2]); local current=tonumber(values[id] or 0); local next=current+delta; if next<0 then next=0 end; if next==0 then values[id]=nil else values[id]=next end; redis.call('SET',KEYS[1],cjson.encode(values)); return next`;
+    const next = Number(await kvCmd(['EVAL', lua, 1, 'pubcrawl:likes', id, String(amount)])) || 0;
+    if (next === 0) delete likes[id]; else likes[id] = next;
+    return next;
+  }
+  const next = Math.max(0, (likes[id] || 0) + amount);
+  if (next === 0) delete likes[id]; else likes[id] = next;
+  await writeBlob('pubcrawl:likes', 'likes.json', likes);
+  return next;
 }
 
 export function addKept(drink) {

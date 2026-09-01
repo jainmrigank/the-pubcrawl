@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { searchIngredients } from '../api';
+import { searchLocalIngredients } from '../localData';
 import type { Ingredient } from '../types';
 import { IngredientIcon } from './IngredientIcon';
 import { Plus } from '../icons';
@@ -24,13 +25,17 @@ export function Typeahead({ onAdd }: Props) {
       return;
     }
     const t = setTimeout(() => {
-      searchIngredients(q)
+      searchLocalIngredients(q)
         .then((r) => {
           setResults(r);
           setOpen(true);
           setHi(0);
         })
-        .catch(() => {});
+        .catch(() => searchIngredients(q).then((r) => {
+          setResults(r);
+          setOpen(true);
+          setHi(0);
+        }).catch(() => {}));
     }, 160);
     return () => clearTimeout(t);
   }, [q]);
