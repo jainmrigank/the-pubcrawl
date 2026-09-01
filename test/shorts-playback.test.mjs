@@ -4,6 +4,7 @@ import {
   pauseOthers,
   playbackMode,
   poolWindow,
+  preparePlayerSound,
   propagateSound,
   soundPreference,
   soundSyncDecision,
@@ -41,14 +42,20 @@ test('only the active player remains playing', () => {
   assert.deepEqual(paused, [2, 4]);
 });
 
-test('native sound changes propagate to every prepared player', () => {
+test('prepared sound policy keeps every prepared player muted and paused', () => {
   const events = [];
   const players = [
-    { setVolume: (v) => events.push(['volume', v]), mute: () => events.push(['mute']), unMute: () => events.push(['unmute']) },
-    { setVolume: (v) => events.push(['volume', v]), mute: () => events.push(['mute']), unMute: () => events.push(['unmute']) },
+    { setVolume: (v) => events.push(['volume', v]), mute: () => events.push(['mute']), pauseVideo: () => events.push(['pause']), unMute: () => events.push(['unmute']) },
+    { setVolume: (v) => events.push(['volume', v]), mute: () => events.push(['mute']), pauseVideo: () => events.push(['pause']), unMute: () => events.push(['unmute']) },
   ];
+  assert.deepEqual(preparePlayerSound(players, 138), { muted: true, volume: 100 });
   assert.deepEqual(propagateSound(players, { muted: false, volume: 38 }), { muted: false, volume: 38 });
-  assert.deepEqual(events, [['volume', 38], ['unmute'], ['volume', 38], ['unmute']]);
+  assert.deepEqual(events, [
+    ['volume', 100], ['mute'], ['pause'],
+    ['volume', 100], ['mute'], ['pause'],
+    ['volume', 38], ['unmute'],
+    ['volume', 38], ['unmute'],
+  ]);
   assert.deepEqual(soundPreference({ isMuted: () => true, getVolume: () => 12 }, { muted: false, volume: 38 }), { muted: true, volume: 38 });
   assert.deepEqual(soundPreference({ isMuted: () => false, getVolume: () => 67 }), { muted: false, volume: 67 });
 });

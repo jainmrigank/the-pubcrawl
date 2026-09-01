@@ -127,3 +127,30 @@ test('Worker API preserves catalogue, dynamic state, CORS, AI fallback, and vali
   const missing = await call('/api/not-real');
   assert.equal(missing.response.status, 404);
 });
+
+test('AI routes fail closed when the rate-limit salt is not configured', async () => {
+  const withoutSalt = { ...env };
+  delete withoutSalt.RATE_LIMIT_SALT;
+
+  const health = await call('/api/health', {}, withoutSalt);
+  assert.equal(health.response.status, 200);
+  assert.equal(health.body.ok, true);
+
+  const recipes = await call('/api/recipes?offset=0&limit=1', {}, withoutSalt);
+  assert.equal(recipes.response.status, 200);
+  assert.equal(recipes.body.recipes.length, 1);
+
+  const identify = await call('/api/identify', {
+    method: 'POST',
+    body: JSON.stringify({ imageBase64: 'not-a-real-image' }),
+  }, withoutSalt);
+  assert.equal(identify.response.status, 503);
+  assert.deepEqual(identify.body, { error: 'This feature is temporarily unavailable.' });
+
+  const generate = await call('/api/generate', {
+    method: 'POST',
+    body: JSON.stringify({ ingredients: ['gin'] }),
+  }, withoutSalt);
+  assert.equal(generate.response.status, 503);
+  assert.deepEqual(generate.body, { error: 'This feature is temporarily unavailable.' });
+});

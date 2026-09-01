@@ -45,6 +45,10 @@ export function poolWindow(activeIndex, length, mode = 'pool', direction = 'forw
 export function pauseOthers(players, activeIndex) {
   for (const [index, player] of players) {
     if (index === activeIndex) continue;
+    // Pausing alone can leave an iframe audibly armed on iOS. Keep the pure
+    // policy mirror aligned with the browser host: every inactive player is
+    // muted before it is paused.
+    player.mute?.();
     player.pauseVideo();
   }
 }
@@ -60,7 +64,27 @@ export function soundPreference(player, previous = { muted: true, volume: 100 })
   }
 }
 
-/** Apply one session preference to every cued player in the adaptive pool. */
+/**
+ * Prepare every cued player without ever making a prepared iframe audible.
+ * The active player is unmuted separately by the browser gesture handler; a
+ * passive pool update must only set volume, mute, and pause.
+ */
+export function preparePlayerSound(players, volume = 100) {
+  const nextVolume = Math.max(0, Math.min(100, Math.round(Number(volume) || 0)));
+  for (const player of players) {
+    player.setVolume(nextVolume);
+    player.mute();
+    player.pauseVideo?.();
+  }
+  return { muted: true, volume: nextVolume };
+}
+
+/**
+ * Backwards-compatible propagation helper. Older callers intentionally use
+ * this to synchronise a user's explicit preference across already-mounted
+ * players. New preparation paths must call preparePlayerSound instead so a
+ * passive queue update can never create an audible iframe.
+ */
 export function propagateSound(players, { muted = true, volume = 100 } = {}) {
   const nextVolume = Math.max(0, Math.min(100, Math.round(Number(volume) || 0)));
   for (const player of players) {

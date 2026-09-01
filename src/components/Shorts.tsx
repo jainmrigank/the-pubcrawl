@@ -1,8 +1,8 @@
 import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState, type PointerEvent } from 'react';
 import { fetchRecipes, fetchShorts, postShortSession } from '../api';
 import type { Recipe, ShortLibrary, ShortsReturnState, ShortVideo, Vibe, WatchLane } from '../types';
-import { applySound, createYouTubePlayer, YT_PLAYER_STATES, type YouTubePlayer } from '../shortsPlayer';
-import { ArrowLeft, ArrowRight, Check, GlassIcon, Play, Share, X } from '../icons';
+import { applyMutedSound, createYouTubePlayer, YT_PLAYER_STATES, type YouTubePlayer } from '../shortsPlayer';
+import { ArrowLeft, ArrowRight, Check, GlassIcon, Play, Share, Volume2, VolumeX, X } from '../icons';
 import { shareContent, shortShareText } from '../share';
 import { formatMeasure } from '../measure';
 import { SHORTS_SEED } from '../shortsData';
@@ -21,6 +21,14 @@ import {
   type ShortsControllerPhase,
   type ShortsControllerState,
 } from '../shortsController';
+import {
+  audibleAuthorizationMatches,
+  mutedFallbackAuthorization,
+  playerReadyForStart,
+  startModeForGesture,
+  type ShortsStartAuthorization,
+  type ShortsStartMode,
+} from '../shortsSoundPolicy';
 
 const FALLBACK_LANES: WatchLane[] = [
   { id: 'craft', label: 'The Craft', color: '#8A5A24' },
@@ -108,6 +116,9 @@ function clearShortsOverlaySnapshot() {
 
 type ShortsPlaybackMode = 'pool' | 'balanced' | 'manual';
 type ShortsScrollDirection = 'forward' | 'backward';
+type ShortsSettleSource = 'native-scrollend' | 'stable-touchend' | 'quiet-fallback' | 'keyboard' | 'programmatic';
+
+export type { ShortsStartAuthorization, ShortsStartMode } from '../shortsSoundPolicy';
 
 function preferredPlaybackMode(): ShortsPlaybackMode {
   if (typeof window === 'undefined') return 'manual';
@@ -258,6 +269,7 @@ interface ShortPlayerHostProps {
   manualMode: boolean;
   manualToken: number;
   playLeaseGeneration: number | null;
+  startAuthorization: ShortsStartAuthorization | null;
   muted: boolean;
   volume: number;
   online: boolean;
@@ -269,7 +281,7 @@ interface ShortPlayerHostProps {
   onCued: (index: number, generation: number | null, player: YouTubePlayer) => void;
   onBuffering: (index: number, generation: number | null) => void;
   onError: (index: number, generation: number | null, code: number) => void;
-  onAutoplayBlocked: (index: number, generation: number | null) => void;
+  onAutoplayBlocked: (index: number, generation: number | null, player: YouTubePlayer) => boolean;
   onPlaybackRateChange: (index: number, generation: number | null, rate: number) => void;
   onRequestInitialize: (index: number, priority: number, start: () => Promise<void>) => InitializationLease;
 }
@@ -292,6 +304,7 @@ function ShortPlayerHost({
   manualMode,
   manualToken,
   playLeaseGeneration,
+  startAuthorization,
   muted,
   volume,
   online,
@@ -312,6 +325,7 @@ function ShortPlayerHost({
   const initializationLeaseRef = useRef<InitializationLease | null>(null);
   const shouldPlayRef = useRef(shouldPlay);
   const leaseGenerationRef = useRef<number | null>(playLeaseGeneration);
+  const startAuthorizationRef = useRef<ShortsStartAuthorization | null>(startAuthorization);
   const mutedRef = useRef(muted);
   const volumeRef = useRef(volume);
   const onRegisterRef = useRef(onRegister);
@@ -342,6 +356,7 @@ function ShortPlayerHost({
 
   shouldPlayRef.current = shouldPlay;
   leaseGenerationRef.current = playLeaseGeneration;
+  startAuthorizationRef.current = startAuthorization;
   mutedRef.current = muted;
   volumeRef.current = volume;
   onRegisterRef.current = onRegister;
@@ -468,11 +483,20 @@ function ShortPlayerHost({
             const iframe = mount.querySelector('iframe');
             iframe?.setAttribute('referrerpolicy', 'strict-origin-when-cross-origin');
             onRegisterRef.current(index, player);
-            // All automatic starts are muted. The parent restores the session
-            // preference only after YouTube confirms PLAYING.
+            const gestureStart = startAuthorizationRef.current;
+            const audibleGesture = Boolean(
+              gestureStart &&
+              gestureStart.index === index &&
+              gestureStart.generation === leaseGenerationRef.current &&
+              gestureStart.mode === 'gesture-audible' &&
+              !gestureStart.fallbackUsed &&
+              !mutedRef.current,
+            );
+            // Every prepared/automatic player is muted. Only a still-valid
+            // direct gesture may preserve an audible start for this lease.
             try {
               player.setVolume(volumeRef.current);
-              player.mute();
+              if (!audibleGesture) player.mute();
             } catch {}
             if (!cueIssuedRef.current) {
               cueIssuedRef.current = true;
@@ -537,14 +561,23 @@ function ShortPlayerHost({
             if (code === 153) setPhase('blocked');
             onErrorRef.current(index, leaseGenerationRef.current, code);
           },
-          onAutoplayBlocked: () => {
+          onAutoplayBlocked: (player) => {
             releaseInitialization();
             clearStartupTimer();
             clearRetryTimer();
             clearRevealTimer();
-            setAutoplayBlocked(true);
-            setPhase('blocked');
-            onAutoplayBlockedRef.current(index, leaseGenerationRef.current);
+            const retryMuted = onAutoplayBlockedRef.current(index, leaseGenerationRef.current, player);
+            if (retryMuted) {
+              // Keep the host in its blocked state while the parent performs
+              // the one muted recovery.  Clearing this flag here would let
+              // the automatic play effect observe the same paused iframe and
+              // issue a second retry, defeating the one-shot fallback.
+              setAutoplayBlocked(true);
+              setPhase('starting');
+            } else {
+              setAutoplayBlocked(true);
+              setPhase('blocked');
+            }
           },
           onPlaybackRateChange: (_player, rate) => onPlaybackRateChangeRef.current(index, leaseGenerationRef.current, rate),
         }, () => disposed);
@@ -643,6 +676,15 @@ function ShortPlayerHost({
     // pending; only CUED is allowed to transition into playVideo.
     playRequestRef.current = true;
     if (!cued) return;
+    const authorization = startAuthorizationRef.current;
+    const gestureAuthorized = Boolean(
+      authorization &&
+      authorization.index === index &&
+      authorization.generation === generation &&
+      authorization.mode === 'gesture-audible' &&
+      !authorization.fallbackUsed &&
+      !mutedRef.current,
+    );
     try {
       const state = player.getPlayerState();
       if (state === YT_PLAYER_STATES.PLAYING) {
@@ -659,10 +701,11 @@ function ShortPlayerHost({
         return;
       }
       if (state === YT_PLAYER_STATES.BUFFERING) return;
-      // A muted command is autoplay-safe; the parent applies the chosen
-      // session sound once PLAYING is confirmed.
+      // Prepared players and passive settlements are always muted. A direct
+      // gesture may already have unmuted this active player in the same input
+      // task; never remute it from a later React effect.
       player.setVolume(Math.max(0, Math.min(100, Math.round(volume))));
-      player.mute();
+      if (!gestureAuthorized) player.mute();
     } catch {}
     requestStartedAt.current = performance.now();
     setPhase('starting');
@@ -717,6 +760,12 @@ function ShortPlayerHost({
         retryTimerRef.current = null;
       }
     };
+  // `startAuthorization` is read through a ref on purpose.  A direct sound
+  // gesture can synchronously issue unmute + play; re-running this effect just
+  // because React committed the authorization would turn the same gesture
+  // into a second passive play attempt (and could re-trigger iOS autoplay
+  // policy).  Changes that affect automatic playback still flow through the
+  // existing lease/cued/ready dependencies.
   }, [autoplayBlocked, cued, manualToken, playLeaseGeneration, ready, shouldPlay, volume]);
 
   const waitingForAutoplay = shouldPlay && !autoplayBlocked && phase !== 'blocked' && phase !== 'stalled';
@@ -915,6 +964,8 @@ export function Shorts({
   const [playbackMode, setPlaybackMode] = useState<ShortsPlaybackMode>(() => preferredPlaybackMode());
   const [blockedIndex, setBlockedIndex] = useState<number | null>(null);
   const [soundPromptIndex, setSoundPromptIndex] = useState<number | null>(null);
+  const [startAuthorization, setStartAuthorization] = useState<ShortsStartAuthorization | null>(null);
+  const [, setSoundPreferenceVersion] = useState(0);
   const [failureVersion, setFailureVersion] = useState(0);
   const [shared, setShared] = useState<'idle' | 'copied' | 'failed'>('idle');
   const [error, setError] = useState(false);
@@ -943,9 +994,9 @@ export function Shorts({
   const lastInitialIdRef = useRef<string | undefined>(undefined);
   const wasPlayingRef = useRef(false);
   const soundRef = useRef({ muted: true, volume: 100 });
-  const soundSyncedRef = useRef(false);
   const soundSyncTokenRef = useRef(0);
   const soundSyncTimersRef = useRef<number[]>([]);
+  const startAuthorizationRef = useRef<ShortsStartAuthorization | null>(null);
   const playersRef = useRef(new Map<number, YouTubePlayer>());
   const initQueueRef = useRef<Array<{
     index: number;
@@ -972,7 +1023,7 @@ export function Shorts({
   const activationTimerRef = useRef<number | null>(null);
   const settleTimerRef = useRef<number | null>(null);
   const pendingActivationRef = useRef<number | null>(null);
-  const setActiveRef = useRef<(next: number, countAdvance?: boolean) => void>(() => {});
+  const setActiveRef = useRef<(next: number, countAdvance?: boolean, startMode?: ShortsStartMode) => PlayerLease | null>(() => null);
   const orderedLengthRef = useRef(0);
 
   overlayRef.current = recipeOverlay;
@@ -980,6 +1031,7 @@ export function Shorts({
   activeIndexRef.current = activeIndex;
   prepareIndexRef.current = prepareIndex;
   visibleIndexRef.current = visibleIndex;
+  startAuthorizationRef.current = startAuthorization;
 
   const orderedShorts = useMemo(() => {
     const byId = new Map(data.shorts.map((short) => [short.id, short]));
@@ -1021,65 +1073,159 @@ export function Shorts({
     soundSyncTokenRef.current += 1;
     soundSyncTimersRef.current.forEach((timer) => window.clearTimeout(timer));
     soundSyncTimersRef.current = [];
-    soundSyncedRef.current = false;
+    // Sound authorizations are deliberately ephemeral. Any scroll, route,
+    // overlay, or visibility transition invalidates the gesture that created
+    // them so a late YouTube callback cannot unmute a different card.
+    startAuthorizationRef.current = null;
+    setStartAuthorization(null);
   }, []);
 
-  const applySoundToPlayers = useCallback(() => {
+  /**
+   * Keep prepared players quiet. This helper intentionally never calls
+   * unMute: an unmute is only legal in the same task as the user's click or a
+   * still-valid stable touchend gesture. Automatic effects may set volume,
+   * mute, and pause, but must not manufacture an audible gesture.
+   */
+  const applySoundToPlayers = useCallback((activeIndex = activeIndexRef.current) => {
     const { muted, volume } = soundRef.current;
-    playersRef.current.forEach((player) => applySound(player, muted, volume));
+    playersRef.current.forEach((player, index) => {
+      try {
+        player.setVolume(Math.max(0, Math.min(100, Math.round(volume))));
+        if (muted || index !== activeIndex) player.mute();
+        if (index !== activeIndex) player.pauseVideo();
+      } catch {
+        // Ignore players between iframe creation and teardown.
+      }
+    });
   }, []);
 
-  const beginSoundSync = useCallback((index: number, player: YouTubePlayer) => {
-    cancelSoundSync();
-    const token = soundSyncTokenRef.current;
-    const desired = { ...soundRef.current };
-    setSoundPromptIndex(null);
-    applySound(player, desired.muted, desired.volume);
+  /** Start the current player audibly from a direct user gesture. */
+  const beginAudibleStart = useCallback((index: number, generation: number, player: YouTubePlayer) => {
+    const authorization = startAuthorizationRef.current;
+    if (
+      !audibleAuthorizationMatches(authorization, index, generation, soundRef.current.muted) ||
+      !leaseMatches(controllerRef.current, index, generation)
+    ) return;
 
-    const verify = (attempt: number) => {
-      if (token !== soundSyncTokenRef.current || index !== activeIndexRef.current) return;
-      let observedMuted = desired.muted;
-      let observedVolume = desired.volume;
+    soundSyncTokenRef.current += 1;
+    soundSyncTimersRef.current.forEach((timer) => window.clearTimeout(timer));
+    soundSyncTimersRef.current = [];
+    try {
+      // These commands intentionally remain adjacent to the event handler;
+      // WebKit can reject an unmute that is issued from a later effect.
+      player.setVolume(Math.max(0, Math.min(100, Math.round(soundRef.current.volume))));
+      player.unMute();
+      player.playVideo();
+      setSoundPromptIndex(null);
+    } catch {
+      setSoundPromptIndex(index);
+      return;
+    }
+
+    const token = soundSyncTokenRef.current;
+    const timer = window.setTimeout(() => {
+      soundSyncTimersRef.current = soundSyncTimersRef.current.filter((entry) => entry !== timer);
+      if (token !== soundSyncTokenRef.current) return;
+      const current = startAuthorizationRef.current;
+      if (
+        !current ||
+        current.index !== index ||
+        current.generation !== generation ||
+        current.mode !== 'gesture-audible' ||
+        !leaseMatches(controllerRef.current, index, generation) ||
+        document.visibilityState === 'hidden'
+      ) return;
+      let state: number = YT_PLAYER_STATES.UNSTARTED;
+      let currentTime = 0;
+      let muted = true;
       try {
-        observedMuted = Boolean(player.isMuted());
-        observedVolume = Math.max(0, Math.min(100, Math.round(player.getVolume())));
+        state = player.getPlayerState();
+        currentTime = Math.max(0, player.getCurrentTime() || 0);
+        muted = Boolean(player.isMuted());
       } catch {
-        observedMuted = !desired.muted;
+        // Treat an unavailable iframe as a blocked audible start.
       }
-      const muteMatches = observedMuted === desired.muted;
-      const volumeMatches = desired.muted || Math.abs(observedVolume - desired.volume) <= 2;
-      if (muteMatches && volumeMatches) {
-        soundSyncedRef.current = true;
+      if ((state === YT_PLAYER_STATES.PLAYING || state === YT_PLAYER_STATES.BUFFERING) && currentTime > 0.08 && !muted) {
         setSoundPromptIndex(null);
         return;
       }
-      if (attempt < 3) {
-        applySound(player, desired.muted, desired.volume);
-        const timer = window.setTimeout(() => verify(attempt + 1), 140 + attempt * 140);
-        soundSyncTimersRef.current.push(timer);
-        return;
-      }
-      // A blocked unmute is a per-player browser policy result, not a user
-      // decision. Preserve the visit-wide preference and request one gesture.
-      if (!desired.muted && observedMuted) {
-        soundSyncedRef.current = false;
-        setSoundPromptIndex(index);
-        return;
-      }
-      // Volume can be clamped by the native player. Once mute state matches,
-      // accept the audible native level and resume normal user-change polling.
-      if (muteMatches) {
-        soundRef.current = {
-          muted: observedMuted,
-          volume: observedMuted ? desired.volume : observedVolume,
-        };
-        soundSyncedRef.current = true;
-      }
-    };
-
-    const timer = window.setTimeout(() => verify(0), 100);
+      // One and only one recovery: preserve the desired unmuted preference,
+      // but make the video move muted when iOS rejects the audible start.
+      const fallback = mutedFallbackAuthorization(current, index, generation);
+      if (!fallback) return;
+      startAuthorizationRef.current = fallback;
+      setStartAuthorization(fallback);
+      try {
+        player.setVolume(Math.max(0, Math.min(100, Math.round(soundRef.current.volume))));
+        player.mute();
+        player.playVideo();
+      } catch {}
+      setSoundPromptIndex(index);
+      session.current.autoplayFailures += 1;
+    }, 260);
     soundSyncTimersRef.current.push(timer);
-  }, [cancelSoundSync]);
+  }, []);
+
+  /**
+   * A touch/key gesture can settle before its destination iframe is ready.
+   * That gesture cannot legally be replayed from a later YouTube callback on
+   * iOS, so explicitly downgrade that lease to a muted automatic start. Keep
+   * the user's desired-sound preference intact; the prompt gives them a fresh
+   * gesture when the player is ready.
+   */
+  const demoteAudibleStart = useCallback((index: number, generation: number) => {
+    const authorization = startAuthorizationRef.current;
+    if (
+      !authorization ||
+      authorization.index !== index ||
+      authorization.generation !== generation ||
+      authorization.mode !== 'gesture-audible'
+    ) return;
+    const next = mutedFallbackAuthorization(authorization, index, generation);
+    if (!next) return;
+    startAuthorizationRef.current = next;
+    setStartAuthorization(next);
+  }, []);
+
+  /** Handle a first-party sound-button or TAP FOR SOUND gesture. */
+  const enableSoundForPlayer = useCallback((index: number) => {
+    if (index !== activeIndexRef.current || !activeRef.current) return;
+    const lease = controllerRef.current.lease;
+    const player = playersRef.current.get(index);
+    soundRef.current = { ...soundRef.current, muted: false };
+    setSoundPreferenceVersion((version) => version + 1);
+    if (!lease || lease.index !== index || !player) {
+      setSoundPromptIndex(index);
+      return;
+    }
+    const authorization: ShortsStartAuthorization = {
+      index,
+      generation: lease.generation,
+      mode: 'gesture-audible',
+      fallbackUsed: false,
+    };
+    startAuthorizationRef.current = authorization;
+    setStartAuthorization(authorization);
+    beginAudibleStart(index, lease.generation, player);
+  }, [beginAudibleStart]);
+
+  const toggleSound = useCallback((index: number) => {
+    if (index !== activeIndexRef.current) return;
+    if (!soundRef.current.muted) {
+      soundRef.current = { ...soundRef.current, muted: true };
+      setSoundPreferenceVersion((version) => version + 1);
+      startAuthorizationRef.current = null;
+      setStartAuthorization(null);
+      const activePlayer = playersRef.current.get(index);
+      if (activePlayer) {
+        try { activePlayer.mute(); } catch {}
+      }
+      applySoundToPlayers(index);
+      setSoundPromptIndex(null);
+      return;
+    }
+    enableSoundForPlayer(index);
+  }, [applySoundToPlayers, enableSoundForPlayer]);
 
   // Keep iframe bootstrap work bounded. The settled card and the next card in
   // the direction of travel get the first two slots; neighbouring shells wait
@@ -1155,6 +1301,10 @@ export function Shorts({
     playersRef.current.forEach((player, index) => {
       if (index !== keepIndex) {
         try {
+          // A paused iframe can retain its audible state on iOS. Mute before
+          // pausing so a prepared/previous card can never leak sound after a
+          // swipe, route change, overlay open, or visibility transition.
+          player.mute();
           player.pauseVideo();
         } catch {
           // A player can be between iframe teardown and its final callback.
@@ -1204,11 +1354,11 @@ export function Shorts({
   }, []);
 
   const setActive = useCallback(
-    (next: number, countAdvance = true) => {
+    (next: number, countAdvance = true, startMode: ShortsStartMode = 'muted-autoplay'): PlayerLease | null => {
       // Shorts stays mounted behind every route so its visit can be restored,
       // but no delayed scroll/player callback may mutate the URL after the
       // user has left the route.
-      if (!activeRef.current || next < 0 || next >= orderedShorts.length) return;
+      if (!activeRef.current || next < 0 || next >= orderedShorts.length) return null;
       let target = next;
       if (failedIdsRef.current.has(orderedShorts[target].id)) {
         // A prefetched neighbour can fail before the user reaches it. Never
@@ -1231,14 +1381,14 @@ export function Shorts({
         }
         if (target < 0) {
           setError(true);
-          return;
+          return null;
         }
         const card = feedRef.current?.querySelector<HTMLElement>(`[data-short-index="${target}"]`);
         if (card) feedRef.current?.scrollTo({ top: card.offsetTop, behavior: 'smooth' });
       }
       const previous = activeIndexRef.current;
       const direction: ShortsScrollDirection = target < previous ? 'backward' : 'forward';
-      transitionController({ type: 'scroll-settle', index: target });
+      const settled = transitionController({ type: 'scroll-settle', index: target });
       activeIndexRef.current = target;
       prepareIndexRef.current = target;
       visibleIndexRef.current = target;
@@ -1265,6 +1415,18 @@ export function Shorts({
       activeIdRef.current = short?.id || null;
       if (short) replaceShortHash(short);
       if (countAdvance && previous !== target) session.current.advances += 1;
+      const lease = settled.lease;
+      if (lease) {
+        const authorization: ShortsStartAuthorization = {
+          index: target,
+          generation: lease.generation,
+          mode: startMode,
+          fallbackUsed: false,
+        };
+        startAuthorizationRef.current = authorization;
+        setStartAuthorization(authorization);
+      }
+      return lease;
     },
     [cancelSoundSync, orderedShorts, pausePlayersExcept, replaceShortHash, transitionController]
   );
@@ -1304,12 +1466,27 @@ export function Shorts({
       const short = orderedShorts[index];
       if (!snapshot || !short || snapshot.videoId !== short.id) return;
       try {
-        // Seek while muted; a playing snapshot restores sound in
-        // handlePlaying after the PLAYING event arrives.
-        applySound(player, true, snapshot.volume);
+        const authorization = startAuthorizationRef.current;
+        const directAudible = Boolean(
+          phase === 'playing' &&
+          authorization &&
+          authorization.index === index &&
+          authorization.mode === 'gesture-audible' &&
+          !authorization.fallbackUsed &&
+          !soundRef.current.muted &&
+          leaseMatches(controllerRef.current, index, authorization.generation),
+        );
+        // Passive restores seek muted. A close-button/keyboard gesture may
+        // keep the active player audible, but only while its lease remains
+        // current; never let a late CUED callback unmute a prepared iframe.
+        if (directAudible) {
+          player.setVolume(Math.max(0, Math.min(100, Math.round(snapshot.volume))));
+        } else {
+          applyMutedSound(player, snapshot.volume);
+        }
         if (snapshot.currentTime > 0) player.seekTo(snapshot.currentTime, true);
         if (phase === 'playing') {
-          applySound(player, snapshot.muted, snapshot.volume);
+          if (!snapshot.muted && !directAudible) setSoundPromptIndex(index);
           pendingRestoreRef.current = null;
         } else if (!snapshot.wasPlaying) pendingRestoreRef.current = null;
       } catch {
@@ -1397,11 +1574,39 @@ export function Shorts({
     [cancelSoundSync, findNextPlayable, orderedShorts, setActive]
   );
 
-  const handleAutoplayBlocked = useCallback((index: number, generation: number | null) => {
-    if (index !== activeIndexRef.current) return;
-    if (generation != null && !leaseMatches(controllerRef.current, index, generation)) return;
+  const handleAutoplayBlocked = useCallback((index: number, generation: number | null, player: YouTubePlayer): boolean => {
+    if (index !== activeIndexRef.current) return false;
+    if (generation != null && !leaseMatches(controllerRef.current, index, generation)) return false;
+    const authorization = startAuthorizationRef.current;
+    const gestureAuthorized = generation == null
+      ? Boolean(
+        authorization &&
+        authorization.index === index &&
+        authorization.mode === 'gesture-audible' &&
+        !authorization.fallbackUsed &&
+        !soundRef.current.muted,
+      )
+      : audibleAuthorizationMatches(authorization, index, generation, soundRef.current.muted);
+    if (gestureAuthorized && authorization) {
+      const fallback = generation == null
+        ? { ...authorization, mode: 'muted-autoplay' as const, fallbackUsed: true }
+        : mutedFallbackAuthorization(authorization, index, generation);
+      if (!fallback) return false;
+      startAuthorizationRef.current = fallback;
+      setStartAuthorization(fallback);
+      try {
+        player.setVolume(Math.max(0, Math.min(100, Math.round(soundRef.current.volume))));
+        player.mute();
+        player.playVideo();
+      } catch {}
+      setBlockedIndex(null);
+      setSoundPromptIndex(index);
+      session.current.autoplayFailures += 1;
+      return true;
+    }
     setBlockedIndex(index);
     session.current.autoplayFailures += 1;
+    return false;
   }, []);
 
   const handlePlaying = useCallback((index: number, generation: number | null, startupMs: number, player: YouTubePlayer) => {
@@ -1412,7 +1617,16 @@ export function Shorts({
       return;
     }
     restorePlayerState(index, player, 'playing');
-    beginSoundSync(index, player);
+    // A passive autoplay must remain muted even when the user has expressed a
+    // desire for sound. The sound icon/TAP FOR SOUND action is the only path
+    // allowed to issue an audible start after iOS has granted a gesture.
+    try {
+      if (soundRef.current.muted || startAuthorizationRef.current?.index !== index || startAuthorizationRef.current.mode !== 'gesture-audible') {
+        player.mute();
+      }
+      if (!soundRef.current.muted && player.isMuted()) setSoundPromptIndex(index);
+      else setSoundPromptIndex(null);
+    } catch {}
     setPlayingIndex(index);
     wasPlayingRef.current = true;
     const short = orderedShorts[index];
@@ -1422,7 +1636,7 @@ export function Shorts({
       session.current.videosStarted += 1;
       session.current.startupMsTotal += Math.min(30000, startupMs);
     }
-  }, [beginSoundSync, orderedShorts, restorePlayerState]);
+  }, [orderedShorts, restorePlayerState]);
 
   const handlePlaybackRateChange = useCallback((index: number, generation: number | null, rate: number) => {
     if (leaseMatches(controllerRef.current, index, generation) && Number.isFinite(rate) && rate > 0) setPlaybackRate(rate);
@@ -1484,7 +1698,7 @@ export function Shorts({
   );
 
   const restoreSnapshot = useCallback(
-    (snapshot: ShortsReturnState) => {
+    (snapshot: ShortsReturnState, fromDirectGesture = false) => {
       if (!isShortsReturnState(snapshot)) return;
       const index = orderedShorts.findIndex((short) => short.id === snapshot.videoId);
       if (index < 0) return;
@@ -1493,15 +1707,41 @@ export function Shorts({
       const shouldResume = snapshot.resumeIntent ? snapshot.resumeIntent === 'autoplay' : snapshot.wasPlaying;
       overlayResumeRef.current = shouldResume;
       if (activeIndexRef.current === index) {
-        transitionController({ type: 'overlay-close', resume: shouldResume });
+        const resumed = transitionController({ type: 'overlay-close', resume: shouldResume });
         visibleIndexRef.current = index;
         setVisibleIndex(index);
         const player = playersRef.current.get(index);
         if (player) {
           try {
             if (snapshot.currentTime > 0) player.seekTo(snapshot.currentTime, true);
-            applySound(player, true, snapshot.volume);
-            if (shouldResume) player.playVideo();
+            const directAudible = Boolean(fromDirectGesture && shouldResume && !snapshot.muted && resumed.lease);
+            if (directAudible && resumed.lease) {
+              const authorization: ShortsStartAuthorization = {
+                index,
+                generation: resumed.lease.generation,
+                mode: 'gesture-audible',
+                fallbackUsed: false,
+              };
+              startAuthorizationRef.current = authorization;
+              setStartAuthorization(authorization);
+              let state: number = YT_PLAYER_STATES.UNSTARTED;
+              try { state = player.getPlayerState(); } catch {}
+              if (playerReadyForStart(state)) {
+                beginAudibleStart(index, resumed.lease.generation, player);
+              } else {
+                demoteAudibleStart(index, resumed.lease.generation);
+                applyMutedSound(player, snapshot.volume);
+                player.playVideo();
+                setSoundPromptIndex(index);
+              }
+            } else {
+              // A passive history/reload restore cannot legally reuse the
+              // gesture that opened the recipe. Keep it muted and let the
+              // first-party sound action provide a fresh gesture.
+              applyMutedSound(player, snapshot.volume);
+              if (shouldResume) player.playVideo();
+              if (!snapshot.muted && shouldResume) setSoundPromptIndex(index);
+            }
           } catch {}
         }
       } else {
@@ -1512,7 +1752,7 @@ export function Shorts({
         if (card && feedRef.current) feedRef.current.scrollTo({ top: card.offsetTop, behavior: 'auto' });
       });
     },
-    [applySound, orderedShorts, setActive, transitionController]
+    [beginAudibleStart, demoteAudibleStart, orderedShorts, setActive, transitionController]
   );
 
   const openRecipeOverlay = useCallback(
@@ -1553,7 +1793,7 @@ export function Shorts({
     [captureSnapshot, pausePlayersExcept, transitionController]
   );
 
-  const closeRecipeOverlay = useCallback(() => {
+  const closeRecipeOverlay = useCallback((fromDirectGesture = false) => {
     const snapshot = overlayRef.current?.snapshot;
     if (!snapshot || overlayRestoredRef.current) return;
     overlayRestoredRef.current = true;
@@ -1566,7 +1806,7 @@ export function Shorts({
       delete rest.pubcrawlShortsOverlay;
       window.history.replaceState(rest, '', overlayBaseHash.current || window.location.hash.replace(/[?&]make=1(?=&|$)/, '').replace(/[?&]$/, ''));
     }
-    restoreSnapshot(snapshot);
+    restoreSnapshot(snapshot, fromDirectGesture);
     recipeOpenerRef.current?.focus();
     window.setTimeout(() => { overlayRestoredRef.current = false; }, 0);
   }, [restoreSnapshot]);
@@ -1719,11 +1959,16 @@ export function Shorts({
       clearShortsOverlaySnapshot();
     }
     transitionController({ type: 'route-inactive' });
+    // Invalidate any gesture authorization and its verification timer before
+    // pausing the pool. A delayed YouTube callback must not revive sound or
+    // playback after the user has left Shorts.
+    cancelSoundSync();
+    setSoundPromptIndex(null);
     pausePlayersExcept(null);
     flushSession();
     wasPlayingRef.current = false;
     setPlayingIndex(null);
-  }, [active, flushSession, pausePlayersExcept, transitionController]);
+  }, [active, cancelSoundSync, flushSession, pausePlayersExcept, transitionController]);
 
   // A reload can land directly on #/shorts?...&make=1. Rehydrate the modal
   // from history.state/sessionStorage before any player is granted a lease.
@@ -1854,14 +2099,16 @@ export function Shorts({
   }, [orderRevision, orderedShorts, setActive]);
 
   // One scroll state machine owns activation. A meaningful movement revokes
-  // the current lease in the same task and pauses every player; only the
-  // nearest card after scrollend (or 120ms of quiet) receives a new lease.
+  // the current lease in the same task; only the nearest card after native
+  // scrollend, a stable touchend, or the single quiet fallback receives one.
   useEffect(() => {
     const root = feedRef.current;
     if (!active || !root || !orderedShorts.length) return;
     let frame = 0;
     let lastTop = root.scrollTop;
     let touchActive = false;
+    let lastScrollAt = performance.now();
+    let lastScrollDelta = 0;
     const clearSettle = () => {
       if (settleTimerRef.current != null) {
         window.clearTimeout(settleTimerRef.current);
@@ -1884,6 +2131,41 @@ export function Shorts({
       });
       return Math.max(0, Math.min(orderedLengthRef.current - 1, best));
     };
+    const commitSettlement = (targetIndex: number, source: ShortsSettleSource) => {
+      if (!activeRef.current || overlayRef.current || document.visibilityState === 'hidden' || window.location.hash.includes('make=1')) return null;
+      const target = Math.max(0, Math.min(orderedLengthRef.current - 1, Math.round(targetIndex)));
+      clearSettle();
+      pendingActivationRef.current = null;
+      const current = controllerRef.current;
+      const hasLease = current.phase === 'idle' && current.lease?.index === target && current.settledIndex === target;
+      if (hasLease) {
+        visibleIndexRef.current = target;
+        setVisibleIndex(target);
+        gestureStartTopRef.current = null;
+        return current.lease;
+      }
+      const directGesture = source === 'stable-touchend' || source === 'keyboard';
+      const mode = startModeForGesture(soundRef.current.muted, directGesture);
+      const lease = setActiveRef.current(target, true, mode);
+      if (directGesture && mode === 'gesture-audible' && lease) {
+        const player = playersRef.current.get(target);
+        if (player) {
+          let state: number = YT_PLAYER_STATES.UNSTARTED;
+          try { state = player.getPlayerState(); } catch {}
+          if (playerReadyForStart(state)) {
+            beginAudibleStart(target, lease.generation, player);
+          } else {
+            demoteAudibleStart(target, lease.generation);
+            setSoundPromptIndex(target);
+          }
+        } else {
+          demoteAudibleStart(target, lease.generation);
+          setSoundPromptIndex(target);
+        }
+      }
+      gestureStartTopRef.current = null;
+      return lease;
+    };
     const beginScroll = (direction: ShortsScrollDirection) => {
       if (controllerRef.current.phase === 'scrolling') return;
       transitionController({ type: 'scroll-start', direction });
@@ -1905,6 +2187,8 @@ export function Shorts({
     const updateIntent = () => {
       const top = root.scrollTop;
       const delta = top - lastTop;
+      lastScrollDelta = delta;
+      lastScrollAt = performance.now();
       if (Math.abs(delta) > 1) {
         const start = gestureStartTopRef.current ?? lastTop;
         const displacement = top - start;
@@ -1927,22 +2211,13 @@ export function Shorts({
         transitionController({ type: 'scroll-intent', index: intent, direction: scrollDirectionRef.current });
       }
     };
-    const settle = () => {
-      if (overlayRef.current || (typeof window !== 'undefined' && window.location.hash.includes('make=1'))) return;
+    const scheduleQuietSettlement = () => {
       clearSettle();
       const target = cardIndexAtRest();
       pendingActivationRef.current = target;
       settleTimerRef.current = window.setTimeout(() => {
         settleTimerRef.current = null;
-        const finalTarget = cardIndexAtRest();
-        pendingActivationRef.current = null;
-        if (finalTarget !== activeIndexRef.current || controllerRef.current.phase === 'scrolling') setActiveRef.current(finalTarget);
-        else {
-          transitionController({ type: 'scroll-settle', index: finalTarget });
-          visibleIndexRef.current = finalTarget;
-          setVisibleIndex(finalTarget);
-        }
-        gestureStartTopRef.current = null;
+        commitSettlement(cardIndexAtRest(), 'quiet-fallback');
       }, 120);
     };
     const onScroll = () => {
@@ -1954,27 +2229,15 @@ export function Shorts({
       frame = requestAnimationFrame(() => {
         frame = 0;
         updateIntent();
-        // Do not let the quiet-scroll fallback commit a temporary card while
-        // a finger is still down. Mobile browsers can pause scroll events for
-        // more than 100ms during a slow swipe, which previously minted a
-        // short-lived lease and broke the following autoplay handoff.
-        if (!touchActive) settle();
-        else {
-          // Some mobile engines omit the final touchend/touchcancel when a
-          // second fling begins before the first momentum scroll completes.
-          // Retain a longer scroll-quiet safety net so the controller cannot
-          // remain permanently in `scrolling` with every player paused.
-          clearSettle();
-          settleTimerRef.current = window.setTimeout(() => {
-            settleTimerRef.current = null;
-            settle();
-          }, 350);
-        }
+        // Never settle an intermediate card while a finger is down. Once the
+        // browser has released the gesture, one 120ms quiet timer is enough
+        // for engines that do not implement native scrollend.
+        if (!touchActive) scheduleQuietSettlement();
       });
     };
     const onScrollEnd = () => {
       if (touchActive || !active || overlayRef.current || (typeof window !== 'undefined' && window.location.hash.includes('make=1'))) return;
-      settle();
+      commitSettlement(cardIndexAtRest(), 'native-scrollend');
     };
     const onTouchStart = () => {
       touchActive = true;
@@ -1982,7 +2245,22 @@ export function Shorts({
     };
     const onTouchEnd = () => {
       touchActive = false;
-      settle();
+      const target = cardIndexAtRest();
+      const feedTop = root.getBoundingClientRect().top;
+      const card = root.querySelector<HTMLElement>(`[data-short-index="${target}"]`);
+      const cardDistance = card ? Math.abs(card.getBoundingClientRect().top - feedTop) : Infinity;
+      const velocity = Math.abs(lastScrollDelta) / Math.max(1, performance.now() - lastScrollAt);
+      let playerReady = false;
+      const player = playersRef.current.get(target);
+      if (player) {
+        try {
+          const state = player.getPlayerState();
+          playerReady = playerReadyForStart(state);
+        } catch {}
+      }
+      const stable = cardDistance <= Math.max(16, root.clientHeight * 0.04) && velocity < 0.08 && Math.round(root.scrollTop / Math.max(1, root.clientHeight)) === target && playerReady;
+      if (stable) commitSettlement(target, 'stable-touchend');
+      else scheduleQuietSettlement();
     };
     root.addEventListener('scroll', onScroll, { passive: true });
     root.addEventListener('scrollend', onScrollEnd as EventListener, { passive: true });
@@ -1998,11 +2276,10 @@ export function Shorts({
       if (frame) cancelAnimationFrame(frame);
       clearSettle();
     };
-  }, [active, cancelSoundSync, pausePlayersExcept, transitionController]);
+    }, [active, beginAudibleStart, cancelSoundSync, demoteAudibleStart, pausePlayersExcept, transitionController]);
 
-  // YouTube has no volumechange event. Poll only after programmatic sound
-  // synchronization is confirmed so a blocked unmute cannot erase the visit
-  // preference and make every subsequent Short silent.
+  // YouTube has no volumechange event. Observe the active player only; never
+  // use this passive poll to unmute a prepared/newly active iframe.
   useEffect(() => {
     if (!active) return;
     const timer = window.setInterval(() => {
@@ -2011,26 +2288,26 @@ export function Shorts({
       try {
         const muted = Boolean(player.isMuted());
         const volume = Math.max(0, Math.min(100, Math.round(player.getVolume())));
-        if (!soundSyncedRef.current) {
-          if (soundPromptIndex === activeIndexRef.current && !muted) {
+        if (!muted && !soundRef.current.muted) {
+          if (volume !== soundRef.current.volume) {
             soundRef.current = { muted: false, volume };
-            soundSyncedRef.current = true;
-            setSoundPromptIndex(null);
-            applySoundToPlayers();
+            setSoundPreferenceVersion((version) => version + 1);
           }
-          return;
-        }
-        if (muted !== soundRef.current.muted || (!muted && volume !== soundRef.current.volume)) {
-          soundRef.current = { muted, volume: muted ? soundRef.current.volume : volume };
           setSoundPromptIndex(null);
-          applySoundToPlayers();
+        } else if (soundRef.current.muted && !muted) {
+          // A native control can unmute the active player. Record that genuine
+          // user change, but do not propagate it to prepared players.
+          soundRef.current = { muted: false, volume };
+          setSoundPreferenceVersion((version) => version + 1);
+        } else if (!soundRef.current.muted && muted && controllerRef.current.phase === 'idle' && soundPromptIndex !== activeIndexRef.current) {
+          setSoundPromptIndex(activeIndexRef.current);
         }
       } catch {
         // Ignore calls while the active iframe is being replaced.
       }
     }, 150);
     return () => window.clearInterval(timer);
-  }, [active, applySoundToPlayers, soundPromptIndex]);
+  }, [active, soundPromptIndex]);
 
   useEffect(() => {
     const onVisibility = () => {
@@ -2083,7 +2360,7 @@ export function Shorts({
     const onKey = (event: KeyboardEvent) => {
       if (event.key === 'Escape') {
         event.preventDefault();
-        closeRecipeOverlay();
+        closeRecipeOverlay(true);
         return;
       }
       if (event.key !== 'Tab') return;
@@ -2146,6 +2423,23 @@ export function Shorts({
               : Math.max(0, Math.min(orderedShorts.length - 1, activeIndexRef.current + (forward ? 1 : -1)));
           const card = feedRef.current?.querySelector<HTMLElement>(`[data-short-index="${next}"]`);
           if (card && feedRef.current) feedRef.current.scrollTo({ top: card.offsetTop, behavior: 'smooth' });
+          const mode = startModeForGesture(soundRef.current.muted, true);
+          const lease = setActiveRef.current(next, true, mode);
+          if (mode === 'gesture-audible' && lease) {
+            const player = playersRef.current.get(next);
+            if (player) {
+              let state: number = YT_PLAYER_STATES.UNSTARTED;
+              try { state = player.getPlayerState(); } catch {}
+              if (playerReadyForStart(state)) beginAudibleStart(next, lease.generation, player);
+              else {
+                demoteAudibleStart(next, lease.generation);
+                setSoundPromptIndex(next);
+              }
+            } else {
+              demoteAudibleStart(next, lease.generation);
+              setSoundPromptIndex(next);
+            }
+          }
         }}
       >
         {orderedShorts.map((short, index) => {
@@ -2172,6 +2466,7 @@ export function Shorts({
                       manualMode={playbackMode === 'manual'}
                       manualToken={manualToken}
                       playLeaseGeneration={playLeaseGeneration}
+                      startAuthorization={startAuthorization}
                       muted={soundRef.current.muted}
                       volume={soundRef.current.volume}
                       online={online}
@@ -2180,7 +2475,23 @@ export function Shorts({
                         if (!online) return;
                         const card = feedRef.current?.querySelector<HTMLElement>(`[data-short-index="${target}"]`);
                         if (card && target !== activeIndexRef.current) feedRef.current?.scrollTo({ top: card.offsetTop, behavior: 'smooth' });
-                        setActive(target, false);
+                        const mode = startModeForGesture(soundRef.current.muted, true);
+                        const lease = setActive(target, false, mode);
+                        if (mode === 'gesture-audible' && lease) {
+                          const player = playersRef.current.get(target);
+                          if (player) {
+                            let state: number = YT_PLAYER_STATES.UNSTARTED;
+                            try { state = player.getPlayerState(); } catch {}
+                            if (playerReadyForStart(state)) beginAudibleStart(target, lease.generation, player);
+                            else {
+                              demoteAudibleStart(target, lease.generation);
+                              setSoundPromptIndex(target);
+                            }
+                          } else {
+                            demoteAudibleStart(target, lease.generation);
+                            setSoundPromptIndex(target);
+                          }
+                        }
                         overlayResumeRef.current = null;
                         setManualIndex(target);
                         setManualToken((token) => token + 1);
@@ -2217,16 +2528,23 @@ export function Shorts({
                     <button
                       type="button"
                       className="shorts-sound-prompt"
-                      onClick={() => {
-                        const player = playersRef.current.get(index);
-                        if (player) beginSoundSync(index, player);
-                      }}
+                      onClick={() => enableSoundForPlayer(index)}
                     >
                       TAP FOR SOUND
                     </button>
                   )}
                   {isVisible && (
                     <div className="shorts-player-rail" aria-label="Short actions" data-tour="shorts-actions">
+                      <button
+                        type="button"
+                        className="shorts-overlay-action shorts-sound-toggle"
+                        onClick={() => toggleSound(index)}
+                        aria-label={soundRef.current.muted ? 'Turn sound on' : 'Mute'}
+                        aria-pressed={!soundRef.current.muted}
+                        title={soundRef.current.muted ? 'Turn sound on' : 'Mute'}
+                      >
+                        {soundRef.current.muted ? <VolumeX size={20} /> : <Volume2 size={20} />}
+                      </button>
                       <button
                         type="button"
                         className={`shorts-overlay-action ${shared !== 'idle' ? 'shorts-shared' : ''}`}
@@ -2263,7 +2581,7 @@ export function Shorts({
       {recipeOverlay && (
         <div
           className="shorts-recipe-backdrop"
-          onMouseDown={(event) => event.target === event.currentTarget && closeRecipeOverlay()}
+          onMouseDown={(event) => event.target === event.currentTarget && closeRecipeOverlay(true)}
           onWheel={(event) => {
             if (event.target === event.currentTarget) event.preventDefault();
           }}
@@ -2277,7 +2595,7 @@ export function Shorts({
             onKeyDown={(event) => {
               if (event.key === 'Escape') {
                 event.preventDefault();
-                closeRecipeOverlay();
+                closeRecipeOverlay(true);
               }
             }}
           >
@@ -2286,7 +2604,7 @@ export function Shorts({
                 <span className="k-label">MAKE THIS</span>
                 <h2 id="shorts-recipe-title">{recipeOverlay.short.recipeQuery}</h2>
               </div>
-              <button ref={recipeCloseRef} className="shorts-recipe-close" type="button" onClick={closeRecipeOverlay} aria-label="Close recipes">
+              <button ref={recipeCloseRef} className="shorts-recipe-close" type="button" onClick={() => closeRecipeOverlay(true)} aria-label="Close recipes">
                 <X size={20} />
               </button>
             </header>

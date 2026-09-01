@@ -982,32 +982,17 @@ export default function App() {
                     </div>
                   ) : (
                     <>
-                      {barResults.length > 0 ? (
-                        <ShelfResults
-                          recipes={barResults}
-                          visible={barVisible}
-                          matching={matching}
-                          onLoadMore={() => setBarVisible((visible) => Math.min(visible + 12, barResults.length))}
-                          renderCard={card}
-                        />
-                      ) : (
-                        !matching && (
-                          <div className="empty">
-                            <p className="empty-big">NO MATCHES YET</p>
-                            <p className="k-label dim">TRY ADDING ANOTHER BOTTLE, MIXER OR FRESH INGREDIENT.</p>
-                          </div>
-                        )
-                      )}
                       <button
                         type="button"
                         className="text-btn shelf-filter-toggle"
                         aria-expanded={barFiltersExpanded}
+                        aria-controls="bar-result-filters"
                         onClick={() => setBarFiltersExpanded((expanded) => !expanded)}
                       >
                         {barFiltersExpanded ? 'HIDE FILTERS' : 'FILTER RESULTS'} <ArrowDown size={12} />
                       </button>
                       {barFiltersExpanded && (
-                        <div className="shelf-filters">
+                        <div id="bar-result-filters" className="shelf-filters">
                           <div className="bar-controls">
                             <CategoryFilter
                               value={barFilter}
@@ -1027,6 +1012,22 @@ export default function App() {
                             />
                           </div>
                         </div>
+                      )}
+                      {barResults.length > 0 ? (
+                        <ShelfResults
+                          recipes={barResults}
+                          visible={barVisible}
+                          matching={matching}
+                          onLoadMore={() => setBarVisible((visible) => Math.min(visible + 12, barResults.length))}
+                          renderCard={card}
+                        />
+                      ) : (
+                        !matching && (
+                          <div className="empty">
+                            <p className="empty-big">NO MATCHES YET</p>
+                            <p className="k-label dim">TRY ADDING ANOTHER BOTTLE, MIXER OR FRESH INGREDIENT.</p>
+                          </div>
+                        )
                       )}
                     </>
                   )}

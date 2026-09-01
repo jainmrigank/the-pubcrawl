@@ -42,4 +42,27 @@ test.describe('responsive controls', () => {
     await expect(page.locator('.nav-links')).toBeVisible();
     await expect(page.locator('.desktop-theme-toggle')).toBeVisible();
   });
+
+  test('keeps install instructions readable on the inverse banner in dark mode', async ({ page }) => {
+    await page.addInitScript(() => localStorage.removeItem('pubcrawl.installDismissed'));
+    await page.setViewportSize({ width: 390, height: 844 });
+    await openRoute(page, '/#/menu');
+    const banner = page.locator('.install-banner');
+    await expect(banner).toBeVisible();
+    await banner.getByRole('button', { name: 'HOW TO INSTALL' }).click();
+    await expect(banner.locator('.ib-steps')).toBeVisible();
+    const colors = await banner.evaluate((element) => {
+      const style = getComputedStyle(element);
+      const steps = element.querySelector('.ib-steps');
+      return {
+        background: style.backgroundColor,
+        color: style.color,
+        stepsColor: steps ? getComputedStyle(steps).color : '',
+      };
+    });
+    expect(colors.background).toBe('rgb(20, 19, 16)');
+    expect(colors.color).toBe('rgb(241, 238, 229)');
+    expect(colors.stepsColor).toContain('rgba(241, 238, 229');
+    await expect(banner.getByRole('button', { name: 'Dismiss' })).toBeVisible();
+  });
 });

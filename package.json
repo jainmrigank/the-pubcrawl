@@ -16,6 +16,8 @@
     "check:client-data": "node scripts/build_client_data.mjs --check",
     "build": "npm run check:client-data && tsc -b && vite build",
     "test:e2e": "npm run build && playwright test",
+    "test:e2e:preview": "npm run build && PUBCRAWL_E2E_MODE=preview playwright test",
+    "test:e2e:webkit": "npm run build && playwright test --config=playwright.webkit.config.ts",
     "worker:dry-run": "WRANGLER_LOG_PATH=/tmp/pubcrawl-wrangler.log WRANGLER_SEND_METRICS=false wrangler deploy --dry-run --config worker/wrangler.jsonc --outdir /tmp/pubcrawl-worker-dry-run",
     "test:worker": "node --experimental-strip-types --test test/worker-api.test.mjs",
     "perf:local": "node scripts/perf_probe.mjs",

@@ -225,6 +225,7 @@ export async function createApp() {
       catalogueCocktails: cocktails.length,
       ingredients: ingredients.length,
       llm: llmAvailable() ? llmConfig.model : null,
+      store: storeMode(),
     });
   });
 

@@ -18,7 +18,12 @@ const dataFile = (name) => join(ROOT, 'data', name);
 
 const UP_URL = (process.env.KV_REST_API_URL || process.env.UPSTASH_REDIS_REST_URL || '').replace(/\/$/, '');
 const UP_TOKEN = process.env.KV_REST_API_TOKEN || process.env.UPSTASH_REDIS_REST_TOKEN || '';
-const useKV = Boolean(UP_URL && UP_TOKEN);
+// Preview builds can opt into a completely ephemeral store. This is more
+// than a flag on writes: memory mode must never contact Upstash or read/write
+// local persistence files, even when production-looking credentials happen to
+// be present in the shell environment.
+const memoryMode = process.env.PUBCRAWL_STORE_MODE === 'memory';
+const useKV = !memoryMode && Boolean(UP_URL && UP_TOKEN);
 
 async function kvCmd(args) {
   const res = await fetch(UP_URL, {
@@ -32,6 +37,7 @@ async function kvCmd(args) {
 }
 
 async function readBlob(key, file, fallback) {
+  if (memoryMode) return fallback;
   // A remote store failure is not equivalent to an empty store. Propagate it
   // so state-backed routes can return 503 instead of overwriting durable data
   // from in-memory defaults. Local development still treats a missing file as
@@ -49,6 +55,7 @@ async function readBlob(key, file, fallback) {
 }
 
 async function writeBlob(key, file, value) {
+  if (memoryMode) return;
   try {
     if (useKV) {
       await kvCmd(['SET', key, JSON.stringify(value)]);
@@ -73,6 +80,10 @@ let initPromise = null;
 
 export async function initStore() {
   if (initPromise) return initPromise;
+  if (memoryMode) {
+    initPromise = Promise.resolve();
+    return initPromise;
+  }
   // Reads are independent. Parallelising them removes the eight-RTT startup
   // chain that made a sleeping Render process look even slower.
   initPromise = Promise.all([
@@ -205,7 +216,7 @@ export function saveVideoStats(next) {
   return Object.keys(next).length;
 }
 
-export const storeMode = () => (useKV ? 'kv' : 'file');
+export const storeMode = () => (memoryMode ? 'memory' : useKV ? 'kv' : 'file');
 export const getLikes = () => likes;
 export const getKept = () => kept;
 export const getSubs = () => subs;

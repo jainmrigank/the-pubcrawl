@@ -3,6 +3,9 @@
   "name": "pubcrawl-api",
   "main": "index.ts",
   "compatibility_date": "2026-08-31",
+  // Secrets are provisioned with `wrangler secret put` and are intentionally
+  // absent from this file. Required production bindings: KV_REST_API_TOKEN
+  // and RATE_LIMIT_SALT (see worker/README.md).
   "vars": {
     "FRONTEND_ORIGIN": "https://the-pubcrawl.vercel.app"
   }

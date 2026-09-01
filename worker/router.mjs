@@ -86,7 +86,8 @@ function clientAddress(request) {
 }
 
 async function hashedClient(request, env) {
-  const salt = String(env.RATE_LIMIT_SALT || 'pubcrawl-local-rate-limit');
+  const salt = String(env.RATE_LIMIT_SALT || '').trim();
+  if (!salt) throw new Error('rate limit salt is not configured');
   const material = new TextEncoder().encode(`${salt}:${clientAddress(request)}`);
   // Workers and supported local Node versions both expose Web Crypto. Keeping
   // this implementation runtime-neutral avoids importing Node's crypto module
@@ -428,6 +429,7 @@ async function handleApi(request, env, context) {
   // can continue using its local catalogue when these optional services are
   // unavailable; never return an unbounded upstream error or stack trace.
   if (path === '/api/identify' && request.method === 'POST') {
+    if (!String(env.RATE_LIMIT_SALT || '').trim()) return json({ error: 'This feature is temporarily unavailable.' }, 503, origin, { 'Cache-Control': 'no-store' });
     if (tooLarge(request)) return json({ error: 'image is too large' }, 413, origin);
     let body;
     try { body = await parseJsonBody(request); } catch { return json({ error: 'content-type must be application/json' }, 400, origin); }
@@ -444,6 +446,7 @@ async function handleApi(request, env, context) {
     }
   }
   if (path === '/api/generate' && request.method === 'POST') {
+    if (!String(env.RATE_LIMIT_SALT || '').trim()) return json({ error: 'This feature is temporarily unavailable.' }, 503, origin, { 'Cache-Control': 'no-store' });
     if (tooLarge(request)) return json({ error: 'request is too large' }, 413, origin);
     let body;
     try { body = await parseJsonBody(request); } catch { return json({ error: 'content-type must be application/json' }, 400, origin); }

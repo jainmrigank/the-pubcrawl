@@ -24,7 +24,7 @@ export default defineConfig({
         description: "What's your poison? Every cocktail you can make with what's on your shelf.",
         start_url: '/',
         display: 'standalone',
-        orientation: 'portrait',
+        orientation: 'any',
         background_color: '#141310',
         theme_color: '#141310',
         categories: ['food', 'lifestyle', 'entertainment'],

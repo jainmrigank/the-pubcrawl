@@ -233,6 +233,18 @@ export const Share = (p: P) => (
     <path d="M7 10H5v11 Q12 20.3 19 21V10h-2" />
   </S>
 );
+export const Volume2 = (p: P) => (
+  <S {...p}>
+    <path d="M4 10h4l4-4v12l-4-4H4z" />
+    <path d="M16 9c1.5 1.7 1.5 4.3 0 6M18.5 6.5c3.3 3.1 3.3 7.9 0 11" />
+  </S>
+);
+export const VolumeX = (p: P) => (
+  <S {...p}>
+    <path d="M4 10h4l4-4v12l-4-4H4z" />
+    <path d="m17 9 5 6M22 9l-5 6" />
+  </S>
+);
 export const Heart = (p: P) => (
   <S {...p}>
     <path d="M12 20.5 Q5.5 15.5 4 11 C3.2 7.8 5.2 5.2 8 5.2 C9.9 5.2 11.3 6.4 12 8 C12.7 6.4 14.1 5.2 16 5.2 C18.8 5.2 20.8 7.8 20 11 Q18.5 15.5 12 20.5z" />

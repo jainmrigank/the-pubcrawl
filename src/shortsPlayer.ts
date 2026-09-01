@@ -168,3 +168,17 @@ export function applySound(player: YouTubePlayer, muted: boolean, volume: number
     // The API can briefly reject commands between iframe creation and ready.
   }
 }
+
+/**
+ * Apply the safe preparation state used by every non-active Shorts iframe.
+ * Keeping this separate from applySound makes it impossible for a queue or
+ * React effect to accidentally unmute a player outside a user gesture.
+ */
+export function applyMutedSound(player: YouTubePlayer, volume: number): void {
+  try {
+    player.setVolume(Math.max(0, Math.min(100, Math.round(volume))));
+    player.mute();
+  } catch {
+    // The API can briefly reject commands between iframe creation and ready.
+  }
+}

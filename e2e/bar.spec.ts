@@ -29,7 +29,7 @@ test.describe('Bar shelf flow', () => {
     const order = await page.evaluate(() => {
       const grid = document.querySelector('.shelf-results-grid');
       const filters = document.querySelector('.shelf-filter-toggle');
-      return Boolean(grid && filters && (grid.compareDocumentPosition(filters) & Node.DOCUMENT_POSITION_FOLLOWING));
+      return Boolean(grid && filters && (filters.compareDocumentPosition(grid) & Node.DOCUMENT_POSITION_FOLLOWING));
     });
     expect(order).toBe(true);
   });

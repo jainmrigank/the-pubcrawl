@@ -45,6 +45,16 @@ html, body {
   --error-ink: #5c1e15;
   --scrim: rgb(22 21 18 / 0.42);
   --mobile-bottom-nav-height: 62px;
+  /* The install prompt is intentionally inverse in both themes. Keeping its
+     palette independent prevents dark-mode paper/ink inversion from making
+     the instructional copy disappear into the banner. */
+  --install-bg: #141310;
+  --install-ink: #f1eee5;
+  --install-muted: rgb(241 238 229 / 0.78);
+  --install-border: rgb(241 238 229 / 0.72);
+  --install-button-bg: #f1eee5;
+  --install-button-ink: #141310;
+  --install-accent: #f26a32;
 }
 
 html[data-theme='dark'] {
@@ -117,19 +127,20 @@ main { flex: 1; width: 100%; max-width: 1440px; margin: 0 auto; padding: 0 clamp
    "get the app" banner
    ========================================================================== */
 .install-banner {
-  background: var(--ink);
-  color: var(--paper);
+  background: var(--install-bg);
+  color: var(--install-ink);
   padding: 9px clamp(16px, 4vw, 64px);
 }
 .ib-row { display: flex; align-items: center; gap: 14px; }
-.ib-lead { color: var(--paper); flex: 1; min-width: 0; }
+.ib-lead { color: var(--install-ink); flex: 1; min-width: 0; }
 .ib-btn {
   display: inline-flex;
   align-items: center;
   gap: 7px;
   flex: none;
-  background: var(--paper);
-  color: var(--ink);
+  min-height: 44px;
+  background: var(--install-button-bg);
+  color: var(--install-button-ink);
   border: none;
   padding: 7px 12px;
   font-family: var(--mono);
@@ -137,24 +148,32 @@ main { flex: 1; width: 100%; max-width: 1440px; margin: 0 auto; padding: 0 clamp
   letter-spacing: 0.08em;
   cursor: pointer;
 }
-.ib-btn:hover { background: var(--bartalk-accent, #A5542E); color: var(--paper); }
-.ib-tip { font-family: var(--mono); font-size: 11px; letter-spacing: 0.06em; color: var(--paper); flex: none; }
+.ib-btn:hover,
+.ib-btn:focus-visible { background: var(--install-accent); color: var(--install-ink); }
+.ib-btn:focus-visible { outline-color: var(--install-accent); }
+.ib-tip { font-family: var(--mono); font-size: 11px; letter-spacing: 0.06em; color: var(--install-ink); flex: none; }
 .ib-x {
   display: inline-flex;
   flex: none;
+  min-width: 44px;
+  min-height: 44px;
+  align-items: center;
+  justify-content: center;
   background: none;
   border: none;
-  color: rgba(236, 233, 224, 0.6);
+  color: var(--install-muted);
   cursor: pointer;
   padding: 4px;
 }
-.ib-x:hover { color: var(--paper); }
+.ib-x:hover,
+.ib-x:focus-visible { color: var(--install-ink); }
+.ib-x:focus-visible { outline-color: var(--install-accent); }
 .ib-steps {
   margin: 8px 0 2px;
   font-size: 13px;
-  color: rgba(236, 233, 224, 0.8);
+  color: var(--install-muted);
 }
-.ib-steps b { color: var(--paper); font-weight: 700; }
+.ib-steps b { color: var(--install-ink); font-weight: 700; }
 
 @media (max-width: 640px) {
   .ib-row { flex-wrap: wrap; gap: 8px 12px; }
@@ -163,36 +182,13 @@ main { flex: 1; width: 100%; max-width: 1440px; margin: 0 auto; padding: 0 clamp
   .ib-x { order: 3; margin-left: auto; }
 }
 
-/* The bottom navigation is portalled directly under <body>. Keep its visual
-   viewport contract independent from the transformed `.site` shell. */
-@media (max-width: 860px) {
-  html[data-route='shorts'] .mobile-bottom-nav {
-    background: #000;
-    border-top-color: rgb(241 238 229 / 0.28);
-  }
-  html[data-route='shorts'] .mobile-nav-item { color: rgb(241 238 229 / 0.7); }
-  html[data-route='shorts'] .mobile-nav-item.active { color: var(--accent); }
-  html[data-route='shorts'] .shorts-route {
-    position: fixed;
-    z-index: 100;
-    inset: 0 0 calc(var(--mobile-bottom-nav-height) + env(safe-area-inset-bottom)) 0;
-    overflow: hidden;
-    background: #000;
-  }
-  html[data-route='shorts'] .shorts-route .shorts-page,
-  html[data-route='shorts'] .shorts-route .shorts-feed,
-  html[data-route='shorts'] .shorts-route .shorts-card {
-    height: 100%;
-    min-height: 100%;
-  }
-}
-
 /* Shorts starts from a neutral black surface. PubCrawl never renders a
    catalogue thumbnail as a loading facade. */
 .shorts-startup-surface {
   position: absolute;
   inset: 0;
   background: #000;
+  pointer-events: none;
 }
 .shorts-loading-copy {
   position: absolute;
@@ -203,6 +199,7 @@ main { flex: 1; width: 100%; max-width: 1440px; margin: 0 auto; padding: 0 clamp
   color: var(--paper);
   background: rgb(0 0 0 / 0.68);
   white-space: nowrap;
+  pointer-events: none;
 }
 .guided-tour { position: fixed; inset: 0; z-index: 140; pointer-events: none; }
 .guided-tour-focus {
@@ -401,6 +398,9 @@ main { flex: 1; width: 100%; max-width: 1440px; margin: 0 auto; padding: 0 clamp
   display: flex;
   flex-direction: column;
   padding: 0 24px 32px;
+  min-height: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
 }
 .drawer-head {
   display: flex;
@@ -1602,119 +1602,6 @@ main { flex: 1; width: 100%; max-width: 1440px; margin: 0 auto; padding: 0 clamp
   .fc { height: 500px; }
 }
 
-/* The phone shell replaces the hamburger/drawer. Tablets retain the pill
-   presentation while sharing this same mobile route bar. */
-@media (max-width: 860px) {
-  .nav { gap: 8px; }
-  .nav-make,
-  .nav-status,
-  .desktop-theme-toggle,
-  .nav-menu-btn { display: none; }
-  .mobile-top-actions {
-    display: flex;
-    align-items: center;
-    gap: clamp(7px, 2vw, 13px);
-    margin-left: auto;
-    min-width: 0;
-  }
-  .mobile-theme-toggle { min-width: 44px; min-height: 44px; justify-content: center; }
-  .mobile-secondary-action {
-    display: inline-flex;
-    position: relative;
-    align-items: center;
-    justify-content: center;
-    width: 44px;
-    min-width: 44px;
-    height: 44px;
-    min-height: 44px;
-    padding: 0;
-    color: var(--ink);
-    text-decoration: none;
-    line-height: 0;
-  }
-  .mobile-secondary-action[aria-current='page'] { color: var(--accent); }
-  .mobile-secondary-action span { display: none; }
-  .tab-badge {
-    position: absolute;
-    top: 1px;
-    right: -2px;
-    min-width: 16px;
-    height: 16px;
-    padding: 0 4px;
-    border-radius: 8px;
-    background: var(--accent);
-    color: var(--paper);
-    font-family: var(--mono);
-    font-size: 9px;
-    line-height: 16px;
-    text-align: center;
-  }
-  main { padding-bottom: calc(var(--mobile-bottom-nav-height) + env(safe-area-inset-bottom) + 18px); }
-  .foot { padding-bottom: calc(32px + var(--mobile-bottom-nav-height) + env(safe-area-inset-bottom)); }
-  .mobile-bottom-nav {
-    position: fixed;
-    z-index: 110;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    display: grid;
-    grid-template-columns: repeat(5, minmax(0, 1fr));
-    height: calc(var(--mobile-bottom-nav-height) + env(safe-area-inset-bottom));
-    padding: 4px 4px env(safe-area-inset-bottom);
-    border-top: 1px solid var(--line-strong);
-    background: var(--paper);
-  }
-  .mobile-nav-item {
-    position: relative;
-    display: flex;
-    min-width: 44px;
-    min-height: 44px;
-    align-items: center;
-    justify-content: center;
-    flex-direction: column;
-    gap: 2px;
-    color: var(--ink-60);
-    font-family: var(--mono);
-    font-size: 9px;
-    letter-spacing: 0.06em;
-    text-decoration: none;
-    text-transform: uppercase;
-  }
-  .mobile-nav-item.active { color: var(--accent); }
-  .mobile-nav-item.active::before {
-    content: '';
-    position: absolute;
-    top: -4px;
-    left: 25%;
-    right: 25%;
-    height: 2px;
-    background: var(--accent);
-  }
-  .site.shorts-active .mobile-bottom-nav {
-    border-color: rgba(236, 233, 224, 0.28);
-    background: #000;
-    color: var(--paper);
-  }
-  .site.shorts-active .mobile-nav-item { color: rgba(236, 233, 224, 0.7); }
-  .site.shorts-active .mobile-nav-item.active { color: var(--accent); }
-  .site.shorts-active main {
-    height: calc(100dvh - var(--mobile-bottom-nav-height) - env(safe-area-inset-bottom));
-    flex: 1 1 auto;
-  }
-  .site.shorts-active .shorts-route,
-  .site.shorts-active .shorts-page,
-  .site.shorts-active .shorts-feed,
-  .site.shorts-active .shorts-card {
-    height: calc(100dvh - var(--mobile-bottom-nav-height) - env(safe-area-inset-bottom));
-    min-height: calc(100dvh - var(--mobile-bottom-nav-height) - env(safe-area-inset-bottom));
-  }
-  .shorts-bottom-overlay { bottom: max(96px, calc(env(safe-area-inset-bottom) + var(--mobile-bottom-nav-height) + 10px)); }
-  .shorts-player-rail { bottom: max(12px, calc(env(safe-area-inset-bottom) + var(--mobile-bottom-nav-height) + 8px)); }
-  .shorts-sound-prompt { bottom: max(12px, calc(env(safe-area-inset-bottom) + var(--mobile-bottom-nav-height) + 8px)); }
-  .shorts-recipe-backdrop { z-index: 130; }
-  .modal-backdrop { z-index: 130; }
-}
-
 .site.shorts-active .header-icon-action { color: var(--paper); }
 
 @media (max-width: 640px) {
@@ -1753,6 +1640,236 @@ main { flex: 1; width: 100%; max-width: 1440px; margin: 0 auto; padding: 0 clamp
     text-transform: uppercase;
   }
   .wv-kind-pills { display: none; }
+}
+
+/* --------------------------------------------------------------------------
+   Authoritative physical-phone shell
+
+   A phone in landscape can be wider than 860 CSS pixels (the iPhone 13 Pro
+   Max is roughly 926px wide).  Width alone must therefore not switch a touch
+   device into the desktop drawer. This is the authoritative shell rule for
+   both portrait and landscape touch phones while leaving a fine-pointer
+   1024x768 desktop untouched.
+   -------------------------------------------------------------------------- */
+@media (max-width: 860px),
+  (min-width: 861px) and (max-width: 1180px) and (max-height: 600px) and (hover: none) and (pointer: coarse) {
+  .drawer { display: none; }
+  .nav-links,
+  .nav-menu-btn,
+  .nav-make,
+  .nav-status,
+  .desktop-theme-toggle { display: none; }
+  .nav { gap: 8px; }
+  .mobile-top-actions {
+    display: flex;
+    align-items: center;
+    gap: clamp(7px, 2vw, 13px);
+    margin-left: auto;
+    min-width: 0;
+  }
+  .mobile-theme-toggle,
+  .mobile-secondary-action {
+    display: inline-flex;
+    position: relative;
+    align-items: center;
+    justify-content: center;
+    width: 44px;
+    min-width: 44px;
+    height: 44px;
+    min-height: 44px;
+    padding: 0;
+    color: var(--ink);
+    text-decoration: none;
+    line-height: 0;
+  }
+  .mobile-secondary-action[aria-current='page'] { color: var(--accent); }
+  .mobile-secondary-action span { display: none; }
+  .tab-badge {
+    position: absolute;
+    top: 1px;
+    right: -2px;
+    min-width: 16px;
+    height: 16px;
+    padding: 0 4px;
+    border-radius: 8px;
+    background: var(--accent);
+    color: var(--paper);
+    font-family: var(--mono);
+    font-size: 9px;
+    line-height: 16px;
+    text-align: center;
+  }
+  .mobile-bottom-nav {
+    position: fixed;
+    z-index: 110;
+    inset-inline: 0;
+    bottom: 0;
+    display: grid;
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    width: 100%;
+    height: calc(var(--mobile-bottom-nav-height) + env(safe-area-inset-bottom));
+    padding: 4px max(4px, env(safe-area-inset-right)) env(safe-area-inset-bottom) max(4px, env(safe-area-inset-left));
+    border-top: 1px solid var(--line-strong);
+    background: var(--paper);
+  }
+  .mobile-nav-item {
+    position: relative;
+    display: flex;
+    min-width: 44px;
+    min-height: 44px;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    gap: 2px;
+    color: var(--ink-60);
+    font-family: var(--mono);
+    font-size: 9px;
+    letter-spacing: 0.06em;
+    text-decoration: none;
+    text-transform: uppercase;
+  }
+  .mobile-nav-item.active { color: var(--accent); }
+  .mobile-nav-item.active::before {
+    content: '';
+    position: absolute;
+    top: -4px;
+    left: 25%;
+    right: 25%;
+    height: 2px;
+    background: var(--accent);
+  }
+  main { padding-bottom: calc(var(--mobile-bottom-nav-height) + env(safe-area-inset-bottom) + 18px); }
+  .foot { padding-bottom: calc(32px + var(--mobile-bottom-nav-height) + env(safe-area-inset-bottom)); }
+
+  /* Keep the compact header (including icon-only Theme, Bar Basics and Tab)
+     on Shorts too.  The media stage starts below it and ends above the
+     portalled bottom navigation. */
+  .site.shorts-active .nav {
+    display: flex;
+    flex: 0 0 calc(58px + env(safe-area-inset-top));
+    height: calc(58px + env(safe-area-inset-top));
+    padding-top: env(safe-area-inset-top);
+  }
+  .site.shorts-active main {
+    flex: 1 1 auto;
+    width: 100%;
+    height: calc(100dvh - 58px - env(safe-area-inset-top) - var(--mobile-bottom-nav-height) - env(safe-area-inset-bottom));
+    max-height: calc(100dvh - 58px - env(safe-area-inset-top) - var(--mobile-bottom-nav-height) - env(safe-area-inset-bottom));
+    padding: 0;
+  }
+  html[data-route='shorts'] .mobile-bottom-nav {
+    background: #000;
+    border-top-color: rgb(241 238 229 / 0.28);
+  }
+  html[data-route='shorts'] .mobile-nav-item { color: rgb(241 238 229 / 0.7); }
+  html[data-route='shorts'] .mobile-nav-item.active { color: var(--accent); }
+  html[data-route='shorts'] .shorts-route {
+    position: fixed;
+    z-index: 100;
+    inset: calc(58px + env(safe-area-inset-top)) 0 calc(var(--mobile-bottom-nav-height) + env(safe-area-inset-bottom)) 0;
+    width: auto;
+    height: auto;
+    min-height: 0;
+    overflow: hidden;
+    background: #000;
+  }
+  html[data-route='shorts'] .shorts-page,
+  html[data-route='shorts'] .shorts-feed,
+  html[data-route='shorts'] .shorts-card {
+    height: 100%;
+    min-height: 100%;
+  }
+  html[data-route='shorts'] .shorts-bottom-overlay {
+    bottom: max(96px, calc(env(safe-area-inset-bottom) + var(--mobile-bottom-nav-height) + 10px));
+  }
+  /* Touch devices do not have a reliable hover state. Keep the Short controls
+     discoverable and interactive without requiring a preliminary tap/focus.
+     The media stage remains the visual priority; controls use opacity-only
+     transitions and sit above the bottom navigation's safe area. */
+  html[data-route='shorts'] .shorts-speed-hold {
+    display: inline-flex;
+  }
+  html[data-route='shorts'] .shorts-top-overlay,
+  html[data-route='shorts'] .shorts-bottom-overlay,
+  html[data-route='shorts'] .shorts-player-rail {
+    opacity: 1;
+    pointer-events: auto;
+    transform: none;
+  }
+  .shorts-top-overlay {
+    top: max(12px, env(safe-area-inset-top));
+    left: max(12px, env(safe-area-inset-left));
+  }
+  html[data-route='shorts'] .shorts-bottom-overlay {
+    bottom: max(96px, calc(env(safe-area-inset-bottom) + var(--mobile-bottom-nav-height) + 10px));
+  }
+  html[data-route='shorts'] .shorts-player-rail {
+    top: auto;
+    left: auto;
+    right: max(12px, env(safe-area-inset-right));
+    bottom: max(12px, calc(env(safe-area-inset-bottom) + var(--mobile-bottom-nav-height) + 8px));
+    flex-direction: row-reverse;
+    align-items: center;
+    gap: 10px;
+  }
+  html[data-route='shorts'] .shorts-player-rail .shorts-make {
+    display: inline-flex;
+    min-width: 44px;
+    max-width: min(54vw, 190px);
+    padding: 10px 11px;
+  }
+  html[data-route='shorts'] .shorts-sound-prompt {
+    left: max(12px, env(safe-area-inset-left));
+    bottom: max(12px, calc(env(safe-area-inset-bottom) + var(--mobile-bottom-nav-height) + 8px));
+  }
+  .shorts-recipe-backdrop {
+    align-items: flex-end;
+    padding: max(8px, env(safe-area-inset-top)) max(8px, env(safe-area-inset-right)) max(8px, calc(env(safe-area-inset-bottom) + var(--mobile-bottom-nav-height))) max(8px, env(safe-area-inset-left));
+  }
+  .shorts-recipe-dialog {
+    max-height: calc(100% - 4px);
+    gap: 13px;
+    padding: 14px;
+  }
+  .shorts-recipe-dialog-head h2 {
+    font-size: 27px;
+  }
+  .shorts-recipe-track {
+    display: flex;
+    gap: 10px;
+    margin-inline: -2px;
+    padding-inline: 2px;
+    scroll-snap-type: x mandatory;
+  }
+  .shorts-recipe-card {
+    flex: 0 0 min(83vw, 300px);
+    height: min(430px, 58vh);
+    scroll-snap-align: start;
+  }
+  .shorts-recipe-dialog-foot {
+    display: grid;
+    gap: 9px;
+  }
+  .shorts-recipe-dialog-foot .btn {
+    width: 100%;
+    justify-content: center;
+  }
+  .shorts-return-banner {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 8px;
+  }
+  html[data-route='shorts'] .shorts-player-rail,
+  html[data-route='shorts'] .shorts-sound-prompt {
+    bottom: max(12px, calc(env(safe-area-inset-bottom) + var(--mobile-bottom-nav-height) + 8px));
+  }
+  html[data-route='shorts'] .shorts-config-toast {
+    bottom: max(72px, calc(env(safe-area-inset-bottom) + var(--mobile-bottom-nav-height) + 10px));
+  }
+  html[data-route='shorts'] .shorts-recipe-backdrop,
+  html[data-route='shorts'] .modal-backdrop {
+    z-index: 130;
+  }
 }
 
 @media (max-width: 360px) {
@@ -1834,12 +1951,33 @@ button, a, .fc {
 /* ==========================================================================
    the watch shelf
    ========================================================================== */
-.watch { padding-bottom: clamp(40px, 6vh, 72px); }
+.watch {
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  margin-inline: 0;
+  padding-bottom: clamp(40px, 6vh, 72px);
+}
+
+/* Every Watch wrapper is allowed to shrink inside a grid/flex track. Without
+   these containment rules a long title or iframe intrinsic width can push a
+   phone card past the right gutter after a rotation or Shorts return. */
+main,
+.watch,
+.wv-grid,
+.wv,
+.wv-frame,
+.wv-meta {
+  box-sizing: border-box;
+  min-inline-size: 0;
+  max-inline-size: 100%;
+}
 
 .wv-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(min(300px, 100%), 1fr));
   gap: clamp(20px, 2.6vw, 32px);
+  inline-size: 100%;
   margin-top: clamp(20px, 3vh, 30px);
 }
 
@@ -1860,6 +1998,19 @@ button, a, .fc {
   overflow: hidden;
   border-bottom: 1px solid var(--line-strong);
   background: var(--paper-2);
+}
+.wv-frame,
+.wv-frame img,
+.wv-frame iframe {
+  inline-size: 100%;
+  max-inline-size: 100%;
+}
+.wv-title,
+.wv-channel,
+.wv-by {
+  min-inline-size: 0;
+  overflow-wrap: anywhere;
+  max-inline-size: 100%;
 }
 .wv-thumb {
   display: block;
@@ -2236,12 +2387,12 @@ button, a, .fc {
   outline-offset: 2px;
 }
 .shorts-overlay-action.shorts-shared { border-color: transparent; color: #ff7848; }
-html[data-theme='dark'] .site.shorts-active .shorts-overlay-action,
-html[data-theme='dark'] .site.shorts-active .shorts-overlay-action:hover,
-html[data-theme='dark'] .site.shorts-active .shorts-overlay-action:focus-visible {
+html[data-theme='dark'][data-route='shorts'] .shorts-overlay-action,
+html[data-theme='dark'][data-route='shorts'] .shorts-overlay-action:hover,
+html[data-theme='dark'][data-route='shorts'] .shorts-overlay-action:focus-visible {
   color: #fff;
 }
-html[data-theme='dark'] .site.shorts-active .shorts-overlay-action.shorts-shared { color: #ff7848; }
+html[data-theme='dark'][data-route='shorts'] .shorts-overlay-action.shorts-shared { color: #ff7848; }
 .shorts-actions {
   position: absolute;
   right: max(24px, env(safe-area-inset-right));
@@ -2563,74 +2714,6 @@ html[data-theme='dark'] .site.shorts-active .shorts-overlay-action.shorts-shared
 .shorts-return-banner > span { display: flex; align-items: baseline; gap: 10px; }
 .shorts-return-banner strong { font-size: 13px; text-transform: uppercase; }
 
-@media (max-width: 860px), (hover: none) {
-  /* Touch screens have no hover state, so keep both overlay controls discoverable. */
-  .site.shorts-active .nav { display: none; }
-  .site.shorts-active main {
-    flex: 1 1 100%;
-    height: 100dvh;
-  }
-  .shorts-route,
-  .shorts-page,
-  .shorts-feed,
-  .shorts-card { height: 100dvh; min-height: 100dvh; }
-  .shorts-visual { background: transparent; }
-  .shorts-speed-hold { display: inline-flex; }
-  .shorts-player-frame {
-    height: min(100%, calc(100dvw * 16 / 9));
-    width: min(100%, calc(100dvh * 9 / 16));
-    max-width: 100%;
-    max-height: 100%;
-  }
-  .shorts-top-overlay {
-    top: max(10px, env(safe-area-inset-top));
-    left: max(12px, env(safe-area-inset-left));
-    opacity: 1;
-    pointer-events: auto;
-    transform: none;
-  }
-  .shorts-bottom-overlay {
-    bottom: max(96px, calc(env(safe-area-inset-bottom) + 64px));
-    opacity: 1;
-    pointer-events: auto;
-    transform: none;
-  }
-  .shorts-player-rail {
-    top: auto;
-    left: auto;
-    right: max(12px, env(safe-area-inset-right));
-    bottom: max(12px, env(safe-area-inset-bottom));
-    flex-direction: row-reverse;
-    align-items: center;
-    gap: 10px;
-    opacity: 1;
-    pointer-events: auto;
-    transform: none;
-  }
-  .shorts-player-rail .shorts-make {
-    display: inline-flex;
-    min-width: 44px;
-    max-width: min(54vw, 190px);
-    padding: 10px 11px;
-  }
-  .shorts-player-rail .shorts-overlay-action { order: 0; }
-  .shorts-player-rail .shorts-make { order: 1; }
-  .shorts-sound-prompt {
-    left: max(12px, env(safe-area-inset-left));
-    bottom: max(12px, env(safe-area-inset-bottom));
-    background: rgba(0, 0, 0, 0.3);
-  }
-  .shorts-recipe-backdrop { align-items: flex-end; padding: max(12px, env(safe-area-inset-top)) max(10px, env(safe-area-inset-right)) max(10px, env(safe-area-inset-bottom)) max(10px, env(safe-area-inset-left)); }
-  .shorts-recipe-dialog { max-height: calc(100% - 4px); gap: 13px; padding: 15px 12px max(15px, env(safe-area-inset-bottom)); }
-  .shorts-recipe-dialog-head h2 { font-size: 27px; }
-  .shorts-recipe-track { display: flex; gap: 10px; margin: 0 -2px; padding: 1px 2px 8px; scroll-snap-type: x mandatory; }
-  .shorts-recipe-card { flex: 0 0 min(83vw, 300px); height: min(430px, 58vh); scroll-snap-align: start; }
-  .shorts-recipe-dialog-foot { display: grid; gap: 9px; }
-  .shorts-recipe-dialog-foot .btn { width: 100%; justify-content: center; }
-  .shorts-return-banner { align-items: flex-start; flex-direction: column; gap: 8px; }
-  .shorts-config-toast { bottom: max(72px, calc(env(safe-area-inset-bottom) + 64px)); }
-}
-
 /* Very short phones have no natural letterbox band. Reserve a small control
    band so PubCrawl actions stay outside native YouTube controls while the
    portrait player remains completely uncropped. */
@@ -2675,31 +2758,6 @@ html[data-theme='dark'] .site.shorts-active .shorts-overlay-action.shorts-shared
 
 @media (max-width: 640px) {
   .wv-grid { grid-template-columns: 1fr; }
-}
-
-/* Final mobile-shell overrides live after the legacy touch rules so the
-   bottom navigation owns the viewport height at every cascade path. */
-@media (max-width: 860px) {
-  .drawer { display: none; }
-  .site.shorts-active main {
-    height: calc(100dvh - var(--mobile-bottom-nav-height) - env(safe-area-inset-bottom));
-    max-height: calc(100dvh - var(--mobile-bottom-nav-height) - env(safe-area-inset-bottom));
-  }
-  .site.shorts-active .shorts-route,
-  .site.shorts-active .shorts-page,
-  .site.shorts-active .shorts-feed,
-  .site.shorts-active .shorts-card {
-    height: calc(100dvh - var(--mobile-bottom-nav-height) - env(safe-area-inset-bottom));
-    min-height: calc(100dvh - var(--mobile-bottom-nav-height) - env(safe-area-inset-bottom));
-  }
-  .site.shorts-active .mobile-bottom-nav {
-    display: grid;
-    background: #000;
-    border-top-color: rgb(241 238 229 / 0.28);
-  }
-  .site.shorts-active .mobile-nav-item { color: rgb(241 238 229 / 0.7); }
-  .site.shorts-active .mobile-nav-item.active { color: var(--accent); }
-  .site.shorts-active .shorts-config-toast { bottom: max(72px, calc(env(safe-area-inset-bottom) + var(--mobile-bottom-nav-height) + 10px)); }
 }
 
 /* Keep Watch's compact kind control after the legacy Watch rules so the
