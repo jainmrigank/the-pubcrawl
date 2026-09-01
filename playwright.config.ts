@@ -2,6 +2,11 @@ import { defineConfig } from '@playwright/test';
 
 export default defineConfig({
   testDir: './e2e',
+  // The physical-phone scenarios require the dedicated WebKit device
+  // profile (touch/coarse pointer and iPhone viewport). Running them in the
+  // generic desktop Chromium project would intentionally select the desktop
+  // shell at the landscape width and produce a false failure.
+  testIgnore: ['**/physical-iphone.spec.ts'],
   timeout: 30_000,
   expect: { timeout: 8_000 },
   fullyParallel: false,
