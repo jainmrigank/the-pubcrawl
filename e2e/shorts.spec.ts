@@ -5,6 +5,14 @@ type FakePlayerOptions = {
   blockAudible: boolean;
   stallReadyCount?: number;
   accelerateInitializationTimeout?: boolean;
+  blockPlayCount?: number;
+  blockPlayIndex?: number;
+  error5OnCueIndex?: number;
+  error5OnPlayIndex?: number;
+  accelerateErrorRetry?: boolean;
+  bufferThenPauseCount?: number;
+  bufferThenPauseIndex?: number;
+  accelerateStartupStall?: boolean;
 };
 
 type FakeLogEntry = {
@@ -17,23 +25,42 @@ type FakeLogEntry = {
 
 /** Replace the network YouTube adapter with a deterministic iframe double. */
 async function installFakeYouTube(page: Page, options: FakePlayerOptions = { blockAudible: false }) {
-  await page.addInitScript(({ blockAudible, stallReadyCount = 0, accelerateInitializationTimeout = false }) => {
+  await page.addInitScript(({
+    blockAudible,
+    stallReadyCount = 0,
+    accelerateInitializationTimeout = false,
+    blockPlayCount = 0,
+    blockPlayIndex = -1,
+    error5OnCueIndex = -1,
+    error5OnPlayIndex = -1,
+    accelerateErrorRetry = false,
+    bufferThenPauseCount = 0,
+    bufferThenPauseIndex = -1,
+    accelerateStartupStall = false,
+  }) => {
     type TestWindow = Window & {
       __PUBCRAWL_FAKE_YT_LOG__?: FakeLogEntry[];
       __PUBCRAWL_FAKE_YT__?: {
         nativeSound(index: number, audible: boolean, volume?: number): void;
         emit(index: number, state: number): void;
+        error(index: number, code: number): void;
       };
     };
     const target = window as TestWindow;
     const log = target.__PUBCRAWL_FAKE_YT_LOG__ = [];
     const players = new Map<number, FakePlayer>();
     let constructed = 0;
-    if (accelerateInitializationTimeout) {
+    let cueErrorsEmitted = 0;
+    let blockedPlaysEmitted = 0;
+    if (accelerateInitializationTimeout || accelerateErrorRetry || accelerateStartupStall) {
       const nativeSetTimeout = window.setTimeout.bind(window);
-      window.setTimeout = ((handler: TimerHandler, timeout = 0, ...args: unknown[]) => (
-        nativeSetTimeout(handler, timeout === 12_000 ? 40 : timeout, ...args)
-      )) as typeof window.setTimeout;
+      window.setTimeout = ((handler: TimerHandler, timeout = 0, ...args: unknown[]) => {
+        let nextTimeout = timeout;
+        if (accelerateInitializationTimeout && timeout === 12_000) nextTimeout = 40;
+        if (accelerateErrorRetry && timeout === 1_500) nextTimeout = 40;
+        if (accelerateStartupStall && timeout === 6_000) nextTimeout = 60;
+        return nativeSetTimeout(handler, nextTimeout, ...args);
+      }) as typeof window.setTimeout;
     }
 
     class FakePlayer {
@@ -45,6 +72,8 @@ async function installFakeYouTube(page: Page, options: FakePlayerOptions = { blo
       private state = -1;
       private currentTime = 0;
       private blockedOnce = false;
+      private playErrorEmitted = false;
+      private bufferedPauses = 0;
       private destroyed = false;
 
       constructor(element: HTMLElement, playerOptions: any) {
@@ -79,6 +108,12 @@ async function installFakeYouTube(page: Page, options: FakePlayerOptions = { blo
       cueVideoById() {
         if (this.destroyed) return;
         this.record('cueVideoById');
+        if (this.index === error5OnCueIndex && cueErrorsEmitted < 1) {
+          cueErrorsEmitted += 1;
+          this.state = -1;
+          window.setTimeout(() => this.events.onError?.({ target: this, data: 5 }), 0);
+          return;
+        }
         this.state = 5;
         window.setTimeout(() => this.events.onStateChange?.({ target: this, data: 5 }), 0);
       }
@@ -86,10 +121,32 @@ async function installFakeYouTube(page: Page, options: FakePlayerOptions = { blo
       playVideo() {
         if (this.destroyed) return;
         this.record('playVideo');
+        if (this.index === error5OnPlayIndex && !this.playErrorEmitted) {
+          this.playErrorEmitted = true;
+          this.state = -1;
+          this.events.onError?.({ target: this, data: 5 });
+          return;
+        }
+        if (this.index === blockPlayIndex && blockedPlaysEmitted < blockPlayCount) {
+          blockedPlaysEmitted += 1;
+          this.state = 2;
+          this.events.onAutoplayBlocked?.({ target: this });
+          return;
+        }
         if (blockAudible && !this.muted && !this.blockedOnce) {
           this.blockedOnce = true;
           this.state = 2;
           this.events.onAutoplayBlocked?.({ target: this });
+          return;
+        }
+        if (this.index === bufferThenPauseIndex && this.bufferedPauses < bufferThenPauseCount) {
+          this.bufferedPauses += 1;
+          this.state = 3;
+          this.events.onStateChange?.({ target: this, data: 3 });
+          window.setTimeout(() => {
+            this.state = 2;
+            this.events.onStateChange?.({ target: this, data: 2 });
+          }, 0);
           return;
         }
         this.state = 1;
@@ -121,11 +178,18 @@ async function installFakeYouTube(page: Page, options: FakePlayerOptions = { blo
         this.record(`emit:${state}`);
         this.events.onStateChange?.({ target: this, data: state });
       }
+
+      error(code: number) {
+        this.state = -1;
+        this.record(`error:${code}`);
+        this.events.onError?.({ target: this, data: code });
+      }
     }
 
     target.__PUBCRAWL_FAKE_YT__ = {
       nativeSound(index, audible, volume = 64) { players.get(index)?.nativeSound(audible, volume); },
       emit(index, state) { players.get(index)?.emit(state); },
+      error(index, code) { players.get(index)?.error(code); },
     };
     (window as Window & { YT?: unknown }).YT = { Player: FakePlayer };
   }, options);
@@ -251,6 +315,214 @@ test.describe('Shorts startup and controls', () => {
     await swipeTo(page, 2);
     await swipeTo(page, 1);
     await expect.poll(async () => (await fakeLog(page)).filter((entry) => entry.index === 1 && entry.method === 'playVideo').length).toBeGreaterThan(2);
+    await expect(page.locator('.shorts-card.is-active .shorts-startup-surface')).toBeHidden();
+  });
+
+  test('a real facade tap renews an exhausted start command without changing the lease', async ({ page }) => {
+    await installFakeYouTube(page, {
+      blockAudible: false,
+      blockPlayIndex: 1,
+      blockPlayCount: 2,
+    });
+    await seedStableDevice(page);
+    await openRoute(page, '/#/shorts');
+    await waitForFirstPlay(page);
+
+    await swipeTo(page, 1);
+    await expect.poll(async () => (
+      await fakeLog(page)
+    ).filter((entry) => entry.index === 1 && entry.method === 'playVideo').length).toBe(2);
+    const feed = page.locator('.shorts-feed');
+    const leaseBefore = await feed.getAttribute('data-controller-lease');
+    const facade = page.locator('.shorts-card.is-active .shorts-facade');
+    await expect(facade.locator('.shorts-tap')).toContainText('TAP TO PLAY');
+    // Let the parent blocked marker commit before exercising recovery. This
+    // prevents the test from passing only because the second block and the
+    // click happened in the same React batch.
+    await page.waitForTimeout(50);
+
+    await facade.click();
+
+    await expect.poll(async () => (
+      await fakeLog(page)
+    ).filter((entry) => entry.index === 1 && entry.method === 'playVideo').length).toBe(3);
+    await expect(feed).toHaveAttribute('data-controller-lease', leaseBefore || '');
+    await expect(page.locator('.shorts-card.is-active .shorts-player-layer')).toHaveClass(/is-revealed/);
+    await expect(page.locator('.shorts-card.is-active .shorts-startup-surface')).toBeHidden();
+  });
+
+  test('reinitializing a code-5 player renews an exhausted command before starting the fresh iframe', async ({ page }) => {
+    await installFakeYouTube(page, {
+      blockAudible: false,
+      blockPlayIndex: 1,
+      blockPlayCount: 2,
+      accelerateStartupStall: true,
+    });
+    await seedStableDevice(page);
+    await openRoute(page, '/#/shorts');
+    await waitForFirstPlay(page);
+
+    await swipeTo(page, 1);
+    const activeLayer = page.locator('.shorts-card.is-active .shorts-player-layer');
+    const facade = page.locator('.shorts-card.is-active .shorts-facade');
+    await expect.poll(async () => (
+      await fakeLog(page)
+    ).filter((entry) => entry.index === 1 && entry.method === 'playVideo').length).toBe(2);
+    await expect(facade.locator('.shorts-tap')).toContainText('TAP TO PLAY', { timeout: 3_000 });
+
+    await page.evaluate(() => (window as any).__PUBCRAWL_FAKE_YT__?.error(1, 5));
+    await expect(activeLayer).toHaveAttribute('data-player-phase', 'blocked');
+    const constructsBefore = (await fakeLog(page)).filter((entry) => entry.index === 1 && entry.method === 'construct').length;
+    await facade.click();
+
+    await expect.poll(async () => (
+      await fakeLog(page)
+    ).filter((entry) => entry.index === 1 && entry.method === 'construct').length).toBeGreaterThan(constructsBefore);
+    await expect.poll(async () => (
+      await fakeLog(page)
+    ).filter((entry) => entry.index === 1 && entry.method === 'playVideo').length).toBe(3);
+    await expect(activeLayer).toHaveClass(/is-revealed/);
+    await expect(page.locator('.shorts-card.is-active .shorts-startup-surface')).toBeHidden();
+  });
+
+  test('a real facade tap recovers buffering that paused before first motion', async ({ page }) => {
+    await installFakeYouTube(page, {
+      blockAudible: false,
+      bufferThenPauseIndex: 1,
+      bufferThenPauseCount: 1,
+      accelerateStartupStall: true,
+    });
+    await seedStableDevice(page);
+    await openRoute(page, '/#/shorts');
+    await waitForFirstPlay(page);
+
+    await swipeTo(page, 1);
+    const feed = page.locator('.shorts-feed');
+    const leaseBefore = await feed.getAttribute('data-controller-lease');
+    const facade = page.locator('.shorts-card.is-active .shorts-facade');
+    await expect(facade.locator('.shorts-tap')).toContainText('TAP TO PLAY', { timeout: 3_000 });
+    await facade.click();
+
+    await expect.poll(async () => (
+      await fakeLog(page)
+    ).filter((entry) => entry.index === 1 && entry.method === 'playVideo').length).toBe(2);
+    await expect(feed).toHaveAttribute('data-controller-lease', leaseBefore || '');
+    await expect(page.locator('.shorts-card.is-active .shorts-player-layer')).toHaveClass(/is-revealed/);
+    await expect(page.locator('.shorts-card.is-active .shorts-startup-surface')).toBeHidden();
+  });
+
+  test('an early HTML5 player error uses the unclaimed initial command instead of stranding the card', async ({ page }) => {
+    await installFakeYouTube(page, {
+      blockAudible: false,
+      error5OnCueIndex: 0,
+      accelerateErrorRetry: true,
+    });
+    await seedStableDevice(page);
+    await openRoute(page, '/#/shorts');
+
+    await expect.poll(async () => (
+      await fakeLog(page)
+    ).filter((entry) => entry.index === 0 && entry.method === 'playVideo').length).toBe(1);
+    await expect(page.locator('.shorts-card.is-active .shorts-player-layer')).toHaveClass(/is-revealed/);
+    await expect(page.locator('.shorts-card.is-active .shorts-startup-surface')).toBeHidden();
+  });
+
+  test('manual playback never borrows a lease for an early code-5 error', async ({ page }) => {
+    await page.emulateMedia({ reducedMotion: 'reduce' });
+    await installFakeYouTube(page, {
+      blockAudible: false,
+      error5OnCueIndex: 0,
+      accelerateErrorRetry: true,
+    });
+    await seedStableDevice(page);
+    await openRoute(page, '/#/shorts');
+
+    const facade = page.locator('.shorts-card.is-active .shorts-facade');
+    await expect(facade.locator('.shorts-tap')).toContainText('TAP TO PLAY');
+    await page.waitForTimeout(100);
+    expect((await fakeLog(page)).filter((entry) => entry.index === 0 && entry.method === 'playVideo')).toHaveLength(0);
+
+    await facade.click();
+    await expect.poll(async () => (
+      await fakeLog(page)
+    ).filter((entry) => entry.index === 0 && entry.method === 'playVideo').length).toBe(1);
+    await expect(page.locator('.shorts-card.is-active .shorts-player-layer')).toHaveClass(/is-revealed/);
+  });
+
+  test('a code-5 muted fallback preserves the session sound preference', async ({ page }) => {
+    await installFakeYouTube(page, {
+      blockAudible: false,
+      error5OnPlayIndex: 1,
+      accelerateErrorRetry: true,
+    });
+    await seedStableDevice(page);
+    await openRoute(page, '/#/shorts');
+    await waitForFirstPlay(page);
+    await setNativeSound(page, true, 68);
+    await expect.poll(() => page.evaluate(() => sessionStorage.getItem('pubcrawl.shorts.sound.v1'))).toContain('"desiredAudible":true');
+
+    await swipeTo(page, 1);
+    await expect.poll(async () => (
+      await fakeLog(page)
+    ).filter((entry) => entry.index === 1 && entry.method === 'playVideo').length).toBe(2);
+    await expect(page.locator('.shorts-card.is-active .shorts-player-layer')).toHaveClass(/is-revealed/);
+    await page.waitForTimeout(350);
+    await expect.poll(() => page.evaluate(() => sessionStorage.getItem('pubcrawl.shorts.sound.v1'))).toContain('"desiredAudible":true');
+
+    // Successful motion clears the host's temporary code-5 rebuild marker.
+    // Revisiting this still-mounted prepared player must autoplay instead of
+    // regressing to a facade that needs another tap.
+    const startsBeforeRevisit = (await fakeLog(page)).filter((entry) => entry.index === 1 && entry.method === 'playVideo').length;
+    await swipeTo(page, 2);
+    await swipeTo(page, 1);
+    await expect.poll(async () => (
+      await fakeLog(page)
+    ).filter((entry) => entry.index === 1 && entry.method === 'playVideo').length).toBeGreaterThan(startsBeforeRevisit);
+    await expect(page.locator('.shorts-card.is-active .shorts-startup-surface')).toBeHidden();
+  });
+
+  test('a generationless code-5 error cannot reuse its failed iframe under a newer lease', async ({ page }) => {
+    await installFakeYouTube(page, {
+      blockAudible: false,
+      accelerateErrorRetry: true,
+    });
+    await seedStableDevice(page);
+    await openRoute(page, '/#/shorts');
+    await waitForFirstPlay(page);
+
+    const feed = page.locator('.shorts-feed');
+    await feed.evaluate((element) => {
+      const root = element as HTMLElement;
+      root.dispatchEvent(new TouchEvent('touchstart', { bubbles: true }));
+      root.scrollTop = root.clientHeight * 0.6;
+      root.dispatchEvent(new Event('scroll', { bubbles: true }));
+    });
+    await expect(feed).toHaveAttribute('data-controller-phase', 'scrolling');
+    await page.evaluate(() => (window as any).__PUBCRAWL_FAKE_YT__?.error(0, 5));
+
+    await feed.evaluate((element) => {
+      const root = element as HTMLElement;
+      root.scrollTop = 0;
+      root.dispatchEvent(new Event('scroll', { bubbles: true }));
+      root.dispatchEvent(new TouchEvent('touchend', { bubbles: true }));
+      root.dispatchEvent(new Event('scrollend', { bubbles: true }));
+    });
+    await expect(feed).toHaveAttribute('data-controller-active', '0');
+    const startsAfterResettle = (await fakeLog(page)).filter((entry) => entry.index === 0 && entry.method === 'playVideo').length;
+    await page.waitForTimeout(100);
+    expect((await fakeLog(page)).filter((entry) => entry.index === 0 && entry.method === 'playVideo')).toHaveLength(startsAfterResettle);
+    await expect(feed).toHaveAttribute('data-controller-active', '0');
+    const activeLayer = page.locator('.shorts-card.is-active .shorts-player-layer');
+    const facade = page.locator('.shorts-card.is-active .shorts-facade');
+    await expect(activeLayer).toHaveAttribute('data-player-phase', 'blocked');
+    await expect(facade.locator('.shorts-tap')).toContainText('TAP TO PLAY');
+
+    const constructsBefore = (await fakeLog(page)).filter((entry) => entry.index === 0 && entry.method === 'construct').length;
+    await facade.click();
+    await expect.poll(async () => (
+      await fakeLog(page)
+    ).filter((entry) => entry.index === 0 && entry.method === 'construct').length).toBeGreaterThan(constructsBefore);
+    await expect(activeLayer).toHaveClass(/is-revealed/);
     await expect(page.locator('.shorts-card.is-active .shorts-startup-surface')).toBeHidden();
   });
 

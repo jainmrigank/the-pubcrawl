@@ -21,7 +21,7 @@ interface ShortPlayerHostProps {
   volume: number;
   online: boolean;
   failed: boolean;
-  onManual: (index: number) => void;
+  onManual: (index: number, options?: { reinitialize?: boolean }) => void;
   onRegister: (index: number, player: YouTubePlayer) => void;
   onUnregister: (index: number, player: YouTubePlayer) => void;
   onPlaying: (index: number, generation: number | null, startupMs: number, player: YouTubePlayer) => void;
@@ -104,6 +104,7 @@ export function ShortPlayerHost({
   const [cued, setCued] = useState(false);
   const [revealed, setRevealed] = useState(false);
   const [autoplayBlocked, setAutoplayBlocked] = useState(false);
+  const [needsReinitialize, setNeedsReinitialize] = useState(false);
   const [phase, setPhase] = useState<ShortPlayerPhase>('initializing');
   const [showLoadingCopy, setShowLoadingCopy] = useState(false);
   const [initializationAttempt, setInitializationAttempt] = useState(0);
@@ -223,6 +224,7 @@ export function ShortPlayerHost({
     setRevealed(false);
     setShowLoadingCopy(false);
     setAutoplayBlocked(false);
+    setNeedsReinitialize(false);
     setPhase('initializing');
     playRequestRef.current = false;
     cueIssuedRef.current = false;
@@ -276,6 +278,12 @@ export function ShortPlayerHost({
             if (state === YT_PLAYER_STATES.PLAYING) {
               clearStartupTimer();
               clearRetryTimer();
+              // A code-5 player may recover through the parent's one guarded
+              // same-iframe retry. Confirmed motion proves that iframe is
+              // usable again, so a later visit may autoplay it normally. A
+              // generationless failure cannot reach PLAYING until the user
+              // explicitly replaces the iframe, and therefore stays gated.
+              setNeedsReinitialize(false);
               // A browser may reject the first audible command and then
               // accept the one muted recovery. Once motion is confirmed the
               // player is no longer blocked; retaining this flag would force
@@ -344,6 +352,14 @@ export function ShortPlayerHost({
             clearRevealTimer();
             setRevealed(false);
             if (code === 153) setPhase('blocked');
+            if (code === 5) {
+              // An HTML5/cue failure without an active playback generation
+              // must stay manual. Offer a fresh iframe on an explicit facade
+              // tap instead of borrowing the controller's lease and
+              // autoplaying from this initialization callback.
+              setNeedsReinitialize(true);
+              setPhase('blocked');
+            }
             onErrorRef.current(index, leaseGenerationRef.current, code);
           },
           onAutoplayBlocked: (player) => {
@@ -474,6 +490,15 @@ export function ShortPlayerHost({
       setPhase(cuedRef.current ? 'cued' : 'initializing');
       return;
     }
+    // A code-5 HTML5/cue error makes this iframe unsafe to reuse. A later
+    // lease for the same card must not silently autoplay the failed player;
+    // only the explicit facade action below may replace it with a fresh
+    // iframe. This also prevents a generationless error from borrowing a
+    // newer same-index lease.
+    if (needsReinitialize) {
+      setPhase('blocked');
+      return;
+    }
     const generation = playLeaseGeneration;
     if (autoplayBlocked && manualToken === 0) return;
     if (manualToken > 0 && autoplayBlocked) setAutoplayBlocked(false);
@@ -575,7 +600,7 @@ export function ShortPlayerHost({
   // into a second passive play attempt (and could re-trigger iOS autoplay
   // policy).  Changes that affect automatic playback still flow through the
   // existing lease/cued/ready dependencies.
-  }, [autoplayBlocked, cued, manualToken, playLeaseGeneration, ready, shouldPlay, volume]);
+  }, [autoplayBlocked, cued, manualToken, needsReinitialize, playLeaseGeneration, ready, shouldPlay, volume]);
 
   const waitingForAutoplay = shouldPlay && !autoplayBlocked && phase !== 'blocked' && phase !== 'stalled';
   const interactiveFacade = shouldPlay || manualMode || failed || autoplayBlocked || phase === 'blocked' || phase === 'stalled' || !online;
@@ -608,10 +633,11 @@ export function ShortPlayerHost({
         <button
           className={`shorts-facade ${online ? '' : 'is-offline'} ${waitingForAutoplay ? 'is-waiting' : ''}`}
           onClick={() => {
-            if (!playerRef.current && (phase === 'blocked' || phase === 'stalled')) {
+            const reinitialize = needsReinitialize || (!playerRef.current && (phase === 'blocked' || phase === 'stalled'));
+            if (reinitialize) {
               setInitializationAttempt((attempt) => attempt + 1);
             }
-            onManual(index);
+            onManual(index, { reinitialize });
           }}
           aria-label={online && !failed ? (waitingForAutoplay ? short.title : `Play ${short.title}`) : `${short.title}. ${facadeLabel}`}
           disabled={!online || failed}

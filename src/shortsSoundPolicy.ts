@@ -98,6 +98,29 @@ export function markShortsStartProgress(command: ShortsStartCommand): ShortsStar
   return command.progressed ? command : { ...command, progressed: true };
 }
 
+/** Return the only automatic attempt still available for this lease. */
+export function nextShortsStartAttempt(
+  command: ShortsStartCommand | null | undefined,
+): ShortsStartAttempt | null {
+  if (!command || !command.issued) return 'initial';
+  if (command.progressed || command.retryUsed) return null;
+  return 'retry';
+}
+
+/**
+ * A fresh, explicit tap may recover a player after the automatic command is
+ * exhausted or an earlier BUFFERING/PLAYING signal cancelled passive retries
+ * without producing a frame. This deliberately does not mint a new lease
+ * generation: the caller must still prove that the current index/generation
+ * owns playback before calling it.
+ */
+export function resetShortsStartForManualRecovery(
+  command: ShortsStartCommand,
+): ShortsStartCommand {
+  if (!command.issued) return command;
+  return { ...command, issued: false, retryUsed: false, progressed: false };
+}
+
 /** Same-card snap corrections keep their lease until a real destination wins. */
 export function shouldRevokeShortsLease(
   settledIndex: number,

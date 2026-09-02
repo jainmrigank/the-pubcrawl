@@ -29,8 +29,10 @@ import {
   createShortsStartCommand,
   markShortsStartProgress,
   mutedFallbackAuthorization,
+  nextShortsStartAttempt,
   playerReadyForStart,
   readShortsSoundPreference,
+  resetShortsStartForManualRecovery,
   shouldRevokeShortsLease,
   startModeForGesture,
   writeShortsSoundPreference,
@@ -675,6 +677,22 @@ export function Shorts({
    */
   const beginManualStart = useCallback((index: number, generation: number, player: YouTubePlayer) => {
     if (!leaseMatches(controllerRef.current, index, generation)) return;
+    // A second autoplay-policy rejection marks this card blocked so passive
+    // effects cannot loop. A genuine facade gesture is new authorization;
+    // clear only this current lease's guard before issuing its manual start.
+    setBlockedIndex(null);
+    const key = startCommandKey(index, generation);
+    let existing = startCommandsRef.current.get(key);
+    if (existing && nextShortsStartAttempt(existing) == null) {
+      // Automatic recovery may be exhausted, or a BUFFERING signal may have
+      // cancelled passive retries before motion began. A real facade tap is
+      // new user authorization, so renew the command while retaining the same
+      // guarded lease rather than leaving the card stuck.
+      existing = resetShortsStartForManualRecovery(existing);
+      startCommandsRef.current.set(key, existing);
+    }
+    const attempt = nextShortsStartAttempt(existing);
+    if (!attempt) return;
     const requestedAudible = !soundRef.current.muted;
     const authorization: ShortsStartAuthorization = {
       index,
@@ -686,15 +704,10 @@ export function Shorts({
     setStartAuthorization(authorization);
 
     if (requestedAudible) {
-      const key = startCommandKey(index, generation);
-      const existing = startCommandsRef.current.get(key);
-      beginAudibleStart(index, generation, player, existing?.issued ? 'retry' : 'initial');
+      beginAudibleStart(index, generation, player, attempt);
       return;
     }
 
-    const key = startCommandKey(index, generation);
-    const existing = startCommandsRef.current.get(key);
-    const attempt: ShortsStartAttempt = existing?.issued ? 'retry' : 'initial';
     if (!claimStartCommand(index, generation, attempt, false)) return;
     forcedMutedLeaseRef.current = key;
     try {
@@ -956,6 +969,25 @@ export function Shorts({
     [orderedShorts]
   );
 
+  const failShortAndAdvance = useCallback((index: number, shortId: string) => {
+    if (!failedIdsRef.current.has(shortId)) {
+      failedIdsRef.current.add(shortId);
+      setFailureVersion((version) => version + 1);
+      session.current.unavailableSkips += 1;
+    }
+    if (index !== activeIndexRef.current) return;
+    cancelSoundSync();
+    setPlayingIndex(null);
+    const next = findNextPlayable(index);
+    if (next >= 0) {
+      const card = feedRef.current?.querySelector<HTMLElement>(`[data-short-index="${next}"]`);
+      if (card && feedRef.current) scrollFeedToCard(feedRef.current, card, 'smooth');
+      setActive(next);
+    } else {
+      setError(true);
+    }
+  }, [cancelSoundSync, findNextPlayable, setActive]);
+
   const handlePlayerError = useCallback(
     (index: number, generation: number | null, code: number) => {
       if (generation != null && !leaseMatches(controllerRef.current, index, generation)) return;
@@ -977,49 +1009,53 @@ export function Shorts({
         // can never become active. Mark it now; the active card will advance
         // past it on the next observer decision.
         if (index !== activeIndexRef.current) {
-          failedIdsRef.current.add(short.id);
-          setFailureVersion((version) => version + 1);
-          session.current.unavailableSkips += 1;
+          failShortAndAdvance(index, short.id);
           return;
         }
+        // The player host must identify the exact playback intent that owned
+        // this error. A null generation belongs to a prepared/manual player,
+        // not to the controller's current lease; inferring one here would let
+        // manual mode autoplay and could attach a stale callback to a newer
+        // same-index lease.
+        if (generation == null || !leaseMatches(controllerRef.current, index, generation)) return;
+        const retryGeneration = generation;
         if (tries < 1) {
           retryCountsRef.current.set(short.id, tries + 1);
           window.setTimeout(() => {
             const player = playersRef.current.get(index);
-            if (!player || activeIndexRef.current !== index || generation == null) return;
+            if (
+              !player ||
+              activeIndexRef.current !== index ||
+              !leaseMatches(controllerRef.current, index, retryGeneration)
+            ) return;
             try {
-              if (
-                player.getPlayerState() !== YT_PLAYER_STATES.BUFFERING &&
-                claimStartCommand(index, generation, 'retry', false)
-              ) {
+              const state = player.getPlayerState();
+              if (state === YT_PLAYER_STATES.PLAYING || state === YT_PLAYER_STATES.BUFFERING) return;
+              const key = startCommandKey(index, retryGeneration);
+              const attempt = nextShortsStartAttempt(startCommandsRef.current.get(key));
+              if (attempt && claimStartCommand(index, retryGeneration, attempt, false)) {
+                // A code-5 recovery is an application fallback, not a native
+                // mute action. Mark this lease before muting so the bounded
+                // sound observer preserves the user's desired-audible session
+                // preference for the next eligible gesture.
+                forcedMutedLeaseRef.current = key;
                 player.mute();
                 player.playVideo();
+                return;
               }
             } catch {}
+            // If both command slots were already consumed, or the retry could
+            // not be issued, this iframe cannot be allowed to strand the feed.
+            failShortAndAdvance(index, short.id);
           }, 1500);
           return;
         }
       }
       if (code === 100 || code === 101 || code === 150 || code === 5 || code === 2) {
-        failedIdsRef.current.add(short.id);
-        setFailureVersion((version) => version + 1);
-        session.current.unavailableSkips += 1;
-        if (index === activeIndexRef.current) {
-          cancelSoundSync();
-          setPlayingIndex(null);
-        }
-        if (index !== activeIndexRef.current) return;
-        const next = findNextPlayable(index);
-        if (next >= 0) {
-          const card = feedRef.current?.querySelector<HTMLElement>(`[data-short-index="${next}"]`);
-          if (card && feedRef.current) scrollFeedToCard(feedRef.current, card, 'smooth');
-          setActive(next);
-        } else {
-          setError(true);
-        }
+        failShortAndAdvance(index, short.id);
       }
     },
-    [cancelSoundSync, claimStartCommand, findNextPlayable, orderedShorts, setActive]
+    [cancelSoundSync, claimStartCommand, failShortAndAdvance, orderedShorts, startCommandKey]
   );
 
   const handleAutoplayBlocked = useCallback((index: number, generation: number | null, player: YouTubePlayer): boolean => {
@@ -1937,20 +1973,43 @@ export function Shorts({
                       volume={soundRef.current.volume}
                       online={online}
                       failed={failed}
-                      onManual={(target) => {
+                      onManual={(target, options) => {
                         if (!online) return;
                         const card = feedRef.current?.querySelector<HTMLElement>(`[data-short-index="${target}"]`);
                         if (card && feedRef.current && target !== activeIndexRef.current) scrollFeedToCard(feedRef.current, card, 'smooth');
                         const mode = startModeForGesture(soundRef.current.muted, true);
                         const lease = setActive(target, false, mode);
                         if (lease) {
+                          if (options?.reinitialize) {
+                            // Replacing a failed iframe is a new manual
+                            // recovery attempt, but the replacement itself is
+                            // asynchronous and therefore cannot retain this
+                            // click as an iOS audible-play gesture. Renew the
+                            // command budget for the guarded lease and let the
+                            // fresh player start muted when it becomes ready.
+                            const short = orderedShorts[target];
+                            const key = startCommandKey(target, lease.generation);
+                            const existing = startCommandsRef.current.get(key)
+                              ?? createShortsStartCommand(short.id, target, lease.generation, false);
+                            startCommandsRef.current.set(key, resetShortsStartForManualRecovery(existing));
+                            const authorization: ShortsStartAuthorization = {
+                              index: target,
+                              generation: lease.generation,
+                              mode: 'muted-autoplay',
+                              fallbackUsed: !soundRef.current.muted,
+                            };
+                            startAuthorizationRef.current = authorization;
+                            setStartAuthorization(authorization);
+                            forcedMutedLeaseRef.current = !soundRef.current.muted ? key : null;
+                            setBlockedIndex(null);
+                          }
                           const player = playersRef.current.get(target);
-                          if (player) {
+                          if (player && !options?.reinitialize) {
                             let state: number = YT_PLAYER_STATES.UNSTARTED;
                             try { state = player.getPlayerState(); } catch {}
                             if (playerReadyForStart(state)) beginManualStart(target, lease.generation, player);
                             else if (mode === 'gesture-audible') demoteAudibleStart(target, lease.generation);
-                          } else if (mode === 'gesture-audible') {
+                          } else if (!options?.reinitialize && mode === 'gesture-audible') {
                             demoteAudibleStart(target, lease.generation);
                           }
                         }

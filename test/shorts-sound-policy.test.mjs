@@ -7,9 +7,11 @@ import {
   defaultShortsSoundPreference,
   markShortsStartProgress,
   mutedFallbackAuthorization,
+  nextShortsStartAttempt,
   parseShortsSoundPreference,
   playerReadyForStart,
   readShortsSoundPreference,
+  resetShortsStartForManualRecovery,
   SHORTS_SOUND_SESSION_KEY,
   shouldRevokeShortsLease,
   startModeForGesture,
@@ -76,6 +78,32 @@ test('one initial and one controlled retry may claim a lease command', () => {
   assert.equal(claim.allowed, true);
   command = claim.command;
   assert.equal(claimShortsStart(command, 'retry').allowed, false);
+});
+
+test('a genuine manual gesture can renew an exhausted or stalled command', () => {
+  let command = createShortsStartCommand('short-gesture', 6, 12, false);
+  command = claimShortsStart(command, 'initial').command;
+  command = claimShortsStart(command, 'retry').command;
+  assert.equal(nextShortsStartAttempt(command), null);
+
+  const renewed = resetShortsStartForManualRecovery(command);
+  assert.equal(nextShortsStartAttempt(renewed), 'initial');
+  assert.equal(claimShortsStart(renewed, 'initial').allowed, true);
+
+  const progressed = markShortsStartProgress(command);
+  const recoveredAfterProgress = resetShortsStartForManualRecovery(progressed);
+  assert.equal(nextShortsStartAttempt(recoveredAfterProgress), 'initial');
+  assert.equal(claimShortsStart(recoveredAfterProgress, 'initial').allowed, true);
+});
+
+test('error recovery selects initial before any issued command and retry afterward', () => {
+  let command = createShortsStartCommand('short-error', 1, 3, false);
+  assert.equal(nextShortsStartAttempt(undefined), 'initial');
+  assert.equal(nextShortsStartAttempt(command), 'initial');
+  command = claimShortsStart(command, 'initial').command;
+  assert.equal(nextShortsStartAttempt(command), 'retry');
+  command = claimShortsStart(command, 'retry').command;
+  assert.equal(nextShortsStartAttempt(command), null);
 });
 
 test('playing, buffering, or time advancement cancels every later retry', () => {
