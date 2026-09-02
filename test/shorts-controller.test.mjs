@@ -12,9 +12,19 @@ import {
 } from '../server/shorts-controller.mjs';
 import {
   createShortsFeedState,
+  reconcileShortsOrder,
   shortsFeedLeaseMatches,
   shortsFeedReducer,
 } from '../src/shortsController.ts';
+
+test('saved Shorts order keeps known IDs and appends catalogue additions once', () => {
+  assert.deepEqual(
+    reconcileShortsOrder(['b', 'a', 'removed', 'b'], ['a', 'b', 'c', 'd']),
+    ['b', 'a', 'c', 'd'],
+  );
+  const reconciled = reconcileShortsOrder(['b', 'a'], ['a', 'b', 'c']);
+  assert.deepEqual(reconcileShortsOrder(reconciled, reconciled), reconciled);
+});
 
 test('scroll start revokes the old lease and settle grants only the destination', () => {
   let state = transitionShortsController(createShortsControllerState(4), { type: 'route-enter', index: 4 });

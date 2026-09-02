@@ -79,27 +79,14 @@ export function preparePlayerSound(players, volume = 100) {
   return { muted: true, volume: nextVolume };
 }
 
-/**
- * Backwards-compatible propagation helper. Older callers intentionally use
- * this to synchronise a user's explicit preference across already-mounted
- * players. New preparation paths must call preparePlayerSound instead so a
- * passive queue update can never create an audible iframe.
- */
-export function propagateSound(players, { muted = true, volume = 100 } = {}) {
-  const nextVolume = Math.max(0, Math.min(100, Math.round(Number(volume) || 0)));
-  for (const player of players) {
-    player.setVolume(nextVolume);
-    if (muted) player.mute();
-    else player.unMute();
-  }
-  return { muted: Boolean(muted), volume: nextVolume };
-}
-
 /** Pure mirror of the browser's first-frame reveal gate. */
 export function startupFacadeState(
   previous = { revealed: false, confirmed: false },
   { state = 'starting', currentTime = 0, stable = false } = {}
 ) {
+  // Reveal is monotonic for a mounted video. Buffering and a natural loop can
+  // temporarily report time zero; neither event may restore the black facade.
+  if (previous.confirmed) return previous;
   if (state === 'buffering' && (!previous.confirmed || currentTime < 0.75)) {
     return { revealed: false, confirmed: false };
   }
@@ -107,34 +94,6 @@ export function startupFacadeState(
     return { revealed: true, confirmed: true };
   }
   return previous.confirmed ? previous : { revealed: false, confirmed: false };
-}
-
-/**
- * Decide whether a native sound observation confirms, retries, or needs one
- * user gesture. A failed unmute never changes the stored visit preference.
- */
-export function soundSyncDecision(
-  preference = { muted: true, volume: 100 },
-  observation = preference,
-  attempt = 0,
-  maxAttempts = 3
-) {
-  const wantedVolume = Math.max(0, Math.min(100, Math.round(Number(preference.volume) || 0)));
-  const observedVolume = Math.max(0, Math.min(100, Math.round(Number(observation.volume) || 0)));
-  const wanted = { muted: Boolean(preference.muted), volume: wantedVolume };
-  const observedMuted = Boolean(observation.muted);
-  const muteMatches = observedMuted === wanted.muted;
-  const volumeMatches = wanted.muted || Math.abs(observedVolume - wanted.volume) <= 2;
-  if (muteMatches && volumeMatches) return { status: 'synced', preference: wanted };
-  if (attempt < maxAttempts) return { status: 'retry', preference: wanted };
-  if (!wanted.muted && observedMuted) return { status: 'gesture', preference: wanted };
-  if (muteMatches) {
-    return {
-      status: 'synced',
-      preference: { muted: observedMuted, volume: observedMuted ? wanted.volume : observedVolume },
-    };
-  }
-  return { status: 'pending', preference: wanted };
 }
 
 export function playbackMode({ reducedMotion = false, saveData = false, effectiveType = '' } = {}) {

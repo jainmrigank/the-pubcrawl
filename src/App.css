@@ -267,8 +267,21 @@ main { flex: 1; width: 100%; max-width: 1440px; margin: 0 auto; padding: 0 clamp
   .guided-tour-arrow svg { animation: none; }
 }
 @keyframes guided-tour-fade { from { opacity: 0; } to { opacity: 1; } }
-.tour-replay { margin: 10px 0 0; }
-.shorts-help { font-family: var(--mono); font-size: 16px; }
+.contextual-help {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 0;
+  background: transparent;
+  color: currentColor;
+  font-family: var(--mono);
+  font-size: 17px;
+  cursor: pointer;
+  transition: color var(--t-fast) var(--ease), opacity var(--t-fast) var(--ease);
+}
+.contextual-help:hover { color: var(--accent); }
+.contextual-help:focus-visible { outline: 2px solid currentColor; outline-offset: 2px; }
+.shorts-help { color: var(--paper); }
 
 /* ==========================================================================
    navigation
@@ -1658,7 +1671,8 @@ main { flex: 1; width: 100%; max-width: 1440px; margin: 0 auto; padding: 0 clamp
   .nav-menu-btn,
   .nav-make,
   .nav-status,
-  .desktop-theme-toggle { display: none; }
+  .desktop-theme-toggle,
+  .desktop-help-action { display: none; }
   .nav { gap: 8px; }
   .mobile-top-actions {
     display: flex;
@@ -1668,7 +1682,8 @@ main { flex: 1; width: 100%; max-width: 1440px; margin: 0 auto; padding: 0 clamp
     min-width: 0;
   }
   .mobile-theme-toggle,
-  .mobile-secondary-action {
+  .mobile-secondary-action,
+  .mobile-help-action {
     display: inline-flex;
     position: relative;
     align-items: center;
@@ -1818,10 +1833,6 @@ main { flex: 1; width: 100%; max-width: 1440px; margin: 0 auto; padding: 0 clamp
     max-width: min(54vw, 190px);
     padding: 10px 11px;
   }
-  html[data-route='shorts'] .shorts-sound-prompt {
-    left: max(12px, env(safe-area-inset-left));
-    bottom: max(12px, calc(env(safe-area-inset-bottom) + var(--mobile-bottom-nav-height) + 8px));
-  }
   .shorts-recipe-backdrop {
     align-items: flex-end;
     padding: max(8px, env(safe-area-inset-top)) max(8px, env(safe-area-inset-right)) max(8px, calc(env(safe-area-inset-bottom) + var(--mobile-bottom-nav-height))) max(8px, env(safe-area-inset-left));
@@ -1859,8 +1870,7 @@ main { flex: 1; width: 100%; max-width: 1440px; margin: 0 auto; padding: 0 clamp
     flex-direction: column;
     gap: 8px;
   }
-  html[data-route='shorts'] .shorts-player-rail,
-  html[data-route='shorts'] .shorts-sound-prompt {
+  html[data-route='shorts'] .shorts-player-rail {
     bottom: max(12px, calc(env(safe-area-inset-bottom) + var(--mobile-bottom-nav-height) + 8px));
   }
   html[data-route='shorts'] .shorts-config-toast {
@@ -1872,7 +1882,7 @@ main { flex: 1; width: 100%; max-width: 1440px; margin: 0 auto; padding: 0 clamp
   }
 }
 
-@media (max-width: 360px) {
+@media (max-width: 430px) {
   .wordmark { display: none; }
   .mobile-top-actions { gap: 2px; }
   .mobile-secondary-action span { display: none; }
@@ -2149,13 +2159,30 @@ main,
 .wv-shuffle-btn { color: var(--ink); }
 .wv-empty { margin: clamp(28px, 4vh, 44px) 0; font-size: 15px; color: var(--ink-60); }
 .wv-more {
-  display: flex;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
   align-items: center;
   gap: 20px;
-  flex-wrap: wrap;
+  width: 100%;
   margin-top: clamp(24px, 3.5vh, 36px);
 }
+.wv-more .btn { grid-column: 2; justify-self: center; }
+.wv-more > .k-label { grid-column: 3; justify-self: start; }
 .wv-foot { margin: clamp(28px, 4vh, 44px) 0 0; max-width: 60ch; }
+
+@media (max-width: 640px) {
+  .wv-more {
+    grid-template-columns: minmax(0, 1fr);
+    justify-items: center;
+    gap: 10px;
+  }
+  .wv-more-spacer { display: none; }
+  .wv-more .btn,
+  .wv-more > .k-label {
+    grid-column: 1;
+    justify-self: center;
+  }
+}
 
 /* ==========================================================================
    Shorts — immersive app viewport beneath the persistent navigation
@@ -2229,6 +2256,7 @@ main,
 .shorts-feed {
   overflow-x: hidden;
   overflow-y: auto;
+  overflow-anchor: none;
   overscroll-behavior-y: contain;
   scroll-snap-type: y mandatory;
   scroll-behavior: auto;
@@ -2241,6 +2269,7 @@ main,
 .shorts-feed:focus-visible { outline: 2px solid var(--paper); outline-offset: -2px; }
 .shorts-card {
   position: relative;
+  overflow-anchor: none;
   height: 100%;
   min-height: 100%;
   overflow: hidden;
@@ -2529,30 +2558,6 @@ html[data-theme='dark'][data-route='shorts'] .shorts-overlay-action.shorts-share
 .shorts-speed-hold:focus-visible {
   outline: 2px solid var(--paper);
   outline-offset: 2px;
-}
-
-.shorts-sound-prompt {
-  position: absolute;
-  z-index: 5;
-  left: calc(50% + min(50%, 28.125dvh) + 12px);
-  bottom: max(76px, env(safe-area-inset-bottom));
-  min-width: 44px;
-  min-height: 44px;
-  padding: 8px 10px;
-  border: 1px solid rgba(236, 233, 224, 0.72);
-  background: rgba(0, 0, 0, 0.34);
-  color: var(--paper);
-  font-family: var(--mono);
-  font-size: 10px;
-  letter-spacing: 0.07em;
-  text-transform: uppercase;
-  cursor: pointer;
-  filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.96));
-}
-.shorts-sound-prompt:hover,
-.shorts-sound-prompt:focus-visible {
-  background: var(--paper);
-  color: var(--ink);
 }
 
 /* The player-relative rail owns Share and MAKE THIS at every breakpoint. */

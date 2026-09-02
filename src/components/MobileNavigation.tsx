@@ -1,13 +1,16 @@
 import type { Route } from '../navigation';
 import { createPortal } from 'react-dom';
 import { Camera, Play, PubGlyph, ToolIcon } from '../icons';
-import type { Theme } from '../types';
+import type { Theme, TourId } from '../types';
+import { ContextualHelp } from './ContextualHelp';
 
 interface MobileNavigationProps {
   active: Route | null;
   tabCount: number;
   theme: Theme;
   onToggleTheme: () => void;
+  helpTour?: TourId;
+  hideHelp?: boolean;
 }
 
 const items: { route: Route; label: string; href: string; icon: 'menu' | 'bar' | 'shorts' | 'watch' | 'quiz' }[] = [
@@ -26,7 +29,7 @@ function ItemIcon({ icon }: { icon: (typeof items)[number]['icon'] }) {
   return <ToolIcon id="star" size={20} />;
 }
 
-export function MobileTopActions({ theme, onToggleTheme, tabCount, active }: MobileNavigationProps) {
+export function MobileTopActions({ theme, onToggleTheme, tabCount, active, helpTour = 'menu', hideHelp = false }: MobileNavigationProps) {
   return (
     <div className="mobile-top-actions">
       <button
@@ -61,6 +64,7 @@ export function MobileTopActions({ theme, onToggleTheme, tabCount, active }: Mob
         <ToolIcon id="star" size={18} />
         {tabCount > 0 && <b className="tab-badge" aria-label={`${tabCount} saved`}>{tabCount}</b>}
       </a>
+      {!hideHelp && <ContextualHelp tour={helpTour} className="mobile-help-action" />}
     </div>
   );
 }

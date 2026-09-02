@@ -120,7 +120,9 @@ function playerVars(id?: string | null): Record<string, string | number> {
     autoplay: 0,
     controls: 1,
     enablejsapi: 1,
-    loop: 1,
+    // Shorts owns natural looping in the active host. Enabling YouTube's loop
+    // at the same time produces duplicate restarts and visible rebuffering.
+    loop: 0,
     playsinline: 1,
     rel: 0,
     origin: window.location.origin,

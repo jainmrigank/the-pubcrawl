@@ -112,7 +112,15 @@ export interface ShelfFilter {
   expanded: boolean;
 }
 
-export type TourId = 'bar' | 'shorts';
+export type TourId =
+  | 'landing'
+  | 'menu'
+  | 'bar'
+  | 'basics'
+  | 'tab'
+  | 'quiz'
+  | 'watch'
+  | 'shorts';
 export type TourOutcome = 'completed' | 'skipped';
 
 export interface TourStep {
@@ -121,6 +129,8 @@ export interface TourStep {
   label: string;
   body: string;
   preferredSide: 'top' | 'right' | 'bottom' | 'left';
+  /** Optional steps may be absent for a legitimate page state, such as an empty Tab. */
+  optional?: boolean;
 }
 
 export interface TourDefinition {

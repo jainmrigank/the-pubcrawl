@@ -45,6 +45,32 @@ export function createShortsControllerState(index = 0): ShortsControllerState {
   };
 }
 
+/**
+ * Preserve every still-valid ID from a saved visit, then append catalogue
+ * additions in their current deterministic order. A saved snapshot may
+ * predate the current catalogue; comparing it directly with the complete
+ * order would otherwise reconcile forever whenever a Short is added.
+ */
+export function reconcileShortsOrder(
+  savedOrder: readonly string[],
+  currentOrder: readonly string[],
+): string[] {
+  const currentIds = new Set(currentOrder);
+  const seen = new Set<string>();
+  const reconciled: string[] = [];
+  for (const id of savedOrder) {
+    if (!currentIds.has(id) || seen.has(id)) continue;
+    seen.add(id);
+    reconciled.push(id);
+  }
+  for (const id of currentOrder) {
+    if (seen.has(id)) continue;
+    seen.add(id);
+    reconciled.push(id);
+  }
+  return reconciled;
+}
+
 /** Apply one controller event and mint a new lease only on a real activation. */
 export function transitionShortsController(
   state: ShortsControllerState,

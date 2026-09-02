@@ -28,7 +28,7 @@ export function Knowledge() {
 
   return (
     <div className="manual">
-      <div className="field manual-search">
+      <div className="field manual-search" data-tour="basics-search">
         <input
           value={q}
           onChange={(e) => setQ(e.target.value)}
@@ -47,10 +47,11 @@ export function Knowledge() {
           <p className="k-label dim">TRY “OZ”, “SHAKE” OR “VERMOUTH”.</p>
         </div>
       )}
-      {groups.map((group) => {
+      <div data-tour="basics-groups">
+      {groups.map((group, groupIndex) => {
         const expanded = nq ? true : openGroup === group.id;
         return (
-          <div className="manual-group" key={group.id}>
+          <div className="manual-group" key={group.id} data-tour={groupIndex === 0 ? 'basics-terms' : undefined}>
             <button
               className={`manual-group-head ${expanded ? 'open' : ''}`}
               aria-expanded={expanded}
@@ -122,6 +123,7 @@ export function Knowledge() {
           </div>
         );
       })}
+      </div>
     </div>
   );
 }

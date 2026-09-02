@@ -331,7 +331,7 @@ function WatchShelf({ data, active, initialId, source }: WatchShelfProps) {
         </p>
       </div>
 
-      <div className="wv-search field">
+      <div className="wv-search field" data-tour="watch-controls">
         <Search size={16} />
         <input
           value={q}
@@ -384,7 +384,7 @@ function WatchShelf({ data, active, initialId, source }: WatchShelfProps) {
         </div>
       </div>
 
-      <div className="wv-tabs" role="tablist">
+      <div className="wv-tabs" role="tablist" data-tour="watch-tabs">
         {TABS.map((t) => (
           <button
             key={t.id}
@@ -410,7 +410,7 @@ function WatchShelf({ data, active, initialId, source }: WatchShelfProps) {
       {list.length === 0 ? (
         <p className="wv-empty">Nothing here for that. Try a spirit, a channel, or clear the filters.</p>
       ) : (
-        <div className="wv-grid">
+        <div className="wv-grid" data-tour="watch-grid">
           {list.map((v) => (
             <VideoCard key={v.id} v={v} lanes={data.lanes} active={active} autoPlay={promotedId === v.id} />
           ))}
@@ -418,7 +418,8 @@ function WatchShelf({ data, active, initialId, source }: WatchShelfProps) {
       )}
 
       {more && (
-        <div className="wv-more">
+        <div className="wv-more" data-tour="watch-more">
+          <span className="wv-more-spacer" aria-hidden="true" />
           <button className="btn btn-solid" onClick={() => setShown((n) => n + PAGE)}>
             SHOW MORE
           </button>

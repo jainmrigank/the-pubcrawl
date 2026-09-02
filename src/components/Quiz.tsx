@@ -35,7 +35,7 @@ export function Quiz() {
   const [current, setCurrent] = useState<Question | null>(null);
   const [score, setScore] = useState(0);
   const [picked, setPicked] = useState<number | null>(null);
-  const [high, setHigh] = useState(0);
+  const [high, setHigh] = useState<number | null>(null);
   const [beatIt, setBeatIt] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
@@ -207,10 +207,10 @@ export function Quiz() {
     const over = stage === 'over';
     const v = verdict(score);
     return (
-      <div className="quiz">
+      <div className="quiz" data-tour="quiz-round">
         <div className="quiz-intro">
           <p className="k-label quiz-eyebrow">
-            {swept ? 'THE WHOLE BANK' : over ? 'THAT IS YOUR ROUND' : 'THE PUB QUIZ'}
+            {swept ? 'THE WHOLE BANK' : over ? 'THAT IS YOUR ROUND' : 'PUB QUIZ'}
           </p>
           <h3 className="quiz-title">
             {swept ? 'You drank the bar dry.' : over ? v.title : 'Think you know your drinks?'}
@@ -271,13 +271,13 @@ export function Quiz() {
               </div>
             ))}
 
-          <div className="quiz-start-row">
+          <div className="quiz-start-row" data-tour="quiz-start">
             <button className="btn btn-solid" onClick={start} disabled={loading}>
               {loading ? 'POURING…' : over ? 'GO AGAIN' : 'START THE ROUND'} <ArrowRight size={14} />
             </button>
-            <span className="quiz-high">
+            <span className="quiz-high" data-tour="quiz-score">
               <span className="k-label dim">HOUSE RECORD</span>
-              <b>{high}</b>
+              <b>{high ?? '—'}</b>
             </span>
           </div>
           {error && <p className="err" role="alert">{error}</p>}
@@ -302,9 +302,9 @@ export function Quiz() {
   const gotIt = picked === current.a;
 
   return (
-    <div className="quiz">
-      <div className="quiz-meta">
-        <span className="k-label dim">HOUSE RECORD {high}</span>
+    <div className="quiz" data-tour="quiz-round">
+      <div className="quiz-meta" data-tour="quiz-score">
+        <span className="k-label dim">HOUSE RECORD {high ?? '—'}</span>
         <span className="quiz-score">
           <span className="k-label dim">SCORE</span> <b>{score}</b>
         </span>

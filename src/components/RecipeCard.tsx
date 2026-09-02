@@ -19,6 +19,8 @@ interface Props {
   onToggleLike?: (recipe: Recipe) => void;
   /** Persist a machine-drafted drink into the menu when it's kept/shared. */
   onKeep?: (recipe: Recipe) => void;
+  /** Optional stable tutorial anchor for this card's action rail. */
+  tourActions?: string;
 }
 
 /** The three card actions (tab / share / like), used on both faces. */
@@ -32,7 +34,7 @@ export function RecipeCardActions({
   liked = false,
   onToggleLike,
   onKeep,
-}: Omit<Props, 'index' | 'onVideo'>) {
+}: Omit<Props, 'index' | 'onVideo' | 'tourActions'>) {
   const [shareState, setShareState] = useState<'idle' | 'copied' | 'failed'>('idle');
 
   async function doShare(e: React.MouseEvent) {
@@ -93,7 +95,7 @@ export function RecipeCardActions({
 
 /** Flip flash card. Photo and vibe on the front, the full recipe on the back. */
 export function RecipeCard(props: Props) {
-  const { recipe, vibe, index, onVideo } = props;
+  const { recipe, vibe, index, onVideo, tourActions } = props;
   const [flipped, setFlipped] = useState(false);
   const [imageFailed, setImageFailed] = useState(false);
   const isAI = recipe.source === 'ai' || recipe.source === 'fallback';
@@ -124,7 +126,7 @@ export function RecipeCard(props: Props) {
       <div className="fc-inner">
         {/* ---------- front ---------- */}
         <div className="ff front">
-          {!flipped && <div className="card-actions">{buttons}</div>}
+          {!flipped && <div className="card-actions" data-tour={tourActions}>{buttons}</div>}
           {recipe.thumb && !imageFailed ? (
             <div className="fc-img">
               <img
@@ -165,7 +167,7 @@ export function RecipeCard(props: Props) {
           <div className="fb-head">
             <div className="fb-head-top">
               <span className="k-label">{cardLabel}</span>
-              {flipped && <div className="fb-actions">{buttons}</div>}
+              {flipped && <div className="fb-actions" data-tour={tourActions}>{buttons}</div>}
             </div>
             <h3>{recipe.name}</h3>
             {recipe.tagline && <p className="fb-tagline">{recipe.tagline}</p>}

@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import { AnimatePresence, motion, MotionConfig } from 'framer-motion';
 import { fetchHealth, fetchKeptRecipes, fetchLikes, fetchRecipes, fetchVibes, generateRecipe, keepRecipe, matchRecipes, postLike } from './api';
-import type { BrowseFilter, Health, Ingredient, MatchResult, Recipe, ShortsReturnState, Theme, Vibe, VibeId } from './types';
+import type { BrowseFilter, Health, Ingredient, MatchResult, Recipe, ShortsReturnState, Theme, TourId, Vibe, VibeId } from './types';
 import { Typeahead } from './components/Typeahead';
 import { UploadZone } from './components/UploadZone';
 import { RecipeCard } from './components/RecipeCard';
@@ -19,13 +19,13 @@ import { MobileNavigation, MobileTopActions } from './components/MobileNavigatio
 import { DailyQuestion } from './components/DailyQuestion';
 import { GuidedTour } from './components/GuidedTour';
 import { ShelfResults } from './components/ShelfResults';
+import { ContextualHelp } from './components/ContextualHelp';
 import { EASE, Lines, LOADED_HIDDEN, Reveal } from './motion';
 import { ArrowDown, ArrowRight, Burger, Check, Heart, PubGlyph, Share, Shuffle, SketchDefs, ToolIcon, X } from './icons';
 import { shareContent, tabShareText } from './share';
 import { applyTheme, currentTheme, persistTheme } from './theme';
 import { loadLocalCatalogue, matchLocalRecipes, queryLocalRecipes } from './localData';
 import type { Route } from './navigation';
-import { requestTourReplay } from './tutorial';
 import { OVERLAY_PRIORITY, overlayGate, setBackgroundInert } from './overlayGate';
 import './App.css';
 
@@ -34,9 +34,9 @@ const VIDEO_MODAL_GATE_ID = 'recipe-video';
 
 const ROUTES: Route[] = ['menu', 'bar', 'basics', 'tab', 'quiz', 'watch', 'shorts'];
 const NAV: { route: Route; label: string }[] = [
-  { route: 'menu', label: 'THE MENU' },
-  { route: 'bar', label: 'THE BAR' },
-  { route: 'tab', label: 'THE TAB' },
+  { route: 'menu', label: 'MENU' },
+  { route: 'bar', label: 'BAR' },
+  { route: 'tab', label: 'TAB' },
   { route: 'quiz', label: 'QUIZ' },
   { route: 'shorts', label: 'SHORTS' },
   { route: 'watch', label: 'WATCH' },
@@ -638,6 +638,7 @@ export default function App() {
   const hasPantry = pantry.length > 0;
   // the landing view is 'home', so no nav item is lit until you're in a section
   const active = landing ? null : route;
+  const helpTour: TourId = landing ? 'landing' : route;
   const moreLeft = browseHasMore;
 
   const onBarFilter = useCallback((value: BrowseFilter) => {
@@ -650,7 +651,7 @@ export default function App() {
       : loved ? 'MOST LOVED' : browseQ ? `“${browseQ.toUpperCase()}”` : '';
   const browseNote = `SHOWING ${featured.length} OF ${browseTotal}${browseContext ? ` · ${browseContext}` : ''}`;
 
-  const card = (r: Recipe, i: number, removeMode = false) => (
+  const card = (r: Recipe, i: number, removeMode = false, tourActions?: string) => (
     <RecipeCard
       key={r.id}
       recipe={r}
@@ -664,6 +665,7 @@ export default function App() {
       liked={likedIds.has(r.id)}
       onToggleLike={toggleLike}
       onKeep={keepDrink}
+      tourActions={tourActions}
     />
   );
 
@@ -674,7 +676,13 @@ export default function App() {
         {!shortsActive && <DailyQuestion force={dailyForced} />}
         {!shortsActive && <InstallBanner />}
         {!shortsActive && <NudgePrompt />}
+        <GuidedTour id="landing" active={landing} />
+        <GuidedTour id="menu" active={route === 'menu' && !landing} />
         <GuidedTour id="bar" active={route === 'bar'} />
+        <GuidedTour id="basics" active={route === 'basics'} />
+        <GuidedTour id="tab" active={route === 'tab'} />
+        <GuidedTour id="quiz" active={route === 'quiz'} />
+        <GuidedTour id="watch" active={route === 'watch'} />
         <GuidedTour id="shorts" active={route === 'shorts'} />
 
         {/* ================= nav ================= */}
@@ -707,6 +715,7 @@ export default function App() {
           >
             <ToolIcon id="citrus" size={18} />
           </button>
+          {!shortsActive && <ContextualHelp tour={helpTour} className="desktop-help-action" />}
           <span className="nav-status k-label dim">
             {health ? `${health.cocktails} DRINKS ON TAP` : '…'}
           </span>
@@ -716,7 +725,14 @@ export default function App() {
           <button className="nav-menu-btn" onClick={() => setMenuOpen(true)} aria-label="Open menu">
             <Burger size={22} />
           </button>
-          <MobileTopActions active={active} theme={theme} onToggleTheme={toggleTheme} tabCount={tab.length} />
+          <MobileTopActions
+            active={active}
+            theme={theme}
+            onToggleTheme={toggleTheme}
+            tabCount={tab.length}
+            helpTour={helpTour}
+            hideHelp={shortsActive}
+          />
         </header>
 
         {/* ================= mobile drawer ================= */}
@@ -791,18 +807,19 @@ export default function App() {
                         right now.
                       </p>
                       <div className="hero-cta">
-                        <a className="btn btn-solid" href="#/bar">
+                        <a className="btn btn-solid" href="#/bar" data-tour="landing-make">
                           WHAT CAN I MAKE? <ArrowRight size={14} />
                         </a>
                         <button
                           className="btn"
+                          data-tour="landing-browse"
                           onClick={() => document.querySelector('#menu-list')?.scrollIntoView({ behavior: 'smooth', block: 'start' })}
                         >
                           BROWSE ALL DRINKS <ArrowDown size={14} />
                         </button>
                       </div>
                     </Reveal>
-                    <ol className="hero-steps" aria-label="How it works">
+                    <ol className="hero-steps" aria-label="How it works" data-tour="landing-steps">
                       <li>
                         <span className="k-label dim">01</span>
                         <strong>Add your ingredients</strong>
@@ -826,12 +843,12 @@ export default function App() {
                 <section className="sec" id="menu-list">
                   <SectionHead
                     index="01"
-                    title="THE MENU"
+                    title="MENU"
                     note={browseNote}
                     lead="Every drink we know. Search by name, ingredient, lane, access tier, glass, place, mood or method."
                     loading={browseLoading}
                   />
-                  <div className="field menu-search">
+                  <div className="field menu-search" data-tour="menu-controls">
                     <input
                       value={browseQ}
                       onChange={(e) => setBrowseQ(e.target.value)}
@@ -884,7 +901,9 @@ export default function App() {
                     </div>
                   ) : (
                     <>
-                      <div className={`grid ${browseLoading ? 'is-loading' : ''}`}>{featured.map((r, i) => card(r, i))}</div>
+                      <div className={`grid ${browseLoading ? 'is-loading' : ''}`} data-tour="menu-grid">
+                        {featured.map((r, i) => card(r, i, false, i === 0 ? 'menu-card-actions' : undefined))}
+                      </div>
                       {moreLeft && !browseLoading && (
                         <div className="more-row">
                           <button className="btn" onClick={loadMore} disabled={browseAppending}>
@@ -916,7 +935,6 @@ export default function App() {
                     lead="Tell us what’s on your shelf and we’ll find the drinks you can pour. Type each thing, or snap one photo of your bottles."
                   />
                   <BarTalk />
-                  <button type="button" className="text-btn tour-replay" onClick={() => requestTourReplay('bar')}>SHOW ME HOW</button>
                   <div className="shelf-grid" data-tour="shelf-entry">
                     <div className="shelf-col">
                       <span className="k-label field-label">WHAT HAVE YOU GOT?</span>
@@ -1049,7 +1067,7 @@ export default function App() {
               <section className="sec page-top" id="quiz-page">
                 <SectionHead
                   index="01"
-                  title="THE PUB QUIZ"
+                  title="PUB QUIZ"
                   note="ONE POINT A CORRECT ANSWER"
                   lead="A quiz on cocktails, spirits and the stories behind them. It starts easy and gets meaner."
                 />
@@ -1084,10 +1102,11 @@ export default function App() {
               <section className="sec page-top" id="tab-page">
                 <SectionHead
                   index="01"
-                  title="THE TAB"
+                  title="TAB"
                   note={tab.length ? `${tab.length} ON YOUR TAB TONIGHT` : 'YOUR MENU FOR THE NIGHT'}
                 />
                 <BarTalk />
+                <div data-tour="tab-lineup">
                 {tab.length === 0 ? (
                   <div className="empty">
                     <p className="empty-big">NOTHING ON THE TAB YET.</p>
@@ -1100,7 +1119,7 @@ export default function App() {
                   <>
                     <div className="tab-head">
                       <span className="k-label dim">SAVED ON THIS DEVICE. IT KEEPS BETWEEN VISITS.</span>
-                      <div className="tab-head-actions">
+                      <div className="tab-head-actions" data-tour="tab-actions">
                         <button
                           className="text-btn"
                           onClick={async () => {
@@ -1122,9 +1141,10 @@ export default function App() {
                         </button>
                       </div>
                     </div>
-                    <div className="grid">{tab.map((r, i) => card(r, i, true))}</div>
+                    <div className="grid" data-tour="tab-cards">{tab.map((r, i) => card(r, i, true))}</div>
                   </>
                 )}
+                </div>
               </section>
             </div>
         </main>

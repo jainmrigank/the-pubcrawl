@@ -36,4 +36,36 @@ test.describe('Daily Question and Quiz', () => {
     const outline = await options.first().evaluate((element) => getComputedStyle(element).outlineStyle);
     expect(outline).not.toBe('none');
   });
+
+  test('shows an unverified House Record as an em dash, then shows the confirmed value', async ({ page }) => {
+    await seedStableDevice(page);
+    await page.route('**/api/quiz/high', async (route) => {
+      await new Promise((resolve) => setTimeout(resolve, 350));
+      await route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        body: JSON.stringify({ score: 19, at: 1, hall: [], bank: 352 }),
+      });
+    });
+    await openRoute(page, '/#/quiz');
+    const record = page.locator('.quiz-high');
+    await expect(record.locator('b')).toHaveText('—');
+    await expect(record.locator('b')).toHaveText('19', { timeout: 2_000 });
+  });
+
+  test('distinguishes a legitimate zero record from a failed record request', async ({ page }) => {
+    await seedStableDevice(page);
+    await page.route('**/api/quiz/high', (route) => route.fulfill({
+      status: 200,
+      contentType: 'application/json',
+      body: JSON.stringify({ score: 0, at: 0, hall: [], bank: 352 }),
+    }));
+    await openRoute(page, '/#/quiz');
+    await expect(page.locator('.quiz-high b')).toHaveText('0');
+
+    await page.unroute('**/api/quiz/high');
+    await page.route('**/api/quiz/high', (route) => route.abort('failed'));
+    await page.reload({ waitUntil: 'domcontentloaded' });
+    await expect(page.locator('.quiz-high b')).toHaveText('—');
+  });
 });

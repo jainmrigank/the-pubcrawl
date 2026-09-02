@@ -5,9 +5,7 @@ import {
   playbackMode,
   poolWindow,
   preparePlayerSound,
-  propagateSound,
   soundPreference,
-  soundSyncDecision,
   startupFacadeState,
 } from '../server/shorts-playback.mjs';
 
@@ -49,13 +47,11 @@ test('prepared sound policy keeps every prepared player muted and paused', () =>
     { setVolume: (v) => events.push(['volume', v]), mute: () => events.push(['mute']), pauseVideo: () => events.push(['pause']), unMute: () => events.push(['unmute']) },
   ];
   assert.deepEqual(preparePlayerSound(players, 138), { muted: true, volume: 100 });
-  assert.deepEqual(propagateSound(players, { muted: false, volume: 38 }), { muted: false, volume: 38 });
   assert.deepEqual(events, [
     ['volume', 100], ['mute'], ['pause'],
     ['volume', 100], ['mute'], ['pause'],
-    ['volume', 38], ['unmute'],
-    ['volume', 38], ['unmute'],
   ]);
+  assert.equal(events.some(([event]) => event === 'unmute'), false);
   assert.deepEqual(soundPreference({ isMuted: () => true, getVolume: () => 12 }, { muted: false, volume: 38 }), { muted: true, volume: 38 });
   assert.deepEqual(soundPreference({ isMuted: () => false, getVolume: () => 67 }), { muted: false, volume: 67 });
 });
@@ -69,20 +65,6 @@ test('startup buffering stays behind the facade until playback advances', () => 
   assert.deepEqual(state, { revealed: true, confirmed: true });
   state = startupFacadeState(state, { state: 'buffering', currentTime: 2.4 });
   assert.deepEqual(state, { revealed: true, confirmed: true });
-});
-
-test('a blocked unmute requests one gesture without changing the session preference', () => {
-  const preference = { muted: false, volume: 64 };
-  assert.deepEqual(soundSyncDecision(preference, { muted: true, volume: 64 }, 1), {
-    status: 'retry',
-    preference,
-  });
-  assert.deepEqual(soundSyncDecision(preference, { muted: true, volume: 64 }, 3), {
-    status: 'gesture',
-    preference,
-  });
-  assert.deepEqual(soundSyncDecision(preference, { muted: false, volume: 64 }, 0), {
-    status: 'synced',
-    preference,
-  });
+  state = startupFacadeState(state, { state: 'buffering', currentTime: 0 });
+  assert.deepEqual(state, { revealed: true, confirmed: true });
 });
