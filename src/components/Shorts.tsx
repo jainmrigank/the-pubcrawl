@@ -33,6 +33,7 @@ import {
   playerReadyForStart,
   readShortsSoundPreference,
   resetShortsStartForManualRecovery,
+  shouldAuthorizeAudibleTouchEnd,
   shouldRevokeShortsLease,
   startModeForGesture,
   writeShortsSoundPreference,
@@ -500,6 +501,7 @@ export function Shorts({
   const pendingActivationRef = useRef<number | null>(null);
   const setActiveRef = useRef<(next: number, countAdvance?: boolean, startMode?: ShortsStartMode) => PlayerLease | null>(() => null);
   const orderedLengthRef = useRef(0);
+  const playbackModeRef = useRef(playbackMode);
 
   overlayRef.current = recipeOverlay;
   activeRef.current = active;
@@ -507,6 +509,7 @@ export function Shorts({
   prepareIndexRef.current = prepareIndex;
   visibleIndexRef.current = visibleIndex;
   startAuthorizationRef.current = startAuthorization;
+  playbackModeRef.current = playbackMode;
 
   const orderedShorts = useMemo(() => {
     const byId = new Map(data.shorts.map((short) => [short.id, short]));
@@ -577,6 +580,39 @@ export function Shorts({
     const normalized = writeShortsSoundPreference({ version: 1, desiredAudible: !muted, volume });
     soundRef.current = { muted: !normalized.desiredAudible, volume: normalized.volume };
   }, []);
+
+  const captureActiveSoundPreference = useCallback(() => {
+    const index = activeIndexRef.current;
+    const lease = controllerRef.current.lease;
+    const player = playersRef.current.get(index);
+    if (!player || !lease || lease.index !== index) return;
+    try {
+      const muted = Boolean(player.isMuted());
+      const volume = Math.max(0, Math.min(100, Math.round(player.getVolume())));
+      // Keep this callback independent of the rendered catalogue array. The
+      // scroll listener deliberately survives remote metadata refreshes; if
+      // its callback identity changed mid-drag, local touch state would reset
+      // before the final settlement. Active/order refs always hold the latest
+      // stable Short identity without recreating the listener.
+      const shortId = activeIdRef.current || orderIdsRef.current[index];
+      const key = shortId ? `${shortId}:${index}:${lease.generation}` : '';
+      if (!muted) {
+        // This is the native YouTube control's state. Capture it immediately
+        // at the start of the next swipe instead of waiting for the 250ms
+        // observer, which can otherwise lose a very quick unmute-and-swipe.
+        forcedMutedLeaseRef.current = null;
+        if (soundRef.current.muted || volume !== soundRef.current.volume) persistSoundPreference(false, volume);
+      } else if (soundRef.current.muted) {
+        if (volume !== soundRef.current.volume) persistSoundPreference(true, volume);
+      } else if (forcedMutedLeaseRef.current !== key) {
+        // A mute on an audibly playing, non-fallback lease is a native user
+        // choice. Forced iOS fallback mutes retain the desired-audible flag.
+        persistSoundPreference(true, soundRef.current.volume);
+      }
+    } catch {
+      // The active iframe may be between replacement and registration.
+    }
+  }, [persistSoundPreference]);
 
   const cancelSoundSync = useCallback(() => {
     soundSyncTokenRef.current += 1;
@@ -1588,6 +1624,11 @@ export function Shorts({
     let frame = 0;
     let lastTop = root.scrollTop;
     let touchActive = false;
+    // When touchend commits an audible destination before mandatory snapping
+    // has finished, retain that lease through the remaining same-card
+    // momentum. A later scroll event can move more than the normal 35% bounce
+    // threshold even though it is only finishing the already-chosen snap.
+    let touchCommittedTarget: number | null = null;
     let lastScrollAt = performance.now();
     let lastScrollDelta = 0;
     const clearSettle = () => {
@@ -1625,7 +1666,8 @@ export function Shorts({
         gestureStartTopRef.current = null;
         return current.lease;
       }
-      const directGesture = source === 'stable-touchend' || source === 'keyboard';
+      const directGesture = playbackModeRef.current !== 'manual'
+        && (source === 'stable-touchend' || source === 'keyboard');
       const mode = startModeForGesture(soundRef.current.muted, directGesture);
       const lease = setActiveRef.current(target, true, mode);
       if (directGesture && mode === 'gesture-audible' && lease) {
@@ -1681,7 +1723,11 @@ export function Shorts({
           transitionController({ type: 'scroll-intent', index: prepareIndexRef.current, direction });
         }
         const settled = controllerRef.current.settledIndex;
-        if (shouldRevokeShortsLease(settled, intent, displacement, viewport)) beginScroll(direction);
+        const finishingCommittedSnap = touchCommittedTarget === intent;
+        if (!finishingCommittedSnap && shouldRevokeShortsLease(settled, intent, displacement, viewport)) {
+          touchCommittedTarget = null;
+          beginScroll(direction);
+        }
       }
       lastTop = top;
       if (intent !== prepareIndexRef.current) {
@@ -1727,8 +1773,11 @@ export function Shorts({
       // and let the quiet fallback start the same card a second time.
       flushScrollFrame();
       commitSettlement(cardIndexAtRest(), 'native-scrollend');
+      touchCommittedTarget = null;
     };
     const onTouchStart = () => {
+      captureActiveSoundPreference();
+      touchCommittedTarget = null;
       touchActive = true;
       gestureStartTopRef.current = root.scrollTop;
       clearSettle();
@@ -1754,8 +1803,20 @@ export function Shorts({
         && (exactlySnapped || velocity < 0.35)
         && Math.round(root.scrollTop / Math.max(1, root.clientHeight)) === target
         && playerReady;
-      if (stable) commitSettlement(target, 'stable-touchend');
-      else scheduleQuietSettlement();
+      const audibleMomentumTarget = shouldAuthorizeAudibleTouchEnd({
+        desiredMuted: soundRef.current.muted,
+        manualMode: playbackModeRef.current === 'manual',
+        targetIndex: target,
+        settledIndex: controllerRef.current.settledIndex,
+        intendedIndex: prepareIndexRef.current,
+        cardDistance,
+        feedHeight: root.clientHeight,
+        playerReady,
+      });
+      if (stable || audibleMomentumTarget) {
+        const lease = commitSettlement(target, 'stable-touchend');
+        if (audibleMomentumTarget && lease?.index === target) touchCommittedTarget = target;
+      } else scheduleQuietSettlement();
     };
     root.addEventListener('scroll', onScroll, { passive: true });
     root.addEventListener('scrollend', onScrollEnd as EventListener, { passive: true });
@@ -1771,39 +1832,15 @@ export function Shorts({
       if (frame) cancelAnimationFrame(frame);
       clearSettle();
     };
-    }, [active, beginAudibleStart, cancelSoundSync, demoteAudibleStart, pausePlayersExcept, transitionController]);
+    }, [active, beginAudibleStart, cancelSoundSync, captureActiveSoundPreference, demoteAudibleStart, pausePlayersExcept, transitionController]);
 
   // YouTube has no volumechange event. Observe the active player only; never
   // use this passive poll to unmute a prepared/newly active iframe.
   useEffect(() => {
     if (!active) return;
-    const timer = window.setInterval(() => {
-      const index = activeIndexRef.current;
-      const lease = controllerRef.current.lease;
-      const player = playersRef.current.get(index);
-      if (!player || !lease || lease.index !== index) return;
-      try {
-        const muted = Boolean(player.isMuted());
-        const volume = Math.max(0, Math.min(100, Math.round(player.getVolume())));
-        const key = startCommandKey(index, lease.generation);
-        if (!muted) {
-          // YouTube exposes no volume event to the parent. An observed unmute
-          // on the active iframe is therefore the native control's result.
-          forcedMutedLeaseRef.current = null;
-          if (soundRef.current.muted || volume !== soundRef.current.volume) persistSoundPreference(false, volume);
-        } else if (soundRef.current.muted) {
-          if (volume !== soundRef.current.volume) persistSoundPreference(true, volume);
-        } else if (forcedMutedLeaseRef.current !== key) {
-          // A mute on an audibly playing, non-fallback lease is a native user
-          // choice. Forced iOS fallback mutes retain the desired-audible flag.
-          persistSoundPreference(true, soundRef.current.volume);
-        }
-      } catch {
-        // Ignore calls while the active iframe is being replaced.
-      }
-    }, 250);
+    const timer = window.setInterval(captureActiveSoundPreference, 250);
     return () => window.clearInterval(timer);
-  }, [active, persistSoundPreference, startCommandKey]);
+  }, [active, captureActiveSoundPreference]);
 
   useEffect(() => {
     const onVisibility = () => {

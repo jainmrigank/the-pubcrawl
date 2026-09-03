@@ -13,6 +13,7 @@ import {
   readShortsSoundPreference,
   resetShortsStartForManualRecovery,
   SHORTS_SOUND_SESSION_KEY,
+  shouldAuthorizeAudibleTouchEnd,
   shouldRevokeShortsLease,
   startModeForGesture,
   writeShortsSoundPreference,
@@ -120,4 +121,24 @@ test('same-card snap correction retains its lease until a real destination wins'
   assert.equal(shouldRevokeShortsLease(4, 4, 294, 844), false);
   assert.equal(shouldRevokeShortsLease(4, 4, 296, 844), true);
   assert.equal(shouldRevokeShortsLease(4, 5, 1, 844), true);
+});
+
+test('a ready momentum destination retains the audible touch gesture before scrollend', () => {
+  const eligible = {
+    desiredMuted: false,
+    manualMode: false,
+    targetIndex: 5,
+    settledIndex: 4,
+    intendedIndex: 5,
+    cardDistance: 330,
+    feedHeight: 844,
+    playerReady: true,
+  };
+  assert.equal(shouldAuthorizeAudibleTouchEnd(eligible), true);
+  assert.equal(shouldAuthorizeAudibleTouchEnd({ ...eligible, desiredMuted: true }), false);
+  assert.equal(shouldAuthorizeAudibleTouchEnd({ ...eligible, manualMode: true }), false);
+  assert.equal(shouldAuthorizeAudibleTouchEnd({ ...eligible, playerReady: false }), false);
+  assert.equal(shouldAuthorizeAudibleTouchEnd({ ...eligible, intendedIndex: 6 }), false);
+  assert.equal(shouldAuthorizeAudibleTouchEnd({ ...eligible, targetIndex: 4 }), false);
+  assert.equal(shouldAuthorizeAudibleTouchEnd({ ...eligible, cardDistance: 381 }), false);
 });

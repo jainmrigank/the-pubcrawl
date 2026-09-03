@@ -21,6 +21,7 @@ type FakeLogEntry = {
   shortId: string;
   generation: number | null;
   method: string;
+  value?: number;
 };
 
 /** Replace the network YouTube adapter with a deterministic iframe double. */
@@ -42,6 +43,7 @@ async function installFakeYouTube(page: Page, options: FakePlayerOptions = { blo
       __PUBCRAWL_FAKE_YT_LOG__?: FakeLogEntry[];
       __PUBCRAWL_FAKE_YT__?: {
         nativeSound(index: number, audible: boolean, volume?: number): void;
+        sound(index: number): { muted: boolean; volume: number } | null;
         emit(index: number, state: number): void;
         error(index: number, code: number): void;
       };
@@ -100,9 +102,9 @@ async function installFakeYouTube(page: Page, options: FakePlayerOptions = { blo
         };
       }
 
-      private record(method: string) {
+      private record(method: string, value?: number) {
         const identity = this.identity();
-        log.push({ at: performance.now(), index: this.index, method, ...identity });
+        log.push({ at: performance.now(), index: this.index, method, value, ...identity });
       }
 
       cueVideoById() {
@@ -157,7 +159,7 @@ async function installFakeYouTube(page: Page, options: FakePlayerOptions = { blo
       mute() { if (!this.destroyed) { this.record('mute'); this.muted = true; } }
       unMute() { if (!this.destroyed) { this.record('unMute'); this.muted = false; } }
       isMuted() { return this.muted; }
-      setVolume(volume: number) { if (!this.destroyed) { this.record('setVolume'); this.volume = volume; } }
+      setVolume(volume: number) { if (!this.destroyed) { this.record('setVolume', volume); this.volume = volume; } }
       getVolume() { return this.volume; }
       getCurrentTime() { return this.currentTime; }
       seekTo(seconds: number) { if (!this.destroyed) { this.record('seekTo'); this.currentTime = seconds; } }
@@ -188,6 +190,10 @@ async function installFakeYouTube(page: Page, options: FakePlayerOptions = { blo
 
     target.__PUBCRAWL_FAKE_YT__ = {
       nativeSound(index, audible, volume = 64) { players.get(index)?.nativeSound(audible, volume); },
+      sound(index) {
+        const player = players.get(index);
+        return player ? { muted: player.isMuted(), volume: player.getVolume() } : null;
+      },
       emit(index, state) { players.get(index)?.emit(state); },
       error(index, code) { players.get(index)?.error(code); },
     };
@@ -283,6 +289,106 @@ test.describe('Shorts startup and controls', () => {
     const play = targetEvents.findIndex((entry, eventIndex) => eventIndex > unmute && entry.method === 'playVideo');
     expect(unmute).toBeGreaterThanOrEqual(0);
     expect(play).toBeGreaterThan(unmute);
+    await expect.poll(() => page.evaluate(() => sessionStorage.getItem('pubcrawl.shorts.sound.v1'))).toContain('"desiredAudible":true');
+  });
+
+  test('retains native sound when touchend happens before iOS scroll snapping finishes', async ({ page }) => {
+    await installFakeYouTube(page);
+    await seedStableDevice(page);
+    await openRoute(page, '/#/shorts');
+    await waitForFirstPlay(page);
+
+    // Do not wait for the 250ms sound observer. The swipe's touchstart must
+    // capture a just-changed native YouTube control before the old player is
+    // muted and paused.
+    await setNativeSound(page, true, 67);
+    const feed = page.locator('.shorts-feed');
+    await feed.evaluate((element) => {
+      const root = element as HTMLElement;
+      root.style.scrollSnapType = 'none';
+      root.dispatchEvent(new TouchEvent('touchstart', { bubbles: true }));
+      root.scrollTop = root.clientHeight * 0.6;
+      root.dispatchEvent(new Event('scroll', { bubbles: true }));
+    });
+    await page.waitForTimeout(40);
+    await feed.evaluate((element) => {
+      element.dispatchEvent(new TouchEvent('touchend', { bubbles: true }));
+    });
+    const leaseAfterTouchEnd = await feed.getAttribute('data-controller-lease');
+    await expect(feed).toHaveAttribute('data-controller-active', '1');
+
+    // Mandatory snapping completes after touchend on physical iOS. Its later
+    // scrollend must finalize the same lease without replacing the audible
+    // start or issuing a duplicate command.
+    for (const progress of [0.72, 0.86, 1]) {
+      await feed.evaluate((element, nextProgress) => {
+        const root = element as HTMLElement;
+        root.scrollTop = root.clientHeight * nextProgress;
+        root.dispatchEvent(new Event('scroll', { bubbles: true }));
+      }, progress);
+      await page.waitForTimeout(20);
+    }
+    await feed.evaluate((element) => {
+      const root = element as HTMLElement;
+      root.style.scrollSnapType = '';
+      root.dispatchEvent(new Event('scrollend', { bubbles: true }));
+    });
+    await expect(feed).toHaveAttribute('data-controller-active', '1');
+    await expect(feed).toHaveAttribute('data-controller-phase', 'idle');
+    await expect(feed).toHaveAttribute('data-controller-lease', leaseAfterTouchEnd || '');
+    await expect.poll(() => page.evaluate(() => sessionStorage.getItem('pubcrawl.shorts.sound.v1'))).toBe(
+      JSON.stringify({ version: 1, desiredAudible: true, volume: 67 }),
+    );
+
+    const targetEvents = (await fakeLog(page)).filter((entry) => entry.index === 1);
+    const unmute = targetEvents.findIndex((entry) => entry.method === 'unMute');
+    const play = targetEvents.findIndex((entry, eventIndex) => eventIndex > unmute && entry.method === 'playVideo');
+    expect(unmute).toBeGreaterThanOrEqual(0);
+    expect(play).toBeGreaterThan(unmute);
+    expect(targetEvents.filter((entry) => entry.method === 'playVideo')).toHaveLength(1);
+    expect(targetEvents.some((entry) => entry.method === 'setVolume' && entry.value === 67)).toBe(true);
+    expect(targetEvents.slice(unmute + 1).some((entry) => entry.method === 'mute')).toBe(false);
+    await expect.poll(() => page.evaluate(() => (window as any).__PUBCRAWL_FAKE_YT__?.sound(1))).toEqual({ muted: false, volume: 67 });
+  });
+
+  test('captures a native mute immediately before the next swipe', async ({ page }) => {
+    await installFakeYouTube(page);
+    await seedStableDevice(page);
+    await openRoute(page, '/#/shorts');
+    await waitForFirstPlay(page);
+    await setNativeSound(page, true, 62);
+    await expect.poll(() => page.evaluate(() => sessionStorage.getItem('pubcrawl.shorts.sound.v1'))).toContain('"desiredAudible":true');
+    await setNativeSound(page, false, 62);
+
+    await swipeTo(page, 1);
+
+    await expect.poll(() => page.evaluate(() => sessionStorage.getItem('pubcrawl.shorts.sound.v1'))).toBe(
+      JSON.stringify({ version: 1, desiredAudible: false, volume: 62 }),
+    );
+    const targetEvents = (await fakeLog(page)).filter((entry) => entry.index === 1);
+    expect(targetEvents.some((entry) => entry.method === 'unMute')).toBe(false);
+    expect(targetEvents.some((entry) => entry.method === 'playVideo')).toBe(true);
+    await expect.poll(() => page.evaluate(() => (window as any).__PUBCRAWL_FAKE_YT__?.sound(1))).toEqual({ muted: true, volume: 62 });
+  });
+
+  test('manual playback mode never turns a retained sound preference into swipe autoplay', async ({ page }) => {
+    await page.emulateMedia({ reducedMotion: 'reduce' });
+    await installFakeYouTube(page);
+    await seedStableDevice(page);
+    await openRoute(page, '/#/shorts');
+
+    const firstFacade = page.locator('.shorts-card.is-active .shorts-facade');
+    await expect(firstFacade.locator('.shorts-tap')).toContainText('TAP TO PLAY');
+    await firstFacade.click();
+    await waitForFirstPlay(page);
+    await setNativeSound(page, true, 58);
+    await expect.poll(() => page.evaluate(() => sessionStorage.getItem('pubcrawl.shorts.sound.v1'))).toContain('"desiredAudible":true');
+
+    await swipeTo(page, 1);
+    await page.waitForTimeout(300);
+
+    expect((await fakeLog(page)).filter((entry) => entry.index === 1 && entry.method === 'playVideo')).toHaveLength(0);
+    await expect(page.locator('.shorts-card.is-active .shorts-tap')).toContainText('TAP TO PLAY');
     await expect.poll(() => page.evaluate(() => sessionStorage.getItem('pubcrawl.shorts.sound.v1'))).toContain('"desiredAudible":true');
   });
 

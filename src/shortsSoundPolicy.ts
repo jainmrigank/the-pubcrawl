@@ -132,6 +132,39 @@ export function shouldRevokeShortsLease(
   return Math.abs(displacement) >= Math.max(1, feedHeight) * 0.35;
 }
 
+export interface AudibleTouchEndEligibility {
+  desiredMuted: boolean;
+  manualMode: boolean;
+  targetIndex: number;
+  settledIndex: number;
+  intendedIndex: number;
+  cardDistance: number;
+  feedHeight: number;
+  playerReady: boolean;
+}
+
+/**
+ * iOS normally releases touch before mandatory scroll snapping has finished.
+ * A ready, unambiguous destination may therefore use the actual touchend
+ * gesture while it is still within 45% of the settled position. Waiting for
+ * scrollend would lose the user-activation window and force that player mute.
+ */
+export function shouldAuthorizeAudibleTouchEnd({
+  desiredMuted,
+  manualMode,
+  targetIndex,
+  settledIndex,
+  intendedIndex,
+  cardDistance,
+  feedHeight,
+  playerReady,
+}: AudibleTouchEndEligibility): boolean {
+  if (desiredMuted || manualMode || !playerReady) return false;
+  if (targetIndex === settledIndex || targetIndex !== intendedIndex) return false;
+  if (!Number.isFinite(cardDistance) || !Number.isFinite(feedHeight) || feedHeight <= 0) return false;
+  return cardDistance <= feedHeight * 0.45;
+}
+
 /** A direct gesture can request sound only when the preference is unmuted. */
 export function startModeForGesture(muted: boolean, directGesture: boolean): ShortsStartMode {
   return directGesture && !muted ? 'gesture-audible' : 'muted-autoplay';
