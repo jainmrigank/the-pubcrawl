@@ -4,6 +4,7 @@ dist
 *.local
 .DS_Store
 tsconfig.tsbuildinfo
+test-results/
 data/likes.json
 data/kept_cocktails.json
 data/push_subs.json

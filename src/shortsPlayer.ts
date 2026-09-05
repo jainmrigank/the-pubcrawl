@@ -32,6 +32,7 @@ export interface YouTubePlayer {
   getPlaybackRate?: () => number;
   setPlaybackRate?: (rate: number) => void;
   getAvailablePlaybackRates?: () => number[];
+  getIframe?: () => HTMLIFrameElement;
   destroy: () => void;
 }
 
@@ -163,9 +164,18 @@ export async function createYouTubePlayer(
 
 export function applySound(player: YouTubePlayer, muted: boolean, volume: number): void {
   try {
-    player.setVolume(Math.max(0, Math.min(100, Math.round(volume))));
-    if (muted) player.mute();
-    else player.unMute();
+    if (muted) {
+      player.setVolume(Math.max(0, Math.min(100, Math.round(volume))));
+      player.mute();
+    } else {
+      // Some WebKit/YouTube combinations ignore a level written while the
+      // iframe is muted.  Unmute first, then apply the retained level while
+      // the same user-activation task is still running.  Otherwise the next
+      // player can expose the misleading "sound on at zero" state and make
+      // the native control require two presses.
+      player.unMute();
+      player.setVolume(Math.max(0, Math.min(100, Math.round(volume))));
+    }
   } catch {
     // The API can briefly reject commands between iframe creation and ready.
   }

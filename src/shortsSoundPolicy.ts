@@ -1,6 +1,6 @@
 /** Pure, browser-independent sound/start decisions for the Shorts host. */
 
-export type ShortsStartMode = 'muted-autoplay' | 'gesture-audible';
+export type ShortsStartMode = 'muted-autoplay' | 'gesture-audible' | 'retained-audible';
 
 export interface ShortsStartAuthorization {
   index: number;
@@ -37,6 +37,19 @@ export function defaultShortsSoundPreference(): ShortsSessionSoundPreference {
   return { version: 1, desiredAudible: false, volume: 100 };
 }
 
+/**
+ * Older iframe sessions could persist the contradictory state "sound wanted at
+ * volume zero".  Preserve the user's audible choice while repairing that
+ * unusable level so the native YouTube control works with one press and the
+ * next Short inherits an actually audible volume.
+ */
+export function healShortsSoundPreference(
+  preference: ShortsSessionSoundPreference,
+): ShortsSessionSoundPreference {
+  if (!preference.desiredAudible || preference.volume > 0) return preference;
+  return { ...preference, volume: 100 };
+}
+
 export function parseShortsSoundPreference(raw: string | null | undefined): ShortsSessionSoundPreference {
   if (!raw) return defaultShortsSoundPreference();
   try {
@@ -50,10 +63,14 @@ export function parseShortsSoundPreference(raw: string | null | undefined): Shor
   }
 }
 
-export function readShortsSoundPreference(storage?: Pick<Storage, 'getItem'> | null): ShortsSessionSoundPreference {
+export function readShortsSoundPreference(
+  storage?: Pick<Storage, 'getItem'> | null,
+): ShortsSessionSoundPreference {
   const target = storage ?? (typeof window === 'undefined' ? null : window.sessionStorage);
   if (!target) return defaultShortsSoundPreference();
-  try { return parseShortsSoundPreference(target.getItem(SHORTS_SOUND_SESSION_KEY)); }
+  try {
+    return parseShortsSoundPreference(target.getItem(SHORTS_SOUND_SESSION_KEY));
+  }
   catch { return defaultShortsSoundPreference(); }
 }
 
@@ -90,6 +107,33 @@ export function claimShortsStart(
     if (command.issued) return { allowed: false, command };
     return { allowed: true, command: { ...command, issued: true } };
   }
+  if (!command.issued || command.retryUsed) return { allowed: false, command };
+  return { allowed: true, command: { ...command, retryUsed: true } };
+}
+
+/**
+ * An explicit browser autoplay-policy rejection is stronger evidence than a
+ * preceding BUFFERING callback. It may consume the command's one muted
+ * recovery even after progress was observed, but it can never mint a second
+ * recovery or apply to a command that did not request sound.
+ */
+export function claimShortsBlockedAudibleFallback(
+  command: ShortsStartCommand,
+): { allowed: boolean; command: ShortsStartCommand } {
+  if (!command.issued || !command.requestedAudible || command.retryUsed) {
+    return { allowed: false, command };
+  }
+  return { allowed: true, command: { ...command, retryUsed: true } };
+}
+
+/**
+ * A player may report BUFFERING and then PAUSED before its first frame.  That
+ * is not successful motion. Permit the lease's single muted recovery even
+ * though BUFFERING marked the ordinary startup command as progressed.
+ */
+export function claimShortsPausedStartupFallback(
+  command: ShortsStartCommand,
+): { allowed: boolean; command: ShortsStartCommand } {
   if (!command.issued || command.retryUsed) return { allowed: false, command };
   return { allowed: true, command: { ...command, retryUsed: true } };
 }
@@ -170,6 +214,12 @@ export function startModeForGesture(muted: boolean, directGesture: boolean): Sho
   return directGesture && !muted ? 'gesture-audible' : 'muted-autoplay';
 }
 
+/** Retained sound may be requested after passive settlement without claiming a fresh user gesture. */
+export function startModeForSettlement(muted: boolean, directGesture: boolean): ShortsStartMode {
+  if (muted) return 'muted-autoplay';
+  return directGesture ? 'gesture-audible' : 'retained-audible';
+}
+
 /** The player states that are safe to start synchronously from a gesture. */
 export function playerReadyForStart(state: number): boolean {
   return state === 1 || state === 2 || state === 3 || state === 5;
@@ -186,7 +236,7 @@ export function audibleAuthorizationMatches(
     authorization &&
     authorization.index === index &&
     authorization.generation === generation &&
-    authorization.mode === 'gesture-audible' &&
+    authorization.mode !== 'muted-autoplay' &&
     !authorization.fallbackUsed &&
     !desiredMuted,
   );

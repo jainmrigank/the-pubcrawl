@@ -2484,6 +2484,10 @@ html[data-theme='dark'][data-route='shorts'] .shorts-overlay-action.shorts-share
   transition: opacity 180ms var(--ease);
 }
 .shorts-player-layer.is-revealed .shorts-player-host { opacity: 1; }
+.shorts-swipe-surface {
+  display: none;
+  pointer-events: none;
+}
 .shorts-player-host iframe,
 .shorts-player-host > div {
   display: block;
@@ -2497,6 +2501,23 @@ html[data-theme='dark'][data-route='shorts'] .shorts-overlay-action.shorts-share
   z-index: 2;
 }
 .shorts-facade:disabled .shorts-tap { opacity: 0.86; }
+
+/* Cross-origin iframe touch events cannot bubble into the feed. On coarse
+   pointers, capture vertical swipes over the media body while leaving the
+   native YouTube control strips exposed at both ends. This preserves the
+   direct touchend task needed for an audible handoff without adding another
+   PubCrawl sound control. */
+@media (hover: none) and (pointer: coarse) {
+  html[data-route='shorts'] .shorts-swipe-surface {
+    position: absolute;
+    z-index: 2;
+    inset: 64px 0 96px;
+    display: block;
+    pointer-events: auto;
+    touch-action: pan-y;
+    background: transparent;
+  }
+}
 
 .shorts-player-rail {
   position: absolute;

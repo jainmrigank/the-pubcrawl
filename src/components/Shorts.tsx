@@ -25,8 +25,11 @@ import {
 } from '../shortsController';
 import {
   audibleAuthorizationMatches,
+  claimShortsBlockedAudibleFallback,
+  claimShortsPausedStartupFallback,
   claimShortsStart,
   createShortsStartCommand,
+  healShortsSoundPreference,
   markShortsStartProgress,
   mutedFallbackAuthorization,
   nextShortsStartAttempt,
@@ -36,6 +39,7 @@ import {
   shouldAuthorizeAudibleTouchEnd,
   shouldRevokeShortsLease,
   startModeForGesture,
+  startModeForSettlement,
   writeShortsSoundPreference,
   type ShortsStartAttempt,
   type ShortsStartAuthorization,
@@ -149,6 +153,22 @@ function clearShortsOverlaySnapshot() {
 type ShortsPlaybackMode = 'pool' | 'balanced' | 'manual';
 type ShortsScrollDirection = 'forward' | 'backward';
 type ShortsSettleSource = 'native-scrollend' | 'stable-touchend' | 'quiet-fallback' | 'keyboard' | 'programmatic';
+
+interface ShortsPlaybackCoordinatorState {
+  authorization: ShortsStartAuthorization | null;
+  forcedMutedLease: string | null;
+  pendingAudibleLease: string | null;
+  commands: Map<string, ShortsStartCommand>;
+}
+
+function createShortsPlaybackCoordinator(): ShortsPlaybackCoordinatorState {
+  return {
+    authorization: null,
+    forcedMutedLease: null,
+    pendingAudibleLease: null,
+    commands: new Map(),
+  };
+}
 
 export type { ShortsStartAuthorization, ShortsStartMode } from '../shortsSoundPolicy';
 
@@ -472,15 +492,25 @@ export function Shorts({
   const visitStarted = useRef(false);
   const lastInitialIdRef = useRef<string | undefined>(undefined);
   const wasPlayingRef = useRef(false);
-  const [initialSoundPreference] = useState(() => readShortsSoundPreference());
+  const [initialSoundPreference] = useState(() => {
+    const stored = readShortsSoundPreference();
+    const healed = healShortsSoundPreference(stored);
+    if (healed !== stored) writeShortsSoundPreference(healed);
+    return healed;
+  });
   // `muted` represents the user's desired session state. A specific active
   // player may temporarily be forced muted by iOS without changing this value.
-  const soundRef = useRef({ muted: !initialSoundPreference.desiredAudible, volume: initialSoundPreference.volume });
+  const soundRef = useRef({
+    // A legacy desired-audible/zero-volume session is healed above instead of
+    // being silently converted into a muted preference.
+    muted: !initialSoundPreference.desiredAudible,
+    volume: initialSoundPreference.volume,
+  });
   const soundSyncTokenRef = useRef(0);
   const soundSyncTimersRef = useRef<number[]>([]);
-  const startAuthorizationRef = useRef<ShortsStartAuthorization | null>(null);
-  const forcedMutedLeaseRef = useRef<string | null>(null);
-  const startCommandsRef = useRef(new Map<string, ShortsStartCommand>());
+  // One mutable coordinator owns every lease-level playback decision. React's
+  // `startAuthorization` state is only the render projection passed to hosts.
+  const playbackCoordinatorRef = useRef<ShortsPlaybackCoordinatorState>(createShortsPlaybackCoordinator());
   const playersRef = useRef(new Map<number, YouTubePlayer>());
   const initializationPoolRef = useRef<ReturnType<typeof createShortsInitializationPool> | null>(null);
   if (!initializationPoolRef.current) {
@@ -508,8 +538,12 @@ export function Shorts({
   activeIndexRef.current = activeIndex;
   prepareIndexRef.current = prepareIndex;
   visibleIndexRef.current = visibleIndex;
-  startAuthorizationRef.current = startAuthorization;
   playbackModeRef.current = playbackMode;
+
+  const projectStartAuthorization = useCallback((authorization: ShortsStartAuthorization | null) => {
+    playbackCoordinatorRef.current.authorization = authorization;
+    setStartAuthorization(authorization);
+  }, []);
 
   const orderedShorts = useMemo(() => {
     const byId = new Map(data.shorts.map((short) => [short.id, short]));
@@ -562,23 +596,56 @@ export function Shorts({
     const short = orderedShorts[index];
     if (!short) return false;
     const key = startCommandKey(index, generation);
-    const current = startCommandsRef.current.get(key)
+    const current = playbackCoordinatorRef.current.commands.get(key)
       ?? createShortsStartCommand(short.id, index, generation, requestedAudible);
     const claimed = claimShortsStart({ ...current, requestedAudible: current.requestedAudible || requestedAudible }, attempt);
-    startCommandsRef.current.set(key, claimed.command);
+    playbackCoordinatorRef.current.commands.set(key, claimed.command);
     return claimed.allowed;
   }, [orderedShorts, startCommandKey]);
+
+  const claimBlockedAudibleFallback = useCallback((index: number, generation: number) => {
+    if (!leaseMatches(controllerRef.current, index, generation)) return false;
+    const key = startCommandKey(index, generation);
+    const command = playbackCoordinatorRef.current.commands.get(key);
+    if (!command) return false;
+    const claimed = claimShortsBlockedAudibleFallback(command);
+    playbackCoordinatorRef.current.commands.set(key, claimed.command);
+    return claimed.allowed;
+  }, [startCommandKey]);
 
   const markStartProgress = useCallback((index: number, generation: number | null) => {
     if (generation == null) return;
     const key = startCommandKey(index, generation);
-    const command = startCommandsRef.current.get(key);
-    if (command) startCommandsRef.current.set(key, markShortsStartProgress(command));
+    const command = playbackCoordinatorRef.current.commands.get(key);
+    if (command) playbackCoordinatorRef.current.commands.set(key, markShortsStartProgress(command));
+  }, [startCommandKey]);
+
+  /**
+   * YouTube may synchronously emit BUFFERING or onAutoplayBlocked from the
+   * imperative touchend command, before React has committed the new lease prop
+   * into ShortPlayerHost.  A null host generation is safe to associate with
+   * the current lease only when this exact Short/index already owns an issued
+   * arbiter command.  Prepared and stale players have no such command.
+   */
+  const resolveIssuedGeneration = useCallback((index: number, generation: number | null) => {
+    const lease = controllerRef.current.lease;
+    if (!lease || lease.index !== index) return null;
+    if (generation != null) return lease.generation === generation ? generation : null;
+    const command = playbackCoordinatorRef.current.commands.get(startCommandKey(index, lease.generation));
+    return command?.issued ? lease.generation : null;
   }, [startCommandKey]);
 
   const persistSoundPreference = useCallback((muted: boolean, volume: number) => {
-    const normalized = writeShortsSoundPreference({ version: 1, desiredAudible: !muted, volume });
-    soundRef.current = { muted: !normalized.desiredAudible, volume: normalized.volume };
+    const usableVolume = !muted && volume <= 0 ? soundRef.current.volume || 100 : volume;
+    const normalized = writeShortsSoundPreference({ version: 1, desiredAudible: !muted, volume: usableVolume });
+    // An unmuted zero-volume value is contradictory: YouTube renders its
+    // sound-on control while producing silence. Repair that state to the last
+    // usable level (or 100) in both memory and session storage so it cannot
+    // poison every subsequently prepared iframe.
+    soundRef.current = {
+      muted: !normalized.desiredAudible,
+      volume: normalized.volume > 0 ? normalized.volume : soundRef.current.volume || 100,
+    };
   }, []);
 
   const captureActiveSoundPreference = useCallback(() => {
@@ -589,6 +656,21 @@ export function Shorts({
     try {
       const muted = Boolean(player.isMuted());
       const volume = Math.max(0, Math.min(100, Math.round(player.getVolume())));
+      const state = player.getPlayerState();
+      const playerIframe = player.getIframe?.();
+      // The IFrame API exposes no volume-change event. A click inside the
+      // native YouTube controls does, however, focus that exact iframe. This
+      // lets us distinguish a genuine user mute from an automatic iOS policy
+      // mute on a different, newly activated player.
+      const nativeControlFocused = Boolean(playerIframe && document.activeElement === playerIframe);
+      // CUED/UNSTARTED values describe iframe initialization, not a native
+      // user interaction. Waiting for a playable state prevents YouTube's
+      // transient sound defaults from becoming the session preference.
+      if (
+        state !== YT_PLAYER_STATES.PLAYING &&
+        state !== YT_PLAYER_STATES.BUFFERING &&
+        state !== YT_PLAYER_STATES.PAUSED
+      ) return;
       // Keep this callback independent of the rendered catalogue array. The
       // scroll listener deliberately survives remote metadata refreshes; if
       // its callback identity changed mid-drag, local touch state would reset
@@ -596,15 +678,118 @@ export function Shorts({
       // stable Short identity without recreating the listener.
       const shortId = activeIdRef.current || orderIdsRef.current[index];
       const key = shortId ? `${shortId}:${index}:${lease.generation}` : '';
-      if (!muted) {
+      const authorization = playbackCoordinatorRef.current.authorization;
+      const authorizationForcesMute = Boolean(
+        authorization &&
+        authorization.index === index &&
+        authorization.generation === lease.generation &&
+        authorization.mode === 'muted-autoplay' &&
+        authorization.fallbackUsed &&
+        !soundRef.current.muted
+      );
+      if (!muted && volume <= 0) {
+        // This is the broken native state reported by a freshly cued iframe.
+        // YouTube/WebKit can discard setVolume while muted, so repair the level
+        // first, then restore silence when this session has not requested sound.
+        try {
+          player.setVolume(soundRef.current.volume);
+          if (soundRef.current.muted) {
+            player.mute();
+          } else {
+            // This player is already moving and remains unmuted after the
+            // level repair, so its retained-audible request has succeeded.
+            // Clear the pending/forced guards before the user can press the
+            // native mute control; otherwise that real click may be mistaken
+            // for the policy fallback that never happened.
+            playbackCoordinatorRef.current.forcedMutedLease = null;
+            playbackCoordinatorRef.current.pendingAudibleLease = null;
+            if (
+              authorization &&
+              authorization.index === index &&
+              authorization.generation === lease.generation &&
+              authorization.fallbackUsed
+            ) {
+              projectStartAuthorization({
+                ...authorization,
+                mode: 'retained-audible',
+                fallbackUsed: false,
+              });
+            }
+            persistSoundPreference(false, soundRef.current.volume);
+          }
+        } catch {}
+      } else if (!muted) {
         // This is the native YouTube control's state. Capture it immediately
-        // at the start of the next swipe instead of waiting for the 250ms
+        // at the start of the next swipe instead of waiting for the 100ms
         // observer, which can otherwise lose a very quick unmute-and-swipe.
-        forcedMutedLeaseRef.current = null;
+        playbackCoordinatorRef.current.forcedMutedLease = null;
+        playbackCoordinatorRef.current.pendingAudibleLease = null;
+        if (nativeControlFocused) {
+          // A native unmute is a fresh user authorization, even if this same
+          // lease previously consumed an iOS muted fallback. Renew only the
+          // recovery budget; playback is already moving, so no command is
+          // issued here.
+          if (
+            !authorization ||
+            authorization.index !== index ||
+            authorization.generation !== lease.generation ||
+            authorization.mode !== 'gesture-audible' ||
+            authorization.fallbackUsed
+          ) {
+            projectStartAuthorization({
+              index,
+              generation: lease.generation,
+              mode: 'gesture-audible',
+              fallbackUsed: false,
+            });
+          }
+          const command = playbackCoordinatorRef.current.commands.get(key);
+          if (command?.retryUsed || !command?.requestedAudible) {
+            playbackCoordinatorRef.current.commands.set(key, {
+              ...(command ?? createShortsStartCommand(shortId, index, lease.generation, true)),
+              requestedAudible: true,
+              issued: true,
+              retryUsed: false,
+              progressed: true,
+            });
+          }
+        }
         if (soundRef.current.muted || volume !== soundRef.current.volume) persistSoundPreference(false, volume);
       } else if (soundRef.current.muted) {
-        if (volume !== soundRef.current.volume) persistSoundPreference(true, volume);
-      } else if (forcedMutedLeaseRef.current !== key) {
+        // Prime a muted zero-volume iframe without making it audible. The
+        // native YouTube button can then enable sound with one press.
+        if (volume <= 0) {
+          try { player.setVolume(soundRef.current.volume); } catch {}
+        }
+        return;
+      } else if (
+        playbackCoordinatorRef.current.forcedMutedLease === key ||
+        authorizationForcesMute
+      ) {
+        // An application/iOS fallback is deliberately muted even though the
+        // session still wants sound. Do not reinterpret it as a user choice.
+        if (volume <= 0) {
+          try { player.setVolume(soundRef.current.volume); } catch {}
+        }
+        return;
+      } else if (nativeControlFocused) {
+        // A focused active iframe is the only parent-visible evidence that
+        // this mute came from YouTube's native control. Retire transient
+        // policy guards and remember the explicit session choice.
+        playbackCoordinatorRef.current.forcedMutedLease = null;
+        playbackCoordinatorRef.current.pendingAudibleLease = null;
+        persistSoundPreference(true, volume > 0 ? volume : soundRef.current.volume);
+      } else if (
+        playbackCoordinatorRef.current.pendingAudibleLease === key
+      ) {
+        // A browser may transiently report mute between unMute/play and its
+        // final policy decision. Do not mistake that pending or forced state
+        // for a native user mute.
+        if (volume <= 0) {
+          try { player.setVolume(soundRef.current.volume); } catch {}
+        }
+        return;
+      } else {
         // A mute on an audibly playing, non-fallback lease is a native user
         // choice. Forced iOS fallback mutes retain the desired-audible flag.
         persistSoundPreference(true, soundRef.current.volume);
@@ -612,7 +797,7 @@ export function Shorts({
     } catch {
       // The active iframe may be between replacement and registration.
     }
-  }, [persistSoundPreference]);
+  }, [persistSoundPreference, projectStartAuthorization]);
 
   const cancelSoundSync = useCallback(() => {
     soundSyncTokenRef.current += 1;
@@ -621,40 +806,54 @@ export function Shorts({
     // Sound authorizations are deliberately ephemeral. Any scroll, route,
     // overlay, or visibility transition invalidates the gesture that created
     // them so a late YouTube callback cannot unmute a different card.
-    startAuthorizationRef.current = null;
-    setStartAuthorization(null);
-  }, []);
+    playbackCoordinatorRef.current.pendingAudibleLease = null;
+    projectStartAuthorization(null);
+  }, [projectStartAuthorization]);
 
-  /** Start the current player audibly from a direct user gesture. */
+  /**
+   * Request the current session's audible state for the active player. Touch
+   * and keyboard callers invoke this in their input task; mouse/trackpad
+   * scroll settlement may be accepted because the user already enabled sound.
+   * Browser rejection always falls back once to muted motion.
+   */
   const beginAudibleStart = useCallback((
     index: number,
     generation: number,
     player: YouTubePlayer,
     attempt: ShortsStartAttempt = 'initial',
   ) => {
-    const authorization = startAuthorizationRef.current;
+    const authorization = playbackCoordinatorRef.current.authorization;
     if (
       !audibleAuthorizationMatches(authorization, index, generation, soundRef.current.muted) ||
       !leaseMatches(controllerRef.current, index, generation)
     ) return;
     if (!claimStartCommand(index, generation, attempt, true)) return;
+    const key = startCommandKey(index, generation);
+    playbackCoordinatorRef.current.pendingAudibleLease = key;
+    // Clear an older guard before calling YouTube.  Do this before playVideo,
+    // because onAutoplayBlocked may fire synchronously and install the new
+    // fallback guard while playVideo is still on the stack.
+    playbackCoordinatorRef.current.forcedMutedLease = null;
 
     soundSyncTokenRef.current += 1;
     soundSyncTimersRef.current.forEach((timer) => window.clearTimeout(timer));
     soundSyncTimersRef.current = [];
     try {
-      // These commands intentionally remain adjacent to the event handler;
-      // WebKit can reject an unmute that is issued from a later effect.
-      player.setVolume(Math.max(0, Math.min(100, Math.round(soundRef.current.volume))));
+      // Direct-input callers keep these commands adjacent to the event handler.
+      // Passive scroll settlement can still attempt the retained session state;
+      // WebKit rejection is handled by the guarded muted fallback below.
       player.unMute();
+      // Apply the retained level after unmuting. WebKit can discard a volume
+      // command sent to a muted iframe, leaving YouTube visually "enabled"
+      // at zero and forcing mute-then-unmute on every card.
+      player.setVolume(Math.max(0, Math.min(100, Math.round(soundRef.current.volume))));
       player.playVideo();
-      forcedMutedLeaseRef.current = null;
     } catch {
+      playbackCoordinatorRef.current.pendingAudibleLease = null;
       const fallback = mutedFallbackAuthorization(authorization, index, generation);
       if (attempt === 'initial' && fallback && claimStartCommand(index, generation, 'retry', false)) {
-        startAuthorizationRef.current = fallback;
-        setStartAuthorization(fallback);
-        forcedMutedLeaseRef.current = startCommandKey(index, generation);
+        projectStartAuthorization(fallback);
+        playbackCoordinatorRef.current.forcedMutedLease = startCommandKey(index, generation);
         try { player.mute(); player.playVideo(); } catch {}
       }
       return;
@@ -664,12 +863,12 @@ export function Shorts({
     const timer = window.setTimeout(() => {
       soundSyncTimersRef.current = soundSyncTimersRef.current.filter((entry) => entry !== timer);
       if (token !== soundSyncTokenRef.current) return;
-      const current = startAuthorizationRef.current;
+      const current = playbackCoordinatorRef.current.authorization;
       if (
         !current ||
         current.index !== index ||
         current.generation !== generation ||
-        current.mode !== 'gesture-audible' ||
+        current.mode === 'muted-autoplay' ||
         !leaseMatches(controllerRef.current, index, generation) ||
         document.visibilityState === 'hidden'
       ) return;
@@ -685,25 +884,41 @@ export function Shorts({
       // progress here could unnecessarily remute a valid but slow-starting
       // iOS player after every swipe.
       if ((state === YT_PLAYER_STATES.PLAYING || state === YT_PLAYER_STATES.BUFFERING) && !muted) {
-        forcedMutedLeaseRef.current = null;
+        playbackCoordinatorRef.current.forcedMutedLease = null;
+        playbackCoordinatorRef.current.pendingAudibleLease = null;
         return;
       }
       // One and only one recovery: preserve the desired unmuted preference,
       // but make the video move muted when iOS rejects the audible start.
       const fallback = mutedFallbackAuthorization(current, index, generation);
+      const movingMuted = muted && (
+        state === YT_PLAYER_STATES.PLAYING ||
+        state === YT_PLAYER_STATES.BUFFERING
+      );
+      // WebKit may accept motion while silently rejecting sound. Motion has
+      // already satisfied this lease, so do not replay it; retain a forced-mute
+      // guard so the observer cannot misread the policy fallback as a native
+      // user mute and erase the session's desired-audible state.
+      if (fallback && movingMuted) {
+        projectStartAuthorization(fallback);
+        playbackCoordinatorRef.current.pendingAudibleLease = null;
+        playbackCoordinatorRef.current.forcedMutedLease = key;
+        session.current.autoplayFailures += 1;
+        return;
+      }
+      playbackCoordinatorRef.current.pendingAudibleLease = null;
       if (attempt !== 'initial' || !fallback || !claimStartCommand(index, generation, 'retry', false)) return;
-      startAuthorizationRef.current = fallback;
-      setStartAuthorization(fallback);
-      forcedMutedLeaseRef.current = startCommandKey(index, generation);
+      projectStartAuthorization(fallback);
+      playbackCoordinatorRef.current.forcedMutedLease = key;
       try {
-        player.setVolume(Math.max(0, Math.min(100, Math.round(soundRef.current.volume))));
         player.mute();
+        player.setVolume(Math.max(0, Math.min(100, Math.round(soundRef.current.volume))));
         player.playVideo();
       } catch {}
       session.current.autoplayFailures += 1;
     }, 260);
     soundSyncTimersRef.current.push(timer);
-  }, [claimStartCommand, startCommandKey]);
+  }, [claimStartCommand, projectStartAuthorization, startCommandKey]);
 
   /**
    * A facade tap is an explicit recovery request. It first uses any untouched
@@ -718,14 +933,14 @@ export function Shorts({
     // clear only this current lease's guard before issuing its manual start.
     setBlockedIndex(null);
     const key = startCommandKey(index, generation);
-    let existing = startCommandsRef.current.get(key);
+    let existing = playbackCoordinatorRef.current.commands.get(key);
     if (existing && nextShortsStartAttempt(existing) == null) {
       // Automatic recovery may be exhausted, or a BUFFERING signal may have
       // cancelled passive retries before motion began. A real facade tap is
       // new user authorization, so renew the command while retaining the same
       // guarded lease rather than leaving the card stuck.
       existing = resetShortsStartForManualRecovery(existing);
-      startCommandsRef.current.set(key, existing);
+      playbackCoordinatorRef.current.commands.set(key, existing);
     }
     const attempt = nextShortsStartAttempt(existing);
     if (!attempt) return;
@@ -736,8 +951,7 @@ export function Shorts({
       mode: requestedAudible ? 'gesture-audible' : 'muted-autoplay',
       fallbackUsed: false,
     };
-    startAuthorizationRef.current = authorization;
-    setStartAuthorization(authorization);
+    projectStartAuthorization(authorization);
 
     if (requestedAudible) {
       beginAudibleStart(index, generation, player, attempt);
@@ -745,13 +959,13 @@ export function Shorts({
     }
 
     if (!claimStartCommand(index, generation, attempt, false)) return;
-    forcedMutedLeaseRef.current = key;
+    playbackCoordinatorRef.current.forcedMutedLease = key;
     try {
-      player.setVolume(Math.max(0, Math.min(100, Math.round(soundRef.current.volume))));
       player.mute();
+      player.setVolume(Math.max(0, Math.min(100, Math.round(soundRef.current.volume))));
       player.playVideo();
     } catch {}
-  }, [beginAudibleStart, claimStartCommand, startCommandKey]);
+  }, [beginAudibleStart, claimStartCommand, projectStartAuthorization, startCommandKey]);
 
   /**
    * A touch/key gesture can settle before its destination iframe is ready.
@@ -761,19 +975,19 @@ export function Shorts({
    * request audible playback again.
    */
   const demoteAudibleStart = useCallback((index: number, generation: number) => {
-    const authorization = startAuthorizationRef.current;
+    const authorization = playbackCoordinatorRef.current.authorization;
     if (
       !authorization ||
       authorization.index !== index ||
       authorization.generation !== generation ||
-      authorization.mode !== 'gesture-audible'
+      authorization.mode === 'muted-autoplay'
     ) return;
     const next = mutedFallbackAuthorization(authorization, index, generation);
     if (!next) return;
-    startAuthorizationRef.current = next;
-    setStartAuthorization(next);
-    forcedMutedLeaseRef.current = startCommandKey(index, generation);
-  }, [startCommandKey]);
+    projectStartAuthorization(next);
+    playbackCoordinatorRef.current.pendingAudibleLease = null;
+    playbackCoordinatorRef.current.forcedMutedLease = startCommandKey(index, generation);
+  }, [projectStartAuthorization, startCommandKey]);
 
   const requestPlayerInitialization = useCallback(
     (index: number, priority: number, start: (signal: AbortSignal) => Promise<void>): InitializationLease =>
@@ -906,23 +1120,28 @@ export function Shorts({
       if (countAdvance && previous !== target) session.current.advances += 1;
       const lease = settled.lease;
       if (lease) {
+        // Gesture-owned playback can be issued before React commits the next
+        // render. Mirror the lease on the active card synchronously so player
+        // callbacks and diagnostics can always attribute that command to the
+        // exact generation; the declarative attribute below then preserves it.
+        const activeCard = feedRef.current?.querySelector<HTMLElement>(`[data-short-index="${target}"]`);
+        if (activeCard) activeCard.dataset.leaseGeneration = String(lease.generation);
         const authorization: ShortsStartAuthorization = {
           index: target,
           generation: lease.generation,
           mode: startMode,
           fallbackUsed: false,
         };
-        startAuthorizationRef.current = authorization;
-        setStartAuthorization(authorization);
-        startCommandsRef.current.clear();
+        projectStartAuthorization(authorization);
+        playbackCoordinatorRef.current.commands.clear();
         const key = startCommandKey(target, lease.generation);
-        const command = createShortsStartCommand(short.id, target, lease.generation, startMode === 'gesture-audible');
-        startCommandsRef.current.set(key, command);
-        forcedMutedLeaseRef.current = startMode === 'muted-autoplay' && !soundRef.current.muted ? key : null;
+        const command = createShortsStartCommand(short.id, target, lease.generation, startMode !== 'muted-autoplay');
+        playbackCoordinatorRef.current.commands.set(key, command);
+        playbackCoordinatorRef.current.forcedMutedLease = startMode === 'muted-autoplay' && !soundRef.current.muted ? key : null;
       }
       return lease;
     },
-    [cancelSoundSync, orderedShorts, pausePlayersExcept, replaceShortHash, startCommandKey, transitionController]
+    [cancelSoundSync, orderedShorts, pausePlayersExcept, projectStartAuthorization, replaceShortHash, startCommandKey, transitionController]
   );
   // The scroll listener is intentionally long-lived. API enrichment can
   // replace the ordered array while a quiet-settle timer is pending; keeping
@@ -960,7 +1179,7 @@ export function Shorts({
       const short = orderedShorts[index];
       if (!snapshot || !short || snapshot.videoId !== short.id) return;
       try {
-        const authorization = startAuthorizationRef.current;
+        const authorization = playbackCoordinatorRef.current.authorization;
         const directAudible = Boolean(
           phase === 'playing' &&
           authorization &&
@@ -1068,13 +1287,13 @@ export function Shorts({
               const state = player.getPlayerState();
               if (state === YT_PLAYER_STATES.PLAYING || state === YT_PLAYER_STATES.BUFFERING) return;
               const key = startCommandKey(index, retryGeneration);
-              const attempt = nextShortsStartAttempt(startCommandsRef.current.get(key));
+              const attempt = nextShortsStartAttempt(playbackCoordinatorRef.current.commands.get(key));
               if (attempt && claimStartCommand(index, retryGeneration, attempt, false)) {
                 // A code-5 recovery is an application fallback, not a native
                 // mute action. Mark this lease before muting so the bounded
                 // sound observer preserves the user's desired-audible session
                 // preference for the next eligible gesture.
-                forcedMutedLeaseRef.current = key;
+                playbackCoordinatorRef.current.forcedMutedLease = key;
                 player.mute();
                 player.playVideo();
                 return;
@@ -1096,36 +1315,204 @@ export function Shorts({
 
   const handleAutoplayBlocked = useCallback((index: number, generation: number | null, player: YouTubePlayer): boolean => {
     if (index !== activeIndexRef.current) return false;
-    if (generation != null && !leaseMatches(controllerRef.current, index, generation)) return false;
-    if (generation == null) return false;
-    const authorization = startAuthorizationRef.current;
-    if (claimStartCommand(index, generation, 'retry', false)) {
-      const fallback = authorization
-        ? { ...authorization, mode: 'muted-autoplay' as const, fallbackUsed: true }
-        : { index, generation, mode: 'muted-autoplay' as const, fallbackUsed: true };
-      startAuthorizationRef.current = fallback;
-      setStartAuthorization(fallback);
-      forcedMutedLeaseRef.current = startCommandKey(index, generation);
+    if (playersRef.current.get(index) !== player) {
+      try { player.mute(); player.pauseVideo(); } catch {}
+      return false;
+    }
+    const resolvedGeneration = resolveIssuedGeneration(index, generation);
+    if (resolvedGeneration == null) return false;
+    generation = resolvedGeneration;
+    const authorization = playbackCoordinatorRef.current.authorization;
+    const audibleFallback = mutedFallbackAuthorization(authorization, index, generation);
+    const existingMutedFallback = Boolean(
+      authorization &&
+      authorization.index === index &&
+      authorization.generation === generation &&
+      authorization.mode === 'muted-autoplay' &&
+      authorization.fallbackUsed
+    );
+    let state: number = YT_PLAYER_STATES.UNSTARTED;
+    let muted = true;
+    try {
+      state = player.getPlayerState();
+      muted = Boolean(player.isMuted());
+    } catch {}
+    // YouTube can deliver a delayed policy callback after the current command
+    // has already succeeded. The event carries no command token; the player's
+    // live state and pool identity are therefore the authoritative stale-event
+    // guard. Never interrupt current audible motion to service an old callback.
+    if ((state === YT_PLAYER_STATES.PLAYING || state === YT_PLAYER_STATES.BUFFERING) && !muted) {
+      playbackCoordinatorRef.current.pendingAudibleLease = null;
+      playbackCoordinatorRef.current.forcedMutedLease = null;
+      setBlockedIndex(null);
       try {
-        player.setVolume(Math.max(0, Math.min(100, Math.round(soundRef.current.volume))));
+        const volume = Math.max(0, Math.min(100, Math.round(player.getVolume())));
+        if (volume > 0 && (soundRef.current.muted || soundRef.current.volume !== volume)) {
+          persistSoundPreference(false, volume);
+        }
+      } catch {}
+      return true;
+    }
+    const movingMuted = muted && (
+      state === YT_PLAYER_STATES.PLAYING ||
+      state === YT_PLAYER_STATES.BUFFERING
+    );
+    if ((audibleFallback || existingMutedFallback) && movingMuted) {
+      if (audibleFallback) {
+        projectStartAuthorization(audibleFallback);
+      }
+      playbackCoordinatorRef.current.pendingAudibleLease = null;
+      playbackCoordinatorRef.current.forcedMutedLease = startCommandKey(index, generation);
+      setBlockedIndex(null);
+      session.current.autoplayFailures += 1;
+      return true;
+    }
+    const retryClaimed = claimStartCommand(index, generation, 'retry', false) || (
+      Boolean(audibleFallback) && claimBlockedAudibleFallback(index, generation)
+    );
+    if (retryClaimed) {
+      const fallback = audibleFallback ?? (authorization
+        ? { ...authorization, mode: 'muted-autoplay' as const, fallbackUsed: true }
+        : { index, generation, mode: 'muted-autoplay' as const, fallbackUsed: true });
+      projectStartAuthorization(fallback);
+      playbackCoordinatorRef.current.pendingAudibleLease = null;
+      playbackCoordinatorRef.current.forcedMutedLease = startCommandKey(index, generation);
+      try {
         player.mute();
+        player.setVolume(Math.max(0, Math.min(100, Math.round(soundRef.current.volume))));
         player.playVideo();
       } catch {}
       setBlockedIndex(null);
       session.current.autoplayFailures += 1;
       return true;
     }
+    playbackCoordinatorRef.current.pendingAudibleLease = null;
+    if (audibleFallback) playbackCoordinatorRef.current.forcedMutedLease = startCommandKey(index, generation);
     setBlockedIndex(index);
     session.current.autoplayFailures += 1;
     return false;
-  }, [claimStartCommand, startCommandKey]);
+  }, [claimBlockedAudibleFallback, claimStartCommand, persistSoundPreference, projectStartAuthorization, resolveIssuedGeneration, startCommandKey]);
+
+  const handleUnexpectedPause = useCallback((index: number, generation: number | null, player: YouTubePlayer): boolean => {
+    if (index !== activeIndexRef.current || playersRef.current.get(index) !== player) return false;
+    try {
+      if (player.getPlayerState() !== YT_PLAYER_STATES.PAUSED || player.getCurrentTime() > 0.08) return false;
+    } catch {
+      return false;
+    }
+    const resolvedGeneration = resolveIssuedGeneration(index, generation);
+    if (resolvedGeneration == null) return false;
+    const key = startCommandKey(index, resolvedGeneration);
+    const command = playbackCoordinatorRef.current.commands.get(key);
+    if (!command) return false;
+    const claimed = claimShortsPausedStartupFallback(command);
+    playbackCoordinatorRef.current.commands.set(key, claimed.command);
+    if (!claimed.allowed) return false;
+
+    const current = playbackCoordinatorRef.current.authorization;
+    const fallback = current && current.index === index && current.generation === resolvedGeneration
+      ? {
+          ...current,
+          mode: 'muted-autoplay' as const,
+          fallbackUsed: current.fallbackUsed || command.requestedAudible,
+        }
+      : {
+          index,
+          generation: resolvedGeneration,
+          mode: 'muted-autoplay' as const,
+          fallbackUsed: command.requestedAudible,
+        };
+    projectStartAuthorization(fallback);
+    playbackCoordinatorRef.current.pendingAudibleLease = null;
+    playbackCoordinatorRef.current.forcedMutedLease = command.requestedAudible || !soundRef.current.muted ? key : null;
+    try {
+      player.mute();
+      player.setVolume(Math.max(1, Math.min(100, Math.round(soundRef.current.volume || 100))));
+      player.playVideo();
+    } catch {
+      return false;
+    }
+    setBlockedIndex(null);
+    session.current.autoplayFailures += 1;
+    return true;
+  }, [projectStartAuthorization, resolveIssuedGeneration, startCommandKey]);
 
   const handlePlaying = useCallback((index: number, generation: number | null, startupMs: number, player: YouTubePlayer) => {
-    if (!leaseMatches(controllerRef.current, index, generation)) {
+    if (playersRef.current.get(index) !== player) {
+      try { player.mute(); player.pauseVideo(); } catch {}
+      return;
+    }
+    try {
+      if (player.getPlayerState() !== YT_PLAYER_STATES.PLAYING) return;
+    } catch {
+      return;
+    }
+    const resolvedGeneration = resolveIssuedGeneration(index, generation);
+    if (resolvedGeneration == null) {
       // A late PLAYING callback from a previous lease is never allowed to
       // reclaim the feed. It is safe to pause that iframe immediately.
       try { player.mute(); player.pauseVideo(); } catch {}
       return;
+    }
+    generation = resolvedGeneration;
+    if (generation != null) {
+      const command = playbackCoordinatorRef.current.commands.get(startCommandKey(index, generation));
+      if (!command?.issued) {
+        // A still-mounted iframe can deliver a delayed PLAYING callback after
+        // its former lease was revoked. The IFrame API supplies no request
+        // token, so accept motion only after the current lease's arbiter has
+        // actually issued its own command.
+        try { player.mute(); player.pauseVideo(); } catch {}
+        return;
+      }
+    }
+    // YouTube can report the first PLAYING callback as unmuted with volume 0,
+    // even though the user never selected that state. Normalize synchronously
+    // before the polling observer or native control can expose it. Some iOS
+    // builds ignore setVolume after mute(), so prime the level first and then
+    // restore silence when this session has not requested sound.
+    if (generation != null) {
+      const key = startCommandKey(index, generation);
+      const authorization = playbackCoordinatorRef.current.authorization;
+      const authorizationForcesMute = Boolean(
+        authorization &&
+        authorization.index === index &&
+        authorization.generation === generation &&
+        authorization.mode === 'muted-autoplay' &&
+        authorization.fallbackUsed &&
+        !soundRef.current.muted
+      );
+      try {
+        const muted = Boolean(player.isMuted());
+        const volume = Math.max(0, Math.min(100, Math.round(player.getVolume())));
+        if (soundRef.current.muted) {
+          if (!muted && volume <= 0) {
+            // Prime while YouTube still considers the player unmuted. Some
+            // WebKit builds ignore a volume command sent after mute().
+            player.setVolume(soundRef.current.volume);
+            player.mute();
+          } else {
+            if (!muted) player.mute();
+            if (volume <= 0) player.setVolume(soundRef.current.volume);
+          }
+        } else if (!muted) {
+          const audibleVolume = volume > 0 ? volume : soundRef.current.volume;
+          if (volume <= 0) player.setVolume(audibleVolume);
+          playbackCoordinatorRef.current.pendingAudibleLease = null;
+          playbackCoordinatorRef.current.forcedMutedLease = null;
+          if (soundRef.current.muted || soundRef.current.volume !== audibleVolume) {
+            persistSoundPreference(false, audibleVolume);
+          }
+        } else if (
+          playbackCoordinatorRef.current.pendingAudibleLease !== key &&
+          playbackCoordinatorRef.current.forcedMutedLease !== key &&
+          !authorizationForcesMute
+        ) {
+          // A stable mute outside an application-controlled start is the
+          // native YouTube control, not an initialization default.
+          persistSoundPreference(true, volume > 0 ? volume : soundRef.current.volume);
+        }
+      } catch {}
     }
     markStartProgress(index, generation);
     restorePlayerState(index, player, 'playing');
@@ -1138,7 +1525,7 @@ export function Shorts({
       session.current.videosStarted += 1;
       session.current.startupMsTotal += Math.min(30000, startupMs);
     }
-  }, [markStartProgress, orderedShorts, restorePlayerState]);
+  }, [markStartProgress, orderedShorts, persistSoundPreference, resolveIssuedGeneration, restorePlayerState, startCommandKey]);
 
   const handlePlaybackRateChange = useCallback((index: number, generation: number | null, rate: number) => {
     if (leaseMatches(controllerRef.current, index, generation) && Number.isFinite(rate) && rate > 0) setPlaybackRate(rate);
@@ -1149,6 +1536,7 @@ export function Shorts({
       // Prepared neighbours may cue freely, but only the settled card owns a
       // restore operation. This keeps a late CUED callback from an old lease
       // from seeking or changing sound on a hidden iframe.
+      if (playersRef.current.get(index) !== player) return;
       if (index !== activeIndexRef.current) return;
       if (generation != null && !leaseMatches(controllerRef.current, index, generation)) return;
       restorePlayerState(index, player, 'cued');
@@ -1156,12 +1544,31 @@ export function Shorts({
     [restorePlayerState]
   );
 
-  const handleBuffering = useCallback((index: number, generation: number | null) => {
-    if (leaseMatches(controllerRef.current, index, generation)) {
+  const handleBuffering = useCallback((index: number, generation: number | null, player: YouTubePlayer) => {
+    if (playersRef.current.get(index) !== player) return;
+    try {
+      if (player.getPlayerState() !== YT_PLAYER_STATES.BUFFERING) return;
+    } catch {
+      return;
+    }
+    const resolvedGeneration = resolveIssuedGeneration(index, generation);
+    if (resolvedGeneration != null) {
+      generation = resolvedGeneration;
       markStartProgress(index, generation);
       session.current.bufferingEvents += 1;
+      // BUFFERING is not confirmed motion. Preserve the authorization and its
+      // one muted recovery until first-frame advancement; WebKit may emit
+      // BUFFERING and then PAUSED without onAutoplayBlocked.
+      try {
+        const muted = Boolean(player.isMuted());
+        const volume = Math.max(0, Math.min(100, Math.round(player.getVolume())));
+        if (!muted && volume <= 0) player.setVolume(soundRef.current.volume);
+        if (!muted && volume > 0 && (soundRef.current.muted || soundRef.current.volume !== volume)) {
+          persistSoundPreference(false, volume);
+        }
+      } catch {}
     }
-  }, [markStartProgress]);
+  }, [markStartProgress, persistSoundPreference, resolveIssuedGeneration]);
 
   const captureSnapshot = useCallback(
     (short: ShortVideo): ShortsReturnState => {
@@ -1226,8 +1633,7 @@ export function Shorts({
                 mode: 'gesture-audible',
                 fallbackUsed: false,
               };
-              startAuthorizationRef.current = authorization;
-              setStartAuthorization(authorization);
+              projectStartAuthorization(authorization);
               let state: number = YT_PLAYER_STATES.UNSTARTED;
               try { state = player.getPlayerState(); } catch {}
               if (playerReadyForStart(state)) {
@@ -1242,7 +1648,7 @@ export function Shorts({
               // eligible swipe can request the session's desired sound again.
               applyMutedSound(player, soundRef.current.volume);
               if (shouldResume && resumed.lease && claimStartCommand(index, resumed.lease.generation, 'initial', false)) {
-                forcedMutedLeaseRef.current = startCommandKey(index, resumed.lease.generation);
+                playbackCoordinatorRef.current.forcedMutedLease = startCommandKey(index, resumed.lease.generation);
                 player.playVideo();
               }
             }
@@ -1256,7 +1662,7 @@ export function Shorts({
         if (card && feedRef.current) scrollFeedToCard(feedRef.current, card, 'auto');
       });
     },
-    [beginAudibleStart, claimStartCommand, demoteAudibleStart, orderedShorts, setActive, startCommandKey, transitionController]
+    [beginAudibleStart, claimStartCommand, demoteAudibleStart, orderedShorts, projectStartAuthorization, setActive, startCommandKey, transitionController]
   );
 
   const openRecipeOverlay = useCallback(
@@ -1409,8 +1815,8 @@ export function Shorts({
       started.current.clear();
       failedIdsRef.current.clear();
       retryCountsRef.current.clear();
-      startCommandsRef.current.clear();
-      forcedMutedLeaseRef.current = null;
+      playbackCoordinatorRef.current.commands.clear();
+      playbackCoordinatorRef.current.forcedMutedLease = null;
       setError(false);
       setConfigError(false);
       cancelSoundSync();
@@ -1434,7 +1840,7 @@ export function Shorts({
       const entered = transitionController({ type: 'route-enter', index: safeTarget });
       if (entered.lease && !soundRef.current.muted) {
         const shortId = orderIdsRef.current[safeTarget];
-        if (shortId) forcedMutedLeaseRef.current = `${shortId}:${safeTarget}:${entered.lease.generation}`;
+        if (shortId) playbackCoordinatorRef.current.forcedMutedLease = `${shortId}:${safeTarget}:${entered.lease.generation}`;
       }
       if (typeof window !== 'undefined' && window.location.hash.includes('make=1')) {
         // The overlay is reconstructed below once the matching catalogue item
@@ -1479,8 +1885,8 @@ export function Shorts({
     // pausing the pool. A delayed YouTube callback must not revive sound or
     // playback after the user has left Shorts.
     cancelSoundSync();
-    startCommandsRef.current.clear();
-    forcedMutedLeaseRef.current = null;
+    playbackCoordinatorRef.current.commands.clear();
+    playbackCoordinatorRef.current.forcedMutedLease = null;
     pausePlayersExcept(null);
     flushSession();
     wasPlayingRef.current = false;
@@ -1666,11 +2072,14 @@ export function Shorts({
         gestureStartTopRef.current = null;
         return current.lease;
       }
-      const directGesture = playbackModeRef.current !== 'manual'
-        && (source === 'stable-touchend' || source === 'keyboard');
-      const mode = startModeForGesture(soundRef.current.muted, directGesture);
+      const wantsRetainedSound = playbackModeRef.current !== 'manual' && !soundRef.current.muted;
+      const directGesture = source === 'stable-touchend' || source === 'keyboard';
+      // A passive scroll may request the session's retained sound, but it is
+      // never represented as a fresh user gesture. If the browser declines it,
+      // the same one-shot muted fallback keeps the video moving.
+      const mode = startModeForSettlement(!wantsRetainedSound, directGesture);
       const lease = setActiveRef.current(target, true, mode);
-      if (directGesture && mode === 'gesture-audible' && lease) {
+      if (wantsRetainedSound && lease) {
         const player = playersRef.current.get(target);
         if (player) {
           let state: number = YT_PLAYER_STATES.UNSTARTED;
@@ -1689,6 +2098,9 @@ export function Shorts({
     };
     const beginScroll = (direction: ShortsScrollDirection) => {
       if (controllerRef.current.phase === 'scrolling') return;
+      // Capture a native YouTube sound change before pausing the outgoing
+      // iframe. This closes the sub-250ms click-then-wheel/touch race.
+      captureActiveSoundPreference();
       transitionController({ type: 'scroll-start', direction });
       // This is deliberately imperative: React's next render must not be the
       // first opportunity for the outgoing iframe to stop playing.
@@ -1835,10 +2247,12 @@ export function Shorts({
     }, [active, beginAudibleStart, cancelSoundSync, captureActiveSoundPreference, demoteAudibleStart, pausePlayersExcept, transitionController]);
 
   // YouTube has no volumechange event. Observe the active player only; never
-  // use this passive poll to unmute a prepared/newly active iframe.
+  // use this passive poll to unmute a prepared/newly active iframe. A 100ms
+  // cadence captures a native click before the 260ms audible-policy verifier
+  // can mistake that explicit mute for a browser-enforced fallback.
   useEffect(() => {
     if (!active) return;
-    const timer = window.setInterval(captureActiveSoundPreference, 250);
+    const timer = window.setInterval(captureActiveSoundPreference, 100);
     return () => window.clearInterval(timer);
   }, [active, captureActiveSoundPreference]);
 
@@ -1848,8 +2262,8 @@ export function Shorts({
         transitionController({ type: 'hidden' });
         gestureStartTopRef.current = null;
         cancelSoundSync();
-        startCommandsRef.current.clear();
-        forcedMutedLeaseRef.current = null;
+        playbackCoordinatorRef.current.commands.clear();
+        playbackCoordinatorRef.current.forcedMutedLease = null;
         pausePlayersExcept(null);
         wasPlayingRef.current = false;
         setPlayingIndex(null);
@@ -1860,7 +2274,7 @@ export function Shorts({
           visibleIndexRef.current = next.settledIndex;
           setVisibleIndex(next.settledIndex);
           if (next.lease && !soundRef.current.muted) {
-            forcedMutedLeaseRef.current = startCommandKey(next.lease.index, next.lease.generation);
+            playbackCoordinatorRef.current.forcedMutedLease = startCommandKey(next.lease.index, next.lease.generation);
           }
         }
       }
@@ -2026,18 +2440,17 @@ export function Shorts({
                             // fresh player start muted when it becomes ready.
                             const short = orderedShorts[target];
                             const key = startCommandKey(target, lease.generation);
-                            const existing = startCommandsRef.current.get(key)
+                            const existing = playbackCoordinatorRef.current.commands.get(key)
                               ?? createShortsStartCommand(short.id, target, lease.generation, false);
-                            startCommandsRef.current.set(key, resetShortsStartForManualRecovery(existing));
+                            playbackCoordinatorRef.current.commands.set(key, resetShortsStartForManualRecovery(existing));
                             const authorization: ShortsStartAuthorization = {
                               index: target,
                               generation: lease.generation,
                               mode: 'muted-autoplay',
                               fallbackUsed: !soundRef.current.muted,
                             };
-                            startAuthorizationRef.current = authorization;
-                            setStartAuthorization(authorization);
-                            forcedMutedLeaseRef.current = !soundRef.current.muted ? key : null;
+                            projectStartAuthorization(authorization);
+                            playbackCoordinatorRef.current.forcedMutedLease = !soundRef.current.muted ? key : null;
                             setBlockedIndex(null);
                           }
                           const player = playersRef.current.get(target);
@@ -2059,6 +2472,7 @@ export function Shorts({
                       onPlaying={handlePlaying}
                       onCued={handleCued}
                       onBuffering={handleBuffering}
+                      onUnexpectedPause={handleUnexpectedPause}
                       onError={handlePlayerError}
                       onAutoplayBlocked={handleAutoplayBlocked}
                       onPlaybackRateChange={handlePlaybackRateChange}

@@ -3,7 +3,6 @@ import { defineConfig, devices } from '@playwright/test';
 /** Focused Safari/WebKit coverage for the physical-phone shell. */
 export default defineConfig({
   testDir: './e2e',
-  testMatch: '**/physical-iphone.spec.ts',
   timeout: 30_000,
   expect: { timeout: 8_000 },
   workers: 1,
@@ -17,6 +16,19 @@ export default defineConfig({
     screenshot: 'only-on-failure',
     video: 'retain-on-failure',
   },
+  projects: [
+    {
+      name: 'physical-iphone-shell',
+      testMatch: '**/physical-iphone.spec.ts',
+    },
+    {
+      name: 'webkit-shorts-sound',
+      testMatch: [
+        '**/shorts-sound.spec.ts',
+        '**/shorts-webkit-lifecycle.spec.ts',
+      ],
+    },
+  ],
   webServer: {
     command: 'VITE_API_BASE= PUBCRAWL_STORE_MODE=memory npm run preview -- --host 127.0.0.1 --port 4175',
     url: 'http://127.0.0.1:4175',

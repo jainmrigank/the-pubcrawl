@@ -2,9 +2,12 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import {
   audibleAuthorizationMatches,
+  claimShortsBlockedAudibleFallback,
+  claimShortsPausedStartupFallback,
   claimShortsStart,
   createShortsStartCommand,
   defaultShortsSoundPreference,
+  healShortsSoundPreference,
   markShortsStartProgress,
   mutedFallbackAuthorization,
   nextShortsStartAttempt,
@@ -16,6 +19,7 @@ import {
   shouldAuthorizeAudibleTouchEnd,
   shouldRevokeShortsLease,
   startModeForGesture,
+  startModeForSettlement,
   writeShortsSoundPreference,
 } from '../src/shortsSoundPolicy.ts';
 
@@ -25,6 +29,9 @@ test('sound preference and gesture jointly choose the start mode', () => {
   assert.equal(startModeForGesture(true, true), 'muted-autoplay');
   assert.equal(startModeForGesture(false, false), 'muted-autoplay');
   assert.equal(startModeForGesture(false, true), 'gesture-audible');
+  assert.equal(startModeForSettlement(true, false), 'muted-autoplay');
+  assert.equal(startModeForSettlement(false, true), 'gesture-audible');
+  assert.equal(startModeForSettlement(false, false), 'retained-audible');
 });
 
 test('only cued/paused/buffering/playing players are eligible for a direct start', () => {
@@ -47,7 +54,7 @@ test('muted fallback is one-shot and preserves the desired-sound preference', ()
   assert.equal(mutedFallbackAuthorization(authorization, 4, 8), null);
 });
 
-test('a new session starts muted and persisted native sound is normalized', () => {
+test('a new session starts muted and persisted volume stays inside the public zero-to-100 schema', () => {
   assert.deepEqual(defaultShortsSoundPreference(), { version: 1, desiredAudible: false, volume: 100 });
   assert.deepEqual(parseShortsSoundPreference(null), defaultShortsSoundPreference());
   assert.deepEqual(parseShortsSoundPreference('{"version":1,"desiredAudible":true,"volume":145}'), {
@@ -56,16 +63,42 @@ test('a new session starts muted and persisted native sound is normalized', () =
     volume: 100,
   });
   assert.deepEqual(parseShortsSoundPreference('{"version":2,"desiredAudible":true,"volume":55}'), defaultShortsSoundPreference());
+  assert.deepEqual(parseShortsSoundPreference('{"version":1,"desiredAudible":true,"volume":0}'), {
+    version: 1,
+    desiredAudible: true,
+    volume: 0,
+  });
 
   const values = new Map();
   const storage = {
     getItem: (key) => values.get(key) ?? null,
     setItem: (key, value) => values.set(key, value),
   };
+  assert.deepEqual(readShortsSoundPreference(storage), defaultShortsSoundPreference());
+  assert.equal(values.has(SHORTS_SOUND_SESSION_KEY), false);
+
+  values.set(SHORTS_SOUND_SESSION_KEY, '{"version":1,"desiredAudible":true,"volume":0}');
+  assert.deepEqual(readShortsSoundPreference(storage), { version: 1, desiredAudible: true, volume: 0 });
+  assert.equal(
+    values.get(SHORTS_SOUND_SESSION_KEY),
+    '{"version":1,"desiredAudible":true,"volume":0}',
+  );
+
   const written = writeShortsSoundPreference({ version: 1, desiredAudible: true, volume: -8 }, storage);
   assert.deepEqual(written, { version: 1, desiredAudible: true, volume: 0 });
   assert.equal(values.has(SHORTS_SOUND_SESSION_KEY), true);
   assert.deepEqual(readShortsSoundPreference(storage), written);
+});
+
+test('a legacy audible zero-volume session is healed without erasing audible intent', () => {
+  assert.deepEqual(
+    healShortsSoundPreference({ version: 1, desiredAudible: true, volume: 0 }),
+    { version: 1, desiredAudible: true, volume: 100 },
+  );
+  const valid = { version: 1, desiredAudible: true, volume: 61 };
+  assert.equal(healShortsSoundPreference(valid), valid);
+  const muted = { version: 1, desiredAudible: false, volume: 0 };
+  assert.equal(healShortsSoundPreference(muted), muted);
 });
 
 test('one initial and one controlled retry may claim a lease command', () => {
@@ -114,6 +147,33 @@ test('playing, buffering, or time advancement cancels every later retry', () => 
   assert.equal(command.progressed, true);
   assert.equal(claimShortsStart(command, 'initial').allowed, false);
   assert.equal(claimShortsStart(command, 'retry').allowed, false);
+});
+
+test('an explicit browser sound rejection may consume one muted recovery after buffering', () => {
+  let command = createShortsStartCommand('short-policy-block', 3, 8, true);
+  command = claimShortsStart(command, 'initial').command;
+  command = markShortsStartProgress(command);
+  assert.equal(claimShortsStart(command, 'retry').allowed, false);
+
+  let fallback = claimShortsBlockedAudibleFallback(command);
+  assert.equal(fallback.allowed, true);
+  command = fallback.command;
+  fallback = claimShortsBlockedAudibleFallback(command);
+  assert.equal(fallback.allowed, false);
+
+  const silent = createShortsStartCommand('short-muted', 3, 9, false);
+  assert.equal(claimShortsBlockedAudibleFallback(claimShortsStart(silent, 'initial').command).allowed, false);
+});
+
+test('buffering then pausing before motion permits exactly one muted recovery', () => {
+  let command = createShortsStartCommand('short-paused', 2, 10, true);
+  command = claimShortsStart(command, 'initial').command;
+  command = markShortsStartProgress(command);
+  let fallback = claimShortsPausedStartupFallback(command);
+  assert.equal(fallback.allowed, true);
+  command = fallback.command;
+  fallback = claimShortsPausedStartupFallback(command);
+  assert.equal(fallback.allowed, false);
 });
 
 test('same-card snap correction retains its lease until a real destination wins', () => {
