@@ -2,6 +2,11 @@ import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 import { VitePWA } from 'vite-plugin-pwa';
 
+const previewHost = process.env.PUBCRAWL_PREVIEW_HOST?.trim();
+const previewAllowedHosts = previewHost && /^[a-z0-9.-]+$/i.test(previewHost)
+  ? [previewHost]
+  : [];
+
 export default defineConfig({
   plugins: [
     react(),
@@ -49,4 +54,8 @@ export default defineConfig({
     },
   ],
   server: { port: 5175 },
+  // Physical-device previews are exposed through a temporary HTTPS tunnel.
+  // Require the caller to opt in to that exact hostname instead of allowing
+  // arbitrary Host headers or every ngrok subdomain.
+  preview: { allowedHosts: previewAllowedHosts },
 });
