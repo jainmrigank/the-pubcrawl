@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import { AnimatePresence, motion, MotionConfig } from 'framer-motion';
 import { fetchHealth, fetchKeptRecipes, fetchLikes, fetchRecipes, fetchVibes, generateRecipe, keepRecipe, matchRecipes, postLike } from './api';
-import type { BrowseFilter, Health, Ingredient, MatchResult, Recipe, ShortsReturnState, Theme, TourId, Vibe, VibeId } from './types';
+import type { BrowseFilter, Health, Ingredient, MatchResult, Recipe, Theme, TourId, Vibe, VibeId } from './types';
 import { Typeahead } from './components/Typeahead';
 import { UploadZone } from './components/UploadZone';
 import { RecipeCard } from './components/RecipeCard';
@@ -209,7 +209,6 @@ export default function App() {
   const [barVisible, setBarVisible] = useState(12);
   const barMatchRequestIdRef = useRef(0);
   const [dailyForced, setDailyForced] = useState(wantsDaily);
-  const [shortsReturn, setShortsReturn] = useState<ShortsReturnState | null>(null);
   const [theme, setTheme] = useState<Theme>(() => currentTheme());
   // Most Loved is the only browse view whose ordering depends on likes. Keep
   // a stable null dependency for every other view so a background likes
@@ -318,20 +317,12 @@ export default function App() {
 
   const leaveShorts = useCallback(() => {
     const target = lastNonShortsHash.current || '#/';
-    setShortsReturn(null);
     // A bare-hash landing navigation normally means the wordmark and opens at
     // the top. BACK is different: keep the landing position remembered by the
     // route hook for this one transition.
     preserveLandingPositionOnce = target === '#/' || target === '#' || target === '';
     window.location.hash = target;
   }, []);
-
-  const continueToBar = useCallback((snapshot: ShortsReturnState) => {
-    setShortsReturn(snapshot);
-    window.location.hash = `#/menu?q=${encodeURIComponent(snapshot.recipeQuery || '')}&from=shorts`;
-  }, []);
-
-  const consumeShortsReturn = useCallback(() => setShortsReturn(null), []);
 
   useEffect(() => {
     try {
@@ -782,17 +773,6 @@ export default function App() {
               flipped cards and accordion state survive switching between them */}
             <div hidden={route !== 'menu'}>
               <>
-                {shortsReturn && !landing && (
-                  <div className="shorts-return-banner" role="status">
-                    <span>
-                      <span className="k-label">SHORT PAUSED</span>
-                      <strong>{shortsReturn.title || 'YOUR LAST POUR'}</strong>
-                    </span>
-                    <a className="text-btn" href={`#/shorts?v=${encodeURIComponent(shortsReturn.videoId)}&src=return`}>
-                      BACK TO SHORT <ArrowRight size={12} />
-                    </a>
-                  </div>
-                )}
                 {/* ================= the menu (landing) ================= */}
                 <section className="hero">
                   <div className="hero-kicker">
@@ -1085,16 +1065,6 @@ export default function App() {
                 initialId={shortVideoId()}
                 source={shortsSource()}
                 onBack={leaveShorts}
-                returnState={shortsReturn}
-                onContinueToBar={continueToBar}
-                onReturnConsumed={consumeShortsReturn}
-                recipeVibe={(recipe) => vibeOf(recipe.vibe)}
-                onToggleRecipeTab={toggleTab}
-                recipeTabIds={tabIds}
-                recipeLikes={likes}
-                recipeLikedIds={likedIds}
-                onToggleRecipeLike={toggleLike}
-                onKeepRecipe={keepDrink}
               />
             </div>
 

@@ -1,63 +1,30 @@
-import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState, type PointerEvent } from 'react';
-import { fetchRecipes, fetchShorts, postShortSession } from '../api';
-import type { Recipe, ShortLibrary, ShortsReturnState, ShortVideo, Vibe, WatchLane } from '../types';
-import { applyMutedSound, YT_PLAYER_STATES, type YouTubePlayer } from '../shortsPlayer';
-import { ArrowLeft, ArrowRight, Check, GlassIcon, Share, X } from '../icons';
+import { useCallback, useEffect, useMemo, useRef, useState, type PointerEvent, type WheelEvent, type KeyboardEvent } from 'react';
+import { fetchShorts, postShortSession } from '../api';
+import type { ShortLibrary, ShortVideo } from '../types';
+import { YT_PLAYER_STATES, type YouTubePlayer } from '../shortsPlayer';
+import { ArrowLeft, ArrowRight, Share } from '../icons';
 import { shareContent, shortShareText } from '../share';
-import { formatMeasure } from '../measure';
 import { SHORTS_SEED } from '../shortsData';
-import { RecipeCardActions } from './RecipeCard';
-import { ContextualHelp } from './ContextualHelp';
-import { ShortPlayerHost } from './shorts/ShortPlayerHost';
-import { OVERLAY_PRIORITY, overlayGate, setBackgroundInert } from '../overlayGate';
-import { queryLocalRecipes } from '../localData';
 import {
-  createShortsControllerState,
-  leaseMatches,
-  reconcileShortsOrder,
-  shortsPreparationPriority,
-  shortsContentWindow,
-  shortsDirectionalPlayerWindow,
-  transitionShortsController,
-  type PlayerLease,
-  type ShortsControllerPhase,
-  type ShortsControllerState,
-} from '../shortsController';
-import {
-  audibleAuthorizationMatches,
-  claimShortsBlockedAudibleFallback,
-  claimShortsPausedStartupFallback,
-  claimShortsStart,
-  createShortsStartCommand,
-  healShortsSoundPreference,
-  markShortsStartProgress,
-  mutedFallbackAuthorization,
-  nextShortsStartAttempt,
-  playerReadyForStart,
+  readShortsRatePreference,
   readShortsSoundPreference,
-  resetShortsStartForManualRecovery,
-  shouldAuthorizeAudibleTouchEnd,
-  shouldRevokeShortsLease,
-  startModeForGesture,
-  startModeForSettlement,
+  writeShortsRatePreference,
   writeShortsSoundPreference,
-  type ShortsStartAttempt,
-  type ShortsStartAuthorization,
-  type ShortsStartCommand,
-  type ShortsStartMode,
 } from '../shortsSoundPolicy';
-import { createShortsInitializationPool, type InitializationLease } from '../shortsPlayerPool';
+import { overlayGate } from '../overlayGate';
+import { ContextualHelp } from './ContextualHelp';
+import { ShortPlayerHost, type ShortPlayerHostHandle } from './shorts/ShortPlayerHost';
 
-const FALLBACK_LANES: WatchLane[] = [
+const FALLBACK_LANES = [
   { id: 'craft', label: 'The Craft', color: '#8A5A24' },
   { id: 'education', label: 'Learn It', color: '#5C7A3B' },
   { id: 'comedy', label: 'For The Laugh', color: '#4A4E7A' },
   { id: 'people', label: 'People & Drink', color: '#8E4A5B' },
-];
+] as const;
 
 const staticLibrary: ShortLibrary = {
   shorts: SHORTS_SEED,
-  lanes: FALLBACK_LANES,
+  lanes: FALLBACK_LANES.map((lane) => ({ ...lane })),
   hasNumbers: false,
   updatedAt: null,
 };
@@ -69,7 +36,7 @@ function randomSeed() {
   return Math.floor(Math.random() * 0x100000000);
 }
 
-/** Deterministic Fisher–Yates shuffle so metadata refreshes keep this visit's order. */
+/** Keep one visit's order stable while optional API enrichment arrives. */
 function shuffleWithSeed<T>(items: readonly T[], seed: number): T[] {
   const shuffled = [...items];
   let state = seed >>> 0;
@@ -81,8 +48,8 @@ function shuffleWithSeed<T>(items: readonly T[], seed: number): T[] {
     return ((value ^ (value >>> 14)) >>> 0) / 0x100000000;
   };
   for (let index = shuffled.length - 1; index > 0; index -= 1) {
-    const swapIndex = Math.floor(random() * (index + 1));
-    [shuffled[index], shuffled[swapIndex]] = [shuffled[swapIndex], shuffled[index]];
+    const swap = Math.floor(random() * (index + 1));
+    [shuffled[index], shuffled[swap]] = [shuffled[swap], shuffled[index]];
   }
   return shuffled;
 }
@@ -91,107 +58,11 @@ function sourceLabel(source: string): 'landing' | 'nav' | 'deep-link' | 'direct'
   return source === 'landing' || source === 'nav' || source === 'deep-link' ? source : 'direct';
 }
 
-/**
- * `offsetTop` is relative to an element's offset parent, which is not
- * necessarily the independently scrolling Shorts feed. iOS and Chromium can
- * therefore jump several cards on route entry. Geometry plus the feed's
- * current scroll position gives the correct feed-local destination.
- */
-function scrollFeedToCard(
-  root: HTMLElement,
-  card: HTMLElement,
-  behavior: ScrollBehavior,
-) {
-  const index = Number(card.dataset.shortIndex);
-  const top = Number.isInteger(index)
-    ? index * root.clientHeight
-    : root.scrollTop + card.getBoundingClientRect().top - root.getBoundingClientRect().top;
-  root.scrollTo({ top: Math.max(0, top), behavior });
-}
-
-const SHORTS_SNAPSHOT_VERSION = 2 as const;
-const SHORTS_SNAPSHOT_KEY = 'pubcrawl.shorts.overlay.v2';
-const SHORTS_RECIPE_GATE_ID = 'shorts-recipe-overlay';
-
-function isShortsReturnState(value: unknown): value is ShortsReturnState {
-  if (!value || typeof value !== 'object') return false;
-  const snapshot = value as Partial<ShortsReturnState>;
-  const order = snapshot.order;
-  const volume = snapshot.volume;
-  return (
-    typeof snapshot.videoId === 'string' && /^[A-Za-z0-9_-]{11}$/.test(snapshot.videoId) &&
-    (snapshot.version == null || snapshot.version === SHORTS_SNAPSHOT_VERSION) &&
-    Array.isArray(order) && order.length > 0 && order.length <= 180 &&
-    order.every((id) => typeof id === 'string' && /^[A-Za-z0-9_-]{11}$/.test(id)) &&
-    new Set(order).size === order.length && order.includes(snapshot.videoId) &&
-    typeof snapshot.currentTime === 'number' && Number.isFinite(snapshot.currentTime) && snapshot.currentTime >= 0 &&
-    typeof snapshot.wasPlaying === 'boolean' &&
-    (snapshot.resumeIntent == null || snapshot.resumeIntent === 'autoplay' || snapshot.resumeIntent === 'paused') &&
-    typeof snapshot.muted === 'boolean' && typeof volume === 'number' && Number.isFinite(volume) && volume >= 0 && volume <= 100 &&
-    (snapshot.recipeQuery == null || typeof snapshot.recipeQuery === 'string')
-  );
-}
-
-function readShortsOverlaySnapshot(): ShortsReturnState | null {
-  if (typeof window === 'undefined') return null;
-  const fromHistory = window.history.state?.pubcrawlShortsOverlay;
-  if (isShortsReturnState(fromHistory)) return { ...fromHistory, version: SHORTS_SNAPSHOT_VERSION };
-  try {
-    const raw = window.sessionStorage.getItem(SHORTS_SNAPSHOT_KEY);
-    const parsed = raw ? JSON.parse(raw) : null;
-    return isShortsReturnState(parsed) ? { ...parsed, version: SHORTS_SNAPSHOT_VERSION } : null;
-  } catch {
-    return null;
-  }
-}
-
-function clearShortsOverlaySnapshot() {
-  if (typeof window === 'undefined') return;
-  try { window.sessionStorage.removeItem(SHORTS_SNAPSHOT_KEY); } catch {}
-}
-
-type ShortsPlaybackMode = 'pool' | 'balanced' | 'manual';
-type ShortsScrollDirection = 'forward' | 'backward';
-type ShortsSettleSource = 'native-scrollend' | 'stable-touchend' | 'quiet-fallback' | 'keyboard' | 'programmatic';
-
-interface ShortsPlaybackCoordinatorState {
-  authorization: ShortsStartAuthorization | null;
-  forcedMutedLease: string | null;
-  pendingAudibleLease: string | null;
-  commands: Map<string, ShortsStartCommand>;
-}
-
-function createShortsPlaybackCoordinator(): ShortsPlaybackCoordinatorState {
-  return {
-    authorization: null,
-    forcedMutedLease: null,
-    pendingAudibleLease: null,
-    commands: new Map(),
-  };
-}
-
-export type { ShortsStartAuthorization, ShortsStartMode } from '../shortsSoundPolicy';
-
-function preferredPlaybackMode(): ShortsPlaybackMode {
-  if (typeof window === 'undefined') return 'manual';
-  const reduced = window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
-  const capabilities = navigator as Navigator & {
-    connection?: { saveData?: boolean; effectiveType?: string };
-  };
-  const connection = capabilities.connection;
-  const slow = connection?.effectiveType === 'slow-2g' || connection?.effectiveType === '2g';
-  const saveData = Boolean(connection?.saveData);
-  // Autoplay is evaluated per YouTube iframe. A single blocked player must
-  // not collapse the whole visit into a one-player queue; the remaining
-  // directional shells can still cue while the active card exposes TAP TO
-  // PLAY when YouTube confirms a block.
-  if (reduced || slow || saveData) return 'manual';
-  return connection?.effectiveType === '3g' ? 'balanced' : 'pool';
-}
-
-/** Initialization order for the bounded iframe bootstrap queue. */
-function shortsInitPriority(index: number, activeIndex: number, focusIndex: number, direction: ShortsScrollDirection): number {
-  return shortsPreparationPriority(index, activeIndex, focusIndex, direction);
+function contentWindow(activeIndex: number, length: number, radius = 5): number[] {
+  if (!length || activeIndex < 0 || activeIndex >= length) return [];
+  const start = Math.max(0, activeIndex - radius);
+  const end = Math.min(length - 1, activeIndex + radius);
+  return Array.from({ length: end - start + 1 }, (_, offset) => start + offset);
 }
 
 interface SessionCounters {
@@ -216,2400 +87,397 @@ const blankSession = (): SessionCounters => ({
   startupMsTotal: 0,
 });
 
-interface ShortsProps {
+export interface ShortsProps {
   active: boolean;
   initialId?: string;
   source?: string;
   onBack: () => void;
-  returnState?: ShortsReturnState | null;
-  onContinueToBar?: (snapshot: ShortsReturnState) => void;
-  onReturnConsumed?: () => void;
-  recipeVibe: (recipe: Recipe) => Vibe;
-  onToggleRecipeTab: (recipe: Recipe) => void;
-  recipeTabIds: ReadonlySet<string>;
-  recipeLikes: Record<string, number>;
-  recipeLikedIds: ReadonlySet<string>;
-  onToggleRecipeLike: (recipe: Recipe) => void;
-  onKeepRecipe: (recipe: Recipe) => void;
 }
 
-interface ShortRecipeCardProps {
-  recipe: Recipe;
-  index: number;
-  vibe: Vibe;
-  onToggleTab: (recipe: Recipe) => void;
-  inTab: boolean;
-  likes: number;
-  liked: boolean;
-  onToggleLike: (recipe: Recipe) => void;
-  onKeep: (recipe: Recipe) => void;
+interface GestureStart {
+  pointerId: number;
+  x: number;
+  y: number;
+  ignored: boolean;
 }
 
-function ShortRecipeCard({ recipe, index, vibe, onToggleTab, inTab, likes, liked, onToggleLike, onKeep }: ShortRecipeCardProps) {
-  const [flipped, setFlipped] = useState(false);
-  const [imageFailed, setImageFailed] = useState(false);
-  return (
-    <article className={`shorts-recipe-card ${flipped ? 'is-flipped' : ''}`}>
-      <div
-        className="shorts-recipe-card-inner"
-        role="button"
-        tabIndex={0}
-        aria-label={`${recipe.name}. ${flipped ? 'Show photo' : 'Show ingredients and method'}`}
-        onClick={() => setFlipped((value) => !value)}
-        onKeyDown={(event) => {
-          if (event.key === 'Enter' || event.key === ' ') {
-            event.preventDefault();
-            setFlipped((value) => !value);
-          }
-        }}
-      >
-        <div className="shorts-recipe-face shorts-recipe-front">
-          {recipe.thumb && !imageFailed ? (
-            <div className="shorts-recipe-image">
-              <img src={recipe.thumb} alt={recipe.name} loading={index < 2 ? 'eager' : 'lazy'} decoding="async" onError={() => setImageFailed(true)} />
-            </div>
-          ) : (
-            <div className="shorts-recipe-image shorts-recipe-image-fallback" role="img" aria-label="No verified photo available">
-              <span className="k-label">NO PHOTO</span>
-              <GlassIcon glass={recipe.glass} size={56} />
-            </div>
-          )}
-          <div className="shorts-recipe-copy">
-            <span className="k-label">{recipe.glass || 'ANY GLASS'}</span>
-            <h3>{recipe.name}</h3>
-            <span className="k-label dim">TAP FOR THE POUR</span>
-          </div>
-        </div>
-        <div className="shorts-recipe-face shorts-recipe-back">
-          <div className="shorts-recipe-back-head">
-            <span className="k-label">WHAT YOU NEED</span>
-            <h3>{recipe.name}</h3>
-          </div>
-          <ul>
-            {recipe.ingredients.slice(0, 8).map((ingredient, ingredientIndex) => (
-              <li key={`${ingredient.name}-${ingredientIndex}`}>
-                <span>{ingredient.name}</span>
-                <span className="k-label dim">{formatMeasure(ingredient.measure) || '—'}</span>
-              </li>
-            ))}
-          </ul>
-          <p>{recipe.instructions}</p>
-        </div>
-      </div>
-      <div className="card-actions shorts-recipe-card-actions" aria-label={`${recipe.name} actions`}>
-        <RecipeCardActions
-          recipe={recipe}
-          vibe={vibe}
-          onToggleTab={onToggleTab}
-          inTab={inTab}
-          likes={likes}
-          liked={liked}
-          onToggleLike={onToggleLike}
-          onKeep={onKeep}
-        />
-      </div>
-    </article>
-  );
-}
-
-
-interface ShortsSpeedHoldProps {
-  enabled: boolean;
-  rate: number;
-  player: YouTubePlayer | null;
-}
-
-/** Instagram/YouTube-style temporary 2× hold, kept outside the iframe. */
-function ShortsSpeedHold({ enabled, rate, player }: ShortsSpeedHoldProps) {
-  const timerRef = useRef<number | null>(null);
-  const pointerRef = useRef<{ id: number; x: number; y: number } | null>(null);
-  const originalRateRef = useRef<number | null>(null);
-  const [holding, setHolding] = useState(false);
-
-  const clearTimer = useCallback(() => {
-    if (timerRef.current != null) {
-      window.clearTimeout(timerRef.current);
-      timerRef.current = null;
-    }
-  }, []);
-
-  const restore = useCallback(() => {
-    clearTimer();
-    const original = originalRateRef.current;
-    if (player && original != null) {
-      try {
-        player.setPlaybackRate?.(original);
-      } catch {}
-    }
-    originalRateRef.current = null;
-    pointerRef.current = null;
-    setHolding(false);
-  }, [clearTimer, player]);
-
-  const begin = useCallback((event: PointerEvent<HTMLButtonElement>) => {
-    if (!enabled || pointerRef.current) return;
-    if (!player) return;
-    let current = rate || 1;
-    try {
-      current = player.getPlaybackRate?.() || current;
-    } catch {}
-    pointerRef.current = { id: event.pointerId, x: event.clientX, y: event.clientY };
-    originalRateRef.current = current;
-    event.currentTarget.setPointerCapture?.(event.pointerId);
-    timerRef.current = window.setTimeout(() => {
-      timerRef.current = null;
-      const active = player;
-      if (!active || !pointerRef.current || !enabled) return;
-      if (!active.setPlaybackRate) {
-        restore();
-        return;
-      }
-      let rates: number[] = [];
-      try {
-        rates = active.getAvailablePlaybackRates?.() || [];
-      } catch {}
-      const faster = rates.filter((candidate) => Number.isFinite(candidate) && candidate > 1 && candidate <= 2);
-      if (rates.length && !faster.length) {
-        restore();
-        return;
-      }
-      const target = faster.length ? Math.max(...faster) : 2;
-      try {
-        active.setPlaybackRate(target);
-      } catch {
-        restore();
-      }
-    }, 250);
-  }, [enabled, player, rate, restore]);
-
-  const move = useCallback((event: PointerEvent<HTMLButtonElement>) => {
-    const pointer = pointerRef.current;
-    if (!pointer || pointer.id !== event.pointerId) return;
-    if (Math.hypot(event.clientX - pointer.x, event.clientY - pointer.y) > 12) restore();
-  }, [restore]);
-
-  useEffect(() => {
-    if (enabled) return;
-    restore();
-  }, [enabled, restore]);
-
-  // The IFrame API confirms the accepted rate asynchronously. Do not claim a
-  // 2× hold when a browser/player silently clamps or rejects the request.
-  useEffect(() => {
-    const original = originalRateRef.current;
-    if (!pointerRef.current || original == null || !Number.isFinite(rate)) return;
-    if (rate > original + 0.01) setHolding(true);
-  }, [rate]);
-
-  useEffect(() => {
-    const stop = () => restore();
-    document.addEventListener('visibilitychange', stop);
-    window.addEventListener('pagehide', stop);
-    return () => {
-      document.removeEventListener('visibilitychange', stop);
-      window.removeEventListener('pagehide', stop);
-      restore();
-    };
-  }, [restore]);
-
-  return (
-    <button
-      type="button"
-      className={`shorts-speed-hold ${holding ? 'is-holding' : ''}`}
-      aria-label={holding ? `Playing at ${rate}×. Release to restore speed.` : 'Hold for double speed'}
-      aria-pressed={holding}
-      onPointerDown={begin}
-      onPointerMove={move}
-      onPointerUp={restore}
-      onPointerCancel={restore}
-      onPointerLeave={(event) => {
-        if (holding) restore();
-        else if (pointerRef.current?.id === event.pointerId) restore();
-      }}
-    >
-      {holding ? `${rate % 1 ? rate.toFixed(1) : rate}×` : '2×'}
-    </button>
-  );
-}
-
-/** One-card-per-viewport Shorts shelf with an adaptive directional player pool. */
-export function Shorts({
-  active,
-  initialId,
-  source = 'direct',
-  onBack,
-  returnState = null,
-  onContinueToBar,
-  onReturnConsumed,
-  recipeVibe,
-  onToggleRecipeTab,
-  recipeTabIds,
-  recipeLikes,
-  recipeLikedIds,
-  onToggleRecipeLike,
-  onKeepRecipe,
-}: ShortsProps) {
+/**
+ * A controls-first Shorts route. There is one persistent YouTube iframe for
+ * the active visit; adjacent catalogue entries are local metadata shells only.
+ */
+export function Shorts({ active, initialId, source = 'direct', onBack }: ShortsProps) {
   const [data, setData] = useState<ShortLibrary>(staticLibrary);
-  const [orderSeed, setOrderSeed] = useState(randomSeed);
-  const [orderRevision, setOrderRevision] = useState(0);
+  const [orderSeed] = useState(randomSeed);
   const orderIdsRef = useRef<string[]>([]);
   const [activeIndex, setActiveIndex] = useState(0);
-  const [prepareIndex, setPrepareIndex] = useState(0);
-  const [scrollDirection, setScrollDirection] = useState<ShortsScrollDirection>('forward');
-  const [visibleIndex, setVisibleIndex] = useState(-1);
-  const [controllerPhase, setControllerPhase] = useState<ShortsControllerPhase>('route-inactive');
-  const [manualIndex, setManualIndex] = useState<number | null>(null);
-  const [manualToken, setManualToken] = useState(0);
-  const [playingIndex, setPlayingIndex] = useState<number | null>(null);
-  const [playbackRate, setPlaybackRate] = useState(1);
-  const [playbackMode, setPlaybackMode] = useState<ShortsPlaybackMode>(() => preferredPlaybackMode());
-  const [blockedIndex, setBlockedIndex] = useState<number | null>(null);
-  const [startAuthorization, setStartAuthorization] = useState<ShortsStartAuthorization | null>(null);
-  const [failureVersion, setFailureVersion] = useState(0);
-  const [shared, setShared] = useState<'idle' | 'copied' | 'failed'>('idle');
-  const [error, setError] = useState(false);
-  const [configError, setConfigError] = useState(false);
+  const [generation, setGeneration] = useState(0);
+  const [routeReady, setRouteReady] = useState(false);
+  const [phase, setPhase] = useState<'inactive' | 'initializing' | 'loading' | 'playing' | 'paused' | 'buffering' | 'blocked' | 'offline' | 'error'>('inactive');
   const [online, setOnline] = useState(() => typeof navigator === 'undefined' || navigator.onLine);
-  const [recipeOverlay, setRecipeOverlay] = useState<{ short: ShortVideo; snapshot: ShortsReturnState } | null>(null);
-  const [recipes, setRecipes] = useState<Recipe[]>([]);
-  const [recipesLoading, setRecipesLoading] = useState(false);
-  const [recipesError, setRecipesError] = useState(false);
-  const feedRef = useRef<HTMLDivElement>(null);
-  const recipeCloseRef = useRef<HTMLButtonElement>(null);
-  const recipeOpenerRef = useRef<HTMLElement | null>(null);
-  const activeRef = useRef(active);
+  const [shared, setShared] = useState<'idle' | 'copied' | 'failed'>('idle');
+  const [soundPreference, setSoundPreference] = useState(() => readShortsSoundPreference());
+  const [ratePreference, setRatePreference] = useState(() => readShortsRatePreference());
+  const [startAudible, setStartAudible] = useState(false);
+  const [overlayOwner, setOverlayOwner] = useState<string | null>(overlayGate.active);
   const activeIndexRef = useRef(0);
-  const prepareIndexRef = useRef(0);
-  const visibleIndexRef = useRef(-1);
-  const controllerRef = useRef<ShortsControllerState>(createShortsControllerState(0));
-  const gestureStartTopRef = useRef<number | null>(null);
-  const openingOverlayRef = useRef(false);
-  const overlayRestoredRef = useRef(false);
-  const overlayLoadedRef = useRef(false);
-  const lastScrollTopRef = useRef(0);
-  const scrollDirectionRef = useRef<ShortsScrollDirection>('forward');
-  const activeIdRef = useRef<string | null>(null);
-  const visitStarted = useRef(false);
-  const lastInitialIdRef = useRef<string | undefined>(undefined);
-  const wasPlayingRef = useRef(false);
-  const [initialSoundPreference] = useState(() => {
-    const stored = readShortsSoundPreference();
-    const healed = healShortsSoundPreference(stored);
-    if (healed !== stored) writeShortsSoundPreference(healed);
-    return healed;
-  });
-  // `muted` represents the user's desired session state. A specific active
-  // player may temporarily be forced muted by iOS without changing this value.
-  const soundRef = useRef({
-    // A legacy desired-audible/zero-volume session is healed above instead of
-    // being silently converted into a muted preference.
-    muted: !initialSoundPreference.desiredAudible,
-    volume: initialSoundPreference.volume,
-  });
-  const soundSyncTokenRef = useRef(0);
-  const soundSyncTimersRef = useRef<number[]>([]);
-  // One mutable coordinator owns every lease-level playback decision. React's
-  // `startAuthorization` state is only the render projection passed to hosts.
-  const playbackCoordinatorRef = useRef<ShortsPlaybackCoordinatorState>(createShortsPlaybackCoordinator());
-  const playersRef = useRef(new Map<number, YouTubePlayer>());
-  const initializationPoolRef = useRef<ReturnType<typeof createShortsInitializationPool> | null>(null);
-  if (!initializationPoolRef.current) {
-    initializationPoolRef.current = createShortsInitializationPool(2);
-  }
-  const failedIdsRef = useRef(new Set<string>());
-  const retryCountsRef = useRef(new Map<string, number>());
-  const session = useRef<SessionCounters>(blankSession());
-  const started = useRef(new Set<string>());
-  const sent = useRef(false);
+  const generationRef = useRef(0);
+  const gestureRef = useRef<GestureStart | null>(null);
+  const wheelTimerRef = useRef<number | null>(null);
+  const wheelDirectionRef = useRef<'forward' | 'backward' | null>(null);
+  const initializedRef = useRef(false);
+  const visitedRef = useRef(false);
+  const sentRef = useRef(false);
+  const sessionRef = useRef<SessionCounters>(blankSession());
+  const startedRef = useRef(new Set<string>());
   const sourceRef = useRef(sourceLabel(source));
-  const overlayRef = useRef(recipeOverlay);
-  const overlayBaseHash = useRef('');
-  const overlayResumeRef = useRef<boolean | null>(null);
-  const pendingRestoreRef = useRef<ShortsReturnState | null>(null);
-  const activationTimerRef = useRef<number | null>(null);
-  const settleTimerRef = useRef<number | null>(null);
-  const pendingActivationRef = useRef<number | null>(null);
-  const setActiveRef = useRef<(next: number, countAdvance?: boolean, startMode?: ShortsStartMode) => PlayerLease | null>(() => null);
-  const orderedLengthRef = useRef(0);
-  const playbackModeRef = useRef(playbackMode);
+  const soundPreferenceRef = useRef(soundPreference);
+  const playerHostRef = useRef<ShortPlayerHostHandle | null>(null);
 
-  overlayRef.current = recipeOverlay;
-  activeRef.current = active;
   activeIndexRef.current = activeIndex;
-  prepareIndexRef.current = prepareIndex;
-  visibleIndexRef.current = visibleIndex;
-  playbackModeRef.current = playbackMode;
-
-  const projectStartAuthorization = useCallback((authorization: ShortsStartAuthorization | null) => {
-    playbackCoordinatorRef.current.authorization = authorization;
-    setStartAuthorization(authorization);
-  }, []);
+  generationRef.current = generation;
+  sourceRef.current = sourceLabel(source);
+  soundPreferenceRef.current = soundPreference;
 
   const orderedShorts = useMemo(() => {
     const byId = new Map(data.shorts.map((short) => [short.id, short]));
-    const deterministic = shuffleWithSeed(data.shorts, orderSeed).map((short) => short.id);
+    const shuffled = shuffleWithSeed(data.shorts, orderSeed).map((short) => short.id);
     const existing = orderIdsRef.current.filter((id) => byId.has(id));
     const seen = new Set(existing);
-    const next = [...existing, ...deterministic.filter((id) => !seen.has(id))];
+    const next = [...existing, ...shuffled.filter((id) => !seen.has(id))];
     orderIdsRef.current = next;
     return next.map((id) => byId.get(id)).filter((short): short is ShortVideo => Boolean(short));
-  }, [data.shorts, orderRevision, orderSeed]);
+  }, [data.shorts, orderSeed]);
 
-  const contentIndices = useMemo(
-    () => new Set(shortsContentWindow(activeIndex, orderedShorts.length, 5)),
-    [activeIndex, orderedShorts.length]
-  );
-  const playerIndices = useMemo(
-    () => new Set(shortsDirectionalPlayerWindow(activeIndex, orderedShorts.length, scrollDirection, playbackMode === 'manual' ? 1 : 5)),
-    [activeIndex, orderedShorts.length, playbackMode, scrollDirection]
-  );
-
-  const transitionController = useCallback((event: Parameters<typeof transitionShortsController>[1]) => {
-    const next = transitionShortsController(controllerRef.current, event);
-    controllerRef.current = next;
-    setControllerPhase(next.phase);
-    if (typeof window !== 'undefined') {
-      const hashQuery = window.location.hash.includes('?') ? new URLSearchParams(window.location.hash.split('?')[1]) : null;
-      const debug = import.meta.env.DEV && (new URLSearchParams(window.location.search).get('debug') === 'shorts' || hashQuery?.get('debug') === 'shorts');
-      if (debug) {
-        const target = window as Window & { __PUBCRAWL_SHORTS_DEBUG__?: Array<Record<string, unknown>> };
-        const ring = target.__PUBCRAWL_SHORTS_DEBUG__ || [];
-        ring.push({ at: Date.now(), event: event.type, phase: next.phase, settledIndex: next.settledIndex, intentIndex: next.intentIndex, generation: next.generation, leaseIndex: next.lease?.index ?? null });
-        target.__PUBCRAWL_SHORTS_DEBUG__ = ring.slice(-100);
-      }
-    }
-    return next;
-  }, []);
-
-  const startCommandKey = useCallback((index: number, generation: number) => {
-    const shortId = orderedShorts[index]?.id;
-    return shortId ? `${shortId}:${index}:${generation}` : '';
-  }, [orderedShorts]);
-
-  const claimStartCommand = useCallback((
-    index: number,
-    generation: number,
-    attempt: ShortsStartAttempt,
-    requestedAudible: boolean,
-  ) => {
-    if (!leaseMatches(controllerRef.current, index, generation)) return false;
-    const short = orderedShorts[index];
-    if (!short) return false;
-    const key = startCommandKey(index, generation);
-    const current = playbackCoordinatorRef.current.commands.get(key)
-      ?? createShortsStartCommand(short.id, index, generation, requestedAudible);
-    const claimed = claimShortsStart({ ...current, requestedAudible: current.requestedAudible || requestedAudible }, attempt);
-    playbackCoordinatorRef.current.commands.set(key, claimed.command);
-    return claimed.allowed;
-  }, [orderedShorts, startCommandKey]);
-
-  const claimBlockedAudibleFallback = useCallback((index: number, generation: number) => {
-    if (!leaseMatches(controllerRef.current, index, generation)) return false;
-    const key = startCommandKey(index, generation);
-    const command = playbackCoordinatorRef.current.commands.get(key);
-    if (!command) return false;
-    const claimed = claimShortsBlockedAudibleFallback(command);
-    playbackCoordinatorRef.current.commands.set(key, claimed.command);
-    return claimed.allowed;
-  }, [startCommandKey]);
-
-  const markStartProgress = useCallback((index: number, generation: number | null) => {
-    if (generation == null) return;
-    const key = startCommandKey(index, generation);
-    const command = playbackCoordinatorRef.current.commands.get(key);
-    if (command) playbackCoordinatorRef.current.commands.set(key, markShortsStartProgress(command));
-  }, [startCommandKey]);
-
-  /**
-   * YouTube may synchronously emit BUFFERING or onAutoplayBlocked from the
-   * imperative touchend command, before React has committed the new lease prop
-   * into ShortPlayerHost.  A null host generation is safe to associate with
-   * the current lease only when this exact Short/index already owns an issued
-   * arbiter command.  Prepared and stale players have no such command.
-   */
-  const resolveIssuedGeneration = useCallback((index: number, generation: number | null) => {
-    const lease = controllerRef.current.lease;
-    if (!lease || lease.index !== index) return null;
-    if (generation != null) return lease.generation === generation ? generation : null;
-    const command = playbackCoordinatorRef.current.commands.get(startCommandKey(index, lease.generation));
-    return command?.issued ? lease.generation : null;
-  }, [startCommandKey]);
-
-  const persistSoundPreference = useCallback((muted: boolean, volume: number) => {
-    const usableVolume = !muted && volume <= 0 ? soundRef.current.volume || 100 : volume;
-    const normalized = writeShortsSoundPreference({ version: 1, desiredAudible: !muted, volume: usableVolume });
-    // An unmuted zero-volume value is contradictory: YouTube renders its
-    // sound-on control while producing silence. Repair that state to the last
-    // usable level (or 100) in both memory and session storage so it cannot
-    // poison every subsequently prepared iframe.
-    soundRef.current = {
-      muted: !normalized.desiredAudible,
-      volume: normalized.volume > 0 ? normalized.volume : soundRef.current.volume || 100,
-    };
-  }, []);
-
-  const captureActiveSoundPreference = useCallback(() => {
-    const index = activeIndexRef.current;
-    const lease = controllerRef.current.lease;
-    const player = playersRef.current.get(index);
-    if (!player || !lease || lease.index !== index) return;
-    try {
-      const muted = Boolean(player.isMuted());
-      const volume = Math.max(0, Math.min(100, Math.round(player.getVolume())));
-      const state = player.getPlayerState();
-      const playerIframe = player.getIframe?.();
-      // The IFrame API exposes no volume-change event. A click inside the
-      // native YouTube controls does, however, focus that exact iframe. This
-      // lets us distinguish a genuine user mute from an automatic iOS policy
-      // mute on a different, newly activated player.
-      const nativeControlFocused = Boolean(playerIframe && document.activeElement === playerIframe);
-      // CUED/UNSTARTED values describe iframe initialization, not a native
-      // user interaction. Waiting for a playable state prevents YouTube's
-      // transient sound defaults from becoming the session preference.
-      if (
-        state !== YT_PLAYER_STATES.PLAYING &&
-        state !== YT_PLAYER_STATES.BUFFERING &&
-        state !== YT_PLAYER_STATES.PAUSED
-      ) return;
-      // Keep this callback independent of the rendered catalogue array. The
-      // scroll listener deliberately survives remote metadata refreshes; if
-      // its callback identity changed mid-drag, local touch state would reset
-      // before the final settlement. Active/order refs always hold the latest
-      // stable Short identity without recreating the listener.
-      const shortId = activeIdRef.current || orderIdsRef.current[index];
-      const key = shortId ? `${shortId}:${index}:${lease.generation}` : '';
-      const authorization = playbackCoordinatorRef.current.authorization;
-      const authorizationForcesMute = Boolean(
-        authorization &&
-        authorization.index === index &&
-        authorization.generation === lease.generation &&
-        authorization.mode === 'muted-autoplay' &&
-        authorization.fallbackUsed &&
-        !soundRef.current.muted
-      );
-      if (!muted && volume <= 0) {
-        // This is the broken native state reported by a freshly cued iframe.
-        // YouTube/WebKit can discard setVolume while muted, so repair the level
-        // first, then restore silence when this session has not requested sound.
-        try {
-          player.setVolume(soundRef.current.volume);
-          if (soundRef.current.muted) {
-            player.mute();
-          } else {
-            // This player is already moving and remains unmuted after the
-            // level repair, so its retained-audible request has succeeded.
-            // Clear the pending/forced guards before the user can press the
-            // native mute control; otherwise that real click may be mistaken
-            // for the policy fallback that never happened.
-            playbackCoordinatorRef.current.forcedMutedLease = null;
-            playbackCoordinatorRef.current.pendingAudibleLease = null;
-            if (
-              authorization &&
-              authorization.index === index &&
-              authorization.generation === lease.generation &&
-              authorization.fallbackUsed
-            ) {
-              projectStartAuthorization({
-                ...authorization,
-                mode: 'retained-audible',
-                fallbackUsed: false,
-              });
-            }
-            persistSoundPreference(false, soundRef.current.volume);
-          }
-        } catch {}
-      } else if (!muted) {
-        // This is the native YouTube control's state. Capture it immediately
-        // at the start of the next swipe instead of waiting for the 100ms
-        // observer, which can otherwise lose a very quick unmute-and-swipe.
-        playbackCoordinatorRef.current.forcedMutedLease = null;
-        playbackCoordinatorRef.current.pendingAudibleLease = null;
-        if (nativeControlFocused) {
-          // A native unmute is a fresh user authorization, even if this same
-          // lease previously consumed an iOS muted fallback. Renew only the
-          // recovery budget; playback is already moving, so no command is
-          // issued here.
-          if (
-            !authorization ||
-            authorization.index !== index ||
-            authorization.generation !== lease.generation ||
-            authorization.mode !== 'gesture-audible' ||
-            authorization.fallbackUsed
-          ) {
-            projectStartAuthorization({
-              index,
-              generation: lease.generation,
-              mode: 'gesture-audible',
-              fallbackUsed: false,
-            });
-          }
-          const command = playbackCoordinatorRef.current.commands.get(key);
-          if (command?.retryUsed || !command?.requestedAudible) {
-            playbackCoordinatorRef.current.commands.set(key, {
-              ...(command ?? createShortsStartCommand(shortId, index, lease.generation, true)),
-              requestedAudible: true,
-              issued: true,
-              retryUsed: false,
-              progressed: true,
-            });
-          }
-        }
-        if (soundRef.current.muted || volume !== soundRef.current.volume) persistSoundPreference(false, volume);
-      } else if (soundRef.current.muted) {
-        // Prime a muted zero-volume iframe without making it audible. The
-        // native YouTube button can then enable sound with one press.
-        if (volume <= 0) {
-          try { player.setVolume(soundRef.current.volume); } catch {}
-        }
-        return;
-      } else if (
-        playbackCoordinatorRef.current.forcedMutedLease === key ||
-        authorizationForcesMute
-      ) {
-        // An application/iOS fallback is deliberately muted even though the
-        // session still wants sound. Do not reinterpret it as a user choice.
-        if (volume <= 0) {
-          try { player.setVolume(soundRef.current.volume); } catch {}
-        }
-        return;
-      } else if (nativeControlFocused) {
-        // A focused active iframe is the only parent-visible evidence that
-        // this mute came from YouTube's native control. Retire transient
-        // policy guards and remember the explicit session choice.
-        playbackCoordinatorRef.current.forcedMutedLease = null;
-        playbackCoordinatorRef.current.pendingAudibleLease = null;
-        persistSoundPreference(true, volume > 0 ? volume : soundRef.current.volume);
-      } else if (
-        playbackCoordinatorRef.current.pendingAudibleLease === key
-      ) {
-        // A browser may transiently report mute between unMute/play and its
-        // final policy decision. Do not mistake that pending or forced state
-        // for a native user mute.
-        if (volume <= 0) {
-          try { player.setVolume(soundRef.current.volume); } catch {}
-        }
-        return;
-      } else {
-        // A mute on an audibly playing, non-fallback lease is a native user
-        // choice. Forced iOS fallback mutes retain the desired-audible flag.
-        persistSoundPreference(true, soundRef.current.volume);
-      }
-    } catch {
-      // The active iframe may be between replacement and registration.
-    }
-  }, [persistSoundPreference, projectStartAuthorization]);
-
-  const cancelSoundSync = useCallback(() => {
-    soundSyncTokenRef.current += 1;
-    soundSyncTimersRef.current.forEach((timer) => window.clearTimeout(timer));
-    soundSyncTimersRef.current = [];
-    // Sound authorizations are deliberately ephemeral. Any scroll, route,
-    // overlay, or visibility transition invalidates the gesture that created
-    // them so a late YouTube callback cannot unmute a different card.
-    playbackCoordinatorRef.current.pendingAudibleLease = null;
-    projectStartAuthorization(null);
-  }, [projectStartAuthorization]);
-
-  /**
-   * Request the current session's audible state for the active player. Touch
-   * and keyboard callers invoke this in their input task; mouse/trackpad
-   * scroll settlement may be accepted because the user already enabled sound.
-   * Browser rejection always falls back once to muted motion.
-   */
-  const beginAudibleStart = useCallback((
-    index: number,
-    generation: number,
-    player: YouTubePlayer,
-    attempt: ShortsStartAttempt = 'initial',
-  ) => {
-    const authorization = playbackCoordinatorRef.current.authorization;
-    if (
-      !audibleAuthorizationMatches(authorization, index, generation, soundRef.current.muted) ||
-      !leaseMatches(controllerRef.current, index, generation)
-    ) return;
-    if (!claimStartCommand(index, generation, attempt, true)) return;
-    const key = startCommandKey(index, generation);
-    playbackCoordinatorRef.current.pendingAudibleLease = key;
-    // Clear an older guard before calling YouTube.  Do this before playVideo,
-    // because onAutoplayBlocked may fire synchronously and install the new
-    // fallback guard while playVideo is still on the stack.
-    playbackCoordinatorRef.current.forcedMutedLease = null;
-
-    soundSyncTokenRef.current += 1;
-    soundSyncTimersRef.current.forEach((timer) => window.clearTimeout(timer));
-    soundSyncTimersRef.current = [];
-    try {
-      // Direct-input callers keep these commands adjacent to the event handler.
-      // Passive scroll settlement can still attempt the retained session state;
-      // WebKit rejection is handled by the guarded muted fallback below.
-      player.unMute();
-      // Apply the retained level after unmuting. WebKit can discard a volume
-      // command sent to a muted iframe, leaving YouTube visually "enabled"
-      // at zero and forcing mute-then-unmute on every card.
-      player.setVolume(Math.max(0, Math.min(100, Math.round(soundRef.current.volume))));
-      player.playVideo();
-    } catch {
-      playbackCoordinatorRef.current.pendingAudibleLease = null;
-      const fallback = mutedFallbackAuthorization(authorization, index, generation);
-      if (attempt === 'initial' && fallback && claimStartCommand(index, generation, 'retry', false)) {
-        projectStartAuthorization(fallback);
-        playbackCoordinatorRef.current.forcedMutedLease = startCommandKey(index, generation);
-        try { player.mute(); player.playVideo(); } catch {}
-      }
-      return;
-    }
-
-    const token = soundSyncTokenRef.current;
-    const timer = window.setTimeout(() => {
-      soundSyncTimersRef.current = soundSyncTimersRef.current.filter((entry) => entry !== timer);
-      if (token !== soundSyncTokenRef.current) return;
-      const current = playbackCoordinatorRef.current.authorization;
-      if (
-        !current ||
-        current.index !== index ||
-        current.generation !== generation ||
-        current.mode === 'muted-autoplay' ||
-        !leaseMatches(controllerRef.current, index, generation) ||
-        document.visibilityState === 'hidden'
-      ) return;
-      let state: number = YT_PLAYER_STATES.UNSTARTED;
-      let muted = true;
-      try {
-        state = player.getPlayerState();
-        muted = Boolean(player.isMuted());
-      } catch {
-        // Treat an unavailable iframe as a blocked audible start.
-      }
-      // First-frame motion has its own reveal gate. Requiring 80ms of media
-      // progress here could unnecessarily remute a valid but slow-starting
-      // iOS player after every swipe.
-      if ((state === YT_PLAYER_STATES.PLAYING || state === YT_PLAYER_STATES.BUFFERING) && !muted) {
-        playbackCoordinatorRef.current.forcedMutedLease = null;
-        playbackCoordinatorRef.current.pendingAudibleLease = null;
-        return;
-      }
-      // One and only one recovery: preserve the desired unmuted preference,
-      // but make the video move muted when iOS rejects the audible start.
-      const fallback = mutedFallbackAuthorization(current, index, generation);
-      const movingMuted = muted && (
-        state === YT_PLAYER_STATES.PLAYING ||
-        state === YT_PLAYER_STATES.BUFFERING
-      );
-      // WebKit may accept motion while silently rejecting sound. Motion has
-      // already satisfied this lease, so do not replay it; retain a forced-mute
-      // guard so the observer cannot misread the policy fallback as a native
-      // user mute and erase the session's desired-audible state.
-      if (fallback && movingMuted) {
-        projectStartAuthorization(fallback);
-        playbackCoordinatorRef.current.pendingAudibleLease = null;
-        playbackCoordinatorRef.current.forcedMutedLease = key;
-        session.current.autoplayFailures += 1;
-        return;
-      }
-      playbackCoordinatorRef.current.pendingAudibleLease = null;
-      if (attempt !== 'initial' || !fallback || !claimStartCommand(index, generation, 'retry', false)) return;
-      projectStartAuthorization(fallback);
-      playbackCoordinatorRef.current.forcedMutedLease = key;
-      try {
-        player.mute();
-        player.setVolume(Math.max(0, Math.min(100, Math.round(soundRef.current.volume))));
-        player.playVideo();
-      } catch {}
-      session.current.autoplayFailures += 1;
-    }, 260);
-    soundSyncTimersRef.current.push(timer);
-  }, [claimStartCommand, projectStartAuthorization, startCommandKey]);
-
-  /**
-   * A facade tap is an explicit recovery request. It first uses any untouched
-   * command for the lease, then consumes the single retry if startup had
-   * already been attempted. The native YouTube control remains the only
-   * sound UI; a blocked audible recovery degrades to muted motion.
-   */
-  const beginManualStart = useCallback((index: number, generation: number, player: YouTubePlayer) => {
-    if (!leaseMatches(controllerRef.current, index, generation)) return;
-    // A second autoplay-policy rejection marks this card blocked so passive
-    // effects cannot loop. A genuine facade gesture is new authorization;
-    // clear only this current lease's guard before issuing its manual start.
-    setBlockedIndex(null);
-    const key = startCommandKey(index, generation);
-    let existing = playbackCoordinatorRef.current.commands.get(key);
-    if (existing && nextShortsStartAttempt(existing) == null) {
-      // Automatic recovery may be exhausted, or a BUFFERING signal may have
-      // cancelled passive retries before motion began. A real facade tap is
-      // new user authorization, so renew the command while retaining the same
-      // guarded lease rather than leaving the card stuck.
-      existing = resetShortsStartForManualRecovery(existing);
-      playbackCoordinatorRef.current.commands.set(key, existing);
-    }
-    const attempt = nextShortsStartAttempt(existing);
-    if (!attempt) return;
-    const requestedAudible = !soundRef.current.muted;
-    const authorization: ShortsStartAuthorization = {
-      index,
-      generation,
-      mode: requestedAudible ? 'gesture-audible' : 'muted-autoplay',
-      fallbackUsed: false,
-    };
-    projectStartAuthorization(authorization);
-
-    if (requestedAudible) {
-      beginAudibleStart(index, generation, player, attempt);
-      return;
-    }
-
-    if (!claimStartCommand(index, generation, attempt, false)) return;
-    playbackCoordinatorRef.current.forcedMutedLease = key;
-    try {
-      player.mute();
-      player.setVolume(Math.max(0, Math.min(100, Math.round(soundRef.current.volume))));
-      player.playVideo();
-    } catch {}
-  }, [beginAudibleStart, claimStartCommand, projectStartAuthorization, startCommandKey]);
-
-  /**
-   * A touch/key gesture can settle before its destination iframe is ready.
-   * That gesture cannot legally be replayed from a later YouTube callback on
-   * iOS, so explicitly downgrade that lease to a muted automatic start. Keep
-   * the user's desired-sound preference intact so the next eligible swipe can
-   * request audible playback again.
-   */
-  const demoteAudibleStart = useCallback((index: number, generation: number) => {
-    const authorization = playbackCoordinatorRef.current.authorization;
-    if (
-      !authorization ||
-      authorization.index !== index ||
-      authorization.generation !== generation ||
-      authorization.mode === 'muted-autoplay'
-    ) return;
-    const next = mutedFallbackAuthorization(authorization, index, generation);
-    if (!next) return;
-    projectStartAuthorization(next);
-    playbackCoordinatorRef.current.pendingAudibleLease = null;
-    playbackCoordinatorRef.current.forcedMutedLease = startCommandKey(index, generation);
-  }, [projectStartAuthorization, startCommandKey]);
-
-  const requestPlayerInitialization = useCallback(
-    (index: number, priority: number, start: (signal: AbortSignal) => Promise<void>): InitializationLease =>
-      initializationPoolRef.current!.request(index, priority, start),
-    []
-  );
-
-  const pausePlayersExcept = useCallback((keepIndex: number | null = null) => {
-    playersRef.current.forEach((player, index) => {
-      if (index !== keepIndex) {
-        try {
-          // A paused iframe can retain its audible state on iOS. Mute before
-          // pausing so a prepared/previous card can never leak sound after a
-          // swipe, route change, overlay open, or visibility transition.
-          player.mute();
-          player.pauseVideo();
-        } catch {
-          // A player can be between iframe teardown and its final callback.
-        }
-      }
-    });
-  }, []);
+  const activeShort = orderedShorts[activeIndex] || null;
+  const windowIndexes = useMemo(() => contentWindow(activeIndex, orderedShorts.length, 5), [activeIndex, orderedShorts.length]);
 
   const flushSession = useCallback(() => {
-    const counters = session.current;
-    const total =
-      counters.videosStarted +
-      counters.advances +
-      counters.shares +
-      counters.recipeClicks +
-      counters.autoplayFailures +
-      counters.unavailableSkips +
-      counters.bufferingEvents +
-      counters.startupMsTotal;
-    if (sent.current || total === 0) return;
-    sent.current = true;
-    postShortSession({
+    if (!visitedRef.current || sentRef.current) return;
+    sentRef.current = true;
+    const counters = sessionRef.current;
+    void postShortSession({
       source: sourceRef.current,
-      videosStarted: Math.min(50, counters.videosStarted),
-      advances: Math.min(50, counters.advances),
-      shares: Math.min(50, counters.shares),
-      recipeClicks: Math.min(50, counters.recipeClicks),
-      autoplayFailures: Math.min(50, counters.autoplayFailures),
-      unavailableSkips: Math.min(50, counters.unavailableSkips),
-      bufferingEvents: Math.min(50, counters.bufferingEvents),
-      startupMsTotal: Math.min(300000, counters.startupMsTotal),
+      videosStarted: counters.videosStarted,
+      advances: counters.advances,
+      shares: counters.shares,
+      recipeClicks: 0,
+      autoplayFailures: counters.autoplayFailures,
+      unavailableSkips: counters.unavailableSkips,
+      bufferingEvents: counters.bufferingEvents,
+      startupMsTotal: counters.startupMsTotal,
     }).catch(() => {});
   }, []);
 
-  const replaceShortHash = useCallback((short: ShortVideo) => {
-    if (typeof window === 'undefined' || !short || !activeRef.current) return;
-    const params = new URLSearchParams({ v: short.id, src: sourceRef.current });
-    // A persisted MAKE THIS entry owns the route until the dialog closes. If
-    // a browser emits a synthetic snap/scroll event while that entry is being
-    // reconstructed, changing the video hash must not silently drop make=1.
-    const currentHashQuery = window.location.hash.includes('?')
-      ? new URLSearchParams(window.location.hash.split('?')[1])
-      : null;
-    if (currentHashQuery?.get('make') === '1') params.set('make', '1');
-    if (currentHashQuery?.get('debug') === 'shorts') params.set('debug', 'shorts');
-    window.history.replaceState(window.history.state, '', `#/shorts?${params.toString()}`);
-  }, []);
-
-  const setActive = useCallback(
-    (next: number, countAdvance = true, startMode: ShortsStartMode = 'muted-autoplay'): PlayerLease | null => {
-      // Shorts stays mounted behind every route so its visit can be restored,
-      // but no delayed scroll/player callback may mutate the URL after the
-      // user has left the route.
-      if (!activeRef.current || next < 0 || next >= orderedShorts.length) return null;
-      let target = next;
-      if (failedIdsRef.current.has(orderedShorts[target].id)) {
-        // A prefetched neighbour can fail before the user reaches it. Never
-        // make that failed facade an active stop: advance to the next healthy
-        // card in visit order (or the closest previous one at the end).
-        target = -1;
-        for (let index = next + 1; index < orderedShorts.length; index += 1) {
-          if (!failedIdsRef.current.has(orderedShorts[index].id)) {
-            target = index;
-            break;
-          }
-        }
-        if (target < 0) {
-          for (let index = next - 1; index >= 0; index -= 1) {
-            if (!failedIdsRef.current.has(orderedShorts[index].id)) {
-              target = index;
-              break;
-            }
-          }
-        }
-        if (target < 0) {
-          setError(true);
-          return null;
-        }
-        const card = feedRef.current?.querySelector<HTMLElement>(`[data-short-index="${target}"]`);
-        if (card && feedRef.current) scrollFeedToCard(feedRef.current, card, 'smooth');
-      }
-      const current = controllerRef.current;
-      if (current.phase === 'idle' && current.lease?.index === target && current.settledIndex === target) {
-        visibleIndexRef.current = target;
-        setVisibleIndex(target);
-        return current.lease;
-      }
-      const previous = activeIndexRef.current;
-      const direction: ShortsScrollDirection = target < previous ? 'backward' : 'forward';
-      const settled = transitionController({ type: 'scroll-settle', index: target });
-      activeIndexRef.current = target;
-      prepareIndexRef.current = target;
-      visibleIndexRef.current = target;
-      scrollDirectionRef.current = direction;
-      setActiveIndex(target);
-      setPrepareIndex(target);
-      setScrollDirection(direction);
-      setVisibleIndex(target);
-      setManualIndex(null);
-      setBlockedIndex(null);
-      // The incoming player has not reported PLAYING yet. Do not let a
-      // previous card's state make an immediate MAKE THIS snapshot resume a
-      // video that was only cued.
-      wasPlayingRef.current = false;
-      cancelSoundSync();
-      setPlayingIndex(null);
-      setPlaybackRate(1);
-      if (countAdvance) overlayResumeRef.current = null;
-      // A real activation owns the new lease. Every other player is paused at
-      // the same transition boundary; prepared shells remain CUED.
-      pausePlayersExcept(target);
-      const short = orderedShorts[target];
-      activeIdRef.current = short?.id || null;
-      if (short) replaceShortHash(short);
-      if (countAdvance && previous !== target) session.current.advances += 1;
-      const lease = settled.lease;
-      if (lease) {
-        // Gesture-owned playback can be issued before React commits the next
-        // render. Mirror the lease on the active card synchronously so player
-        // callbacks and diagnostics can always attribute that command to the
-        // exact generation; the declarative attribute below then preserves it.
-        const activeCard = feedRef.current?.querySelector<HTMLElement>(`[data-short-index="${target}"]`);
-        if (activeCard) activeCard.dataset.leaseGeneration = String(lease.generation);
-        const authorization: ShortsStartAuthorization = {
-          index: target,
-          generation: lease.generation,
-          mode: startMode,
-          fallbackUsed: false,
-        };
-        projectStartAuthorization(authorization);
-        playbackCoordinatorRef.current.commands.clear();
-        const key = startCommandKey(target, lease.generation);
-        const command = createShortsStartCommand(short.id, target, lease.generation, startMode !== 'muted-autoplay');
-        playbackCoordinatorRef.current.commands.set(key, command);
-        playbackCoordinatorRef.current.forcedMutedLease = startMode === 'muted-autoplay' && !soundRef.current.muted ? key : null;
-      }
-      return lease;
-    },
-    [cancelSoundSync, orderedShorts, pausePlayersExcept, projectStartAuthorization, replaceShortHash, startCommandKey, transitionController]
-  );
-  // The scroll listener is intentionally long-lived. API enrichment can
-  // replace the ordered array while a quiet-settle timer is pending; keeping
-  // the latest activation callback in a ref prevents that rerender from
-  // tearing down the listener and stranding the controller in `scrolling`.
-  setActiveRef.current = setActive;
-  orderedLengthRef.current = orderedShorts.length;
-
-  const registerPlayer = useCallback((index: number, player: YouTubePlayer) => {
-    playersRef.current.set(index, player);
-    // All automatic starts begin muted. The session preference is applied to
-    // the active player only after YouTube confirms PLAYING.
-    try {
-      player.setVolume(soundRef.current.volume);
-      player.mute();
-    } catch {}
-    if (index !== activeIndexRef.current) {
-      try {
-        player.pauseVideo();
-      } catch {
-        // Ignore a player that has not finished its own initialization.
-      }
-    }
-  }, []);
-
-  /**
-   * Apply a captured MAKE THIS/menu-return position once the matching player
-   * is cued. Playing restores seek again on PLAYING because the iframe can
-   * emit a fresh state transition after the initial seek; paused snapshots
-   * only need the first CUED seek and are then fully restored without auto-play.
-   */
-  const restorePlayerState = useCallback(
-    (index: number, player: YouTubePlayer, phase: 'cued' | 'playing') => {
-      const snapshot = pendingRestoreRef.current;
-      const short = orderedShorts[index];
-      if (!snapshot || !short || snapshot.videoId !== short.id) return;
-      try {
-        const authorization = playbackCoordinatorRef.current.authorization;
-        const directAudible = Boolean(
-          phase === 'playing' &&
-          authorization &&
-          authorization.index === index &&
-          authorization.mode === 'gesture-audible' &&
-          !authorization.fallbackUsed &&
-          !soundRef.current.muted &&
-          leaseMatches(controllerRef.current, index, authorization.generation),
-        );
-        // Passive restores seek muted. A close-button/keyboard gesture may
-        // keep the active player audible, but only while its lease remains
-        // current; never let a late CUED callback unmute a prepared iframe.
-        if (directAudible) {
-          player.setVolume(Math.max(0, Math.min(100, Math.round(snapshot.volume))));
-        } else {
-          applyMutedSound(player, snapshot.volume);
-        }
-        if (snapshot.currentTime > 0) player.seekTo(snapshot.currentTime, true);
-        if (phase === 'playing') {
-          pendingRestoreRef.current = null;
-        } else if (!snapshot.wasPlaying) pendingRestoreRef.current = null;
-      } catch {
-        // The API can briefly reject commands while a cue/load transition is
-        // settling; the next state event gets another chance.
-      }
-    },
-    [orderedShorts]
-  );
-
-  const unregisterPlayer = useCallback((index: number, player: YouTubePlayer) => {
-    if (playersRef.current.get(index) === player) playersRef.current.delete(index);
-  }, []);
-
-  const findNextPlayable = useCallback(
-    (from: number) => {
-      for (let index = from + 1; index < orderedShorts.length; index += 1)
-        if (!failedIdsRef.current.has(orderedShorts[index].id)) return index;
-      for (let index = from - 1; index >= 0; index -= 1)
-        if (!failedIdsRef.current.has(orderedShorts[index].id)) return index;
-      return -1;
-    },
-    [orderedShorts]
-  );
-
-  const failShortAndAdvance = useCallback((index: number, shortId: string) => {
-    if (!failedIdsRef.current.has(shortId)) {
-      failedIdsRef.current.add(shortId);
-      setFailureVersion((version) => version + 1);
-      session.current.unavailableSkips += 1;
-    }
-    if (index !== activeIndexRef.current) return;
-    cancelSoundSync();
-    setPlayingIndex(null);
-    const next = findNextPlayable(index);
-    if (next >= 0) {
-      const card = feedRef.current?.querySelector<HTMLElement>(`[data-short-index="${next}"]`);
-      if (card && feedRef.current) scrollFeedToCard(feedRef.current, card, 'smooth');
-      setActive(next);
-    } else {
-      setError(true);
-    }
-  }, [cancelSoundSync, findNextPlayable, setActive]);
-
-  const handlePlayerError = useCallback(
-    (index: number, generation: number | null, code: number) => {
-      if (generation != null && !leaseMatches(controllerRef.current, index, generation)) return;
-      const short = orderedShorts[index];
-      if (!short) return;
-      if (code === 153) {
-        setConfigError(true);
-        setBlockedIndex(index);
-        if (index === activeIndexRef.current) {
-          cancelSoundSync();
-          setPlayingIndex(null);
-        }
-        return;
-      }
-      if (code === 5) {
-        const tries = retryCountsRef.current.get(short.id) || 0;
-        // A prefetched neighbour that fails is not visible, so there is no
-        // reason to keep a broken player in the pool or wait for a retry that
-        // can never become active. Mark it now; the active card will advance
-        // past it on the next observer decision.
-        if (index !== activeIndexRef.current) {
-          failShortAndAdvance(index, short.id);
-          return;
-        }
-        // The player host must identify the exact playback intent that owned
-        // this error. A null generation belongs to a prepared/manual player,
-        // not to the controller's current lease; inferring one here would let
-        // manual mode autoplay and could attach a stale callback to a newer
-        // same-index lease.
-        if (generation == null || !leaseMatches(controllerRef.current, index, generation)) return;
-        const retryGeneration = generation;
-        if (tries < 1) {
-          retryCountsRef.current.set(short.id, tries + 1);
-          window.setTimeout(() => {
-            const player = playersRef.current.get(index);
-            if (
-              !player ||
-              activeIndexRef.current !== index ||
-              !leaseMatches(controllerRef.current, index, retryGeneration)
-            ) return;
-            try {
-              const state = player.getPlayerState();
-              if (state === YT_PLAYER_STATES.PLAYING || state === YT_PLAYER_STATES.BUFFERING) return;
-              const key = startCommandKey(index, retryGeneration);
-              const attempt = nextShortsStartAttempt(playbackCoordinatorRef.current.commands.get(key));
-              if (attempt && claimStartCommand(index, retryGeneration, attempt, false)) {
-                // A code-5 recovery is an application fallback, not a native
-                // mute action. Mark this lease before muting so the bounded
-                // sound observer preserves the user's desired-audible session
-                // preference for the next eligible gesture.
-                playbackCoordinatorRef.current.forcedMutedLease = key;
-                player.mute();
-                player.playVideo();
-                return;
-              }
-            } catch {}
-            // If both command slots were already consumed, or the retry could
-            // not be issued, this iframe cannot be allowed to strand the feed.
-            failShortAndAdvance(index, short.id);
-          }, 1500);
-          return;
-        }
-      }
-      if (code === 100 || code === 101 || code === 150 || code === 5 || code === 2) {
-        failShortAndAdvance(index, short.id);
-      }
-    },
-    [cancelSoundSync, claimStartCommand, failShortAndAdvance, orderedShorts, startCommandKey]
-  );
-
-  const handleAutoplayBlocked = useCallback((index: number, generation: number | null, player: YouTubePlayer): boolean => {
-    if (index !== activeIndexRef.current) return false;
-    if (playersRef.current.get(index) !== player) {
-      try { player.mute(); player.pauseVideo(); } catch {}
-      return false;
-    }
-    const resolvedGeneration = resolveIssuedGeneration(index, generation);
-    if (resolvedGeneration == null) return false;
-    generation = resolvedGeneration;
-    const authorization = playbackCoordinatorRef.current.authorization;
-    const audibleFallback = mutedFallbackAuthorization(authorization, index, generation);
-    const existingMutedFallback = Boolean(
-      authorization &&
-      authorization.index === index &&
-      authorization.generation === generation &&
-      authorization.mode === 'muted-autoplay' &&
-      authorization.fallbackUsed
-    );
-    let state: number = YT_PLAYER_STATES.UNSTARTED;
-    let muted = true;
-    try {
-      state = player.getPlayerState();
-      muted = Boolean(player.isMuted());
-    } catch {}
-    // YouTube can deliver a delayed policy callback after the current command
-    // has already succeeded. The event carries no command token; the player's
-    // live state and pool identity are therefore the authoritative stale-event
-    // guard. Never interrupt current audible motion to service an old callback.
-    if ((state === YT_PLAYER_STATES.PLAYING || state === YT_PLAYER_STATES.BUFFERING) && !muted) {
-      playbackCoordinatorRef.current.pendingAudibleLease = null;
-      playbackCoordinatorRef.current.forcedMutedLease = null;
-      setBlockedIndex(null);
-      try {
-        const volume = Math.max(0, Math.min(100, Math.round(player.getVolume())));
-        if (volume > 0 && (soundRef.current.muted || soundRef.current.volume !== volume)) {
-          persistSoundPreference(false, volume);
-        }
-      } catch {}
-      return true;
-    }
-    const movingMuted = muted && (
-      state === YT_PLAYER_STATES.PLAYING ||
-      state === YT_PLAYER_STATES.BUFFERING
-    );
-    if ((audibleFallback || existingMutedFallback) && movingMuted) {
-      if (audibleFallback) {
-        projectStartAuthorization(audibleFallback);
-      }
-      playbackCoordinatorRef.current.pendingAudibleLease = null;
-      playbackCoordinatorRef.current.forcedMutedLease = startCommandKey(index, generation);
-      setBlockedIndex(null);
-      session.current.autoplayFailures += 1;
-      return true;
-    }
-    const retryClaimed = claimStartCommand(index, generation, 'retry', false) || (
-      Boolean(audibleFallback) && claimBlockedAudibleFallback(index, generation)
-    );
-    if (retryClaimed) {
-      const fallback = audibleFallback ?? (authorization
-        ? { ...authorization, mode: 'muted-autoplay' as const, fallbackUsed: true }
-        : { index, generation, mode: 'muted-autoplay' as const, fallbackUsed: true });
-      projectStartAuthorization(fallback);
-      playbackCoordinatorRef.current.pendingAudibleLease = null;
-      playbackCoordinatorRef.current.forcedMutedLease = startCommandKey(index, generation);
-      try {
-        player.mute();
-        player.setVolume(Math.max(0, Math.min(100, Math.round(soundRef.current.volume))));
-        player.playVideo();
-      } catch {}
-      setBlockedIndex(null);
-      session.current.autoplayFailures += 1;
-      return true;
-    }
-    playbackCoordinatorRef.current.pendingAudibleLease = null;
-    if (audibleFallback) playbackCoordinatorRef.current.forcedMutedLease = startCommandKey(index, generation);
-    setBlockedIndex(index);
-    session.current.autoplayFailures += 1;
-    return false;
-  }, [claimBlockedAudibleFallback, claimStartCommand, persistSoundPreference, projectStartAuthorization, resolveIssuedGeneration, startCommandKey]);
-
-  const handleUnexpectedPause = useCallback((index: number, generation: number | null, player: YouTubePlayer): boolean => {
-    if (index !== activeIndexRef.current || playersRef.current.get(index) !== player) return false;
-    try {
-      if (player.getPlayerState() !== YT_PLAYER_STATES.PAUSED || player.getCurrentTime() > 0.08) return false;
-    } catch {
-      return false;
-    }
-    const resolvedGeneration = resolveIssuedGeneration(index, generation);
-    if (resolvedGeneration == null) return false;
-    const key = startCommandKey(index, resolvedGeneration);
-    const command = playbackCoordinatorRef.current.commands.get(key);
-    if (!command) return false;
-    const claimed = claimShortsPausedStartupFallback(command);
-    playbackCoordinatorRef.current.commands.set(key, claimed.command);
-    if (!claimed.allowed) return false;
-
-    const current = playbackCoordinatorRef.current.authorization;
-    const fallback = current && current.index === index && current.generation === resolvedGeneration
-      ? {
-          ...current,
-          mode: 'muted-autoplay' as const,
-          fallbackUsed: current.fallbackUsed || command.requestedAudible,
-        }
-      : {
-          index,
-          generation: resolvedGeneration,
-          mode: 'muted-autoplay' as const,
-          fallbackUsed: command.requestedAudible,
-        };
-    projectStartAuthorization(fallback);
-    playbackCoordinatorRef.current.pendingAudibleLease = null;
-    playbackCoordinatorRef.current.forcedMutedLease = command.requestedAudible || !soundRef.current.muted ? key : null;
-    try {
-      player.mute();
-      player.setVolume(Math.max(1, Math.min(100, Math.round(soundRef.current.volume || 100))));
-      player.playVideo();
-    } catch {
-      return false;
-    }
-    setBlockedIndex(null);
-    session.current.autoplayFailures += 1;
-    return true;
-  }, [projectStartAuthorization, resolveIssuedGeneration, startCommandKey]);
-
-  const handlePlaying = useCallback((index: number, generation: number | null, startupMs: number, player: YouTubePlayer) => {
-    if (playersRef.current.get(index) !== player) {
-      try { player.mute(); player.pauseVideo(); } catch {}
-      return;
-    }
-    try {
-      if (player.getPlayerState() !== YT_PLAYER_STATES.PLAYING) return;
-    } catch {
-      return;
-    }
-    const resolvedGeneration = resolveIssuedGeneration(index, generation);
-    if (resolvedGeneration == null) {
-      // A late PLAYING callback from a previous lease is never allowed to
-      // reclaim the feed. It is safe to pause that iframe immediately.
-      try { player.mute(); player.pauseVideo(); } catch {}
-      return;
-    }
-    generation = resolvedGeneration;
-    if (generation != null) {
-      const command = playbackCoordinatorRef.current.commands.get(startCommandKey(index, generation));
-      if (!command?.issued) {
-        // A still-mounted iframe can deliver a delayed PLAYING callback after
-        // its former lease was revoked. The IFrame API supplies no request
-        // token, so accept motion only after the current lease's arbiter has
-        // actually issued its own command.
-        try { player.mute(); player.pauseVideo(); } catch {}
-        return;
-      }
-    }
-    // YouTube can report the first PLAYING callback as unmuted with volume 0,
-    // even though the user never selected that state. Normalize synchronously
-    // before the polling observer or native control can expose it. Some iOS
-    // builds ignore setVolume after mute(), so prime the level first and then
-    // restore silence when this session has not requested sound.
-    if (generation != null) {
-      const key = startCommandKey(index, generation);
-      const authorization = playbackCoordinatorRef.current.authorization;
-      const authorizationForcesMute = Boolean(
-        authorization &&
-        authorization.index === index &&
-        authorization.generation === generation &&
-        authorization.mode === 'muted-autoplay' &&
-        authorization.fallbackUsed &&
-        !soundRef.current.muted
-      );
-      try {
-        const muted = Boolean(player.isMuted());
-        const volume = Math.max(0, Math.min(100, Math.round(player.getVolume())));
-        if (soundRef.current.muted) {
-          if (!muted && volume <= 0) {
-            // Prime while YouTube still considers the player unmuted. Some
-            // WebKit builds ignore a volume command sent after mute().
-            player.setVolume(soundRef.current.volume);
-            player.mute();
-          } else {
-            if (!muted) player.mute();
-            if (volume <= 0) player.setVolume(soundRef.current.volume);
-          }
-        } else if (!muted) {
-          const audibleVolume = volume > 0 ? volume : soundRef.current.volume;
-          if (volume <= 0) player.setVolume(audibleVolume);
-          playbackCoordinatorRef.current.pendingAudibleLease = null;
-          playbackCoordinatorRef.current.forcedMutedLease = null;
-          if (soundRef.current.muted || soundRef.current.volume !== audibleVolume) {
-            persistSoundPreference(false, audibleVolume);
-          }
-        } else if (
-          playbackCoordinatorRef.current.pendingAudibleLease !== key &&
-          playbackCoordinatorRef.current.forcedMutedLease !== key &&
-          !authorizationForcesMute
-        ) {
-          // A stable mute outside an application-controlled start is the
-          // native YouTube control, not an initialization default.
-          persistSoundPreference(true, volume > 0 ? volume : soundRef.current.volume);
-        }
-      } catch {}
-    }
-    markStartProgress(index, generation);
-    restorePlayerState(index, player, 'playing');
-    setPlayingIndex(index);
-    wasPlayingRef.current = true;
-    const short = orderedShorts[index];
-    if (!short) return;
-    if (!started.current.has(short.id)) {
-      started.current.add(short.id);
-      session.current.videosStarted += 1;
-      session.current.startupMsTotal += Math.min(30000, startupMs);
-    }
-  }, [markStartProgress, orderedShorts, persistSoundPreference, resolveIssuedGeneration, restorePlayerState, startCommandKey]);
-
-  const handlePlaybackRateChange = useCallback((index: number, generation: number | null, rate: number) => {
-    if (leaseMatches(controllerRef.current, index, generation) && Number.isFinite(rate) && rate > 0) setPlaybackRate(rate);
-  }, []);
-
-  const handleCued = useCallback(
-    (index: number, generation: number | null, player: YouTubePlayer) => {
-      // Prepared neighbours may cue freely, but only the settled card owns a
-      // restore operation. This keeps a late CUED callback from an old lease
-      // from seeking or changing sound on a hidden iframe.
-      if (playersRef.current.get(index) !== player) return;
-      if (index !== activeIndexRef.current) return;
-      if (generation != null && !leaseMatches(controllerRef.current, index, generation)) return;
-      restorePlayerState(index, player, 'cued');
-    },
-    [restorePlayerState]
-  );
-
-  const handleBuffering = useCallback((index: number, generation: number | null, player: YouTubePlayer) => {
-    if (playersRef.current.get(index) !== player) return;
-    try {
-      if (player.getPlayerState() !== YT_PLAYER_STATES.BUFFERING) return;
-    } catch {
-      return;
-    }
-    const resolvedGeneration = resolveIssuedGeneration(index, generation);
-    if (resolvedGeneration != null) {
-      generation = resolvedGeneration;
-      markStartProgress(index, generation);
-      session.current.bufferingEvents += 1;
-      // BUFFERING is not confirmed motion. Preserve the authorization and its
-      // one muted recovery until first-frame advancement; WebKit may emit
-      // BUFFERING and then PAUSED without onAutoplayBlocked.
-      try {
-        const muted = Boolean(player.isMuted());
-        const volume = Math.max(0, Math.min(100, Math.round(player.getVolume())));
-        if (!muted && volume <= 0) player.setVolume(soundRef.current.volume);
-        if (!muted && volume > 0 && (soundRef.current.muted || soundRef.current.volume !== volume)) {
-          persistSoundPreference(false, volume);
-        }
-      } catch {}
-    }
-  }, [markStartProgress, persistSoundPreference, resolveIssuedGeneration]);
-
-  const captureSnapshot = useCallback(
-    (short: ShortVideo): ShortsReturnState => {
-      const player = playersRef.current.get(activeIndexRef.current);
-      let currentTime = 0;
-      let wasPlaying = wasPlayingRef.current;
-      let resumeIntent: ShortsReturnState['resumeIntent'] = wasPlaying ? 'autoplay' : 'paused';
-      if (player) {
-        try {
-          currentTime = Math.max(0, player.getCurrentTime() || 0);
-          const state = player.getPlayerState();
-          // A paused native player is an intentional pause. CUED/BUFFERING,
-          // however, can simply be a transient startup state while autoplay
-          // is still pending and must resume after the recipe closes.
-          resumeIntent = state === YT_PLAYER_STATES.PAUSED
-            ? 'paused'
-            : state === YT_PLAYER_STATES.PLAYING || state === YT_PLAYER_STATES.BUFFERING || state === YT_PLAYER_STATES.CUED
-              ? 'autoplay'
-              : wasPlaying ? 'autoplay' : 'paused';
-          wasPlaying = resumeIntent === 'autoplay';
-        } catch {
-          // Keep the last known playback state when the iframe is unavailable.
-        }
-      }
-      return {
-        version: SHORTS_SNAPSHOT_VERSION,
-        videoId: short.id,
-        title: short.title,
-        order: orderedShorts.map((entry) => entry.id),
-        currentTime,
-        wasPlaying,
-        resumeIntent,
-        recipeQuery: short.recipeQuery,
-        muted: soundRef.current.muted,
-        volume: soundRef.current.volume,
-      };
-    },
-    [orderedShorts]
-  );
-
-  const restoreSnapshot = useCallback(
-    (snapshot: ShortsReturnState, fromDirectGesture = false) => {
-      if (!isShortsReturnState(snapshot)) return;
-      const index = orderedShorts.findIndex((short) => short.id === snapshot.videoId);
-      if (index < 0) return;
-      pendingRestoreRef.current = snapshot;
-      const shouldResume = snapshot.resumeIntent ? snapshot.resumeIntent === 'autoplay' : snapshot.wasPlaying;
-      overlayResumeRef.current = shouldResume;
-      if (activeIndexRef.current === index) {
-        const resumed = transitionController({ type: 'overlay-close', resume: shouldResume });
-        visibleIndexRef.current = index;
-        setVisibleIndex(index);
-        const player = playersRef.current.get(index);
-        if (player) {
-          try {
-            if (snapshot.currentTime > 0) player.seekTo(snapshot.currentTime, true);
-            const directAudible = Boolean(fromDirectGesture && shouldResume && !soundRef.current.muted && resumed.lease);
-            if (directAudible && resumed.lease) {
-              const authorization: ShortsStartAuthorization = {
-                index,
-                generation: resumed.lease.generation,
-                mode: 'gesture-audible',
-                fallbackUsed: false,
-              };
-              projectStartAuthorization(authorization);
-              let state: number = YT_PLAYER_STATES.UNSTARTED;
-              try { state = player.getPlayerState(); } catch {}
-              if (playerReadyForStart(state)) {
-                beginAudibleStart(index, resumed.lease.generation, player);
-              } else {
-                demoteAudibleStart(index, resumed.lease.generation);
-                applyMutedSound(player, soundRef.current.volume);
-              }
-            } else {
-              // A passive history/reload restore cannot legally reuse the
-              // gesture that opened the recipe. Keep it moving muted; the next
-              // eligible swipe can request the session's desired sound again.
-              applyMutedSound(player, soundRef.current.volume);
-              if (shouldResume && resumed.lease && claimStartCommand(index, resumed.lease.generation, 'initial', false)) {
-                playbackCoordinatorRef.current.forcedMutedLease = startCommandKey(index, resumed.lease.generation);
-                player.playVideo();
-              }
-            }
-          } catch {}
-        }
-      } else {
-        setActive(index, false);
-      }
-      requestAnimationFrame(() => {
-        const card = feedRef.current?.querySelector<HTMLElement>(`[data-short-index="${index}"]`);
-        if (card && feedRef.current) scrollFeedToCard(feedRef.current, card, 'auto');
-      });
-    },
-    [beginAudibleStart, claimStartCommand, demoteAudibleStart, orderedShorts, projectStartAuthorization, setActive, startCommandKey, transitionController]
-  );
-
-  const openRecipeOverlay = useCallback(
-    (short: ShortVideo) => {
-      if (!activeRef.current || !short.recipeQuery || openingOverlayRef.current || overlayRef.current) return;
-      if (!overlayGate.acquire(SHORTS_RECIPE_GATE_ID, OVERLAY_PRIORITY.shortsRecipe)) return;
-      openingOverlayRef.current = true;
-      recipeOpenerRef.current = document.activeElement instanceof HTMLElement ? document.activeElement : null;
-      const snapshot = captureSnapshot(short);
-      const baseHash = typeof window !== 'undefined' ? window.location.hash.replace(/[?&]make=1(?=&|$)/, '').replace(/[?&]$/, '') : '';
-      overlayBaseHash.current = baseHash;
-      transitionController({ type: 'overlay-open' });
-      pausePlayersExcept(null);
-      setVisibleIndex(-1);
-      visibleIndexRef.current = -1;
-      wasPlayingRef.current = snapshot.wasPlaying;
-      setRecipeOverlay({ short, snapshot });
-      setRecipes([]);
-      setRecipesLoading(true);
-      setRecipesError(false);
-      session.current.recipeClicks += 1;
-      if (typeof window !== 'undefined') {
-        const separator = baseHash.includes('?') ? '&' : '?';
-        const nextHash = `${baseHash}${separator}make=1`;
-        const currentState = window.history.state && typeof window.history.state === 'object' ? window.history.state : {};
-        window.history.pushState({ ...currentState, pubcrawlShortsOverlay: snapshot }, '', nextHash);
-        try { window.sessionStorage.setItem(SHORTS_SNAPSHOT_KEY, JSON.stringify(snapshot)); } catch {}
-      }
-      queryLocalRecipes({ q: short.recipeQuery, limit: 3, seed: short.id })
-        .catch(() => fetchRecipes({ q: short.recipeQuery!, limit: 3, seed: short.id }))
-        .then((result) => setRecipes(result.recipes))
-        .catch(() => setRecipesError(true))
-        .finally(() => {
-          openingOverlayRef.current = false;
-          setRecipesLoading(false);
-        });
-    },
-    [captureSnapshot, pausePlayersExcept, transitionController]
-  );
-
-  const closeRecipeOverlay = useCallback((fromDirectGesture = false) => {
-    const snapshot = overlayRef.current?.snapshot;
-    if (!snapshot || overlayRestoredRef.current) return;
-    overlayRestoredRef.current = true;
-    openingOverlayRef.current = false;
-    setRecipeOverlay(null);
-    overlayGate.release(SHORTS_RECIPE_GATE_ID);
-    clearShortsOverlaySnapshot();
-    if (typeof window !== 'undefined' && window.location.hash.includes('make=1')) {
-      const rest = window.history.state && typeof window.history.state === 'object' ? { ...(window.history.state as Record<string, unknown>) } : {};
-      delete rest.pubcrawlShortsOverlay;
-      window.history.replaceState(rest, '', overlayBaseHash.current || window.location.hash.replace(/[?&]make=1(?=&|$)/, '').replace(/[?&]$/, ''));
-    }
-    restoreSnapshot(snapshot, fromDirectGesture);
-    recipeOpenerRef.current?.focus();
-    window.setTimeout(() => { overlayRestoredRef.current = false; }, 0);
-  }, [restoreSnapshot]);
-
-  const continueToBar = useCallback(() => {
-    const overlay = overlayRef.current;
-    if (!overlay || !onContinueToBar) return;
-    const snapshot = overlay.snapshot;
-    setRecipeOverlay(null);
-    openingOverlayRef.current = false;
-    overlayRestoredRef.current = true;
-    overlayGate.release(SHORTS_RECIPE_GATE_ID);
-    clearShortsOverlaySnapshot();
-    if (typeof window !== 'undefined') {
-      const baseHash = overlayBaseHash.current || window.location.hash.replace(/&make=1$/, '');
-      // Keep the history entry immediately before the Menu explicitly
-      // resumable. This matters when the user presses browser/mobile Back
-      // instead of tapping BACK TO SHORT: a nav-sourced visit must not be
-      // mistaken for a brand-new random Shorts visit.
-      const returnHash = /([?&])src=[^&]*/.test(baseHash)
-        ? baseHash.replace(/([?&])src=[^&]*/, '$1src=return')
-        : `${baseHash}${baseHash.includes('?') ? '&' : '?'}src=return`;
-      overlayBaseHash.current = returnHash;
-      const rest = window.history.state && typeof window.history.state === 'object' ? { ...(window.history.state as Record<string, unknown>) } : {};
-      delete rest.pubcrawlShortsOverlay;
-      window.history.replaceState(rest, '', returnHash);
-    }
-    transitionController({ type: 'route-inactive' });
-    onContinueToBar(snapshot);
-    // `continueToBar` leaves this component mounted while App changes routes.
-    // Clear the idempotence guard on the next turn so a later Shorts visit can
-    // close its own overlay normally.
-    window.setTimeout(() => { overlayRestoredRef.current = false; }, 0);
-  }, [onContinueToBar, transitionController]);
-
   useEffect(() => {
-    const sync = () => setOnline(navigator.onLine);
-    window.addEventListener('online', sync);
-    window.addEventListener('offline', sync);
-    return () => {
-      window.removeEventListener('online', sync);
-      window.removeEventListener('offline', sync);
-    };
-  }, []);
-
-  useEffect(() => {
-    let alive = true;
-    fetchShorts()
-      .then((remote) => {
-        if (!alive || !Array.isArray(remote?.shorts)) return;
-        setData(remote);
-      })
-      .catch(() => {
-        if (alive && SHORTS_SEED.length === 0) setError(true);
-      });
-    return () => {
-      alive = false;
-    };
-  }, []);
-
-  // A fresh route entry gets a new random order. A return from the Menu keeps
-  // the captured order so the next swipe is exactly where the drinker left it.
-  useLayoutEffect(() => {
-    if (active && !visitStarted.current) {
-      overlayLoadedRef.current = false;
-      overlayRestoredRef.current = false;
-      const persistedOverlay = typeof window !== 'undefined' && window.location.hash.includes('make=1') ? readShortsOverlaySnapshot() : null;
-      const canResume = Boolean(returnState && initialId && returnState.videoId === initialId && source !== 'nav');
-      const capturedState = persistedOverlay || (canResume ? returnState : null);
-      if (capturedState) {
-        orderIdsRef.current = [...capturedState.order];
-        pendingRestoreRef.current = capturedState;
-        overlayResumeRef.current = persistedOverlay ? false : (capturedState.resumeIntent === 'autoplay' || capturedState.wasPlaying);
-        setOrderRevision((revision) => revision + 1);
-        if (!persistedOverlay) onReturnConsumed?.();
-      } else {
-        pendingRestoreRef.current = null;
-        overlayResumeRef.current = null;
-        if (orderRevision === 0 && orderIdsRef.current.length) {
-          // The first render already used a cryptographically random seed.
-          // Re-shuffling that keyed list during route entry makes browser
-          // scroll anchoring follow the old first card to its new position,
-          // sometimes jumping dozens of Shorts before playback begins.
-          setOrderRevision(1);
-        } else {
-          const nextSeed = randomSeed();
-          orderIdsRef.current = shuffleWithSeed(data.shorts, nextSeed).map((short) => short.id);
-          setOrderSeed(nextSeed);
-          setOrderRevision((revision) => revision + 1);
-        }
-      }
-      visitStarted.current = true;
-      sourceRef.current = sourceLabel(source);
-      sent.current = false;
-      session.current = blankSession();
-      started.current.clear();
-      failedIdsRef.current.clear();
-      retryCountsRef.current.clear();
-      playbackCoordinatorRef.current.commands.clear();
-      playbackCoordinatorRef.current.forcedMutedLease = null;
-      setError(false);
-      setConfigError(false);
-      cancelSoundSync();
-      const nextPlaybackMode = preferredPlaybackMode();
-      setPlaybackMode(nextPlaybackMode);
-      setManualIndex(null);
-      setBlockedIndex(null);
-      setFailureVersion((version) => version + 1);
-      if (!capturedState) overlayResumeRef.current = null;
-      const targetId = capturedState ? capturedState.videoId : initialId;
-      const target = targetId ? orderIdsRef.current.indexOf(targetId) : 0;
-      const safeTarget = target >= 0 ? target : 0;
-      // If a deep-link id is not in the build-time seed yet, leave the marker
-      // empty so reconciliation can pick it up when the API catalogue arrives.
-      // Otherwise the first render would stay on the random seed card and
-      // never honour the shared link.
-      lastInitialIdRef.current = target >= 0 ? targetId : undefined;
-      activeIndexRef.current = safeTarget;
-      prepareIndexRef.current = safeTarget;
-      visibleIndexRef.current = safeTarget;
-      const entered = transitionController({ type: 'route-enter', index: safeTarget });
-      if (entered.lease && !soundRef.current.muted) {
-        const shortId = orderIdsRef.current[safeTarget];
-        if (shortId) playbackCoordinatorRef.current.forcedMutedLease = `${shortId}:${safeTarget}:${entered.lease.generation}`;
-      }
-      if (typeof window !== 'undefined' && window.location.hash.includes('make=1')) {
-        // The overlay is reconstructed below once the matching catalogue item
-        // is available; keep the initial route from acquiring a play lease.
-        controllerRef.current = transitionShortsController(entered, { type: 'overlay-open' });
-        setControllerPhase('overlay');
-      }
-      lastScrollTopRef.current = 0;
-      scrollDirectionRef.current = 'forward';
-      setActiveIndex(safeTarget);
-      setPrepareIndex(safeTarget);
-      setScrollDirection('forward');
-      setVisibleIndex(safeTarget);
-      // `orderedShorts` is from the render before this fresh seed/order was
-      // committed. Read the ref we just established so the reconciliation
-      // effect cannot jump the user back to the old first card.
-      activeIdRef.current = orderIdsRef.current[safeTarget] || null;
-      requestAnimationFrame(() => {
-        const card = feedRef.current?.querySelector<HTMLElement>(`[data-short-index="${safeTarget}"]`);
-        if (card && feedRef.current) scrollFeedToCard(feedRef.current, card, 'auto');
-      });
+    if (!active) {
+      initializedRef.current = false;
+      setRouteReady(false);
+      setPhase('inactive');
+      flushSession();
+      return;
     }
-  }, [active, cancelSoundSync, data.shorts, initialId, onReturnConsumed, orderRevision, orderedShorts, returnState, source, transitionController]);
+    if (initializedRef.current || !orderedShorts.length) return;
+    initializedRef.current = true;
+    visitedRef.current = true;
+    sentRef.current = false;
+    sessionRef.current = blankSession();
+    startedRef.current.clear();
+    const requested = initialId ? orderedShorts.findIndex((short) => short.id === initialId) : -1;
+    const nextIndex = requested >= 0 ? requested : 0;
+    activeIndexRef.current = nextIndex;
+    setActiveIndex(nextIndex);
+    generationRef.current += 1;
+    setGeneration(generationRef.current);
+    setStartAudible(false);
+    setPhase(online ? 'initializing' : 'offline');
+    setRouteReady(true);
+  }, [active, flushSession, initialId, online, orderedShorts]);
 
-  // Route exit is the only passive transition that pauses the whole pool.
-  // Keep its dependency list intentionally narrow: a hidden Shorts instance
-  // may still receive catalogue/API enrichment, and that must never replay a
-  // global pause or flush the visit as though the user just navigated away.
   useEffect(() => {
     if (active) return;
-    visitStarted.current = false;
-    overlayLoadedRef.current = false;
-    if (overlayRef.current) {
-      setRecipeOverlay(null);
-      openingOverlayRef.current = false;
-      overlayRestoredRef.current = true;
-      overlayGate.release(SHORTS_RECIPE_GATE_ID);
-      clearShortsOverlaySnapshot();
-    }
-    transitionController({ type: 'route-inactive' });
-    // Invalidate any gesture authorization and its verification timer before
-    // pausing the pool. A delayed YouTube callback must not revive sound or
-    // playback after the user has left Shorts.
-    cancelSoundSync();
-    playbackCoordinatorRef.current.commands.clear();
-    playbackCoordinatorRef.current.forcedMutedLease = null;
-    pausePlayersExcept(null);
-    flushSession();
-    wasPlayingRef.current = false;
-    setPlayingIndex(null);
-  }, [active, cancelSoundSync, flushSession, pausePlayersExcept, transitionController]);
+    return () => flushSession();
+  }, [active, flushSession]);
 
-  // A reload can land directly on #/shorts?...&make=1. Rehydrate the modal
-  // from history.state/sessionStorage before any player is granted a lease.
   useEffect(() => {
-    if (!active || recipeOverlay || overlayLoadedRef.current || typeof window === 'undefined' || !window.location.hash.includes('make=1')) return;
-    const snapshot = pendingRestoreRef.current || readShortsOverlaySnapshot();
-    const removeInvalidFlag = () => {
-      clearShortsOverlaySnapshot();
-      const base = window.location.hash.replace(/[?&]make=1(?=&|$)/, '').replace(/[?&]$/, '');
-      const state = window.history.state && typeof window.history.state === 'object' ? { ...(window.history.state as Record<string, unknown>) } : {};
-      delete state.pubcrawlShortsOverlay;
-      window.history.replaceState(state, '', base);
-      pendingRestoreRef.current = null;
-      overlayResumeRef.current = null;
-      transitionController({ type: 'route-enter', index: activeIndexRef.current });
-    };
-    if (!snapshot || !isShortsReturnState(snapshot)) {
-      removeInvalidFlag();
-      return;
-    }
-    const known = new Set(data.shorts.map((short) => short.id));
-    const restoredOrder = snapshot.order.filter((id) => known.has(id));
-    if (!known.has(snapshot.videoId) || !restoredOrder.length) {
-      removeInvalidFlag();
-      return;
-    }
-    // Preserve the visit order before resolving the target index. The first
-    // pass may still contain the fresh random order, so wait for this revision.
-    const currentIds = orderedShorts.map((short) => short.id);
-    const reconciledOrder = reconcileShortsOrder(restoredOrder, currentIds);
-    if (currentIds.some((id, index) => id !== reconciledOrder[index])) {
-      orderIdsRef.current = reconciledOrder;
-      setOrderRevision((revision) => revision + 1);
-      return;
-    }
-    const short = orderedShorts.find((entry) => entry.id === snapshot.videoId);
-    if (!short) {
-      removeInvalidFlag();
-      return;
-    }
-    const index = orderedShorts.indexOf(short);
-    activeIndexRef.current = index;
-    prepareIndexRef.current = index;
-    visibleIndexRef.current = -1;
-    activeIdRef.current = short.id;
-    setActiveIndex(index);
-    setPrepareIndex(index);
-    setVisibleIndex(-1);
-    if (!overlayGate.acquire(SHORTS_RECIPE_GATE_ID, OVERLAY_PRIORITY.shortsRecipe)) return;
-    transitionController({ type: 'overlay-open' });
-    overlayBaseHash.current = window.location.hash.replace(/[?&]make=1(?=&|$)/, '').replace(/[?&]$/, '');
-    pendingRestoreRef.current = snapshot;
-    overlayLoadedRef.current = true;
-    setRecipeOverlay({ short, snapshot });
-    setRecipes([]);
-    setRecipesLoading(true);
-    setRecipesError(false);
-    queryLocalRecipes({ q: short.recipeQuery || short.title, limit: 3, seed: short.id })
-      .catch(() => fetchRecipes({ q: short.recipeQuery || short.title, limit: 3, seed: short.id }))
-      .then((result) => setRecipes(result.recipes))
-      .catch(() => setRecipesError(true))
-      .finally(() => setRecipesLoading(false));
-  }, [active, data.shorts, orderedShorts, recipeOverlay, transitionController]);
+    let cancelled = false;
+    void fetchShorts().then((next) => {
+      if (!cancelled && next?.shorts?.length) setData(next);
+    }).catch(() => {});
+    return () => { cancelled = true; };
+  }, []);
 
-  // Browsers are allowed to restore an element's scroll position before React
-  // mounts its scroll listener (notably after a reload or a PWA resume). In
-  // that case there is no scroll event to drive the normal settle path, so
-  // explicitly re-assert the settled lease and visible card once the ordered
-  // catalogue has committed. This is a no-op during a real gesture or recipe
-  // overlay and prevents a blank, non-active feed until the next swipe.
-  useLayoutEffect(() => {
-    if (!active || !orderedShorts.length || recipeOverlay || typeof window === 'undefined' || window.location.hash.includes('make=1')) return;
-    if (document.visibilityState === 'hidden' || controllerRef.current.phase === 'scrolling') return;
-    const index = Math.max(0, Math.min(orderedShorts.length - 1, activeIndexRef.current));
-    const lease = controllerRef.current.lease;
-    if (controllerRef.current.phase === 'route-inactive' || !lease || lease.index !== index) {
-      transitionController({ type: 'scroll-settle', index });
-    }
-    if (controllerRef.current.phase === 'idle' && visibleIndexRef.current !== index) {
-      visibleIndexRef.current = index;
-      setVisibleIndex(index);
-    }
-  }, [active, orderedShorts, recipeOverlay, transitionController]);
-
-  // A deep link can change while the Shorts component stays mounted (for
-  // example, a second teaser tap or a shared link opened from the current
-  // feed). Reconcile that id explicitly instead of letting the existing visit
-  // order win and silently playing a different Short.
   useEffect(() => {
-    if (!active || !visitStarted.current || !initialId || initialId === activeIdRef.current) return;
-    const index = orderedShorts.findIndex((short) => short.id === initialId);
-    lastInitialIdRef.current = initialId;
-    if (index < 0) return;
-    sourceRef.current = sourceLabel(source);
-    overlayResumeRef.current = null;
-    setActive(index, false);
-    requestAnimationFrame(() => {
-      const card = feedRef.current?.querySelector<HTMLElement>(`[data-short-index="${index}"]`);
-      if (card && feedRef.current) scrollFeedToCard(feedRef.current, card, 'auto');
-    });
-  }, [active, initialId, orderedShorts, setActive, source]);
-
-  // Keep the active index valid when the server removes a dead Short during a
-  // metadata refresh, without reshuffling the surviving visit.
-  useEffect(() => {
-    // The first active render deliberately replaces the initial random seed
-    // in a layout effect. Passive effects from that render still carry the
-    // pre-replacement `orderedShorts` array; waiting for the committed order
-    // prevents its stale index lookup from jumping a fresh visit to a random
-    // card before the first scroll.
-    if (!orderedShorts.length || orderRevision === 0) return;
-    const currentId = activeIdRef.current;
-    const next = currentId ? orderedShorts.findIndex((short) => short.id === currentId) : -1;
-    if (next >= 0 && next !== activeIndexRef.current) {
-      activeIndexRef.current = next;
-      visibleIndexRef.current = next;
-      setActiveIndex(next);
-      setVisibleIndex(next);
-    } else if (currentId && next < 0) {
-      // The refresh endpoint may remove the currently visible id after a
-      // confirmed YouTube takedown. Keep the visit order and land on the card
-      // occupying that slot instead of leaving a stale hash/player visible.
-      const fallback = Math.min(activeIndexRef.current, orderedShorts.length - 1);
-      if (fallback >= 0) setActive(fallback, false);
-    } else if (activeIndexRef.current >= orderedShorts.length) {
-      setActive(orderedShorts.length - 1, false);
-    }
-  }, [orderRevision, orderedShorts, setActive]);
-
-  // One scroll state machine owns activation. A meaningful movement revokes
-  // the current lease in the same task; only the nearest card after native
-  // scrollend, a stable touchend, or the single quiet fallback receives one.
-  useEffect(() => {
-    const root = feedRef.current;
-    if (!active || !root || !orderedShorts.length) return;
-    let frame = 0;
-    let lastTop = root.scrollTop;
-    let touchActive = false;
-    // When touchend commits an audible destination before mandatory snapping
-    // has finished, retain that lease through the remaining same-card
-    // momentum. A later scroll event can move more than the normal 35% bounce
-    // threshold even though it is only finishing the already-chosen snap.
-    let touchCommittedTarget: number | null = null;
-    let lastScrollAt = performance.now();
-    let lastScrollDelta = 0;
-    const clearSettle = () => {
-      if (settleTimerRef.current != null) {
-        window.clearTimeout(settleTimerRef.current);
-        settleTimerRef.current = null;
-      }
-    };
-    const cardIndexAtRest = () => {
-      const feedTop = root.getBoundingClientRect().top;
-      const cards = [...root.querySelectorAll<HTMLElement>('[data-short-index]')];
-      let best = 0;
-      let distance = Infinity;
-      cards.forEach((card) => {
-        const index = Number(card.dataset.shortIndex);
-        if (!Number.isInteger(index)) return;
-        const next = Math.abs(card.getBoundingClientRect().top - feedTop);
-        if (next < distance) {
-          best = index;
-          distance = next;
-        }
-      });
-      return Math.max(0, Math.min(orderedLengthRef.current - 1, best));
-    };
-    const commitSettlement = (targetIndex: number, source: ShortsSettleSource) => {
-      if (!activeRef.current || overlayRef.current || document.visibilityState === 'hidden' || window.location.hash.includes('make=1')) return null;
-      const target = Math.max(0, Math.min(orderedLengthRef.current - 1, Math.round(targetIndex)));
-      clearSettle();
-      pendingActivationRef.current = null;
-      const current = controllerRef.current;
-      const hasLease = current.phase === 'idle' && current.lease?.index === target && current.settledIndex === target;
-      if (hasLease) {
-        visibleIndexRef.current = target;
-        setVisibleIndex(target);
-        gestureStartTopRef.current = null;
-        return current.lease;
-      }
-      const wantsRetainedSound = playbackModeRef.current !== 'manual' && !soundRef.current.muted;
-      const directGesture = source === 'stable-touchend' || source === 'keyboard';
-      // A passive scroll may request the session's retained sound, but it is
-      // never represented as a fresh user gesture. If the browser declines it,
-      // the same one-shot muted fallback keeps the video moving.
-      const mode = startModeForSettlement(!wantsRetainedSound, directGesture);
-      const lease = setActiveRef.current(target, true, mode);
-      if (wantsRetainedSound && lease) {
-        const player = playersRef.current.get(target);
-        if (player) {
-          let state: number = YT_PLAYER_STATES.UNSTARTED;
-          try { state = player.getPlayerState(); } catch {}
-          if (playerReadyForStart(state)) {
-            beginAudibleStart(target, lease.generation, player);
-          } else {
-            demoteAudibleStart(target, lease.generation);
-          }
-        } else {
-          demoteAudibleStart(target, lease.generation);
-        }
-      }
-      gestureStartTopRef.current = null;
-      return lease;
-    };
-    const beginScroll = (direction: ShortsScrollDirection) => {
-      if (controllerRef.current.phase === 'scrolling') return;
-      // Capture a native YouTube sound change before pausing the outgoing
-      // iframe. This closes the sub-250ms click-then-wheel/touch race.
-      captureActiveSoundPreference();
-      transitionController({ type: 'scroll-start', direction });
-      // This is deliberately imperative: React's next render must not be the
-      // first opportunity for the outgoing iframe to stop playing.
-      pausePlayersExcept(null);
-      cancelSoundSync();
-      setPlayingIndex(null);
-      setVisibleIndex(-1);
-      visibleIndexRef.current = -1;
-      pendingActivationRef.current = null;
-      if (activationTimerRef.current != null) {
-        window.clearTimeout(activationTimerRef.current);
-        activationTimerRef.current = null;
-      }
-    };
-    const updateIntent = () => {
-      const top = root.scrollTop;
-      const delta = top - lastTop;
-      lastScrollDelta = delta;
-      lastScrollAt = performance.now();
-      const viewport = Math.max(1, root.clientHeight);
-      const intent = Math.max(0, Math.min(orderedLengthRef.current - 1, Math.round(top / viewport)));
-      if (Math.abs(delta) > 1) {
-        if (gestureStartTopRef.current == null) gestureStartTopRef.current = lastTop;
-        const start = gestureStartTopRef.current;
-        const displacement = top - start;
-        const direction: ShortsScrollDirection = displacement < -8 ? 'backward' : displacement > 8 ? 'forward' : delta < 0 ? 'backward' : 'forward';
-        // Direction is based on the gesture displacement, not the tiny
-        // reverse correction emitted by mandatory snapping.
-        if (Math.abs(displacement) > 8 && direction !== scrollDirectionRef.current) {
-          scrollDirectionRef.current = direction;
-          setScrollDirection(direction);
-          transitionController({ type: 'scroll-intent', index: prepareIndexRef.current, direction });
-        }
-        const settled = controllerRef.current.settledIndex;
-        const finishingCommittedSnap = touchCommittedTarget === intent;
-        if (!finishingCommittedSnap && shouldRevokeShortsLease(settled, intent, displacement, viewport)) {
-          touchCommittedTarget = null;
-          beginScroll(direction);
-        }
-      }
-      lastTop = top;
-      if (intent !== prepareIndexRef.current) {
-        prepareIndexRef.current = intent;
-        setPrepareIndex(intent);
-        transitionController({ type: 'scroll-intent', index: intent, direction: scrollDirectionRef.current });
-      }
-    };
-    const scheduleQuietSettlement = () => {
-      clearSettle();
-      const target = cardIndexAtRest();
-      pendingActivationRef.current = target;
-      settleTimerRef.current = window.setTimeout(() => {
-        settleTimerRef.current = null;
-        commitSettlement(cardIndexAtRest(), 'quiet-fallback');
-      }, 120);
-    };
-    const onScroll = () => {
-      if (!active || overlayRef.current || (typeof window !== 'undefined' && window.location.hash.includes('make=1'))) {
-        clearSettle();
-        return;
-      }
-      if (frame) return;
-      frame = requestAnimationFrame(() => {
-        frame = 0;
-        updateIntent();
-        // Never settle an intermediate card while a finger is down. Once the
-        // browser has released the gesture, one 120ms quiet timer is enough
-        // for engines that do not implement native scrollend.
-        if (!touchActive) scheduleQuietSettlement();
-      });
-    };
-    const flushScrollFrame = () => {
-      if (!frame) return;
-      cancelAnimationFrame(frame);
-      frame = 0;
-      updateIntent();
-    };
-    const onScrollEnd = () => {
-      if (touchActive || !active || overlayRef.current || (typeof window !== 'undefined' && window.location.hash.includes('make=1'))) return;
-      // A browser may deliver scrollend before our queued animation-frame
-      // reader. Flush that reader first so it cannot revoke this fresh lease
-      // and let the quiet fallback start the same card a second time.
-      flushScrollFrame();
-      commitSettlement(cardIndexAtRest(), 'native-scrollend');
-      touchCommittedTarget = null;
-    };
-    const onTouchStart = () => {
-      captureActiveSoundPreference();
-      touchCommittedTarget = null;
-      touchActive = true;
-      gestureStartTopRef.current = root.scrollTop;
-      clearSettle();
-    };
-    const onTouchEnd = () => {
-      touchActive = false;
-      flushScrollFrame();
-      const target = cardIndexAtRest();
-      const feedTop = root.getBoundingClientRect().top;
-      const card = root.querySelector<HTMLElement>(`[data-short-index="${target}"]`);
-      const cardDistance = card ? Math.abs(card.getBoundingClientRect().top - feedTop) : Infinity;
-      const velocity = Math.abs(lastScrollDelta) / Math.max(1, performance.now() - lastScrollAt);
-      let playerReady = false;
-      const player = playersRef.current.get(target);
-      if (player) {
-        try {
-          const state = player.getPlayerState();
-          playerReady = playerReadyForStart(state);
-        } catch {}
-      }
-      const exactlySnapped = cardDistance <= 2;
-      const stable = cardDistance <= Math.max(16, root.clientHeight * 0.04)
-        && (exactlySnapped || velocity < 0.35)
-        && Math.round(root.scrollTop / Math.max(1, root.clientHeight)) === target
-        && playerReady;
-      const audibleMomentumTarget = shouldAuthorizeAudibleTouchEnd({
-        desiredMuted: soundRef.current.muted,
-        manualMode: playbackModeRef.current === 'manual',
-        targetIndex: target,
-        settledIndex: controllerRef.current.settledIndex,
-        intendedIndex: prepareIndexRef.current,
-        cardDistance,
-        feedHeight: root.clientHeight,
-        playerReady,
-      });
-      if (stable || audibleMomentumTarget) {
-        const lease = commitSettlement(target, 'stable-touchend');
-        if (audibleMomentumTarget && lease?.index === target) touchCommittedTarget = target;
-      } else scheduleQuietSettlement();
-    };
-    root.addEventListener('scroll', onScroll, { passive: true });
-    root.addEventListener('scrollend', onScrollEnd as EventListener, { passive: true });
-    root.addEventListener('touchstart', onTouchStart, { passive: true });
-    root.addEventListener('touchend', onTouchEnd, { passive: true });
-    root.addEventListener('touchcancel', onTouchEnd, { passive: true });
+    const onOnline = () => setOnline(true);
+    const onOffline = () => setOnline(false);
+    window.addEventListener('online', onOnline);
+    window.addEventListener('offline', onOffline);
     return () => {
-      root.removeEventListener('scroll', onScroll);
-      root.removeEventListener('scrollend', onScrollEnd as EventListener);
-      root.removeEventListener('touchstart', onTouchStart);
-      root.removeEventListener('touchend', onTouchEnd);
-      root.removeEventListener('touchcancel', onTouchEnd);
-      if (frame) cancelAnimationFrame(frame);
-      clearSettle();
+      window.removeEventListener('online', onOnline);
+      window.removeEventListener('offline', onOffline);
     };
-    }, [active, beginAudibleStart, cancelSoundSync, captureActiveSoundPreference, demoteAudibleStart, pausePlayersExcept, transitionController]);
+  }, []);
 
-  // YouTube has no volumechange event. Observe the active player only; never
-  // use this passive poll to unmute a prepared/newly active iframe. A 100ms
-  // cadence captures a native click before the 260ms audible-policy verifier
-  // can mistake that explicit mute for a browser-enforced fallback.
-  useEffect(() => {
-    if (!active) return;
-    const timer = window.setInterval(captureActiveSoundPreference, 100);
-    return () => window.clearInterval(timer);
-  }, [active, captureActiveSoundPreference]);
+  useEffect(() => overlayGate.subscribe(() => setOverlayOwner(overlayGate.active)), []);
 
   useEffect(() => {
-    const onVisibility = () => {
-      if (document.visibilityState === 'hidden') {
-        transitionController({ type: 'hidden' });
-        gestureStartTopRef.current = null;
-        cancelSoundSync();
-        playbackCoordinatorRef.current.commands.clear();
-        playbackCoordinatorRef.current.forcedMutedLease = null;
-        pausePlayersExcept(null);
-        wasPlayingRef.current = false;
-        setPlayingIndex(null);
-        setVisibleIndex(-1);
-      } else if (active && !overlayRef.current) {
-        const next = transitionController({ type: 'visible' });
-        if (next.phase === 'idle') {
-          visibleIndexRef.current = next.settledIndex;
-          setVisibleIndex(next.settledIndex);
-          if (next.lease && !soundRef.current.muted) {
-            playbackCoordinatorRef.current.forcedMutedLease = startCommandKey(next.lease.index, next.lease.generation);
-          }
-        }
-      }
-    };
-    const restoreFromHistory = () => {
-      if (!window.location.hash.includes('make=1') && overlayRef.current) {
-        closeRecipeOverlay();
-      }
-    };
-    const onHash = () => restoreFromHistory();
-    document.addEventListener('visibilitychange', onVisibility);
-    window.addEventListener('pagehide', flushSession);
-    window.addEventListener('hashchange', onHash);
-    window.addEventListener('popstate', onHash);
-    return () => {
-      document.removeEventListener('visibilitychange', onVisibility);
-      window.removeEventListener('pagehide', flushSession);
-      window.removeEventListener('hashchange', onHash);
-      window.removeEventListener('popstate', onHash);
-    };
-  }, [active, cancelSoundSync, closeRecipeOverlay, flushSession, pausePlayersExcept, startCommandKey, transitionController]);
+    const update = () => setOverlayOwner(overlayGate.active);
+    window.addEventListener('pubcrawl:replay-tour', update);
+    return () => window.removeEventListener('pubcrawl:replay-tour', update);
+  }, []);
 
-  // Only final unmount is allowed to tear down every iframe. Metadata/API
-  // enrichment and callback changes must not pause a healthy active player.
   useEffect(() => () => {
-    pausePlayersExcept(null);
-    cancelSoundSync();
-    flushSession();
-  }, [cancelSoundSync, flushSession, pausePlayersExcept]);
+    if (wheelTimerRef.current != null) window.clearTimeout(wheelTimerRef.current);
+  }, []);
 
-  useEffect(() => {
-    if (!recipeOverlay) return;
-    const restoreInert = setBackgroundInert(true, '.shorts-recipe-backdrop');
-    const onKey = (event: KeyboardEvent) => {
-      if (event.key === 'Escape') {
-        event.preventDefault();
-        closeRecipeOverlay(true);
-        return;
-      }
-      if (event.key !== 'Tab') return;
-      const dialog = document.querySelector<HTMLElement>('.shorts-recipe-dialog');
-      const focusable = Array.from(dialog?.querySelectorAll<HTMLElement>('button, a, input, [tabindex]:not([tabindex="-1"])') || []).filter((element) => !element.hasAttribute('disabled'));
-      if (!focusable.length) return;
-      const first = focusable[0];
-      const last = focusable[focusable.length - 1];
-      if (event.shiftKey && document.activeElement === first) { event.preventDefault(); last.focus(); }
-      else if (!event.shiftKey && document.activeElement === last) { event.preventDefault(); first.focus(); }
-    };
-    document.addEventListener('keydown', onKey);
-    recipeCloseRef.current?.focus();
-    return () => {
-      document.removeEventListener('keydown', onKey);
-      restoreInert();
-    };
-  }, [closeRecipeOverlay, recipeOverlay]);
+  const navigate = useCallback((requestedIndex: number, directGesture: boolean) => {
+    if (!orderedShorts.length) return;
+    const nextIndex = Math.max(0, Math.min(orderedShorts.length - 1, requestedIndex));
+    const current = activeIndexRef.current;
+    if (nextIndex === current) return;
+    const nextShort = orderedShorts[nextIndex];
+    if (!nextShort) return;
+    // YouTube does not expose a volume-change event to the parent document.
+    // Read the active iframe synchronously while the swipe/click is still the
+    // user gesture, then use the updated ref below instead of a stale React
+    // state closure. This is what keeps a native unmute/volume choice when a
+    // user swipes immediately afterward.
+    playerHostRef.current?.syncNativeSound();
+    const desired = soundPreferenceRef.current.desiredAudible;
+    const audible = Boolean(directGesture && desired);
+    activeIndexRef.current = nextIndex;
+    generationRef.current += 1;
+    setActiveIndex(nextIndex);
+    setGeneration(generationRef.current);
+    setStartAudible(audible);
+    setPhase(online ? 'loading' : 'offline');
+    sessionRef.current.advances += 1;
+    const params = new URLSearchParams();
+    params.set('v', nextShort.id);
+    params.set('src', sourceLabel(source));
+    window.history.replaceState(window.history.state, '', `#/shorts?${params.toString()}`);
+  }, [online, orderedShorts, source]);
 
-  if (error)
-    return (
-      <section className="shorts-page shorts-state">
-        <p className="err" role="alert">The Shorts shelf is still waking up. Try again in a moment.</p>
-      </section>
-    );
+  const onSidePointerDown = useCallback((event: PointerEvent<HTMLDivElement>) => {
+    const target = event.target as Element | null;
+    const ignored = Boolean(target?.closest('button'));
+    gestureRef.current = { pointerId: event.pointerId, x: event.clientX, y: event.clientY, ignored };
+    if (!ignored) event.currentTarget.setPointerCapture?.(event.pointerId);
+  }, []);
 
-  if (!orderedShorts.length)
-    return (
-      <section className="shorts-page shorts-state">
-        <p className="empty-big">THE FIRST POUR IS COMING.</p>
-        <p className="k-label dim">WE’RE CURATING THE FIRST 60 SHORTS BEFORE THIS SHELF OPENS.</p>
-      </section>
-    );
+  const onSidePointerUp = useCallback((event: PointerEvent<HTMLDivElement>) => {
+    const start = gestureRef.current;
+    gestureRef.current = null;
+    if (!start || start.pointerId !== event.pointerId || start.ignored) return;
+    const dx = event.clientX - start.x;
+    const dy = event.clientY - start.y;
+    if (Math.abs(dy) < 40 || Math.abs(dy) <= Math.abs(dx) * 1.25) return;
+    navigate(activeIndexRef.current + (dy < 0 ? 1 : -1), true);
+  }, [navigate]);
 
-  const activeLease: PlayerLease | null = controllerRef.current.lease;
+  const onSidePointerCancel = useCallback(() => { gestureRef.current = null; }, []);
 
+  const onFeedKeyDown = useCallback((event: KeyboardEvent<HTMLDivElement>) => {
+    if (event.target !== event.currentTarget) return;
+    let destination: number | null = null;
+    if (event.key === 'ArrowDown' || event.key === 'PageDown' || event.key === ' ') destination = activeIndexRef.current + 1;
+    else if (event.key === 'ArrowUp' || event.key === 'PageUp') destination = activeIndexRef.current - 1;
+    else if (event.key === 'Home') destination = 0;
+    else if (event.key === 'End') destination = orderedShorts.length - 1;
+    if (destination == null) return;
+    event.preventDefault();
+    navigate(destination, true);
+  }, [navigate, orderedShorts.length]);
+
+  const onFeedWheel = useCallback((event: WheelEvent<HTMLDivElement>) => {
+    if ((event.target as Element | null)?.closest('.shorts-player-frame')) return;
+    const raw = event.deltaMode === 1 ? event.deltaY * 16 : event.deltaMode === 2 ? event.deltaY * window.innerHeight : event.deltaY;
+    if (Math.abs(raw) < 12) return;
+    event.preventDefault();
+    wheelDirectionRef.current = raw > 0 ? 'forward' : 'backward';
+    if (wheelTimerRef.current != null) window.clearTimeout(wheelTimerRef.current);
+    wheelTimerRef.current = window.setTimeout(() => {
+      wheelTimerRef.current = null;
+      const direction = wheelDirectionRef.current;
+      wheelDirectionRef.current = null;
+      if (direction) navigate(activeIndexRef.current + (direction === 'forward' ? 1 : -1), true);
+    }, 120);
+  }, [navigate]);
+
+  const onNativeSound = useCallback((muted: boolean, volume: number) => {
+    const previous = soundPreferenceRef.current;
+    const desiredAudible = !muted;
+    const normalizedVolume = Math.max(0, Math.min(100, Math.round(Number.isFinite(volume) ? volume : previous.volume)));
+    if (previous.desiredAudible === desiredAudible && previous.volume === normalizedVolume) return;
+    const next = writeShortsSoundPreference({ version: 1, desiredAudible, volume: normalizedVolume });
+    // Keep the ref current in the same task as the native gesture. React may
+    // batch the visible state update until after navigate() has read it.
+    soundPreferenceRef.current = next;
+    setSoundPreference(next);
+  }, []);
+
+  const onPlaybackRateChange = useCallback((rate: number) => {
+    setRatePreference((previous) => {
+      if (previous.preferredRate === rate) return previous;
+      return writeShortsRatePreference({ version: 1, preferredRate: rate });
+    });
+  }, []);
+
+  const handleShare = useCallback(async () => {
+    if (!activeShort) return;
+    const result = await shareContent(activeShort.title, shortShareText(activeShort.title, activeShort.channel, activeShort.id));
+    if (result === 'shared' || result === 'copied') {
+      sessionRef.current.shares += 1;
+      setShared(result === 'shared' ? 'idle' : 'copied');
+    } else if (result === 'failed') setShared('failed');
+    window.setTimeout(() => setShared('idle'), 1800);
+  }, [activeShort]);
+
+  const onPlaying = useCallback((startupMs: number) => {
+    const key = `${activeShort?.id || ''}:${generationRef.current}`;
+    if (startedRef.current.has(key)) return;
+    startedRef.current.add(key);
+    sessionRef.current.videosStarted += 1;
+    sessionRef.current.startupMsTotal += startupMs;
+    setPhase('playing');
+  }, [activeShort?.id]);
+
+  const onBuffering = useCallback(() => {
+    sessionRef.current.bufferingEvents += 1;
+    setPhase('buffering');
+  }, []);
+
+  const onStateChange = useCallback((state: number) => {
+    if (state === YT_PLAYER_STATES.PLAYING) setPhase('playing');
+    else if (state === YT_PLAYER_STATES.BUFFERING) setPhase('buffering');
+    else if (state === YT_PLAYER_STATES.PAUSED) setPhase('paused');
+  }, []);
+
+  const onAutoplayBlocked = useCallback(() => {
+    sessionRef.current.autoplayFailures += 1;
+  }, []);
+
+  const onPlayerError = useCallback((code: number) => {
+    if (code === 100 || code === 101 || code === 150) sessionRef.current.unavailableSkips += 1;
+    setPhase('error');
+  }, []);
+
+  if (!active) return null;
+
+  const suspended = Boolean(overlayOwner);
   return (
     <section className="shorts-page" aria-label="Shorts">
       <div
-        ref={feedRef}
         className="shorts-feed"
         tabIndex={0}
-        aria-label="Shorts feed. Scroll vertically for the next video."
+        role="region"
+        aria-label="Shorts feed"
         data-tour="shorts-feed"
-        data-controller-phase={controllerPhase}
+        data-controller-phase={phase}
         data-controller-active={activeIndex}
-        data-controller-visible={visibleIndex}
-        data-controller-lease={activeLease ? `${activeLease.index}:${activeLease.generation}` : ''}
-        aria-hidden={recipeOverlay ? true : undefined}
-        onKeyDown={(event) => {
-          if (event.target !== event.currentTarget || recipeOverlay) return;
-          const forward = event.key === 'ArrowDown' || event.key === 'PageDown' || event.key === ' ';
-          const backward = event.key === 'ArrowUp' || event.key === 'PageUp';
-          if (!forward && !backward && event.key !== 'Home' && event.key !== 'End') return;
-          event.preventDefault();
-          const next = event.key === 'Home'
-            ? 0
-            : event.key === 'End'
-              ? orderedShorts.length - 1
-              : Math.max(0, Math.min(orderedShorts.length - 1, activeIndexRef.current + (forward ? 1 : -1)));
-          const card = feedRef.current?.querySelector<HTMLElement>(`[data-short-index="${next}"]`);
-          if (card && feedRef.current) scrollFeedToCard(feedRef.current, card, 'smooth');
-          const mode = startModeForGesture(soundRef.current.muted, true);
-          const lease = setActiveRef.current(next, true, mode);
-          if (mode === 'gesture-audible' && lease) {
-            const player = playersRef.current.get(next);
-            if (player) {
-              let state: number = YT_PLAYER_STATES.UNSTARTED;
-              try { state = player.getPlayerState(); } catch {}
-              if (playerReadyForStart(state)) beginManualStart(next, lease.generation, player);
-              else demoteAudibleStart(next, lease.generation);
-            } else {
-              demoteAudibleStart(next, lease.generation);
-            }
-          }
-        }}
+        data-controller-visible={activeIndex}
+        data-controller-lease={`${activeIndex}:${generation}`}
+        data-content-window={windowIndexes.join(',')}
+        onKeyDown={onFeedKeyDown}
+        onWheel={onFeedWheel}
       >
-        {orderedShorts.map((short, index) => {
-          const isVisible = controllerPhase === 'idle' && activeLease?.index === index && visibleIndex === index && activeIndex === index;
-          const failed = failureVersion >= 0 && failedIdsRef.current.has(short.id);
-          const renderContent = contentIndices.has(index);
-          if (!renderContent) {
-            return <article className="shorts-card shorts-card-placeholder" data-short-index={index} key={short.id} aria-hidden="true" />;
-          }
-          const enabled = active && online && !failed && playerIndices.has(index);
-          const shouldPlay = active && isVisible && activeLease?.index === index && !recipeOverlay && overlayResumeRef.current !== false && online && !failed && (playbackMode !== 'manual' || manualIndex === index) && blockedIndex !== index;
-          const playLeaseGeneration = shouldPlay && activeLease?.index === index ? activeLease.generation : null;
-          return (
-            <article
-              className={`shorts-card ${isVisible ? 'is-active' : ''}`}
-              data-short-index={index}
-              data-short-id={short.id}
-              data-lease-generation={activeLease?.index === index ? activeLease.generation : ''}
-              key={short.id}
-            >
-              <div className={`shorts-stage ${short.recipeQuery ? 'has-recipe' : ''}`}>
-                <div className="shorts-visual">
-                  <div className="shorts-player-frame">
-                    <ShortPlayerHost
-                      index={index}
-                      short={short}
-                      enabled={enabled}
-                      initPriority={shortsInitPriority(index, activeIndex, prepareIndex, scrollDirection)}
-                      shouldPlay={shouldPlay}
-                      manualMode={playbackMode === 'manual'}
-                      manualToken={manualToken}
-                      playLeaseGeneration={playLeaseGeneration}
-                      startAuthorization={startAuthorization}
-                      muted={soundRef.current.muted}
-                      volume={soundRef.current.volume}
-                      online={online}
-                      failed={failed}
-                      onManual={(target, options) => {
-                        if (!online) return;
-                        const card = feedRef.current?.querySelector<HTMLElement>(`[data-short-index="${target}"]`);
-                        if (card && feedRef.current && target !== activeIndexRef.current) scrollFeedToCard(feedRef.current, card, 'smooth');
-                        const mode = startModeForGesture(soundRef.current.muted, true);
-                        const lease = setActive(target, false, mode);
-                        if (lease) {
-                          if (options?.reinitialize) {
-                            // Replacing a failed iframe is a new manual
-                            // recovery attempt, but the replacement itself is
-                            // asynchronous and therefore cannot retain this
-                            // click as an iOS audible-play gesture. Renew the
-                            // command budget for the guarded lease and let the
-                            // fresh player start muted when it becomes ready.
-                            const short = orderedShorts[target];
-                            const key = startCommandKey(target, lease.generation);
-                            const existing = playbackCoordinatorRef.current.commands.get(key)
-                              ?? createShortsStartCommand(short.id, target, lease.generation, false);
-                            playbackCoordinatorRef.current.commands.set(key, resetShortsStartForManualRecovery(existing));
-                            const authorization: ShortsStartAuthorization = {
-                              index: target,
-                              generation: lease.generation,
-                              mode: 'muted-autoplay',
-                              fallbackUsed: !soundRef.current.muted,
-                            };
-                            projectStartAuthorization(authorization);
-                            playbackCoordinatorRef.current.forcedMutedLease = !soundRef.current.muted ? key : null;
-                            setBlockedIndex(null);
-                          }
-                          const player = playersRef.current.get(target);
-                          if (player && !options?.reinitialize) {
-                            let state: number = YT_PLAYER_STATES.UNSTARTED;
-                            try { state = player.getPlayerState(); } catch {}
-                            if (playerReadyForStart(state)) beginManualStart(target, lease.generation, player);
-                            else if (mode === 'gesture-audible') demoteAudibleStart(target, lease.generation);
-                          } else if (!options?.reinitialize && mode === 'gesture-audible') {
-                            demoteAudibleStart(target, lease.generation);
-                          }
-                        }
-                        overlayResumeRef.current = null;
-                        setManualIndex(target);
-                        setManualToken((token) => token + 1);
-                      }}
-                      onRegister={registerPlayer}
-                      onUnregister={unregisterPlayer}
-                      onPlaying={handlePlaying}
-                      onCued={handleCued}
-                      onBuffering={handleBuffering}
-                      onUnexpectedPause={handleUnexpectedPause}
-                      onError={handlePlayerError}
-                      onAutoplayBlocked={handleAutoplayBlocked}
-                      onPlaybackRateChange={handlePlaybackRateChange}
-                      onClaimStart={claimStartCommand}
-                      onStartProgress={markStartProgress}
-                      onRequestInitialize={requestPlayerInitialization}
-                    />
-                  </div>
-                  {isVisible && (
-                    <div className="shorts-top-overlay" aria-label="Short navigation">
-                      <button type="button" className="shorts-overlay-action" onClick={onBack} aria-label="Back" title="Back">
-                        <ArrowLeft size={20} />
-                      </button>
-                      <ContextualHelp tour="shorts" className="shorts-overlay-action shorts-help" />
-                    </div>
-                  )}
-                  {isVisible && (
-                    <ShortsSpeedHold
-                      enabled={active && playingIndex === index && !recipeOverlay}
-                      rate={playbackRate}
-                      player={playersRef.current.get(index) || null}
-                    />
-                  )}
-                  {isVisible && (
-                    <div className="shorts-player-rail" aria-label="Short actions" data-tour="shorts-actions">
-                      <button
-                        type="button"
-                        className={`shorts-overlay-action ${shared !== 'idle' ? 'shorts-shared' : ''}`}
-                        onClick={() => {
-                          void (async () => {
-                            const outcome = await shareContent(`${short.title} · The PubCrawl`, shortShareText(short.title, short.channel, short.id));
-                            session.current.shares += 1;
-                            if (outcome === 'copied' || outcome === 'failed') {
-                              setShared(outcome);
-                              window.setTimeout(() => setShared('idle'), 1600);
-                            }
-                          })();
-                        }}
-                        aria-label={shared === 'copied' ? 'Link copied' : shared === 'failed' ? 'Share blocked' : 'Share'}
-                        title={shared === 'copied' ? 'Link copied' : 'Share'}
-                      >
-                        {shared === 'copied' ? <Check size={20} /> : <Share size={20} />}
-                      </button>
-                      {short.recipeQuery && (
-                        <button type="button" className="shorts-action shorts-make" onClick={() => openRecipeOverlay(short)}>
-                          MAKE THIS <ArrowRight size={13} />
-                        </button>
-                      )}
-                    </div>
-                  )}
-                </div>
-
-              </div>
-            </article>
-          );
-        })}
-      </div>
-
-      {recipeOverlay && (
-        <div
-          className="shorts-recipe-backdrop"
-          onMouseDown={(event) => event.target === event.currentTarget && closeRecipeOverlay(true)}
-          onWheel={(event) => {
-            if (event.target === event.currentTarget) event.preventDefault();
-          }}
-        >
-          <div
-            className="shorts-recipe-dialog"
-            role="dialog"
-            aria-modal="true"
-            aria-labelledby="shorts-recipe-title"
-            onMouseDown={(event) => event.stopPropagation()}
-            onKeyDown={(event) => {
-              if (event.key === 'Escape') {
-                event.preventDefault();
-                closeRecipeOverlay(true);
-              }
-            }}
+        {routeReady && activeShort ? (
+          <article
+            className="shorts-card is-active"
+            data-short-index={activeIndex}
+            data-short-id={activeShort.id}
+            data-lease-generation={generation}
+            aria-label={activeShort.title}
           >
-            <header className="shorts-recipe-dialog-head">
-              <div>
-                <span className="k-label">MAKE THIS</span>
-                <h2 id="shorts-recipe-title">{recipeOverlay.short.recipeQuery}</h2>
+            <div className="shorts-stage">
+              <div
+                className="shorts-nav-zone shorts-nav-zone-left"
+                data-swipe-zone="previous"
+                data-tour="shorts-actions"
+                onPointerDown={onSidePointerDown}
+                onPointerUp={onSidePointerUp}
+                onPointerCancel={onSidePointerCancel}
+              >
+                <button type="button" className="shorts-overlay-action" aria-label="Back" title="Back" onClick={onBack}>
+                  <ArrowLeft size={26} />
+                </button>
+                <ContextualHelp tour="shorts" className="shorts-help" />
+                <button
+                  type="button"
+                  className="shorts-overlay-action"
+                  aria-label="Previous Short"
+                  title="Previous Short"
+                  disabled={activeIndex <= 0}
+                  onClick={() => navigate(activeIndex - 1, true)}
+                >
+                  <ArrowLeft size={22} />
+                </button>
               </div>
-              <button ref={recipeCloseRef} className="shorts-recipe-close" type="button" onClick={() => closeRecipeOverlay(true)} aria-label="Close recipes">
-                <X size={20} />
-              </button>
-            </header>
 
-            {recipesLoading ? (
-              <div className="shorts-recipe-loading" aria-label="Loading recipes">
-                <span /><span /><span />
+              <div className="shorts-player-frame">
+                <ShortPlayerHost
+                  ref={playerHostRef}
+                  active={routeReady}
+                  short={activeShort}
+                  index={activeIndex}
+                  generation={generation}
+                  startAudible={startAudible}
+                  desiredAudible={soundPreference.desiredAudible}
+                  volume={soundPreference.volume}
+                  preferredRate={ratePreference.preferredRate}
+                  online={online}
+                  suspended={suspended}
+                  onStateChange={onStateChange}
+                  onPlaying={onPlaying}
+                  onBuffering={onBuffering}
+                  onError={onPlayerError}
+                  onAutoplayBlocked={onAutoplayBlocked}
+                  onPlaybackRateChange={onPlaybackRateChange}
+                  onNativeSound={onNativeSound}
+                />
               </div>
-            ) : recipesError ? (
-              <div className="shorts-recipe-empty" role="alert">
-                <p className="empty-big">THE BAR IS WAKING.</p>
-                <p className="k-label dim">CLOSE THIS CARD OR CONTINUE TO THE FULL MENU.</p>
-              </div>
-            ) : recipes.length ? (
-              <div className="shorts-recipe-track" aria-label="Related recipes">
-                {recipes.map((recipe, index) => (
-                  <ShortRecipeCard
-                    key={recipe.id}
-                    recipe={recipe}
-                    index={index}
-                    vibe={recipeVibe(recipe)}
-                    onToggleTab={onToggleRecipeTab}
-                    inTab={recipeTabIds.has(recipe.id)}
-                    likes={recipeLikes[recipe.id] || 0}
-                    liked={recipeLikedIds.has(recipe.id)}
-                    onToggleLike={onToggleRecipeLike}
-                    onKeep={onKeepRecipe}
-                  />
-                ))}
-              </div>
-            ) : (
-              <div className="shorts-recipe-empty">
-                <p className="empty-big">NO MATCHES YET.</p>
-                <p className="k-label dim">THE FULL BAR MAY HAVE A POUR FOR THIS SHORT.</p>
-              </div>
-            )}
 
-            <footer className="shorts-recipe-dialog-foot">
-              <button type="button" className="btn btn-solid" onClick={continueToBar}>
-                CONTINUE TO THE BAR <ArrowRight size={14} />
-              </button>
-              <span className="k-label dim">YOUR SHORT IS PAUSED · CLOSE TO KEEP SCROLLING</span>
-            </footer>
-          </div>
+              <div
+                className="shorts-nav-zone shorts-nav-zone-right"
+                data-swipe-zone="next"
+                onPointerDown={onSidePointerDown}
+                onPointerUp={onSidePointerUp}
+                onPointerCancel={onSidePointerCancel}
+              >
+                <button type="button" className="shorts-overlay-action" aria-label="Share" title="Share" onClick={handleShare}>
+                  <Share size={24} />
+                </button>
+                <button
+                  type="button"
+                  className="shorts-overlay-action"
+                  aria-label="Next Short"
+                  title="Next Short"
+                  disabled={activeIndex >= orderedShorts.length - 1}
+                  onClick={() => navigate(activeIndex + 1, true)}
+                >
+                  <ArrowRight size={22} />
+                </button>
+              </div>
+            </div>
+            <div className="shorts-meta">
+              <span className="k-label">{activeShort.lane}</span>
+              <h1>{activeShort.title}</h1>
+              <p className="k-label dim">{activeShort.channel}</p>
+              {shared !== 'idle' && <span className="k-label shorts-share-status" role="status">{shared === 'copied' ? 'LINK COPIED' : 'SHARE FAILED'}</span>}
+            </div>
+          </article>
+        ) : (
+          <div className="shorts-route-loading" role="status">LOADING..</div>
+        )}
+
+        <div className="shorts-queue" aria-hidden="true">
+          {windowIndexes.filter((index) => index !== activeIndex).map((index) => {
+            const short = orderedShorts[index];
+            return short ? <article key={`${short.id}-${index}`} className="shorts-card shorts-card-placeholder" data-short-index={index} data-short-id={short.id} /> : null;
+          })}
         </div>
-      )}
-
-      {configError && !recipeOverlay && (
-        <div className="shorts-config-toast" role="status">
-          PLAYER CONNECTION INTERRUPTED · TRY AGAIN WHEN THE CONNECTION RETURNS
-        </div>
-      )}
+      </div>
     </section>
   );
 }
+
+export type { YouTubePlayer };
