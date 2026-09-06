@@ -1,750 +1,755 @@
-import { useEffect, useRef, useState } from 'react';
+import { forwardRef, useEffect, useImperativeHandle, useRef, useState } from 'react';
 import type { ShortVideo } from '../../types';
-import { createYouTubePlayer, YT_PLAYER_STATES, type YouTubePlayer } from '../../shortsPlayer';
-import { Play } from '../../icons';
-import type { ShortsStartAttempt, ShortsStartAuthorization } from '../../shortsSoundPolicy';
 import {
-  waitForShortsInitialization,
-  type InitializationLease,
-} from '../../shortsPlayerPool';
-interface ShortPlayerHostProps {
-  index: number;
+  applyMutedSound,
+  applySound,
+  createYouTubePlayer,
+  YT_PLAYER_STATES,
+  type YouTubePlayer,
+} from '../../shortsPlayer';
+
+/**
+ * The Shorts route deliberately has one playback owner. The host owns only
+ * the iframe's lifetime and reports native events; all navigation decisions
+ * are represented by the selected video's generation.
+ */
+export interface ShortPlayerHostProps {
+  active: boolean;
   short: ShortVideo;
-  enabled: boolean;
-  initPriority: number;
-  shouldPlay: boolean;
-  manualMode: boolean;
-  manualToken: number;
-  playLeaseGeneration: number | null;
-  startAuthorization: ShortsStartAuthorization | null;
-  muted: boolean;
+  index: number;
+  generation: number;
+  startAudible: boolean;
+  desiredAudible: boolean;
   volume: number;
+  preferredRate: number;
   online: boolean;
-  failed: boolean;
-  onManual: (index: number, options?: { reinitialize?: boolean }) => void;
-  onRegister: (index: number, player: YouTubePlayer) => void;
-  onUnregister: (index: number, player: YouTubePlayer) => void;
-  onPlaying: (index: number, generation: number | null, startupMs: number, player: YouTubePlayer) => void;
-  onCued: (index: number, generation: number | null, player: YouTubePlayer) => void;
-  onBuffering: (index: number, generation: number | null, player: YouTubePlayer) => void;
-  onUnexpectedPause: (index: number, generation: number | null, player: YouTubePlayer) => boolean;
-  onError: (index: number, generation: number | null, code: number) => void;
-  onAutoplayBlocked: (index: number, generation: number | null, player: YouTubePlayer) => boolean;
-  onPlaybackRateChange: (index: number, generation: number | null, rate: number) => void;
-  onClaimStart: (index: number, generation: number, attempt: ShortsStartAttempt, requestedAudible: boolean) => boolean;
-  onStartProgress: (index: number, generation: number | null) => void;
-  onRequestInitialize: (index: number, priority: number, start: (signal: AbortSignal) => Promise<void>) => InitializationLease;
+  suspended?: boolean;
+  onReady?: (player: YouTubePlayer) => void;
+  onStateChange?: (state: number, player: YouTubePlayer) => void;
+  onPlaying?: (startupMs: number, player: YouTubePlayer) => void;
+  onBuffering?: (player: YouTubePlayer) => void;
+  onError?: (code: number, player: YouTubePlayer) => void;
+  onAutoplayBlocked?: (player: YouTubePlayer) => void;
+  onPlaybackRateChange?: (rate: number) => void;
+  onNativeSound?: (muted: boolean, volume: number) => void;
 }
 
-type ShortPlayerPhase = 'initializing' | 'cued' | 'starting' | 'confirming' | 'playing' | 'blocked' | 'stalled';
+export interface ShortPlayerHostHandle {
+  /** Read the current native control state before a navigation gesture. */
+  syncNativeSound: () => void;
+}
 
-const STARTUP_REVEAL_DELAY_MS = 220;
-const STARTUP_REVEAL_TIME_SECONDS = 0.08;
-const IFRAME_INITIALIZATION_TIMEOUT_MS = 12_000;
+type HostPhase = 'initializing' | 'loading' | 'playing' | 'paused' | 'buffering' | 'blocked' | 'offline' | 'error';
 
-/** A slide owns its player shell; the parent decides which directional pool slots stay mounted. */
-export function ShortPlayerHost({
-  index,
+interface StartCommand {
+  videoId: string;
+  generation: number;
+  issued: boolean;
+  retryUsed: boolean;
+  progressed: boolean;
+  manualPause: boolean;
+}
+
+const MOTION_THRESHOLD = 0.08;
+const SOUND_OBSERVE_MS = 200;
+const STARTUP_RETRY_MS = 1500;
+const LOADING_STATUS_MS = 700;
+
+function clampVolume(value: number): number {
+  return Math.max(0, Math.min(100, Math.round(Number.isFinite(value) ? value : 100)));
+}
+
+function clampRate(value: number): number {
+  return Number.isFinite(value) && value > 0 ? Math.min(2, Math.max(0.25, value)) : 1;
+}
+
+function currentVideoId(player: YouTubePlayer): string | null {
+  try {
+    const url = player.getVideoUrl?.();
+    if (!url) return null;
+    const match = url.match(/[?&]v=([^&#]+)/) || url.match(/\/shorts\/([^/?#]+)/);
+    return match?.[1] || null;
+  } catch {
+    return null;
+  }
+}
+
+export const ShortPlayerHost = forwardRef<ShortPlayerHostHandle, ShortPlayerHostProps>(function ShortPlayerHost({
+  active,
   short,
-  enabled,
-  initPriority,
-  shouldPlay,
-  manualMode,
-  manualToken,
-  playLeaseGeneration,
-  startAuthorization,
-  muted,
+  index,
+  generation,
+  startAudible,
+  desiredAudible,
   volume,
+  preferredRate,
   online,
-  failed,
-  onManual,
-  onRegister,
-  onUnregister,
+  suspended = false,
+  onReady,
+  onStateChange,
   onPlaying,
-  onCued,
   onBuffering,
-  onUnexpectedPause,
   onError,
   onAutoplayBlocked,
   onPlaybackRateChange,
-  onClaimStart,
-  onStartProgress,
-  onRequestInitialize,
-}: ShortPlayerHostProps) {
+  onNativeSound,
+}: ShortPlayerHostProps, ref) {
   const hostRef = useRef<HTMLDivElement>(null);
   const playerRef = useRef<YouTubePlayer | null>(null);
-  const initializationLeaseRef = useRef<InitializationLease | null>(null);
-  const shouldPlayRef = useRef(shouldPlay);
-  const leaseGenerationRef = useRef<number | null>(playLeaseGeneration);
-  const startAuthorizationRef = useRef<ShortsStartAuthorization | null>(startAuthorization);
-  const mutedRef = useRef(muted);
-  const volumeRef = useRef(volume);
-  const onRegisterRef = useRef(onRegister);
-  const onUnregisterRef = useRef(onUnregister);
+  const expectedIdRef = useRef(short.id);
+  const generationRef = useRef(generation);
+  const activeRef = useRef(active);
+  const suspendedRef = useRef(suspended);
+  const desiredAudibleRef = useRef(desiredAudible);
+  const startAudibleRef = useRef(startAudible);
+  const volumeRef = useRef(clampVolume(volume));
+  const preferredRateRef = useRef(clampRate(preferredRate));
+  const onReadyRef = useRef(onReady);
+  const onStateChangeRef = useRef(onStateChange);
   const onPlayingRef = useRef(onPlaying);
-  const onCuedRef = useRef(onCued);
   const onBufferingRef = useRef(onBuffering);
-  const onUnexpectedPauseRef = useRef(onUnexpectedPause);
   const onErrorRef = useRef(onError);
   const onAutoplayBlockedRef = useRef(onAutoplayBlocked);
   const onPlaybackRateChangeRef = useRef(onPlaybackRateChange);
-  const onClaimStartRef = useRef(onClaimStart);
-  const onStartProgressRef = useRef(onStartProgress);
-  const onRequestInitializeRef = useRef(onRequestInitialize);
-  const requestStartedAt = useRef<number | null>(null);
-  const startupTimerRef = useRef<number | null>(null);
-  const loadingCopyTimerRef = useRef<number | null>(null);
+  const onNativeSoundRef = useRef(onNativeSound);
+  const commandRef = useRef<StartCommand>({
+    videoId: short.id,
+    generation,
+    issued: false,
+    retryUsed: false,
+    progressed: false,
+    manualPause: false,
+  });
+  const firstMotionRef = useRef(false);
+  const startupAtRef = useRef<number | null>(null);
   const retryTimerRef = useRef<number | null>(null);
-  const revealTimerRef = useRef<number | null>(null);
-  const confirmPlaybackRef = useRef<(player: YouTubePlayer, generation: number | null) => void>(() => {});
-  const playRequestRef = useRef(false);
-  const cueIssuedRef = useRef(false);
-  const cuedRef = useRef(false);
-  const playbackConfirmedRef = useRef(false);
-  const loopRestartPendingRef = useRef(false);
-  const loopReleaseTimerRef = useRef<number | null>(null);
+  const loadingTimerRef = useRef<number | null>(null);
+  const postLoadRestoreTimerRef = useRef<number | null>(null);
   const loopEpochRef = useRef(0);
+  const loopRestartedEpochRef = useRef<number | null>(null);
+  const soundObservationSuppressedUntilRef = useRef(0);
+  const observedSoundRef = useRef<{ muted: boolean; volume: number } | null>(null);
+  const observedRateRef = useRef<number | null>(null);
+  const applyingRateRef = useRef(false);
+  // `manualPauseRef` describes a pause made through YouTube's native
+  // controls. `appPauseRef` describes a pause we issued for a route,
+  // visibility, or tutorial transition. Keeping them separate prevents a
+  // hidden/overlay pause from being mistaken for a user pause (and vice
+  // versa), which is what used to make a later Short wait for a tap.
+  const manualPauseRef = useRef(false);
+  const appPauseRef = useRef(false);
+  const resumeIntentRef = useRef(false);
+  const disposedRef = useRef(false);
   const [ready, setReady] = useState(false);
-  const [cued, setCued] = useState(false);
+  const [phase, setPhase] = useState<HostPhase>(online ? 'initializing' : 'offline');
   const [revealed, setRevealed] = useState(false);
-  const [autoplayBlocked, setAutoplayBlocked] = useState(false);
-  const [needsReinitialize, setNeedsReinitialize] = useState(false);
-  const [phase, setPhase] = useState<ShortPlayerPhase>('initializing');
-  const [showLoadingCopy, setShowLoadingCopy] = useState(false);
-  const [initializationAttempt, setInitializationAttempt] = useState(0);
+  const [showLoading, setShowLoading] = useState(true);
 
-  shouldPlayRef.current = shouldPlay;
-  leaseGenerationRef.current = playLeaseGeneration;
-  startAuthorizationRef.current = startAuthorization;
-  mutedRef.current = muted;
-  volumeRef.current = volume;
-  onRegisterRef.current = onRegister;
-  onUnregisterRef.current = onUnregister;
+  generationRef.current = generation;
+  activeRef.current = active;
+  suspendedRef.current = suspended;
+  expectedIdRef.current = short.id;
+  desiredAudibleRef.current = desiredAudible;
+  startAudibleRef.current = startAudible;
+  volumeRef.current = clampVolume(volume);
+  preferredRateRef.current = clampRate(preferredRate);
+  onReadyRef.current = onReady;
+  onStateChangeRef.current = onStateChange;
   onPlayingRef.current = onPlaying;
-  onCuedRef.current = onCued;
   onBufferingRef.current = onBuffering;
-  onUnexpectedPauseRef.current = onUnexpectedPause;
   onErrorRef.current = onError;
   onAutoplayBlockedRef.current = onAutoplayBlocked;
   onPlaybackRateChangeRef.current = onPlaybackRateChange;
-  onClaimStartRef.current = onClaimStart;
-  onStartProgressRef.current = onStartProgress;
-  onRequestInitializeRef.current = onRequestInitialize;
+  onNativeSoundRef.current = onNativeSound;
 
-  useEffect(() => {
-    initializationLeaseRef.current?.updatePriority(initPriority);
-  }, [initPriority]);
-
-  useEffect(() => {
-    let disposed = false;
-    const clearStartupTimer = () => {
-      if (startupTimerRef.current != null) {
-        window.clearTimeout(startupTimerRef.current);
-        startupTimerRef.current = null;
-      }
-    };
-    const clearLoadingCopyTimer = () => {
-      if (loadingCopyTimerRef.current != null) {
-        window.clearTimeout(loadingCopyTimerRef.current);
-        loadingCopyTimerRef.current = null;
-      }
-    };
-    const clearRetryTimer = () => {
-      if (retryTimerRef.current != null) {
-        window.clearTimeout(retryTimerRef.current);
-        retryTimerRef.current = null;
-      }
-    };
-    const clearRevealTimer = () => {
-      if (revealTimerRef.current != null) {
-        window.clearTimeout(revealTimerRef.current);
-        revealTimerRef.current = null;
-      }
-    };
-    const clearLoopReleaseTimer = () => {
-      if (loopReleaseTimerRef.current != null) {
-        window.clearTimeout(loopReleaseTimerRef.current);
-        loopReleaseTimerRef.current = null;
-      }
-    };
-
-    const releaseLoopLatchWhenMoving = (
-      player: YouTubePlayer,
-      generation: number,
-      epoch: number,
-      attempt = 0,
-    ) => {
-      clearLoopReleaseTimer();
-      loopReleaseTimerRef.current = window.setTimeout(() => {
-        loopReleaseTimerRef.current = null;
-        if (
-          disposed ||
-          !shouldPlayRef.current ||
-          leaseGenerationRef.current !== generation ||
-          loopEpochRef.current !== epoch
-        ) return;
-        try {
-          if (
-            player.getPlayerState() === YT_PLAYER_STATES.PLAYING &&
-            player.getCurrentTime() >= STARTUP_REVEAL_TIME_SECONDS
-          ) {
-            loopRestartPendingRef.current = false;
-            return;
-          }
-        } catch {}
-        // Slow YouTube loop restarts can remain at time zero beyond the first
-        // check. Poll for a bounded 1.8 seconds, then unlock defensively so one
-        // delayed frame cannot disable every future natural loop.
-        if (attempt < 11) releaseLoopLatchWhenMoving(player, generation, epoch, attempt + 1);
-        else loopRestartPendingRef.current = false;
-      }, 150);
-    };
-
-    const confirmPlayback = (player: YouTubePlayer, generation: number | null) => {
-      clearRevealTimer();
-      clearLoopReleaseTimer();
-      revealTimerRef.current = window.setTimeout(() => {
-        revealTimerRef.current = null;
-        if (disposed || !shouldPlayRef.current || leaseGenerationRef.current !== generation) return;
-        try {
-          const state = player.getPlayerState();
-          const currentTime = Math.max(0, player.getCurrentTime() || 0);
-          if (state === YT_PLAYER_STATES.PLAYING && currentTime >= STARTUP_REVEAL_TIME_SECONDS) {
-            playbackConfirmedRef.current = true;
-            setPhase('playing');
-            setRevealed(true);
-            return;
-          }
-          if (state === YT_PLAYER_STATES.PLAYING) confirmPlayback(player, generation);
-        } catch {
-          // A later state event retries confirmation while the iframe settles.
-        }
-      }, STARTUP_REVEAL_DELAY_MS);
-    };
-    confirmPlaybackRef.current = confirmPlayback;
-
-    if (!enabled || !online || failed || !hostRef.current) {
-      clearStartupTimer();
-      clearLoadingCopyTimer();
-      clearRetryTimer();
-      clearRevealTimer();
-      const old = playerRef.current;
-      if (old) {
-        onUnregisterRef.current(index, old);
-        old.destroy();
-        playerRef.current = null;
-      }
-      setReady(false);
-      setCued(false);
-      setRevealed(false);
-      setShowLoadingCopy(false);
-      setPhase('initializing');
-      playRequestRef.current = false;
-      cueIssuedRef.current = false;
-      cuedRef.current = false;
-      playbackConfirmedRef.current = false;
-      loopRestartPendingRef.current = false;
-      loopEpochRef.current += 1;
-      return;
+  const clearTimer = (ref: { current: number | null }) => {
+    if (ref.current != null) {
+      window.clearTimeout(ref.current);
+      ref.current = null;
     }
+  };
 
-    let created: YouTubePlayer | null = null;
-    let cancelQueued: InitializationLease | null = null;
-    let releaseInitialization = () => {};
-    let initializationExpired = false;
-    // YouTube mutates the element passed to YT.Player. Give it a DOM shell
-    // React does not reconcile so StrictMode/effect teardown cannot race the
-    // iframe API's own child removal.
-    const mount = document.createElement('div');
-    hostRef.current.appendChild(mount);
-    setReady(false);
-    setCued(false);
-    setRevealed(false);
-    setShowLoadingCopy(false);
-    setAutoplayBlocked(false);
-    setNeedsReinitialize(false);
-    setPhase('initializing');
-    playRequestRef.current = false;
-    cueIssuedRef.current = false;
-    cuedRef.current = false;
-    playbackConfirmedRef.current = false;
-    loopRestartPendingRef.current = false;
-    loopEpochRef.current += 1;
+  const isCurrent = (player: YouTubePlayer, command = commandRef.current) => {
+    if (disposedRef.current || !activeRef.current || suspendedRef.current) return false;
+    if (playerRef.current !== player) return false;
+    if (command.generation !== generationRef.current || command.videoId !== expectedIdRef.current) return false;
+    const nativeId = currentVideoId(player);
+    return !nativeId || nativeId === expectedIdRef.current;
+  };
 
-    const start = async (signal: AbortSignal) => {
-      const initialized = new Promise<void>((resolve) => {
-        releaseInitialization = resolve;
-      });
-      try {
-        // Build a shell first. The reviewed id is cued exactly once from
-        // onReady; this avoids YouTube racing an implicit loadVideoById call.
-        created = await createYouTubePlayer(mount, undefined, {
-          onReady: (player) => {
-            if (disposed || initializationExpired) {
-              releaseInitialization();
-              player.destroy();
-              return;
-            }
-            created = player;
-            playerRef.current = player;
-            const iframe = mount.querySelector('iframe');
-            iframe?.setAttribute('referrerpolicy', 'strict-origin-when-cross-origin');
-            onRegisterRef.current(index, player);
-            const gestureStart = startAuthorizationRef.current;
-            const audibleStart = Boolean(
-              gestureStart &&
-              gestureStart.index === index &&
-              gestureStart.generation === leaseGenerationRef.current &&
-              gestureStart.mode !== 'muted-autoplay' &&
-              !gestureStart.fallbackUsed &&
-              !mutedRef.current,
-            );
-            // Every prepared player is muted. Only a still-valid audible start
-            // already issued for this lease may preserve its current state.
-            try {
-              player.setVolume(volumeRef.current);
-              if (!audibleStart) player.mute();
-            } catch {}
-            if (!cueIssuedRef.current) {
-              cueIssuedRef.current = true;
-              player.cueVideoById(short.id);
-            }
-            setReady(true);
-            releaseInitialization();
-          },
-          onStateChange: (player, state) => {
-            if (disposed || initializationExpired) return;
-            if (state === YT_PLAYER_STATES.PLAYING) {
-              clearStartupTimer();
-              clearRetryTimer();
-              // A code-5 player may recover through the parent's one guarded
-              // same-iframe retry. Confirmed motion proves that iframe is
-              // usable again, so a later visit may autoplay it normally. A
-              // generationless failure cannot reach PLAYING until the user
-              // explicitly replaces the iframe, and therefore stays gated.
-              setNeedsReinitialize(false);
-              // A browser may reject the first audible command and then
-              // accept the one muted recovery. Once motion is confirmed the
-              // player is no longer blocked; retaining this flag would force
-              // a tap when the same prepared iframe becomes active again.
-              setAutoplayBlocked(false);
-              playRequestRef.current = true;
-              const generation = leaseGenerationRef.current;
-              onStartProgressRef.current(index, generation);
-              if (loopRestartPendingRef.current && loopReleaseTimerRef.current == null && generation != null) {
-                releaseLoopLatchWhenMoving(player, generation, loopEpochRef.current);
-              }
-              if (playbackConfirmedRef.current) {
-                setPhase('playing');
-                setRevealed(true);
-              } else {
-                setPhase('confirming');
-                confirmPlayback(player, generation);
-              }
-              const startedAt = requestStartedAt.current;
-              requestStartedAt.current = null;
-              onPlayingRef.current(index, generation, startedAt == null ? 0 : Math.max(0, Math.round(performance.now() - startedAt)), player);
-            } else if (state === YT_PLAYER_STATES.BUFFERING) {
-              onStartProgressRef.current(index, leaseGenerationRef.current);
-              // Reveal is monotonic for a mounted video. Buffering before the
-              // first frame keeps the black surface; buffering after motion
-              // leaves the iframe visible and never re-cues it.
-              if (!playbackConfirmedRef.current) clearRevealTimer();
-              // Buffering is progress, not a retry condition. Never interrupt
-              // this player with a second play command.
-              setPhase(playbackConfirmedRef.current ? 'playing' : 'starting');
-              onBufferingRef.current(index, leaseGenerationRef.current, player);
-            } else if (state === YT_PLAYER_STATES.CUED) {
-              cuedRef.current = true;
-              setCued(true);
-              setPhase('cued');
-              const authorization = startAuthorizationRef.current;
-              const preserveAudibleStart = Boolean(
-                shouldPlayRef.current &&
-                authorization &&
-                authorization.index === index &&
-                authorization.generation === leaseGenerationRef.current &&
-                authorization.mode !== 'muted-autoplay' &&
-                !authorization.fallbackUsed &&
-                !mutedRef.current,
-              );
-              try {
-                // YouTube may replace its internal media element while cueing
-                // and reset the native volume after onReady. Reapply the
-                // session level at CUED, but never unmute a prepared player.
-                player.setVolume(volumeRef.current);
-                if (!preserveAudibleStart) player.mute();
-              } catch {}
-              onCuedRef.current(index, leaseGenerationRef.current, player);
-            } else if (state === YT_PLAYER_STATES.PAUSED && shouldPlayRef.current && !playbackConfirmedRef.current) {
-              let beforeMotion = true;
-              try { beforeMotion = player.getCurrentTime() <= STARTUP_REVEAL_TIME_SECONDS; } catch {}
-              if (beforeMotion) {
-                // WebKit can emit BUFFERING then PAUSED without the dedicated
-                // autoplay-block callback. Give the parent one guarded muted
-                // recovery so motion never depends on a second tap.
-                setPhase('starting');
-                const recovered = onUnexpectedPauseRef.current(index, leaseGenerationRef.current, player);
-                if (!recovered) {
-                  setAutoplayBlocked(true);
-                  setPhase('blocked');
-                }
-              }
-            } else if (state === YT_PLAYER_STATES.PAUSED && !shouldPlayRef.current) {
-              // YouTube can emit PAUSED after the parent has already revoked
-              // a lease. Keep the DOM phase honest so a stopped neighbour is
-              // never mistaken for a second concurrently playing player. A
-              // confirmed mounted iframe stays revealed so revisiting it
-              // cannot create an app-induced black flash.
-              setPhase(cuedRef.current ? 'cued' : 'initializing');
-            } else if (state === YT_PLAYER_STATES.ENDED && shouldPlayRef.current && leaseGenerationRef.current != null && cuedRef.current) {
-              if (loopRestartPendingRef.current) return;
-              loopRestartPendingRef.current = true;
-              loopEpochRef.current += 1;
-              // One host owns looping. Seeking the existing player keeps its
-              // revealed iframe and avoids a cue/recreate/black-flash cycle.
-              player.seekTo(0, true);
-              player.playVideo();
-            }
-          },
-          onError: (_player, code) => {
-            if (disposed || initializationExpired) return;
-            releaseInitialization();
-            clearStartupTimer();
-            clearRetryTimer();
-            clearRevealTimer();
-            setRevealed(false);
-            if (code === 153) setPhase('blocked');
-            if (code === 5) {
-              // An HTML5/cue failure without an active playback generation
-              // must stay manual. Offer a fresh iframe on an explicit facade
-              // tap instead of borrowing the controller's lease and
-              // autoplaying from this initialization callback.
-              setNeedsReinitialize(true);
-              setPhase('blocked');
-            }
-            onErrorRef.current(index, leaseGenerationRef.current, code);
-          },
-          onAutoplayBlocked: (player) => {
-            if (disposed || initializationExpired) return;
-            releaseInitialization();
-            clearStartupTimer();
-            clearRetryTimer();
-            clearRevealTimer();
-            const retryMuted = onAutoplayBlockedRef.current(index, leaseGenerationRef.current, player);
-            if (retryMuted) {
-              let moving = false;
-              try {
-                const state = player.getPlayerState();
-                moving = state === YT_PLAYER_STATES.PLAYING || state === YT_PLAYER_STATES.BUFFERING;
-              } catch {}
-              if (moving) {
-                // A delayed duplicate policy event must not turn already
-                // recovered motion back into TAP TO PLAY. The parent either
-                // confirmed an existing muted fallback or started the one
-                // permitted muted recovery synchronously.
-                setAutoplayBlocked(false);
-                if (playbackConfirmedRef.current) {
-                  setPhase('playing');
-                  setRevealed(true);
-                } else {
-                  setPhase('confirming');
-                  confirmPlayback(player, leaseGenerationRef.current);
-                }
-              } else {
-                // Keep the host gated while the parent's one muted recovery
-                // settles. Clearing it here could let the play effect issue a
-                // second retry against the same paused iframe.
-                setAutoplayBlocked(true);
-                setPhase('starting');
-              }
-            } else {
-              setAutoplayBlocked(true);
-              setPhase('blocked');
-            }
-          },
-          onPlaybackRateChange: (_player, rate) => {
-            if (disposed || initializationExpired) return;
-            onPlaybackRateChangeRef.current(index, leaseGenerationRef.current, rate);
-          },
-        }, () => disposed || signal.aborted);
-        // Do not let the queue launch another shell until this one has
-        // actually fired onReady (or a terminal callback). The constructor
-        // promise resolves before that event in the IFrame API.
-        if (disposed || signal.aborted || initializationExpired) {
-          created.destroy();
-          return;
-        }
-        await waitForShortsInitialization(initialized, IFRAME_INITIALIZATION_TIMEOUT_MS, () => {
-          initializationExpired = true;
-          const stalledPlayer = created || playerRef.current;
-          if (stalledPlayer) {
-            onUnregisterRef.current(index, stalledPlayer);
-            try { stalledPlayer.destroy(); } catch {}
-          }
-          if (playerRef.current === stalledPlayer) playerRef.current = null;
-          created = null;
-        });
-      } catch {
-        // A failed API bootstrap is a configuration/network problem, not a
-        // dead video. Keep the facade and expose tap-to-play rather than
-        // cycling the whole visit into manual mode.
-        if (!disposed) {
-          setAutoplayBlocked(true);
-          setPhase('blocked');
-          // A readiness timeout is local to this iframe. It releases the
-          // bounded queue and can be retried through the facade without
-          // labelling the entire YouTube configuration as invalid.
-          if (!initializationExpired) onErrorRef.current(index, leaseGenerationRef.current, 153);
-        }
-      }
-    };
-
-    cancelQueued = onRequestInitializeRef.current(index, initPriority, start);
-    initializationLeaseRef.current = cancelQueued;
-
-    return () => {
-      disposed = true;
-      cancelQueued?.();
-      releaseInitialization();
-      clearStartupTimer();
-      clearLoadingCopyTimer();
-      clearRetryTimer();
-      clearRevealTimer();
-      clearLoopReleaseTimer();
-      playRequestRef.current = false;
-      loopRestartPendingRef.current = false;
-      loopEpochRef.current += 1;
-      const player = created || playerRef.current;
-      if (player) {
-        onUnregisterRef.current(index, player);
-        player.destroy();
-      }
-      if (playerRef.current === player) playerRef.current = null;
-      initializationLeaseRef.current = null;
-      if (mount.parentNode) mount.parentNode.removeChild(mount);
-      if (confirmPlaybackRef.current === confirmPlayback) confirmPlaybackRef.current = () => {};
-    };
-  }, [enabled, failed, index, initializationAttempt, online, short.id]);
-
-  // Revoking a lease is an imperative boundary: clear delayed commands even
-  // before the next state event arrives from the iframe.
-  useEffect(() => {
-    // A loop restart belongs to one lease generation. If a swipe, overlay, or
-    // visibility transition changes that generation while the platform is
-    // still at time zero, the old bounded poll must not leave this preserved
-    // iframe permanently loop-locked when it is revisited.
-    loopRestartPendingRef.current = false;
-    loopEpochRef.current += 1;
-    if (loopReleaseTimerRef.current != null) {
-      window.clearTimeout(loopReleaseTimerRef.current);
-      loopReleaseTimerRef.current = null;
-    }
-    if (playLeaseGeneration != null) return;
-    playRequestRef.current = false;
-    if (startupTimerRef.current != null) {
-      window.clearTimeout(startupTimerRef.current);
-      startupTimerRef.current = null;
-    }
-    if (loadingCopyTimerRef.current != null) {
-      window.clearTimeout(loadingCopyTimerRef.current);
-      loadingCopyTimerRef.current = null;
-    }
-    setShowLoadingCopy(false);
-    if (retryTimerRef.current != null) {
-      window.clearTimeout(retryTimerRef.current);
-      retryTimerRef.current = null;
-    }
-    if (revealTimerRef.current != null) {
-      window.clearTimeout(revealTimerRef.current);
-      revealTimerRef.current = null;
-    }
+  const rememberSound = (player: YouTubePlayer) => {
     try {
-      playerRef.current?.pauseVideo();
-    } catch {}
-    setPhase(cuedRef.current ? 'cued' : 'initializing');
-  }, [playLeaseGeneration]);
+      observedSoundRef.current = { muted: Boolean(player.isMuted()), volume: clampVolume(player.getVolume()) };
+    } catch {
+      observedSoundRef.current = null;
+    }
+  };
 
-  useEffect(() => {
-    const player = playerRef.current;
-    if (!player || !ready) return;
-    if (startupTimerRef.current != null) {
-      window.clearTimeout(startupTimerRef.current);
-      startupTimerRef.current = null;
-    }
-    if (retryTimerRef.current != null) {
-      window.clearTimeout(retryTimerRef.current);
-      retryTimerRef.current = null;
-    }
-    if (!shouldPlay || playLeaseGeneration == null) {
-      player.pauseVideo();
-      setShowLoadingCopy(false);
-      playRequestRef.current = false;
-      setPhase(cuedRef.current ? 'cued' : 'initializing');
-      return;
-    }
-    // A code-5 HTML5/cue error makes this iframe unsafe to reuse. A later
-    // lease for the same card must not silently autoplay the failed player;
-    // only the explicit facade action below may replace it with a fresh
-    // iframe. This also prevents a generationless error from borrowing a
-    // newer same-index lease.
-    if (needsReinitialize) {
-      setPhase('blocked');
-      return;
-    }
-    const generation = playLeaseGeneration;
-    if (autoplayBlocked && manualToken === 0) return;
-    if (manualToken > 0 && autoplayBlocked) setAutoplayBlocked(false);
-    // Activation may beat the asynchronous CUED event. Keep the request
-    // pending; only CUED is allowed to transition into playVideo.
-    playRequestRef.current = true;
-    if (!cued) return;
-    const authorization = startAuthorizationRef.current;
-    const gestureAuthorized = Boolean(
-      authorization &&
-      authorization.index === index &&
-      authorization.generation === generation &&
-      authorization.mode !== 'muted-autoplay' &&
-      !authorization.fallbackUsed &&
-      !mutedRef.current,
+  const suppressSoundObservation = (duration = 700) => {
+    soundObservationSuppressedUntilRef.current = Math.max(
+      soundObservationSuppressedUntilRef.current,
+      performance.now() + duration,
     );
+  };
+
+  const syncNativeSound = () => {
+    const player = playerRef.current;
+    if (!player || !activeRef.current || suspendedRef.current) return;
     try {
-      const state = player.getPlayerState();
+      const next = { muted: Boolean(player.isMuted()), volume: clampVolume(player.getVolume()) };
+      const previous = observedSoundRef.current;
+      observedSoundRef.current = next;
+      volumeRef.current = next.volume;
+      if (previous && (previous.muted !== next.muted || previous.volume !== next.volume)) {
+        onNativeSoundRef.current?.(next.muted, next.volume);
+      }
+    } catch {}
+  };
+
+  useImperativeHandle(ref, () => ({ syncNativeSound }), []);
+
+  const applyRate = (player: YouTubePlayer) => {
+    if (!player.setPlaybackRate) return;
+    const rate = clampRate(preferredRateRef.current);
+    applyingRateRef.current = true;
+    try {
+      player.setPlaybackRate(rate);
+      observedRateRef.current = rate;
+    } catch {
+      // Older/mobile players may reject the rate briefly.
+    } finally {
+      window.setTimeout(() => { applyingRateRef.current = false; }, 0);
+    }
+  };
+
+  const beginLoadingStatus = () => {
+    clearTimer(loadingTimerRef);
+    setShowLoading(true);
+    loadingTimerRef.current = window.setTimeout(() => {
+      loadingTimerRef.current = null;
+      if (!firstMotionRef.current && activeRef.current && !suspendedRef.current) setShowLoading(true);
+    }, LOADING_STATUS_MS);
+  };
+
+  const confirmMotion = (player: YouTubePlayer, command: StartCommand) => {
+    if (!isCurrent(player, command) || firstMotionRef.current) return;
+    let moving = false;
+    try {
+      moving = player.getPlayerState() === YT_PLAYER_STATES.PLAYING && player.getCurrentTime() > MOTION_THRESHOLD;
+    } catch {}
+    if (!moving) return;
+    firstMotionRef.current = true;
+    command.progressed = true;
+    clearTimer(retryTimerRef);
+    clearTimer(loadingTimerRef);
+    setShowLoading(false);
+    setPhase('playing');
+    setRevealed(true);
+    const startupAt = startupAtRef.current;
+    startupAtRef.current = null;
+    onPlayingRef.current?.(startupAt == null ? 0 : Math.max(0, Math.round(performance.now() - startupAt)), player);
+  };
+
+  /**
+   * A few mobile YouTube/WebKit builds reset the native level while a new
+   * video is loading. Repair that one load-time reset without issuing another
+   * playback command or taking ownership away from the native controls.
+   */
+  const restoreSoundAfterLoad = (
+    player: YouTubePlayer,
+    command: StartCommand,
+    requestedAudible: boolean,
+  ) => {
+    if (!isCurrent(player, command) || command.manualPause || firstMotionRef.current) return;
+    let muted = true;
+    let currentVolume = volumeRef.current;
+    let state: number = YT_PLAYER_STATES.UNSTARTED;
+    try {
+      muted = Boolean(player.isMuted());
+      currentVolume = clampVolume(player.getVolume());
+      state = player.getPlayerState();
+    } catch {
+      return;
+    }
+    // A load may already have handed control to the autoplay fallback. Do
+    // not re-unmute that recovery while it is buffering or playing.
+    if (state === YT_PLAYER_STATES.PLAYING || command.retryUsed) return;
+    if (state !== YT_PLAYER_STATES.CUED && state !== YT_PLAYER_STATES.UNSTARTED && state !== YT_PLAYER_STATES.PAUSED && state !== YT_PLAYER_STATES.BUFFERING) return;
+    const targetVolume = clampVolume(volumeRef.current);
+    if (currentVolume !== targetVolume || (requestedAudible && muted) || (!requestedAudible && !muted)) {
+      if (requestedAudible) applySound(player, false, targetVolume);
+      else applyMutedSound(player, targetVolume);
+      suppressSoundObservation();
+      rememberSound(player);
+    }
+  };
+
+  const schedulePostLoadSoundRestore = (
+    player: YouTubePlayer,
+    command: StartCommand,
+    requestedAudible: boolean,
+  ) => {
+    clearTimer(postLoadRestoreTimerRef);
+    // Repair a synchronous load reset before YouTube's autoplay task runs,
+    // then make one bounded follow-up pass for implementations that reset the
+    // native level asynchronously.
+    restoreSoundAfterLoad(player, command, requestedAudible);
+    postLoadRestoreTimerRef.current = window.setTimeout(() => {
+      postLoadRestoreTimerRef.current = null;
+      restoreSoundAfterLoad(player, command, requestedAudible);
+    }, 0);
+  };
+
+  const issueMutedRecovery = (player: YouTubePlayer, command: StartCommand) => {
+    if (!isCurrent(player, command) || command.retryUsed || command.manualPause || manualPauseRef.current) return false;
+    let state: number = YT_PLAYER_STATES.UNSTARTED;
+    let time = 0;
+    try {
+      state = player.getPlayerState();
+      time = player.getCurrentTime();
+    } catch {}
+    if (command.progressed || time > MOTION_THRESHOLD || (state !== YT_PLAYER_STATES.CUED && state !== YT_PLAYER_STATES.UNSTARTED && state !== YT_PLAYER_STATES.PAUSED)) return false;
+    command.retryUsed = true;
+    try {
+      applyMutedSound(player, volumeRef.current);
+      player.playVideo();
+      suppressSoundObservation();
+      rememberSound(player);
+      setPhase('loading');
+      beginLoadingStatus();
+      return true;
+    } catch {
+      return false;
+    }
+  };
+
+  const issueInitialStart = (player: YouTubePlayer) => {
+    const command = commandRef.current;
+    if (!isCurrent(player, command) || command.issued || command.manualPause) return;
+    command.issued = true;
+    startupAtRef.current = performance.now();
+    beginLoadingStatus();
+    try {
+      // Audible playback is attempted only once. If WebKit rejects it, the
+      // autoplay callback or the bounded timer invokes muted recovery without
+      // changing the saved preference.
+      if (desiredAudibleRef.current && (startAudibleRef.current || activeRef.current)) {
+        applySound(player, false, volumeRef.current);
+      } else {
+        applyMutedSound(player, volumeRef.current);
+      }
+      suppressSoundObservation();
+      applyRate(player);
+      player.playVideo();
+      rememberSound(player);
+      setPhase('loading');
+    } catch {
+      setPhase('blocked');
+    }
+    clearTimer(retryTimerRef);
+    retryTimerRef.current = window.setTimeout(() => {
+      retryTimerRef.current = null;
+      if (!isCurrent(player, command) || firstMotionRef.current) return;
+      issueMutedRecovery(player, command);
+    }, STARTUP_RETRY_MS);
+  };
+
+  // One iframe is created for the lifetime of this active route. The mount
+  // node is never keyed by the selected video, so React renders cannot
+  // recreate or re-cue the player.
+  useEffect(() => {
+    disposedRef.current = false;
+    // A connectivity transition tears down and recreates the iframe while
+    // this React host stays mounted. The previous activation's motion marker
+    // must not prevent the replacement player from revealing its first frame.
+    firstMotionRef.current = false;
+    startupAtRef.current = null;
+    if (!active || !online || !hostRef.current) {
+      setPhase(online ? 'initializing' : 'offline');
+      setReady(false);
+      setRevealed(false);
+      setShowLoading(!online);
+      return;
+    }
+
+    const mount = document.createElement('div');
+    mount.className = 'shorts-player-mount';
+    hostRef.current.replaceChildren(mount);
+    const effectGeneration = generation;
+    let cancelled = false;
+
+    const onReadyForMount = (player: YouTubePlayer) => {
+      if (cancelled || disposedRef.current || !activeRef.current) {
+        try { player.destroy(); } catch {}
+        return;
+      }
+      playerRef.current = player;
+      // A user can navigate while the YouTube API is still loading. Use the
+      // latest refs rather than the mount effect's initial closure so the
+      // obsolete constructor video is never started first.
+      const readyId = expectedIdRef.current;
+      const readyGeneration = generationRef.current;
+      commandRef.current = {
+        videoId: readyId,
+        generation: readyGeneration,
+        issued: false,
+        retryUsed: false,
+        progressed: false,
+        manualPause: false,
+      };
+      manualPauseRef.current = false;
+      appPauseRef.current = false;
+      resumeIntentRef.current = false;
+      const iframe = mount.querySelector('iframe');
+      iframe?.setAttribute('referrerpolicy', 'strict-origin-when-cross-origin');
+      setReady(true);
+      setPhase('loading');
+      onReadyRef.current?.(player);
+      if (readyId !== short.id || readyGeneration !== effectGeneration) {
+        startupAtRef.current = performance.now();
+        beginLoadingStatus();
+        try {
+          if (desiredAudibleRef.current && startAudibleRef.current) applySound(player, false, volumeRef.current);
+          else applyMutedSound(player, volumeRef.current);
+          suppressSoundObservation();
+          applyRate(player);
+          rememberSound(player);
+          // The constructor was created with autoplay disabled. Loading the
+          // latest selected id is the only start command needed here.
+          player.loadVideoById(readyId);
+          rememberSound(player);
+          schedulePostLoadSoundRestore(
+            player,
+            commandRef.current,
+            Boolean(desiredAudibleRef.current && startAudibleRef.current),
+          );
+        } catch {
+          setPhase('error');
+        }
+      } else {
+        applyRate(player);
+        issueInitialStart(player);
+      }
+    };
+
+    const onStateForMount = (player: YouTubePlayer, state: number) => {
+      if (cancelled || !isCurrent(player)) return;
+      const command = commandRef.current;
+      onStateChangeRef.current?.(state, player);
       if (state === YT_PLAYER_STATES.PLAYING) {
-        // A harmless lease refresh can happen while YouTube is already
-        // playing. Re-arm first-frame confirmation for the current generation
-        // instead of waiting for another PLAYING event that may never arrive.
-        if (playbackConfirmedRef.current) {
-          setPhase('playing');
-          setRevealed(true);
-        } else {
-          setPhase('confirming');
-          confirmPlaybackRef.current(player, generation);
+        // Any genuine progress means the application has successfully started
+        // this activation. A later native PAUSED event is therefore a manual
+        // pause unless we explicitly marked it as an app lifecycle pause.
+        manualPauseRef.current = false;
+        command.manualPause = false;
+        clearTimer(retryTimerRef);
+        let currentTime = 0;
+        try { currentTime = player.getCurrentTime(); } catch {}
+        if (currentTime > MOTION_THRESHOLD) command.progressed = true;
+        if (currentTime > MOTION_THRESHOLD && loopRestartedEpochRef.current === loopEpochRef.current) {
+          // A natural loop has produced a fresh frame. Release the duplicate
+          // END guard so the next real end can loop once as well.
+          loopRestartedEpochRef.current = null;
+        }
+        if (currentTime > MOTION_THRESHOLD) confirmMotion(player, command);
+        else {
+          setPhase('loading');
+          window.setTimeout(() => confirmMotion(player, command), 120);
         }
         return;
       }
-      if (state === YT_PLAYER_STATES.BUFFERING) return;
-      // A direct or immediately issued retained-sound command may already have
-      // unmuted this active player. Never remute it from a later React effect.
-      if (!gestureAuthorized) player.mute();
-      player.setVolume(Math.max(0, Math.min(100, Math.round(volume))));
-    } catch {}
-    if (!onClaimStartRef.current(index, generation, 'initial', gestureAuthorized)) return;
-    requestStartedAt.current = performance.now();
-    setPhase('starting');
-    if (loadingCopyTimerRef.current != null) {
-      window.clearTimeout(loadingCopyTimerRef.current);
-      loadingCopyTimerRef.current = null;
-    }
-    setShowLoadingCopy(false);
-    loadingCopyTimerRef.current = window.setTimeout(() => {
-      loadingCopyTimerRef.current = null;
-      if (leaseGenerationRef.current === generation && shouldPlayRef.current && !revealed) {
-        setShowLoadingCopy(true);
+      if (state === YT_PLAYER_STATES.BUFFERING) {
+        clearTimer(retryTimerRef);
+        setPhase(firstMotionRef.current ? 'playing' : 'buffering');
+        if (!firstMotionRef.current) beginLoadingStatus();
+        onBufferingRef.current?.(player);
+        return;
       }
-    }, 700);
-    player.playVideo();
-    retryTimerRef.current = window.setTimeout(() => {
-      retryTimerRef.current = null;
-      if (leaseGenerationRef.current !== generation || !shouldPlayRef.current || !playRequestRef.current || !cuedRef.current) return;
-      try {
-        const state = player.getPlayerState();
-        if (state === YT_PLAYER_STATES.PLAYING || state === YT_PLAYER_STATES.BUFFERING) return;
-        if (state === YT_PLAYER_STATES.CUED || state === YT_PLAYER_STATES.PAUSED || state === YT_PLAYER_STATES.UNSTARTED) {
-          if (onClaimStartRef.current(index, generation, 'retry', false)) {
-            player.mute();
-            player.playVideo();
-          }
+      if (state === YT_PLAYER_STATES.PAUSED) {
+        if (appPauseRef.current || suspendedRef.current) {
+          setPhase('paused');
+          return;
         }
-      } catch {}
-    }, 1500);
-    startupTimerRef.current = window.setTimeout(() => {
-      startupTimerRef.current = null;
-      if (leaseGenerationRef.current !== generation || !shouldPlayRef.current || revealed || !playRequestRef.current) return;
-      try {
-        const state = player.getPlayerState();
-        if (state === YT_PLAYER_STATES.PLAYING || state === YT_PLAYER_STATES.BUFFERING) return;
-      } catch {}
-      setPhase('stalled');
-      // Keep the facade calm during normal startup, but do not leave a stalled
-      // active card in an indefinite waiting state. Six seconds gives the
-      // queued iframe and a slow mobile connection room to reach PLAYING while
-      // still offering an explicit tap when startup is genuinely stuck.
-    }, 6000);
+        // Once this activation has produced motion, PAUSED is a native user
+        // pause unless an app lifecycle pause is in flight. Before first
+        // motion it may be the browser's audible-autoplay rejection, so let
+        // the one-shot muted recovery decide instead of stranding the card.
+        if (firstMotionRef.current || manualPauseRef.current) {
+          manualPauseRef.current = true;
+          command.manualPause = true;
+          resumeIntentRef.current = false;
+          setPhase('paused');
+          return;
+        }
+        if (!issueMutedRecovery(player, command)) setPhase('paused');
+        return;
+      }
+      if (state === YT_PLAYER_STATES.ENDED) {
+        if (loopRestartedEpochRef.current === loopEpochRef.current) return;
+        loopRestartedEpochRef.current = loopEpochRef.current;
+        try {
+          player.seekTo(0, true);
+          player.playVideo();
+          setPhase('loading');
+          if (!firstMotionRef.current) beginLoadingStatus();
+        } catch {}
+        return;
+      }
+      if (state === YT_PLAYER_STATES.CUED || state === YT_PLAYER_STATES.UNSTARTED) setPhase('loading');
+    };
+
+    const onErrorForMount = (player: YouTubePlayer, code: number) => {
+      if (cancelled || !isCurrent(player)) return;
+      clearTimer(retryTimerRef);
+      setPhase('error');
+      onErrorRef.current?.(code, player);
+    };
+
+    const onAutoplayBlockedForMount = (player: YouTubePlayer) => {
+      if (cancelled || !isCurrent(player)) return;
+      const recovered = issueMutedRecovery(player, commandRef.current);
+      if (!recovered) setPhase('blocked');
+      onAutoplayBlockedRef.current?.(player);
+    };
+
+    const onRateForMount = (player: YouTubePlayer, rate: number) => {
+      if (cancelled || !isCurrent(player)) return;
+      const normalized = clampRate(rate);
+      if (applyingRateRef.current && observedRateRef.current === normalized) return;
+      observedRateRef.current = normalized;
+      onPlaybackRateChangeRef.current?.(normalized);
+    };
+
+    let creationCancelled = false;
+    void createYouTubePlayer(mount, short.id, {
+      onReady: onReadyForMount,
+      onStateChange: onStateForMount,
+      onError: onErrorForMount,
+      onAutoplayBlocked: onAutoplayBlockedForMount,
+      onPlaybackRateChange: onRateForMount,
+    }, () => creationCancelled || cancelled || disposedRef.current).catch(() => {
+      if (!cancelled) {
+        setPhase('error');
+        setReady(false);
+      }
+    });
+
     return () => {
-      if (startupTimerRef.current != null) {
-        window.clearTimeout(startupTimerRef.current);
-        startupTimerRef.current = null;
+      cancelled = true;
+      creationCancelled = true;
+      // Route changes unmount the host before the parent can navigate again.
+      // Capture a native YouTube change made immediately before leaving so a
+      // same-session re-entry restores the user's sound and volume choice.
+      syncNativeSound();
+      disposedRef.current = true;
+      firstMotionRef.current = false;
+      startupAtRef.current = null;
+      clearTimer(retryTimerRef);
+      clearTimer(loadingTimerRef);
+      clearTimer(postLoadRestoreTimerRef);
+      loopEpochRef.current += 1;
+      try { playerRef.current?.pauseVideo(); } catch {}
+      try { playerRef.current?.destroy(); } catch {}
+      playerRef.current = null;
+      mount.remove();
+      setReady(false);
+      setRevealed(false);
+    };
+    // This effect intentionally mounts once for the active route. Video
+    // changes are handled by the navigation effect below.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [active, online]);
+
+  // Navigation changes the video inside the same player instance. Mark the
+  // command before loading so no React effect can issue a duplicate start.
+  useEffect(() => {
+    const player = playerRef.current;
+    if (!player || !ready || !active || !online) return;
+    const previous = commandRef.current;
+    if (previous.videoId === short.id && previous.generation === generation) return;
+    clearTimer(retryTimerRef);
+    clearTimer(loadingTimerRef);
+    clearTimer(postLoadRestoreTimerRef);
+    expectedIdRef.current = short.id;
+    commandRef.current = {
+      videoId: short.id,
+      generation,
+      issued: true,
+      retryUsed: false,
+      progressed: false,
+      manualPause: false,
+    };
+    manualPauseRef.current = false;
+    appPauseRef.current = false;
+    resumeIntentRef.current = false;
+    firstMotionRef.current = false;
+    loopEpochRef.current += 1;
+    loopRestartedEpochRef.current = null;
+    startupAtRef.current = performance.now();
+    setRevealed(false);
+    setPhase('loading');
+    beginLoadingStatus();
+    try {
+      if (desiredAudible && startAudible) applySound(player, false, clampVolume(volume));
+      else applyMutedSound(player, clampVolume(volume));
+      suppressSoundObservation();
+      applyRate(player);
+      rememberSound(player);
+      // loadVideoById is the single navigation start command. YouTube begins
+      // playback from this call; no unconditional playVideo follows it.
+      player.loadVideoById(short.id);
+      schedulePostLoadSoundRestore(player, commandRef.current, Boolean(desiredAudible && startAudible));
+    } catch {
+      setPhase('error');
+    }
+  }, [active, generation, online, ready, short.id, startAudible, desiredAudible, volume, preferredRate]);
+
+  // Native YouTube controls are the only sound UI. Observe the active iframe
+  // without writing to it, and persist changes through the parent callback.
+  useEffect(() => {
+    const player = playerRef.current;
+    if (!active || !ready || !player || suspended) return;
+    rememberSound(player);
+    const timer = window.setInterval(() => {
+      if (!activeRef.current || suspendedRef.current || playerRef.current !== player) return;
+      try {
+        const next = { muted: Boolean(player.isMuted()), volume: clampVolume(player.getVolume()) };
+        const suppressed = performance.now() < soundObservationSuppressedUntilRef.current;
+        // During the short window after an application-controlled load/mute,
+        // keep the last known baseline intact.  YouTube can apply those
+        // commands asynchronously; recording the transient value here would
+        // make a real native change disappear before the observer is allowed
+        // to persist it.  The next unsuppressed tick compares the settled
+        // native state against the baseline captured by rememberSound().
+        if (suppressed) return;
+        const previous = observedSoundRef.current;
+        observedSoundRef.current = next;
+        volumeRef.current = next.volume;
+        if (previous && (previous.muted !== next.muted || previous.volume !== next.volume)) onNativeSoundRef.current?.(next.muted, next.volume);
+      } catch {}
+    }, SOUND_OBSERVE_MS);
+    return () => window.clearInterval(timer);
+  }, [active, ready, suspended, short.id, generation]);
+
+  // Pause/resume for visibility, tutorial, and route overlays without
+  // destroying the iframe or changing the selected video.
+  useEffect(() => {
+    const player = playerRef.current;
+    if (!player || !ready) return;
+    if (!active || !online || suspended) {
+      let state: number = YT_PLAYER_STATES.PAUSED;
+      try { state = player.getPlayerState(); } catch {}
+      resumeIntentRef.current = !manualPauseRef.current && (
+        state === YT_PLAYER_STATES.PLAYING ||
+        state === YT_PLAYER_STATES.BUFFERING ||
+        state === YT_PLAYER_STATES.CUED ||
+        state === YT_PLAYER_STATES.UNSTARTED ||
+        (commandRef.current.issued && !firstMotionRef.current)
+      );
+      appPauseRef.current = true;
+      clearTimer(retryTimerRef);
+      try { player.pauseVideo(); } catch {}
+      return;
+    }
+    if (appPauseRef.current) {
+      appPauseRef.current = false;
+      const shouldResume = resumeIntentRef.current && !manualPauseRef.current;
+      resumeIntentRef.current = false;
+      if (shouldResume) {
+        try {
+          // Resuming after a lifecycle transition is no longer a user
+          // activation. Start muted so WebKit cannot strand the card; the
+          // desired-audible preference remains stored for the next gesture.
+          applyMutedSound(player, volumeRef.current);
+          suppressSoundObservation();
+          // Establish the application-controlled muted state as the observer
+          // baseline. Without this, the next 200ms read could mistake our
+          // lifecycle fallback for a native user mute and overwrite the
+          // desired-audible session preference.
+          rememberSound(player);
+          player.playVideo();
+          setPhase('loading');
+        } catch {}
       }
-      if (loadingCopyTimerRef.current != null) {
-        window.clearTimeout(loadingCopyTimerRef.current);
-        loadingCopyTimerRef.current = null;
-      }
-      setShowLoadingCopy(false);
-      if (retryTimerRef.current != null) {
-        window.clearTimeout(retryTimerRef.current);
-        retryTimerRef.current = null;
+    }
+    commandRef.current.manualPause = manualPauseRef.current;
+  }, [active, online, ready, suspended]);
+
+  useEffect(() => {
+    const onVisibility = () => {
+      const player = playerRef.current;
+      if (!player || !ready) return;
+      if (document.hidden) {
+        // Capture a native YouTube volume/mute change before pausing. The
+        // browser may background the iframe immediately after this event, so
+        // waiting for the 200ms observer would lose the user's latest choice.
+        syncNativeSound();
+        let state: number = YT_PLAYER_STATES.PAUSED;
+        try { state = player.getPlayerState(); } catch {}
+        resumeIntentRef.current = !manualPauseRef.current && (
+          state === YT_PLAYER_STATES.PLAYING ||
+          state === YT_PLAYER_STATES.BUFFERING ||
+          state === YT_PLAYER_STATES.CUED ||
+          state === YT_PLAYER_STATES.UNSTARTED
+        );
+        appPauseRef.current = true;
+        clearTimer(retryTimerRef);
+        try { player.pauseVideo(); } catch {}
+      } else if (activeRef.current && !suspendedRef.current && appPauseRef.current) {
+        appPauseRef.current = false;
+        const shouldResume = resumeIntentRef.current && !manualPauseRef.current;
+        resumeIntentRef.current = false;
+        if (shouldResume) {
+          try {
+            applyMutedSound(player, volumeRef.current);
+            suppressSoundObservation();
+            rememberSound(player);
+            player.playVideo();
+            setPhase('loading');
+          } catch {}
+        }
       }
     };
-  // `startAuthorization` is read through a ref on purpose.  A direct sound
-  // gesture can synchronously issue unmute + play; re-running this effect just
-  // because React committed the authorization would turn the same gesture
-  // into a second passive play attempt (and could re-trigger iOS autoplay
-  // policy).  Changes that affect automatic playback still flow through the
-  // existing lease/cued/ready dependencies.
-  }, [autoplayBlocked, cued, manualToken, needsReinitialize, playLeaseGeneration, ready, shouldPlay, volume]);
+    document.addEventListener('visibilitychange', onVisibility);
+    return () => document.removeEventListener('visibilitychange', onVisibility);
+  }, [ready]);
 
-  const waitingForAutoplay = shouldPlay && !autoplayBlocked && phase !== 'blocked' && phase !== 'stalled';
-  const interactiveFacade = shouldPlay || manualMode || failed || autoplayBlocked || phase === 'blocked' || phase === 'stalled' || !online;
-  const facadeLabel = !interactiveFacade
-    ? ''
-    : !online
-      ? 'OFFLINE · RECONNECT TO PLAY'
-      : failed
-        ? 'SKIPPED'
-        : manualMode && !shouldPlay
-          ? 'TAP TO PLAY'
-          : autoplayBlocked || phase === 'blocked'
-            ? 'TAP TO PLAY'
-            : phase === 'stalled'
-              ? 'TAP TO PLAY · SWIPE TO SKIP'
-              : waitingForAutoplay
-                ? ''
-                : 'TAP TO PLAY';
-  const showPlayControl = interactiveFacade && !waitingForAutoplay && !failed;
+  useEffect(() => {
+    loopRestartedEpochRef.current = null;
+  }, [generation]);
+
+  const status = !online
+    ? 'OFFLINE · RECONNECT TO PLAY'
+    : phase === 'blocked'
+      ? 'TAP TO PLAY'
+      : phase === 'error'
+        ? 'VIDEO UNAVAILABLE'
+        : phase === 'buffering'
+          ? 'LOADING..'
+          : showLoading && !firstMotionRef.current
+          ? 'LOADING..'
+          : '';
 
   return (
     <div
       className={`shorts-player-layer ${revealed ? 'is-revealed' : ''}`}
       data-player-phase={phase}
       data-player-ready={ready ? 'true' : 'false'}
-      data-player-cued={cued ? 'true' : 'false'}
+      data-player-id={short.id}
+      data-player-index={index}
+      data-player-generation={generation}
     >
-      {enabled && online && !failed && <div ref={hostRef} className="shorts-player-host" aria-hidden={!(revealed && shouldPlay)} />}
-      {/* Keep the original touch target mounted through scroll-start. The
-          controller revokes shouldPlay as soon as a real destination wins;
-          removing this surface in that render would prevent iOS from
-          delivering the matching touchend that authorizes the new card. */}
-      {revealed && enabled && <div className="shorts-swipe-surface" aria-hidden="true" />}
-      {!revealed && (
-        <button
-          className={`shorts-facade ${online ? '' : 'is-offline'} ${waitingForAutoplay ? 'is-waiting' : ''}`}
-          onClick={() => {
-            const reinitialize = needsReinitialize || (!playerRef.current && (phase === 'blocked' || phase === 'stalled'));
-            if (reinitialize) {
-              setInitializationAttempt((attempt) => attempt + 1);
-            }
-            onManual(index, { reinitialize });
-          }}
-          aria-label={online && !failed ? (waitingForAutoplay ? short.title : `Play ${short.title}`) : `${short.title}. ${facadeLabel}`}
-          disabled={!online || failed}
+      <div ref={hostRef} className="shorts-player-host" aria-label={`${short.title} YouTube player`} />
+      {!ready && <div className="shorts-startup-surface" aria-hidden="true" />}
+      {status && (
+        <div
+          className={`shorts-player-status ${ready ? '' : 'is-startup'}`.trim()}
+          role="status"
+          aria-live="polite"
         >
-          <span className="shorts-startup-surface" aria-hidden="true" />
-          {showPlayControl && <span className="shorts-facade-play"><Play size={24} /></span>}
-          {showLoadingCopy && <span className="k-label shorts-loading-copy" role="status">LOADING VIDEO…</span>}
-          {facadeLabel && <span className="k-label shorts-tap">{facadeLabel}</span>}
-        </button>
+          {status}
+        </div>
       )}
     </div>
   );
-}
+});

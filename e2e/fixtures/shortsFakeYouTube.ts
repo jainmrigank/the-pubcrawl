@@ -1,143 +1,153 @@
 import { expect, type Page } from '@playwright/test';
 
+/** Options for the one-player YouTube test double. */
 export type FakePlayerOptions = {
-  blockAudible: boolean;
+  blockAudible?: boolean;
   blockAudibleCount?: number;
-  ignoreVolumeWhileMuted?: boolean;
-  resetSoundToZeroOnCue?: boolean;
-  resetSoundToZeroOnPlaying?: boolean;
-  resetSoundToZeroAfterPlaying?: boolean;
-  silentlyMuteAudiblePlay?: boolean;
-  bufferAudibleBeforePlayingMs?: number;
-  delayedAutoplayBlockedAfterMutedPlayMs?: number;
-  delayedAutoplayBlockedAfterAudiblePlayMs?: number;
-  stallReadyCount?: number;
-  delayReadyIndex?: number;
-  delayReadyMs?: number;
-  manualReadyIndex?: number;
-  accelerateInitializationTimeout?: boolean;
-  blockPlayCount?: number;
-  blockPlayIndex?: number;
-  error5OnCueIndex?: number;
-  error5OnPlayIndex?: number;
-  accelerateErrorRetry?: boolean;
-  bufferThenPauseCount?: number;
-  bufferThenPauseIndex?: number;
-  accelerateStartupStall?: boolean;
-  stalePlayingAfterDestroyIndex?: number;
-  stalePlayingDelayMs?: number;
-  stalePreparedCallbackIndex?: number;
+  startDelayMs?: number;
+  readyDelayMs?: number;
   loopProgressDelayMs?: number;
+  resetSoundToZeroOnLoad?: boolean;
+  rejectMutedStarts?: boolean;
 };
 
 export type FakeLogEntry = {
   at: number;
+  timestamp?: number;
+  instanceId: string;
   index: number;
   shortId: string;
   generation: number | null;
   method: string;
   value?: number;
+  origin: 'application' | 'native-fixture';
 };
 
-/** Replace the network YouTube adapter with a deterministic iframe double. */
-export async function installFakeYouTube(page: Page, options: FakePlayerOptions = { blockAudible: false }) {
-  await page.addInitScript(({
-    blockAudible,
-    blockAudibleCount = 0,
-    ignoreVolumeWhileMuted = false,
-    resetSoundToZeroOnCue = false,
-    resetSoundToZeroOnPlaying = false,
-    resetSoundToZeroAfterPlaying = false,
-    silentlyMuteAudiblePlay = false,
-    bufferAudibleBeforePlayingMs = 0,
-    delayedAutoplayBlockedAfterMutedPlayMs = 0,
-    delayedAutoplayBlockedAfterAudiblePlayMs = 0,
-    stallReadyCount = 0,
-    delayReadyIndex = -1,
-    delayReadyMs = 0,
-    manualReadyIndex = -1,
-    accelerateInitializationTimeout = false,
-    blockPlayCount = 0,
-    blockPlayIndex = -1,
-    error5OnCueIndex = -1,
-    error5OnPlayIndex = -1,
-    accelerateErrorRetry = false,
-    bufferThenPauseCount = 0,
-    bufferThenPauseIndex = -1,
-    accelerateStartupStall = false,
-    stalePlayingAfterDestroyIndex = -1,
-    stalePlayingDelayMs = 300,
-    stalePreparedCallbackIndex = -1,
-    loopProgressDelayMs = 0,
-  }) => {
-    type TestWindow = Window & {
+/**
+ * Install a deterministic one-iframe YouTube double. The real Shorts route
+ * owns one player and changes its video with loadVideoById; this fixture does
+ * the same so browser assertions cannot accidentally pass against the old
+ * pooled-player implementation.
+ */
+export async function installFakeYouTube(page: Page, options: FakePlayerOptions = {}) {
+  await page.addInitScript((config) => {
+    type FakeWindow = Window & {
       __PUBCRAWL_FAKE_YT_LOG__?: FakeLogEntry[];
       __PUBCRAWL_FAKE_YT__?: {
-        nativeSound(index: number, audible: boolean, volume?: number): void;
-        nativeToggle(index: number): void;
-        sound(index: number): { muted: boolean; volume: number } | null;
-        emit(index: number, state: number): void;
-        error(index: number, code: number): void;
-        autoplayBlocked(index: number, preserveState?: boolean): void;
-        ready(index: number): void;
-        states(): Array<{ index: number; state: number; muted: boolean; volume: number }>;
+        nativeSound(audible: boolean, volume?: number): void;
+        nativeToggle(): void;
+        nativeVolume(volume: number): void;
+        nativeRate(rate: number): void;
+        nativePause(): void;
+        nativePlay(): void;
+        emit(state: number): void;
+        end(): void;
+        autoplayBlocked(): void;
+        buffering(): void;
+        staleCallbacks(videoId?: string): void;
+        error(code?: number): void;
+        setRejectMutedStarts(reject: boolean): void;
+        sound(): { muted: boolean; volume: number } | null;
+        state(): { state: number; muted: boolean; volume: number; shortId: string } | null;
+        iframeCount(): number;
       };
     };
-    const target = window as TestWindow;
+
+    const target = window as FakeWindow;
     const log = target.__PUBCRAWL_FAKE_YT_LOG__ = [];
-    const players = new Map<number, FakePlayer>();
-    let constructed = 0;
-    let cueErrorsEmitted = 0;
-    let blockedPlaysEmitted = 0;
-    let audibleBlocksEmitted = 0;
-    if (accelerateInitializationTimeout || accelerateErrorRetry || accelerateStartupStall) {
-      const nativeSetTimeout = window.setTimeout.bind(window);
-      window.setTimeout = ((handler: TimerHandler, timeout = 0, ...args: unknown[]) => {
-        let nextTimeout = timeout;
-        if (accelerateInitializationTimeout && timeout === 12_000) nextTimeout = 40;
-        if (accelerateErrorRetry && timeout === 1_500) nextTimeout = 40;
-        if (accelerateStartupStall && timeout === 6_000) nextTimeout = 60;
-        return nativeSetTimeout(handler, nextTimeout, ...args);
-      }) as typeof window.setTimeout;
-    }
+    const blockAudible = Boolean(config.blockAudible);
+    const blockAudibleCount = Number(config.blockAudibleCount || 0);
+    const startDelayMs = Math.max(0, Number(config.startDelayMs || 0));
+    const readyDelayMs = Math.max(0, Number(config.readyDelayMs || 0));
+    const loopProgressDelayMs = Math.max(0, Number(config.loopProgressDelayMs || 0));
+    let rejectMutedStarts = Boolean(config.rejectMutedStarts);
+    let audibleBlocks = 0;
+    let instanceCounter = 0;
+
+    const identity = (element: HTMLElement, videoId: string, instanceId: string) => {
+      const card = element.closest<HTMLElement>('[data-short-id]');
+      const rawGeneration = Number(card?.dataset.leaseGeneration);
+      const now = performance.now();
+      return {
+        at: now,
+        timestamp: now,
+        instanceId,
+        index: Number(card?.dataset.shortIndex || 0),
+        shortId: card?.dataset.shortId || videoId,
+        generation: Number.isInteger(rawGeneration) ? rawGeneration : null,
+        origin: 'application' as const,
+      };
+    };
 
     class FakePlayer {
-      readonly index: number;
       private readonly element: HTMLElement;
       private readonly events: any;
+      private readonly instanceId = `fake-${++instanceCounter}`;
+      private videoId = '';
       private muted = true;
       private volume = 100;
-      private state = -1;
+      private rate = 1;
+      private playerState = -1;
       private currentTime = 0;
-      private blockedOnce = false;
-      private playErrorEmitted = false;
-      private bufferedPauses = 0;
       private destroyed = false;
-      private soundResetOnPlaying = false;
-      private soundResetAfterPlaying = false;
-      private audiblePlaySilentlyMuted = false;
-      private audibleBufferingEmitted = false;
-      private lastGeneration: number | null = null;
       private readyEmitted = false;
-      private loopRestart = false;
+      private loopPending = false;
+      private playToken = 0;
 
       constructor(element: HTMLElement, playerOptions: any) {
         this.element = element;
-        this.index = Number(element.closest('[data-short-index]')?.getAttribute('data-short-index') || -1);
         this.events = playerOptions.events;
-        players.set(this.index, this);
+        this.videoId = String(playerOptions.videoId || '');
         const iframe = document.createElement('iframe');
         iframe.title = 'Fake YouTube player';
         iframe.tabIndex = 0;
         iframe.setAttribute('data-fake-youtube', 'true');
+        iframe.setAttribute('allow', 'autoplay; fullscreen; picture-in-picture');
         element.appendChild(iframe);
         this.record('construct');
-        const shouldStall = constructed < stallReadyCount;
-        constructed += 1;
-        if (!shouldStall && this.index !== manualReadyIndex) {
-          const readyDelay = this.index === delayReadyIndex ? delayReadyMs : 0;
-          window.setTimeout(() => this.ready(), readyDelay);
+        window.setTimeout(() => this.ready(), readyDelayMs);
+      }
+
+      private record(method: string, value?: number, origin: 'application' | 'native-fixture' = 'application') {
+        log.push({ ...identity(this.element, this.videoId, this.instanceId), method, value, origin });
+      }
+
+      private setState(state: number, notify = true) {
+        if (this.destroyed) return;
+        this.playerState = state;
+        if (notify) this.events.onStateChange?.({ target: this, data: state });
+      }
+
+      private beginPlay() {
+        if (this.destroyed) return;
+        if (blockAudible && !this.muted && (blockAudibleCount <= 0 || audibleBlocks < blockAudibleCount)) {
+          audibleBlocks += 1;
+          this.setState(2);
+          this.events.onAutoplayBlocked?.({ target: this });
+          return;
         }
+        if (rejectMutedStarts && this.muted) {
+          this.setState(2);
+          this.events.onAutoplayBlocked?.({ target: this });
+          return;
+        }
+        const token = ++this.playToken;
+        this.setState(3);
+        window.setTimeout(() => {
+          if (this.destroyed || token !== this.playToken) return;
+          const loop = this.loopPending;
+          this.setState(1, false);
+          this.currentTime = loop ? 0 : 0.2;
+          this.loopPending = false;
+          this.events.onStateChange?.({ target: this, data: 1 });
+          if (loop && loopProgressDelayMs > 0) {
+            window.setTimeout(() => {
+              if (this.destroyed) return;
+              this.currentTime = 0.2;
+              this.events.onStateChange?.({ target: this, data: 1 });
+            }, loopProgressDelayMs);
+          }
+        }, startDelayMs);
       }
 
       ready() {
@@ -147,270 +157,180 @@ export async function installFakeYouTube(page: Page, options: FakePlayerOptions 
         this.events.onReady?.({ target: this });
       }
 
-      private identity() {
-        const card = this.element.closest<HTMLElement>('[data-short-index]');
-        const rawGeneration = Number(card?.dataset.leaseGeneration);
-        if (Number.isInteger(rawGeneration) && rawGeneration > 0) this.lastGeneration = rawGeneration;
-        return {
-          shortId: card?.dataset.shortId || '',
-          generation: this.lastGeneration,
-        };
-      }
-
-      private record(method: string, value?: number) {
-        const identity = this.identity();
-        log.push({ at: performance.now(), index: this.index, method, value, ...identity });
-      }
-
-      cueVideoById() {
-        if (this.destroyed) return;
-        this.record('cueVideoById');
-        // Physical YouTube iframes can briefly expose an unmuted/zero-volume
-        // native state after cueing. This is not a user choice and must never
-        // replace the last usable session volume.
-        if (resetSoundToZeroOnCue) {
-          this.muted = false;
-          this.volume = 0;
-          this.record('cueSoundReset', 0);
-        }
-        if (this.index === error5OnCueIndex && cueErrorsEmitted < 1) {
-          cueErrorsEmitted += 1;
-          this.state = -1;
-          window.setTimeout(() => this.events.onError?.({ target: this, data: 5 }), 0);
-          return;
-        }
-        this.state = 5;
-        window.setTimeout(() => this.events.onStateChange?.({ target: this, data: 5 }), 0);
-      }
-      loadVideoById() { this.record('loadVideoById'); }
       playVideo() {
         if (this.destroyed) return;
         this.record('playVideo');
-        if (this.index === error5OnPlayIndex && !this.playErrorEmitted) {
-          this.playErrorEmitted = true;
-          this.state = -1;
-          this.events.onError?.({ target: this, data: 5 });
-          return;
-        }
-        if (this.index === blockPlayIndex && blockedPlaysEmitted < blockPlayCount) {
-          blockedPlaysEmitted += 1;
-          this.state = 2;
-          this.events.onAutoplayBlocked?.({ target: this });
-          return;
-        }
-        const shouldBlockAudible = blockAudible && !this.muted && (
-          blockAudibleCount > 0
-            ? audibleBlocksEmitted < blockAudibleCount
-            : !this.blockedOnce
-        );
-        if (shouldBlockAudible) {
-          this.blockedOnce = true;
-          audibleBlocksEmitted += 1;
-          this.state = 2;
-          this.events.onAutoplayBlocked?.({ target: this });
-          return;
-        }
-        if (this.index === bufferThenPauseIndex && this.bufferedPauses < bufferThenPauseCount) {
-          this.bufferedPauses += 1;
-          this.state = 3;
-          this.events.onStateChange?.({ target: this, data: 3 });
-          window.setTimeout(() => {
-            this.state = 2;
-            this.events.onStateChange?.({ target: this, data: 2 });
-          }, 0);
-          return;
-        }
-        if (resetSoundToZeroOnPlaying && !this.soundResetOnPlaying) {
-          this.soundResetOnPlaying = true;
-          this.muted = false;
-          this.volume = 0;
-          this.record('playingSoundReset', 0);
-        }
-        if (silentlyMuteAudiblePlay && !this.muted && !this.audiblePlaySilentlyMuted) {
-          this.audiblePlaySilentlyMuted = true;
-          this.muted = true;
-          this.record('audiblePlaySilentlyMuted');
-        }
-        if (bufferAudibleBeforePlayingMs > 0 && !this.muted && !this.audibleBufferingEmitted) {
-          this.audibleBufferingEmitted = true;
-          this.state = 3;
-          this.record('audibleBuffering');
-          this.events.onStateChange?.({ target: this, data: 3 });
-          window.setTimeout(() => {
-            this.state = 1;
-            this.currentTime = 0.2;
-            this.events.onStateChange?.({ target: this, data: 1 });
-          }, bufferAudibleBeforePlayingMs);
-          return;
-        }
-        this.state = 1;
-        const delayLoopProgress = this.loopRestart && loopProgressDelayMs > 0;
-        this.currentTime = delayLoopProgress ? 0 : 0.2;
-        this.loopRestart = false;
-        window.setTimeout(() => {
-          this.events.onStateChange?.({ target: this, data: 1 });
-          if (this.audiblePlaySilentlyMuted && delayedAutoplayBlockedAfterMutedPlayMs > 0) {
-            window.setTimeout(() => this.autoplayBlocked(true), delayedAutoplayBlockedAfterMutedPlayMs);
-          }
-          if (resetSoundToZeroAfterPlaying && !this.soundResetAfterPlaying) {
-            this.soundResetAfterPlaying = true;
-            window.setTimeout(() => {
-              this.muted = false;
-              this.volume = 0;
-              this.record('postPlayingSoundReset', 0);
-            }, 0);
-          }
-          if (!this.muted && delayedAutoplayBlockedAfterAudiblePlayMs > 0) {
-            window.setTimeout(() => {
-              this.state = 2;
-              this.autoplayBlocked(true);
-            }, delayedAutoplayBlockedAfterAudiblePlayMs);
-          }
-          if (delayLoopProgress) {
-            window.setTimeout(() => {
-              this.state = 1;
-              this.currentTime = 0.2;
-              this.events.onStateChange?.({ target: this, data: 1 });
-            }, loopProgressDelayMs);
-          }
-        }, 0);
+        this.beginPlay();
       }
-      pauseVideo() { if (!this.destroyed) { this.record('pauseVideo'); this.state = 2; } }
+
+      pauseVideo() {
+        if (this.destroyed) return;
+        ++this.playToken;
+        this.record('pauseVideo');
+        this.setState(2);
+      }
+
       mute() { if (!this.destroyed) { this.record('mute'); this.muted = true; } }
       unMute() { if (!this.destroyed) { this.record('unMute'); this.muted = false; } }
       isMuted() { return this.muted; }
-      setVolume(volume: number) {
+      setVolume(value: number) {
         if (this.destroyed) return;
-        this.record('setVolume', volume);
-        if (ignoreVolumeWhileMuted && this.muted) {
-          this.record('setVolumeIgnoredWhileMuted', volume);
-          return;
-        }
-        this.volume = volume;
+        this.volume = Math.max(0, Math.min(100, Math.round(value)));
+        this.record('setVolume', this.volume);
       }
       getVolume() { return this.volume; }
       getCurrentTime() { return this.currentTime; }
+      getPlayerState() { return this.playerState; }
+      getVideoUrl() { return this.videoId ? `https://www.youtube.com/watch?v=${this.videoId}` : ''; }
+      getPlaybackRate() { return this.rate; }
+      setPlaybackRate(value: number) {
+        if (!this.destroyed) {
+          this.rate = value;
+          this.record('setPlaybackRate', value);
+          this.events.onPlaybackRateChange?.({ target: this, data: value });
+        }
+      }
+      getAvailablePlaybackRates() { return [0.25, 0.5, 1, 1.5, 2]; }
+      getIframe() { return this.element.querySelector('iframe') as HTMLIFrameElement; }
+
+      loadVideoById(videoId: string) {
+        if (this.destroyed) return;
+        this.videoId = videoId;
+        this.currentTime = 0;
+        this.loopPending = false;
+        this.record('loadVideoById');
+        if (config.resetSoundToZeroOnLoad) {
+          this.muted = false;
+          this.volume = 0;
+          this.record('loadSoundReset', 0);
+        }
+        this.setState(5);
+        window.setTimeout(() => {
+          if (!this.destroyed) this.beginPlay();
+        }, 0);
+      }
+
       seekTo(seconds: number) {
         if (!this.destroyed) {
-          this.record('seekTo');
+          this.record('seekTo', seconds);
           this.currentTime = seconds;
-          if (seconds === 0) this.loopRestart = true;
+          if (seconds === 0) this.loopPending = true;
         }
       }
-      getPlayerState() { return this.state; }
-      getPlaybackRate() { return 1; }
-      setPlaybackRate() {}
-      getAvailablePlaybackRates() { return [1, 2]; }
-      getIframe() { return this.element.querySelector('iframe') as HTMLIFrameElement; }
-      snapshot() { return { index: this.index, state: this.state, muted: this.muted, volume: this.volume }; }
+
       destroy() {
+        if (this.destroyed) return;
         this.record('destroy');
         this.destroyed = true;
-        players.delete(this.index);
-        if (this.index === stalePlayingAfterDestroyIndex) {
-          window.setTimeout(() => {
-            this.record('stalePlayingCallback');
-            this.events.onStateChange?.({ target: this, data: 1 });
-          }, stalePlayingDelayMs);
-        }
-        if (this.index === stalePreparedCallbackIndex) {
-          // Preserve the generationless identity of a prepared-never-leased
-          // iframe. The replacement player at this index must reject both late
-          // callbacks through pool identity and live-state validation.
-          this.lastGeneration = null;
-          window.setTimeout(() => {
-            const staleIdentity = {
-              at: performance.now(),
-              index: this.index,
-              shortId: '',
-              generation: null,
-            };
-            log.push({ ...staleIdentity, method: 'stalePreparedBufferingCallback' });
-            this.events.onStateChange?.({ target: this, data: 3 });
-            log.push({ ...staleIdentity, at: performance.now(), method: 'stalePreparedPlayingCallback' });
-            this.events.onStateChange?.({ target: this, data: 1 });
-          }, stalePlayingDelayMs);
-        }
+        this.element.replaceChildren();
       }
 
-      nativeSound(audible: boolean, volume = 64) {
+      nativeSound(audible: boolean, value = this.volume) {
+        if (this.destroyed) return;
         this.getIframe()?.focus();
-        this.volume = volume;
+        this.volume = Math.max(0, Math.min(100, Math.round(value)));
         this.muted = !audible;
-        this.record(audible ? 'nativeUnmute' : 'nativeMute');
+        this.record(audible ? 'nativeUnmute' : 'nativeMute', this.volume, 'native-fixture');
       }
-
-      nativeToggle() {
-        this.getIframe()?.focus();
-        if (this.muted) {
-          this.muted = false;
-          this.record('nativeUnmute', this.volume);
-        } else {
-          this.muted = true;
-          this.record('nativeMute', this.volume);
+      nativeToggle() { this.nativeSound(this.muted, this.volume); }
+      nativeVolume(value: number) {
+        if (this.destroyed) return;
+        this.volume = Math.max(0, Math.min(100, Math.round(value)));
+        this.record('nativeVolume', this.volume, 'native-fixture');
+      }
+      nativeRate(value: number) {
+        this.rate = value;
+        this.record('nativeRate', value, 'native-fixture');
+        this.events.onPlaybackRateChange?.({ target: this, data: value });
+      }
+      nativePause() { this.pauseVideo(); }
+      nativePlay() { this.record('nativePlay', undefined, 'native-fixture'); this.beginPlay(); }
+      emit(state: number) { this.record(`emit:${state}`, undefined, 'native-fixture'); this.setState(state); }
+      end() { this.currentTime = 0; this.emit(0); }
+      autoplayBlocked() { this.record('autoplayBlocked', undefined, 'native-fixture'); this.events.onAutoplayBlocked?.({ target: this }); }
+      buffering() { this.emit(3); }
+      /**
+       * Deliver callbacks from the previous video after a new load. Real
+       * YouTube events do not carry PubCrawl's generation, so the production
+       * guard must validate the player's current native URL before acting.
+       */
+      staleCallbacks(videoId = 'stale-video-id') {
+        if (this.destroyed) return;
+        const current = this.videoId;
+        this.videoId = videoId;
+        try {
+          for (const state of [1, 2, 0]) {
+            this.record(`stale:${state}`, undefined, 'native-fixture');
+            this.events.onStateChange?.({ target: this, data: state });
+          }
+          this.record('stale:autoplayBlocked', undefined, 'native-fixture');
+          this.events.onAutoplayBlocked?.({ target: this });
+        } finally {
+          this.videoId = current;
         }
       }
-
-      emit(state: number) {
-        this.state = state;
-        this.record(`emit:${state}`);
-        this.events.onStateChange?.({ target: this, data: state });
-      }
-
-      error(code: number) {
-        this.state = -1;
-        this.record(`error:${code}`);
+      error(code = 150) {
+        if (this.destroyed) return;
+        this.record('error', code, 'native-fixture');
         this.events.onError?.({ target: this, data: code });
       }
-
-      autoplayBlocked(preserveState = true) {
-        if (!preserveState) this.state = 2;
-        this.record('autoplayBlocked');
-        this.events.onAutoplayBlocked?.({ target: this });
-      }
+      setRejectMutedStarts(reject: boolean) { rejectMutedStarts = Boolean(reject); }
+      sound() { return { muted: this.muted, volume: this.volume }; }
+      snapshot() { return { state: this.playerState, muted: this.muted, volume: this.volume, shortId: this.videoId }; }
     }
 
-    target.__PUBCRAWL_FAKE_YT__ = {
-      nativeSound(index, audible, volume = 64) { players.get(index)?.nativeSound(audible, volume); },
-      nativeToggle(index) { players.get(index)?.nativeToggle(); },
-      sound(index) {
-        const player = players.get(index);
-        return player ? { muted: player.isMuted(), volume: player.getVolume() } : null;
+    let player: FakePlayer | null = null;
+    (window as Window & { YT?: unknown }).YT = {
+      Player: class extends FakePlayer {
+        constructor(element: HTMLElement, playerOptions: any) {
+          super(element, playerOptions);
+          player = this;
+        }
       },
-      emit(index, state) { players.get(index)?.emit(state); },
-      error(index, code) { players.get(index)?.error(code); },
-      autoplayBlocked(index, preserveState = true) { players.get(index)?.autoplayBlocked(preserveState); },
-      ready(index) { players.get(index)?.ready(); },
-      states() { return [...players.values()].map((player) => player.snapshot()); },
     };
-    (window as Window & { YT?: unknown }).YT = { Player: FakePlayer };
+    target.__PUBCRAWL_FAKE_YT__ = {
+      nativeSound: (audible, volume) => player?.nativeSound(audible, volume),
+      nativeToggle: () => player?.nativeToggle(),
+      nativeVolume: (volume) => player?.nativeVolume(volume),
+      nativeRate: (rate) => player?.nativeRate(rate),
+      nativePause: () => player?.nativePause(),
+      nativePlay: () => player?.nativePlay(),
+      emit: (state) => player?.emit(state),
+      end: () => player?.end(),
+      autoplayBlocked: () => player?.autoplayBlocked(),
+      buffering: () => player?.buffering(),
+      staleCallbacks: (videoId) => player?.staleCallbacks(videoId),
+      error: (code) => player?.error(code),
+      setRejectMutedStarts: (reject) => player?.setRejectMutedStarts(reject),
+      sound: () => player?.sound() || null,
+      state: () => player?.snapshot() || null,
+      iframeCount: () => document.querySelectorAll('iframe[data-fake-youtube]').length,
+    };
   }, options);
 }
 
 export async function waitForFirstPlay(page: Page) {
-  await page.waitForLoadState('load');
-  await page.waitForFunction(() => Boolean((window as any).__PUBCRAWL_FAKE_YT_LOG__?.some((entry: FakeLogEntry) => entry.method === 'playVideo')));
-  // DOMContentLoaded and the fake player's first command can precede the
-  // final responsive stylesheet layout in WebKit. Do not synthesize a swipe
-  // until the real feed owns a scroll viewport; otherwise scrollTop is
-  // correctly clamped to zero and the test exercises an unstyled document.
-  await page.waitForFunction(() => {
-    const root = document.querySelector<HTMLElement>('.shorts-feed');
-    return Boolean(
-      root &&
-      getComputedStyle(root).overflowY === 'auto' &&
-      root.clientHeight > 0 &&
-      root.scrollHeight > root.clientHeight,
-    );
-  });
+  // The route helper already waits for the app document. Waiting for the
+  // browser's full `load` event here makes WebKit depend on an iframe/network
+  // event that the fake player intentionally does not provide. Wait on the
+  // player-specific readiness signal instead.  The fake can become ready
+  // before the hashed stylesheet finishes loading, so also wait for the
+  // controls-first grid to be applied before measuring side rails.
+  await page.waitForFunction(() => getComputedStyle(document.querySelector('.shorts-stage') as Element | null).display === 'grid', null, { timeout: 20_000 });
+  await page.waitForSelector('.shorts-player-layer[data-player-ready="true"]', { timeout: 20_000 });
+  await expect.poll(async () => (await fakeLog(page)).some((entry) => entry.method === 'playVideo' || entry.method === 'loadVideoById')).toBe(true);
+  await expect(page.locator('.shorts-player-layer')).toHaveClass(/is-revealed/, { timeout: 20_000 });
 }
 
 export async function fakeLog(page: Page): Promise<FakeLogEntry[]> {
   return page.evaluate(() => [...((window as any).__PUBCRAWL_FAKE_YT_LOG__ || [])]);
 }
 
-export async function fakeStates(page: Page): Promise<Array<{ index: number; state: number; muted: boolean; volume: number }>> {
-  return page.evaluate(() => (window as any).__PUBCRAWL_FAKE_YT__?.states() || []);
+export async function fakeStates(page: Page) {
+  return page.evaluate(() => {
+    const state = (window as any).__PUBCRAWL_FAKE_YT__?.state?.();
+    return state ? [{ index: Number(document.querySelector('.shorts-card.is-active')?.getAttribute('data-short-index') || 0), ...state }] : [];
+  });
 }
 
 export async function activeIndex(page: Page): Promise<number> {
@@ -418,106 +338,56 @@ export async function activeIndex(page: Page): Promise<number> {
 }
 
 export async function activeLeaseIdentity(page: Page) {
-  const feed = page.locator('.shorts-feed');
-  const index = Number(await feed.getAttribute('data-controller-active'));
-  const lease = (await feed.getAttribute('data-controller-lease')) || '';
+  const index = await activeIndex(page);
+  const lease = (await page.locator('.shorts-feed').getAttribute('data-controller-lease')) || '';
   const generation = Number(lease.split(':')[1]);
-  const shortId = (await page.locator(`.shorts-card[data-short-index="${index}"]`).getAttribute('data-short-id')) || '';
+  const shortId = (await page.locator('.shorts-card.is-active').getAttribute('data-short-id')) || '';
   return { index, generation, shortId };
 }
 
 export async function setNativeSound(page: Page, audible: boolean, volume = 64) {
-  const index = await activeIndex(page);
-  await page.evaluate(({ index, audible, volume }) => {
-    (window as any).__PUBCRAWL_FAKE_YT__?.nativeSound(index, audible, volume);
-  }, { index, audible, volume });
+  await page.evaluate(({ audible, volume }) => (window as any).__PUBCRAWL_FAKE_YT__?.nativeSound(audible, volume), { audible, volume });
 }
 
 export async function toggleNativeSound(page: Page) {
-  const index = await activeIndex(page);
-  await page.evaluate((active) => {
-    (window as any).__PUBCRAWL_FAKE_YT__?.nativeToggle(active);
-  }, index);
+  await page.evaluate(() => (window as any).__PUBCRAWL_FAKE_YT__?.nativeToggle());
 }
 
-export async function swipeTo(page: Page, index: number) {
-  const feed = page.locator('.shorts-feed');
-  await feed.evaluate((element, target) => {
-    const root = element as HTMLElement;
-    const blockNativeScrollEnd = (event: Event) => event.stopImmediatePropagation();
-    root.addEventListener('scrollend', blockNativeScrollEnd, { capture: true });
-    (root as HTMLElement & { __testScrollEndBlocker?: EventListener }).__testScrollEndBlocker = blockNativeScrollEnd;
-    // WebKit may immediately snap a programmatic exact-card scroll back to
-    // the current card while a synthetic touch is still open. Disable only
-    // the test page's snap behavior so the application receives the intended
-    // geometry deterministically; production CSS remains unchanged.
-    root.style.setProperty('scroll-snap-type', 'none', 'important');
-    root.style.scrollBehavior = 'auto';
-    for (const card of root.querySelectorAll<HTMLElement>('.shorts-card')) {
-      card.style.setProperty('scroll-snap-align', 'none', 'important');
-    }
-    // Force WebKit to commit the snap override before assigning scrollTop.
-    void root.offsetHeight;
-    root.dispatchEvent(new TouchEvent('touchstart', { bubbles: true }));
-    root.scrollTop = target * root.clientHeight;
-    root.dispatchEvent(new Event('scroll', { bubbles: true }));
-  }, index);
-  await expect.poll(() => feed.evaluate((element) => {
-    const root = element as HTMLElement;
-    return Math.round(root.scrollTop / Math.max(1, root.clientHeight));
-  })).toBe(index);
-  await page.waitForTimeout(40);
-  await feed.evaluate((element) => {
-    element.dispatchEvent(new TouchEvent('touchend', { bubbles: true }));
-  });
-  await expect(feed).toHaveAttribute('data-controller-active', String(index));
-  await expect(feed).toHaveAttribute('data-controller-phase', 'idle');
-  await feed.evaluate((element) => {
-    const root = element as HTMLElement;
-    const testRoot = root as HTMLElement & { __testScrollEndBlocker?: EventListener };
-    if (testRoot.__testScrollEndBlocker) {
-      root.removeEventListener('scrollend', testRoot.__testScrollEndBlocker, { capture: true });
-      delete testRoot.__testScrollEndBlocker;
-    }
-    root.style.removeProperty('scroll-snap-type');
-    root.style.scrollBehavior = '';
-    for (const card of root.querySelectorAll<HTMLElement>('.shorts-card')) {
-      card.style.removeProperty('scroll-snap-align');
-    }
-  });
+export async function swipeTo(page: Page, target: number) {
+  const current = await activeIndex(page);
+  const direction = target >= current ? 'Next Short' : 'Previous Short';
+  const count = Math.abs(target - current);
+  for (let index = 0; index < count; index += 1) {
+    await page.getByRole('button', { name: direction }).click();
+    const expected = current + (target >= current ? index + 1 : -(index + 1));
+    await expect(page.locator('.shorts-feed')).toHaveAttribute('data-controller-active', String(expected));
+    await expect(page.locator('.shorts-player-layer')).toHaveClass(/is-revealed/, { timeout: 20_000 });
+  }
 }
 
-export async function scrollToWithoutTouch(page: Page, index: number) {
-  const feed = page.locator('.shorts-feed');
-  await feed.evaluate((element, target) => {
-    const root = element as HTMLElement;
-    root.scrollTop = target * root.clientHeight;
-    root.dispatchEvent(new Event('scroll', { bubbles: true }));
-  }, index);
-  await page.waitForTimeout(40);
-  await feed.evaluate((element) => {
-    element.dispatchEvent(new Event('scrollend', { bubbles: true }));
-  });
-  await expect(feed).toHaveAttribute('data-controller-active', String(index));
-  await expect(feed).toHaveAttribute('data-controller-phase', 'idle');
+/** Exercise the real side-zone pointer handler instead of the fallback buttons. */
+export async function sideSwipeTo(page: Page, target: number) {
+  const current = await activeIndex(page);
+  if (target === current) return;
+  const forward = target > current;
+  const zone = page.locator(forward ? '.shorts-nav-zone-right' : '.shorts-nav-zone-left');
+  const box = await zone.boundingBox();
+  if (!box) throw new Error('Shorts side navigation zone is not measurable');
+  const x = box.x + box.width / 2;
+  // Start in the open part of the side rail rather than on one of its
+  // buttons.  The rail deliberately contains the Back/Help/Previous (or
+  // Share/Next) controls, so its midpoint can land on a button and the
+  // production handler will correctly ignore that pointer sequence as a
+  // button interaction.  A quarter-height point is stable across the
+  // portrait WebKit viewport while still leaving room for a 120px swipe.
+  const y = box.y + Math.max(24, Math.min(box.height - 24, box.height * 0.25));
+  await page.mouse.move(x, y);
+  await page.mouse.down();
+  await page.mouse.move(x, y + (forward ? -120 : 120), { steps: 4 });
+  await page.mouse.up();
+  await expect(page.locator('.shorts-feed')).toHaveAttribute('data-controller-active', String(target));
+  await expect(page.locator('.shorts-player-layer')).toHaveClass(/is-revealed/, { timeout: 20_000 });
 }
 
-export async function scrollToWithQuietFallback(page: Page, index: number) {
-  const feed = page.locator('.shorts-feed');
-  await feed.evaluate((element, target) => {
-    const root = element as HTMLElement;
-    // Chromium emits a native scrollend for programmatic scrollTop changes.
-    // Suppress only that test event so the app's 120ms no-scrollend fallback
-    // is the sole settlement owner in this scenario.
-    root.addEventListener('scrollend', (event) => event.stopImmediatePropagation(), {
-      capture: true,
-      once: true,
-    });
-    root.scrollTop = target * root.clientHeight;
-    root.dispatchEvent(new Event('scroll', { bubbles: true }));
-  }, index);
-  // Deliberately omit scrollend. The feed-wide 120ms quiet fallback owns this
-  // settlement on browsers that do not provide a reliable native event.
-  await expect(feed).toHaveAttribute('data-controller-active', String(index), { timeout: 2_000 });
-  await expect(feed).toHaveAttribute('data-controller-phase', 'idle');
-}
+export async function scrollToWithoutTouch(page: Page, target: number) { await swipeTo(page, target); }
+export async function scrollToWithQuietFallback(page: Page, target: number) { await swipeTo(page, target); }

@@ -1,183 +1,165 @@
 import { test, expect } from '@playwright/test';
 import { openRoute, seedStableDevice } from './helpers';
-import {
-  activeIndex,
-  activeLeaseIdentity,
-  fakeLog,
-  fakeStates,
-  installFakeYouTube,
-  scrollToWithQuietFallback,
-  scrollToWithoutTouch,
-  setNativeSound,
-  swipeTo,
-  toggleNativeSound,
-  waitForFirstPlay,
-} from './fixtures/shortsFakeYouTube';
+import { fakeLog, installFakeYouTube, setNativeSound, sideSwipeTo, swipeTo, waitForFirstPlay } from './fixtures/shortsFakeYouTube';
 
-test.describe('Shorts startup and controls', () => {
+test.describe('Shorts WebKit lifecycle', () => {
   test.use({ viewport: { width: 390, height: 844 }, isMobile: true, hasTouch: true });
 
-  test('native scrollend commits immediately and does not duplicate the quiet fallback start', async ({ page }) => {
-    await installFakeYouTube(page);
-    await seedStableDevice(page);
-    await openRoute(page, '/#/shorts');
-    const feed = page.locator('.shorts-feed');
-    await waitForFirstPlay(page);
-
-    const startedAt = await page.evaluate(() => performance.now());
-    await feed.evaluate((element) => {
-      const root = element as HTMLElement;
-      root.scrollTop = root.clientHeight;
-      root.dispatchEvent(new Event('scroll', { bubbles: true }));
-      root.dispatchEvent(new Event('scrollend', { bubbles: true }));
-    });
-    await expect.poll(async () => (await fakeLog(page)).filter((entry) => entry.index === 1 && entry.method === 'playVideo').length).toBe(1);
-    const firstStart = (await fakeLog(page)).find((entry) => entry.index === 1 && entry.method === 'playVideo');
-    expect(firstStart).toBeTruthy();
-    expect(firstStart!.at - startedAt).toBeLessThan(120);
-    await expect(feed).toHaveAttribute('data-controller-active', '1');
-    await expect(feed).toHaveAttribute('data-controller-phase', 'idle');
-    await page.waitForTimeout(180);
-    const starts = (await fakeLog(page)).filter((entry) => entry.index === 1 && entry.method === 'playVideo');
-    expect(starts).toHaveLength(1);
-  });
-
-  test('passive native-scrollend handoffs keep every destination moving automatically', async ({ page }) => {
+  test('native controls remain reachable because no first-party layer covers the iframe', async ({ page }) => {
     await installFakeYouTube(page);
     await seedStableDevice(page);
     await openRoute(page, '/#/shorts');
     await waitForFirstPlay(page);
-
-    const destinations = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 9, 8, 7, 6, 5];
-    for (const destination of destinations) {
-      await scrollToWithoutTouch(page, destination);
-      await expect(page.locator('.shorts-card.is-active .shorts-player-layer')).toHaveClass(/is-revealed/);
-      await expect(page.locator('.shorts-card.is-active .shorts-startup-surface')).toBeHidden();
-      await expect(page.locator('.shorts-card.is-active .shorts-tap')).toHaveCount(0);
-      const states = await fakeStates(page);
-      expect(states.filter((player) => player.state === 1).map((player) => player.index)).toEqual([destination]);
-      expect(states.filter((player) => !player.muted && player.volume > 0)).toHaveLength(0);
-    }
-  });
-
-  test('coarse-pointer swipe surface wires feed touch handlers while native control strips stay exposed', async ({ page }) => {
-    await installFakeYouTube(page);
-    await seedStableDevice(page);
-    await openRoute(page, '/#/shorts');
-    await waitForFirstPlay(page);
-
-    const sourceIndex = await activeIndex(page);
-    const surface = page.locator(`.shorts-card[data-short-index="${sourceIndex}"] .shorts-swipe-surface`);
-    await expect(surface).toBeVisible();
     const geometry = await page.evaluate(() => {
-      const overlay = document.querySelector<HTMLElement>('.shorts-card.is-active .shorts-swipe-surface');
-      const media = document.querySelector<HTMLElement>('.shorts-card.is-active .shorts-player-frame');
-      if (!overlay || !media) return null;
-      const overlayRect = overlay.getBoundingClientRect();
-      const mediaRect = media.getBoundingClientRect();
-      return {
-        pointerEvents: getComputedStyle(overlay).pointerEvents,
-        topGap: overlayRect.top - mediaRect.top,
-        bottomGap: mediaRect.bottom - overlayRect.bottom,
-      };
+      const iframe = document.querySelector<HTMLIFrameElement>('.shorts-player-host iframe')?.getBoundingClientRect();
+      const zones = [...document.querySelectorAll<HTMLElement>('.shorts-nav-zone')].map((node) => node.getBoundingClientRect());
+      return iframe ? { iframe, zones } : null;
     });
     expect(geometry).not.toBeNull();
-    expect(geometry!.pointerEvents).toBe('auto');
-    expect(geometry!.topGap).toBeGreaterThanOrEqual(60);
-    expect(geometry!.bottomGap).toBeGreaterThanOrEqual(92);
-
-    await setNativeSound(page, true, 75);
-    await expect.poll(() => page.evaluate(() => sessionStorage.getItem('pubcrawl.shorts.sound.v1'))).toBe(
-      JSON.stringify({ version: 1, desiredAudible: true, volume: 75 }),
-    );
-    const feed = page.locator('.shorts-feed');
-    await surface.evaluate((element) => {
-      const root = element.closest<HTMLElement>('.shorts-feed')!;
-      root.style.setProperty('scroll-snap-type', 'none', 'important');
-      for (const card of root.querySelectorAll<HTMLElement>('.shorts-card')) {
-        card.style.setProperty('scroll-snap-align', 'none', 'important');
-      }
-      void root.offsetHeight;
-      element.dispatchEvent(new TouchEvent('touchstart', { bubbles: true }));
-      root.scrollTop = root.clientHeight;
-      root.dispatchEvent(new Event('scroll', { bubbles: true }));
-    });
-    await page.waitForTimeout(40);
-    await surface.evaluate((element) => element.dispatchEvent(new TouchEvent('touchend', { bubbles: true })));
-    await expect(feed).toHaveAttribute('data-controller-active', '1');
-    await expect.poll(() => page.evaluate(() => (window as any).__PUBCRAWL_FAKE_YT__?.sound(1))).toEqual({
-      muted: false,
-      volume: 75,
-    });
-    await expect(page.locator('.shorts-card.is-active .shorts-player-layer')).toHaveClass(/is-revealed/);
+    for (const zone of geometry!.zones) {
+      expect(zone.right <= geometry!.iframe.left || zone.left >= geometry!.iframe.right).toBe(true);
+    }
+    expect(await page.locator('.shorts-player-host iframe').count()).toBe(1);
   });
 
-  test('same-card snap-back and natural looping preserve one revealed iframe', async ({ page }) => {
-    await installFakeYouTube(page, { loopProgressDelayMs: 700 });
+  test('visibility suspension pauses and resumes only the current persistent player', async ({ page }) => {
+    await installFakeYouTube(page);
     await seedStableDevice(page);
     await openRoute(page, '/#/shorts');
-    const feed = page.locator('.shorts-feed');
     await waitForFirstPlay(page);
-    await expect(page.locator('.shorts-card.is-active .shorts-player-layer')).toHaveClass(/is-revealed/);
-    const index = await activeIndex(page);
-    const leaseBefore = await feed.getAttribute('data-controller-lease');
-    const logBefore = (await fakeLog(page)).length;
+    await setNativeSound(page, true, 66);
+    const before = (await fakeLog(page)).find((entry) => entry.method === 'construct')?.instanceId;
+    await page.evaluate(() => Object.defineProperty(document, 'hidden', { configurable: true, value: true }));
+    await page.evaluate(() => document.dispatchEvent(new Event('visibilitychange')));
+    await expect.poll(async () => (await fakeLog(page)).filter((entry) => entry.method === 'pauseVideo').length).toBeGreaterThan(0);
+    await page.evaluate(() => Object.defineProperty(document, 'hidden', { configurable: true, value: false }));
+    await page.evaluate(() => document.dispatchEvent(new Event('visibilitychange')));
+    await expect.poll(async () => (await fakeLog(page)).filter((entry) => entry.method === 'playVideo').length).toBeGreaterThan(1);
+    expect((await fakeLog(page)).filter((entry) => entry.method === 'construct').map((entry) => entry.instanceId)).toEqual([before]);
+    await expect.poll(() => page.evaluate(() => (window as any).__PUBCRAWL_FAKE_YT__?.sound())).toEqual({ muted: true, volume: 66 });
+  });
 
-    await feed.evaluate((element) => {
-      const root = element as HTMLElement;
-      root.dispatchEvent(new TouchEvent('touchstart', { bubbles: true }));
-      root.scrollTop += 1;
-      root.dispatchEvent(new Event('scroll', { bubbles: true }));
-      root.scrollTop -= 1;
-      root.dispatchEvent(new Event('scroll', { bubbles: true }));
-      root.dispatchEvent(new TouchEvent('touchend', { bubbles: true }));
-      root.dispatchEvent(new Event('scrollend', { bubbles: true }));
-    });
-    await expect(feed).toHaveAttribute('data-controller-lease', leaseBefore || '');
-    const bounceEvents = (await fakeLog(page)).slice(logBefore).filter((entry) => entry.index === index);
-    expect(bounceEvents.some((entry) => entry.method === 'playVideo' || entry.method === 'pauseVideo')).toBe(false);
+  test('same player loops without recuing or hiding the revealed frame', async ({ page }) => {
+    await installFakeYouTube(page);
+    await seedStableDevice(page);
+    await openRoute(page, '/#/shorts');
+    await waitForFirstPlay(page);
+    const before = (await fakeLog(page)).length;
+    await page.evaluate(() => (window as any).__PUBCRAWL_FAKE_YT__?.end());
+    await expect.poll(async () => (await fakeLog(page)).slice(before).filter((entry) => entry.method === 'seekTo').length).toBe(1);
+    await expect.poll(async () => (await fakeLog(page)).slice(before).filter((entry) => entry.method === 'playVideo').length).toBe(1);
+    await expect(page.locator('.shorts-player-layer')).toHaveClass(/is-revealed/);
+    expect((await fakeLog(page)).slice(before).some((entry) => /construct|loadVideoById|destroy/.test(entry.method))).toBe(false);
+  });
 
-    await page.evaluate((active) => (window as any).__PUBCRAWL_FAKE_YT__?.emit(active, 3), index);
-    await expect(page.locator('.shorts-card.is-active .shorts-player-layer')).toHaveClass(/is-revealed/);
-    await expect(page.locator('.shorts-card.is-active .shorts-startup-surface')).toBeHidden();
+  test('post-reveal buffering keeps the same visible iframe without a reload', async ({ page }) => {
+    await installFakeYouTube(page);
+    await seedStableDevice(page);
+    await openRoute(page, '/#/shorts');
+    await waitForFirstPlay(page);
+    // Allow optional catalogue enrichment to settle before taking the command
+    // baseline; it must not be confused with buffering-induced reload work.
+    await page.waitForTimeout(250);
+    const before = await fakeLog(page);
+    const beforeLoads = before.filter((entry) => entry.method === 'loadVideoById').length;
+    const beforeConstructs = before.filter((entry) => entry.method === 'construct').length;
+    const beforeDestroys = before.filter((entry) => entry.method === 'destroy').length;
+    await page.evaluate(() => (window as any).__PUBCRAWL_FAKE_YT__?.buffering());
+    await expect(page.locator('.shorts-player-layer')).toHaveClass(/is-revealed/);
+    await expect(page.locator('.shorts-player-host iframe')).toHaveCount(1);
+    const after = await fakeLog(page);
+    expect(after.filter((entry) => entry.method === 'loadVideoById')).toHaveLength(beforeLoads);
+    expect(after.filter((entry) => entry.method === 'construct')).toHaveLength(beforeConstructs);
+    expect(after.filter((entry) => entry.method === 'destroy')).toHaveLength(beforeDestroys);
+  });
 
-    const loopBefore = (await fakeLog(page)).length;
-    await page.evaluate((active) => {
-      (window as any).__PUBCRAWL_FAKE_YT__?.emit(active, 0);
-      (window as any).__PUBCRAWL_FAKE_YT__?.emit(active, 0);
-    }, index);
-    await expect.poll(async () => (await fakeLog(page)).slice(loopBefore).filter((entry) => entry.index === index && entry.method === 'playVideo').length).toBe(1);
-    const loopEvents = (await fakeLog(page)).slice(loopBefore).filter((entry) => entry.index === index);
-    expect(loopEvents.filter((entry) => entry.method === 'seekTo')).toHaveLength(1);
-    expect(loopEvents.some((entry) => entry.method === 'cueVideoById' || entry.method === 'loadVideoById' || entry.method === 'destroy')).toBe(false);
-    await expect(page.locator('.shorts-card.is-active .shorts-player-layer')).toHaveClass(/is-revealed/);
+  test('a native pause is respected until the user resumes it', async ({ page }) => {
+    await installFakeYouTube(page);
+    await seedStableDevice(page);
+    await openRoute(page, '/#/shorts');
+    await waitForFirstPlay(page);
+    const before = (await fakeLog(page)).filter((entry) => entry.method === 'playVideo').length;
+    await page.evaluate(() => (window as any).__PUBCRAWL_FAKE_YT__?.nativePause());
+    await expect(page.locator('.shorts-player-layer')).toHaveAttribute('data-player-ready', 'true');
+    await page.waitForTimeout(1_650);
+    expect((await fakeLog(page)).filter((entry) => entry.method === 'playVideo').length).toBe(before);
+    await page.evaluate(() => (window as any).__PUBCRAWL_FAKE_YT__?.nativePlay());
+    await expect(page.locator('.shorts-player-layer')).toHaveClass(/is-revealed/);
+    await expect.poll(() => page.evaluate(() => (window as any).__PUBCRAWL_FAKE_YT__?.state()?.state)).toBe(1);
+    await expect.poll(() => page.evaluate(() => (window as any).__PUBCRAWL_FAKE_YT__?.state()?.shortId)).toBe(
+      await page.locator('.shorts-card.is-active').getAttribute('data-short-id'),
+    );
+  });
 
-    // A slow platform loop can remain at time zero beyond the old one-shot
-    // 350ms latch check. Once motion arrives, a later ENDED event must still
-    // own exactly one additional seek/play pair.
-    await page.waitForTimeout(850);
-    const secondLoopBefore = (await fakeLog(page)).length;
-    await page.evaluate((active) => {
-      (window as any).__PUBCRAWL_FAKE_YT__?.emit(active, 0);
-      (window as any).__PUBCRAWL_FAKE_YT__?.emit(active, 0);
-    }, index);
-    await expect.poll(async () => (
-      await fakeLog(page)
-    ).slice(secondLoopBefore).filter((entry) => entry.index === index && entry.method === 'playVideo').length).toBe(1);
-    const secondLoopEvents = (await fakeLog(page)).slice(secondLoopBefore).filter((entry) => entry.index === index);
-    expect(secondLoopEvents.filter((entry) => entry.method === 'seekTo')).toHaveLength(1);
-    expect(secondLoopEvents.some((entry) => /cueVideoById|loadVideoById|destroy/.test(entry.method))).toBe(false);
-    await expect(page.locator('.shorts-card.is-active .shorts-player-layer')).toHaveClass(/is-revealed/);
+  test('a partial side swipe leaves the selected video and iframe untouched', async ({ page }) => {
+    await installFakeYouTube(page);
+    await seedStableDevice(page);
+    await openRoute(page, '/#/shorts');
+    await waitForFirstPlay(page);
+    const before = await page.locator('.shorts-feed').getAttribute('data-controller-lease');
+    const zone = page.locator('.shorts-nav-zone-right');
+    const box = await zone.boundingBox();
+    expect(box).not.toBeNull();
+    await zone.dispatchEvent('pointerdown', { pointerId: 1, clientX: (box?.x || 0) + 12, clientY: (box?.y || 0) + 100, bubbles: true });
+    await zone.dispatchEvent('pointerup', { pointerId: 1, clientX: (box?.x || 0) + 18, clientY: (box?.y || 0) + 124, bubbles: true });
+    await expect(page.locator('.shorts-feed')).toHaveAttribute('data-controller-lease', before || '');
+    expect((await fakeLog(page)).filter((entry) => entry.method === 'loadVideoById')).toHaveLength(0);
+  });
 
-    // A still-mounted player keeps its confirmed frame while inactive, so
-    // swiping back cannot expose the startup surface or rebuild the iframe.
-    const priorIdentityEvents = (await fakeLog(page)).filter((entry) => entry.index === index && /cueVideoById|loadVideoById|destroy/.test(entry.method)).length;
-    await swipeTo(page, index + 1);
-    await expect(page.locator(`.shorts-card[data-short-index="${index}"] .shorts-player-layer`)).toHaveClass(/is-revealed/);
-    await swipeTo(page, index);
-    await expect(page.locator('.shorts-card.is-active .shorts-player-layer')).toHaveClass(/is-revealed/);
-    await expect(page.locator('.shorts-card.is-active .shorts-startup-surface')).toBeHidden();
-    const nextIdentityEvents = (await fakeLog(page)).filter((entry) => entry.index === index && /cueVideoById|loadVideoById|destroy/.test(entry.method)).length;
-    expect(nextIdentityEvents).toBe(priorIdentityEvents);
+  test('a complete side swipe uses the real pointer path in both directions', async ({ page }) => {
+    await installFakeYouTube(page);
+    await seedStableDevice(page);
+    await openRoute(page, '/#/shorts');
+    await waitForFirstPlay(page);
+    await setNativeSound(page, true, 58);
+    await sideSwipeTo(page, 1);
+    await expect.poll(() => page.evaluate(() => (window as any).__PUBCRAWL_FAKE_YT__?.sound())).toEqual({ muted: false, volume: 58 });
+    await sideSwipeTo(page, 0);
+    await expect.poll(() => page.evaluate(() => (window as any).__PUBCRAWL_FAKE_YT__?.sound())).toEqual({ muted: false, volume: 58 });
+    expect((await fakeLog(page)).filter((entry) => entry.method === 'construct')).toHaveLength(1);
+  });
+
+  test('a delayed loop keeps the revealed player and restarts once per natural end', async ({ page }) => {
+    await installFakeYouTube(page, { loopProgressDelayMs: 220 });
+    await seedStableDevice(page);
+    await openRoute(page, '/#/shorts');
+    await waitForFirstPlay(page);
+    const before = (await fakeLog(page)).length;
+    await page.evaluate(() => (window as any).__PUBCRAWL_FAKE_YT__?.end());
+    await expect.poll(async () => (await fakeLog(page)).slice(before).filter((entry) => entry.method === 'seekTo').length).toBe(1);
+    await expect(page.locator('.shorts-player-layer')).toHaveClass(/is-revealed/);
+    await page.waitForTimeout(280);
+    await page.evaluate(() => (window as any).__PUBCRAWL_FAKE_YT__?.end());
+    await expect.poll(async () => (await fakeLog(page)).slice(before).filter((entry) => entry.method === 'seekTo').length).toBe(2);
+    await expect.poll(async () => (await fakeLog(page)).slice(before).filter((entry) => entry.method === 'playVideo').length).toBe(2);
+    await expect(page.locator('.shorts-player-layer')).toHaveClass(/is-revealed/);
+    expect((await fakeLog(page)).slice(before).some((entry) => /construct|loadVideoById|destroy/.test(entry.method))).toBe(false);
+  });
+
+  test('opening Help pauses and resumes the same player without hidden audio', async ({ page }) => {
+    await installFakeYouTube(page);
+    await seedStableDevice(page, { tours: true });
+    await openRoute(page, '/#/shorts');
+    await waitForFirstPlay(page);
+    const before = await fakeLog(page);
+    await page.getByRole('button', { name: 'Show Shorts tutorial' }).click();
+    await expect(page.getByRole('dialog')).toBeVisible();
+    await expect.poll(async () => (await fakeLog(page)).filter((entry) => entry.method === 'pauseVideo').length).toBeGreaterThan(before.filter((entry) => entry.method === 'pauseVideo').length);
+    await page.getByRole('button', { name: 'Skip' }).click();
+    await expect(page.getByRole('dialog')).toHaveCount(0);
+    await expect.poll(async () => (await fakeLog(page)).filter((entry) => entry.method === 'playVideo').length).toBeGreaterThan(before.filter((entry) => entry.method === 'playVideo').length);
+    expect((await fakeLog(page)).filter((entry) => entry.method === 'construct')).toHaveLength(1);
+  });
+
+  test('route leave destroys the player and does not resume hidden audio', async ({ page }) => {
+    await installFakeYouTube(page);
+    await seedStableDevice(page);
+    await openRoute(page, '/#/shorts');
+    await waitForFirstPlay(page);
+    await page.locator('.mobile-nav-item[href="#/menu"]').click();
+    await expect(page.locator('.shorts-player-host iframe')).toHaveCount(0);
+    await page.waitForTimeout(100);
+    const last = (await fakeLog(page)).at(-1);
+    expect(last?.method).toBe('destroy');
   });
 });
