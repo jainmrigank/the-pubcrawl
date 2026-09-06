@@ -246,19 +246,3 @@ export interface ShortLibrary {
   hasNumbers: boolean;
   updatedAt: number | null;
 }
-
-/** In-memory snapshot used when MAKE THIS temporarily leaves the Shorts feed. */
-export interface ShortsReturnState {
-  /** versioned so a stale tab-scoped snapshot can be rejected safely */
-  version?: 2;
-  videoId: string;
-  title?: string;
-  order: string[];
-  currentTime: number;
-  wasPlaying: boolean;
-  /** semantic intent survives a transient CUED/BUFFERING state */
-  resumeIntent?: 'autoplay' | 'paused';
-  recipeQuery?: string;
-  muted: boolean;
-  volume: number;
-}

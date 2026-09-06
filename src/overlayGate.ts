@@ -41,10 +41,13 @@ export const overlayGate: OverlayGate = {
   },
   acquire(id, priority) {
     if (!id) return false;
-    if (!holder || holder.id === id || priority > holder.priority) {
-      const replaced = holder && holder.id !== id;
+    const previous = holder;
+    if (!previous || previous.id === id || priority > previous.priority) {
       holder = { id, priority };
-      if (replaced) for (const listener of listeners) listener();
+      // Notify both first acquisition and replacement. A Shorts host may be
+      // the only subscriber when a tutorial opens from an empty gate; without
+      // this notification it could keep playing underneath the scrim.
+      if (!previous || previous.id !== id) for (const listener of listeners) listener();
       return true;
     }
     return false;

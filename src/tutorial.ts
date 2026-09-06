@@ -82,8 +82,8 @@ export const TOURS: Record<TourId, TourDefinition> = {
     id: 'shorts',
     storageKey: TOUR_STORAGE_KEYS.shorts,
     steps: [
-      { id: 'feed', target: '[data-tour="shorts-feed"]', label: 'SWIPE UP FOR THE NEXT POUR', body: 'Each Short plays when it settles in the frame.', preferredSide: 'bottom' },
-      { id: 'actions', target: '[data-tour="shorts-actions"]', label: 'SHARE IT OR OPEN THE RECIPE', body: 'Use these actions without leaving your place. Sound uses YouTube’s own player control and is remembered for this session.', preferredSide: 'left' },
+      { id: 'feed', target: '[data-tour="shorts-feed"]', label: 'MOVE BETWEEN SHORTS', body: 'Swipe in the side areas, or use Previous and Next, to move through the pour.', preferredSide: 'bottom' },
+      { id: 'actions', target: '[data-tour="shorts-actions"]', label: 'USE THE VIDEO CONTROLS', body: 'Sound and playback settings use YouTube’s own player control. Share stays beside the player.', preferredSide: 'left' },
     ],
   },
 };
