@@ -1,13 +1,10 @@
-/** Pure, browser-independent sound/start decisions for the Shorts host. */
-
-export type ShortsStartMode = 'muted-autoplay' | 'gesture-audible' | 'retained-audible';
-
-export interface ShortsStartAuthorization {
-  index: number;
-  generation: number;
-  mode: ShortsStartMode;
-  fallbackUsed: boolean;
-}
+/**
+ * Browser-independent persistence helpers for the Shorts native controls.
+ *
+ * Playback commands deliberately do not live here. The persistent YouTube
+ * host is the only command owner; this module only validates the session
+ * preferences that the host reads and the native-control observer writes.
+ */
 
 export interface ShortsSessionSoundPreference {
   version: 1;
@@ -15,22 +12,21 @@ export interface ShortsSessionSoundPreference {
   volume: number;
 }
 
-export const SHORTS_SOUND_SESSION_KEY = 'pubcrawl.shorts.sound.v1';
-
-export interface ShortsStartCommand {
-  shortId: string;
-  index: number;
-  generation: number;
-  requestedAudible: boolean;
-  issued: boolean;
-  retryUsed: boolean;
-  progressed: boolean;
+export interface ShortsSessionRatePreference {
+  version: 1;
+  preferredRate: number;
 }
 
-export type ShortsStartAttempt = 'initial' | 'retry';
+export const SHORTS_SOUND_SESSION_KEY = 'pubcrawl.shorts.sound.v1';
+export const SHORTS_SOUND_NORMALIZED_KEY = 'pubcrawl.shorts.sound.normalized.v1';
+// A second marker lets the one-time migration distinguish a deliberately
+// selected native volume of zero from the unusable zero left by the retired
+// player implementation. It is session-scoped and contains no user data.
+export const SHORTS_SOUND_ZERO_INTENT_KEY = 'pubcrawl.shorts.sound.zero-intent.v1';
+export const SHORTS_RATE_SESSION_KEY = 'pubcrawl.shorts.rate.v1';
 
-export function clampShortsVolume(volume: number): number {
-  return Math.max(0, Math.min(100, Math.round(Number.isFinite(volume) ? volume : 100)));
+export function clampShortsVolume(value: number): number {
+  return Math.max(0, Math.min(100, Math.round(Number.isFinite(value) ? value : 100)));
 }
 
 export function defaultShortsSoundPreference(): ShortsSessionSoundPreference {
@@ -38,10 +34,9 @@ export function defaultShortsSoundPreference(): ShortsSessionSoundPreference {
 }
 
 /**
- * Older iframe sessions could persist the contradictory state "sound wanted at
- * volume zero".  Preserve the user's audible choice while repairing that
- * unusable level so the native YouTube control works with one press and the
- * next Short inherits an actually audible volume.
+ * Repair the contradictory state written by the retired pooled-player
+ * implementation. This is intentionally a pure one-time migration helper:
+ * a deliberate native volume of zero remains valid after the marker is set.
  */
 export function healShortsSoundPreference(
   preference: ShortsSessionSoundPreference,
@@ -54,200 +49,107 @@ export function parseShortsSoundPreference(raw: string | null | undefined): Shor
   if (!raw) return defaultShortsSoundPreference();
   try {
     const value = JSON.parse(raw) as Partial<ShortsSessionSoundPreference>;
-    if (value.version !== 1 || typeof value.desiredAudible !== 'boolean' || typeof value.volume !== 'number') {
-      return defaultShortsSoundPreference();
-    }
-    return { version: 1, desiredAudible: value.desiredAudible, volume: clampShortsVolume(value.volume) };
+    if (
+      value.version !== 1 ||
+      typeof value.desiredAudible !== 'boolean' ||
+      typeof value.volume !== 'number'
+    ) return defaultShortsSoundPreference();
+    return {
+      version: 1,
+      desiredAudible: value.desiredAudible,
+      volume: clampShortsVolume(value.volume),
+    };
   } catch {
     return defaultShortsSoundPreference();
   }
 }
 
 export function readShortsSoundPreference(
-  storage?: Pick<Storage, 'getItem'> | null,
+  storage?: Pick<Storage, 'getItem'> & Partial<Pick<Storage, 'setItem'>> | null,
 ): ShortsSessionSoundPreference {
   const target = storage ?? (typeof window === 'undefined' ? null : window.sessionStorage);
   if (!target) return defaultShortsSoundPreference();
   try {
-    return parseShortsSoundPreference(target.getItem(SHORTS_SOUND_SESSION_KEY));
+    const parsed = parseShortsSoundPreference(target.getItem(SHORTS_SOUND_SESSION_KEY));
+    const explicitlySelectedZero = target.getItem(SHORTS_SOUND_ZERO_INTENT_KEY) === '1';
+    // Existing releases could have already written the normalized marker
+    // before the zero-volume repair shipped. Heal that stale state too, but
+    // leave a zero that this release observed from an intentional native
+    // control change untouched.
+    if (!explicitlySelectedZero && parsed.desiredAudible && parsed.volume === 0) {
+      const healed = healShortsSoundPreference(parsed);
+      target.setItem?.(SHORTS_SOUND_SESSION_KEY, JSON.stringify(healed));
+      target.setItem?.(SHORTS_SOUND_NORMALIZED_KEY, '1');
+      return healed;
+    }
+    if (target.getItem(SHORTS_SOUND_NORMALIZED_KEY) !== '1') {
+      const healed = healShortsSoundPreference(parsed);
+      target.setItem?.(SHORTS_SOUND_SESSION_KEY, JSON.stringify(healed));
+      target.setItem?.(SHORTS_SOUND_NORMALIZED_KEY, '1');
+      return healed;
+    }
+    return parsed;
+  } catch {
+    return defaultShortsSoundPreference();
   }
-  catch { return defaultShortsSoundPreference(); }
 }
 
 export function writeShortsSoundPreference(
   preference: ShortsSessionSoundPreference,
-  storage?: Pick<Storage, 'setItem'> | null,
+  storage?: Pick<Storage, 'setItem'> & Partial<Pick<Storage, 'removeItem'>> | null,
 ): ShortsSessionSoundPreference {
-  const normalized = {
-    version: 1 as const,
+  const normalized: ShortsSessionSoundPreference = {
+    version: 1,
     desiredAudible: Boolean(preference.desiredAudible),
     volume: clampShortsVolume(preference.volume),
   };
   const target = storage ?? (typeof window === 'undefined' ? null : window.sessionStorage);
-  try { target?.setItem(SHORTS_SOUND_SESSION_KEY, JSON.stringify(normalized)); } catch {}
+  try {
+    target?.setItem(SHORTS_SOUND_SESSION_KEY, JSON.stringify(normalized));
+    if (normalized.desiredAudible && normalized.volume === 0) {
+      target?.setItem(SHORTS_SOUND_ZERO_INTENT_KEY, '1');
+    } else {
+      target?.removeItem?.(SHORTS_SOUND_ZERO_INTENT_KEY);
+    }
+  } catch {}
   return normalized;
 }
 
-export function createShortsStartCommand(
-  shortId: string,
-  index: number,
-  generation: number,
-  requestedAudible: boolean,
-): ShortsStartCommand {
-  return { shortId, index, generation, requestedAudible, issued: false, retryUsed: false, progressed: false };
+export function defaultShortsRatePreference(): ShortsSessionRatePreference {
+  return { version: 1, preferredRate: 1 };
 }
 
-/** Claim is pure so the browser arbiter and deterministic policy tests share the same rules. */
-export function claimShortsStart(
-  command: ShortsStartCommand,
-  attempt: ShortsStartAttempt,
-): { allowed: boolean; command: ShortsStartCommand } {
-  if (command.progressed) return { allowed: false, command };
-  if (attempt === 'initial') {
-    if (command.issued) return { allowed: false, command };
-    return { allowed: true, command: { ...command, issued: true } };
+export function clampShortsRate(value: number): number {
+  return Number.isFinite(value) && value > 0 ? Math.min(2, Math.max(0.25, value)) : 1;
+}
+
+export function parseShortsRatePreference(raw: string | null | undefined): ShortsSessionRatePreference {
+  if (!raw) return defaultShortsRatePreference();
+  try {
+    const value = JSON.parse(raw) as Partial<ShortsSessionRatePreference>;
+    if (value.version !== 1 || typeof value.preferredRate !== 'number') return defaultShortsRatePreference();
+    return { version: 1, preferredRate: clampShortsRate(value.preferredRate) };
+  } catch {
+    return defaultShortsRatePreference();
   }
-  if (!command.issued || command.retryUsed) return { allowed: false, command };
-  return { allowed: true, command: { ...command, retryUsed: true } };
 }
 
-/**
- * An explicit browser autoplay-policy rejection is stronger evidence than a
- * preceding BUFFERING callback. It may consume the command's one muted
- * recovery even after progress was observed, but it can never mint a second
- * recovery or apply to a command that did not request sound.
- */
-export function claimShortsBlockedAudibleFallback(
-  command: ShortsStartCommand,
-): { allowed: boolean; command: ShortsStartCommand } {
-  if (!command.issued || !command.requestedAudible || command.retryUsed) {
-    return { allowed: false, command };
-  }
-  return { allowed: true, command: { ...command, retryUsed: true } };
+export function readShortsRatePreference(storage?: Pick<Storage, 'getItem'> | null): ShortsSessionRatePreference {
+  const target = storage ?? (typeof window === 'undefined' ? null : window.sessionStorage);
+  if (!target) return defaultShortsRatePreference();
+  try { return parseShortsRatePreference(target.getItem(SHORTS_RATE_SESSION_KEY)); }
+  catch { return defaultShortsRatePreference(); }
 }
 
-/**
- * A player may report BUFFERING and then PAUSED before its first frame.  That
- * is not successful motion. Permit the lease's single muted recovery even
- * though BUFFERING marked the ordinary startup command as progressed.
- */
-export function claimShortsPausedStartupFallback(
-  command: ShortsStartCommand,
-): { allowed: boolean; command: ShortsStartCommand } {
-  if (!command.issued || command.retryUsed) return { allowed: false, command };
-  return { allowed: true, command: { ...command, retryUsed: true } };
-}
-
-export function markShortsStartProgress(command: ShortsStartCommand): ShortsStartCommand {
-  return command.progressed ? command : { ...command, progressed: true };
-}
-
-/** Return the only automatic attempt still available for this lease. */
-export function nextShortsStartAttempt(
-  command: ShortsStartCommand | null | undefined,
-): ShortsStartAttempt | null {
-  if (!command || !command.issued) return 'initial';
-  if (command.progressed || command.retryUsed) return null;
-  return 'retry';
-}
-
-/**
- * A fresh, explicit tap may recover a player after the automatic command is
- * exhausted or an earlier BUFFERING/PLAYING signal cancelled passive retries
- * without producing a frame. This deliberately does not mint a new lease
- * generation: the caller must still prove that the current index/generation
- * owns playback before calling it.
- */
-export function resetShortsStartForManualRecovery(
-  command: ShortsStartCommand,
-): ShortsStartCommand {
-  if (!command.issued) return command;
-  return { ...command, issued: false, retryUsed: false, progressed: false };
-}
-
-/** Same-card snap corrections keep their lease until a real destination wins. */
-export function shouldRevokeShortsLease(
-  settledIndex: number,
-  intendedIndex: number,
-  displacement: number,
-  feedHeight: number,
-): boolean {
-  if (intendedIndex !== settledIndex) return true;
-  return Math.abs(displacement) >= Math.max(1, feedHeight) * 0.35;
-}
-
-export interface AudibleTouchEndEligibility {
-  desiredMuted: boolean;
-  manualMode: boolean;
-  targetIndex: number;
-  settledIndex: number;
-  intendedIndex: number;
-  cardDistance: number;
-  feedHeight: number;
-  playerReady: boolean;
-}
-
-/**
- * iOS normally releases touch before mandatory scroll snapping has finished.
- * A ready, unambiguous destination may therefore use the actual touchend
- * gesture while it is still within 45% of the settled position. Waiting for
- * scrollend would lose the user-activation window and force that player mute.
- */
-export function shouldAuthorizeAudibleTouchEnd({
-  desiredMuted,
-  manualMode,
-  targetIndex,
-  settledIndex,
-  intendedIndex,
-  cardDistance,
-  feedHeight,
-  playerReady,
-}: AudibleTouchEndEligibility): boolean {
-  if (desiredMuted || manualMode || !playerReady) return false;
-  if (targetIndex === settledIndex || targetIndex !== intendedIndex) return false;
-  if (!Number.isFinite(cardDistance) || !Number.isFinite(feedHeight) || feedHeight <= 0) return false;
-  return cardDistance <= feedHeight * 0.45;
-}
-
-/** A direct gesture can request sound only when the preference is unmuted. */
-export function startModeForGesture(muted: boolean, directGesture: boolean): ShortsStartMode {
-  return directGesture && !muted ? 'gesture-audible' : 'muted-autoplay';
-}
-
-/** Retained sound may be requested after passive settlement without claiming a fresh user gesture. */
-export function startModeForSettlement(muted: boolean, directGesture: boolean): ShortsStartMode {
-  if (muted) return 'muted-autoplay';
-  return directGesture ? 'gesture-audible' : 'retained-audible';
-}
-
-/** The player states that are safe to start synchronously from a gesture. */
-export function playerReadyForStart(state: number): boolean {
-  return state === 1 || state === 2 || state === 3 || state === 5;
-}
-
-/** Guard every delayed callback against route, index, and generation changes. */
-export function audibleAuthorizationMatches(
-  authorization: ShortsStartAuthorization | null | undefined,
-  index: number,
-  generation: number,
-  desiredMuted: boolean,
-): boolean {
-  return Boolean(
-    authorization &&
-    authorization.index === index &&
-    authorization.generation === generation &&
-    authorization.mode !== 'muted-autoplay' &&
-    !authorization.fallbackUsed &&
-    !desiredMuted,
-  );
-}
-
-/** Permit exactly one audible-to-muted recovery for a still-current lease. */
-export function mutedFallbackAuthorization(
-  authorization: ShortsStartAuthorization | null | undefined,
-  index: number,
-  generation: number,
-): ShortsStartAuthorization | null {
-  if (!audibleAuthorizationMatches(authorization, index, generation, false)) return null;
-  return { ...authorization!, mode: 'muted-autoplay', fallbackUsed: true };
+export function writeShortsRatePreference(
+  preference: ShortsSessionRatePreference,
+  storage?: Pick<Storage, 'setItem'> | null,
+): ShortsSessionRatePreference {
+  const normalized: ShortsSessionRatePreference = {
+    version: 1,
+    preferredRate: clampShortsRate(preference.preferredRate),
+  };
+  const target = storage ?? (typeof window === 'undefined' ? null : window.sessionStorage);
+  try { target?.setItem(SHORTS_RATE_SESSION_KEY, JSON.stringify(normalized)); } catch {}
+  return normalized;
 }

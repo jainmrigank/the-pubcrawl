@@ -33,6 +33,8 @@ export interface YouTubePlayer {
   setPlaybackRate?: (rate: number) => void;
   getAvailablePlaybackRates?: () => number[];
   getIframe?: () => HTMLIFrameElement;
+  /** Documented by the IFrame API; used only to reject stale callbacks. */
+  getVideoUrl?: () => string;
   destroy: () => void;
 }
 
@@ -116,7 +118,7 @@ export function loadYouTubeApi(): Promise<YouTubeNamespace> {
   return apiPromise;
 }
 
-function playerVars(id?: string | null): Record<string, string | number> {
+function playerVars(): Record<string, string | number> {
   const vars: Record<string, string | number> = {
     autoplay: 0,
     controls: 1,
@@ -128,7 +130,6 @@ function playerVars(id?: string | null): Record<string, string | number> {
     rel: 0,
     origin: window.location.origin,
   };
-  if (id) vars.playlist = id;
   return vars;
 }
 
@@ -146,7 +147,7 @@ export async function createYouTubePlayer(
   if (isCancelled() || !element.isConnected) throw new Error('player creation cancelled');
   const options: YouTubePlayerOptions = {
     host: 'https://www.youtube-nocookie.com',
-    playerVars: playerVars(id),
+    playerVars: playerVars(),
     events: {
       onReady: (event) => handlers.onReady?.(event.target),
       onStateChange: (event) => handlers.onStateChange?.(event.target, event.data ?? YT_PLAYER_STATES.UNSTARTED),
@@ -155,26 +156,26 @@ export async function createYouTubePlayer(
       onPlaybackRateChange: (event) => handlers.onPlaybackRateChange?.(event.target, event.data ?? 1),
     },
   };
-  // A shell without a video is intentional. Shorts cues the reviewed id once
-  // onReady; passing a videoId here makes YouTube race its implicit load with
-  // our activation command and is the source of most retry facades.
+  // The first reviewed id is supplied to the constructor with autoplay
+  // disabled. Later selections reuse this iframe through loadVideoById().
   if (id) options.videoId = id;
   return new YT.Player(element, options);
 }
 
 export function applySound(player: YouTubePlayer, muted: boolean, volume: number): void {
   try {
+    const level = Math.max(0, Math.min(100, Math.round(volume)));
     if (muted) {
-      player.setVolume(Math.max(0, Math.min(100, Math.round(volume))));
+      player.setVolume(level);
       player.mute();
     } else {
-      // Some WebKit/YouTube combinations ignore a level written while the
-      // iframe is muted.  Unmute first, then apply the retained level while
-      // the same user-activation task is still running.  Otherwise the next
-      // player can expose the misleading "sound on at zero" state and make
-      // the native control require two presses.
+      // Prime the retained level before and after unmuting. Some WebKit builds
+      // ignore a volume write while muted, while others reset the level during
+      // the unmute transition. Both writes stay in the same user-activation
+      // task, so the native control never exposes sound-on-at-zero.
+      player.setVolume(level);
       player.unMute();
-      player.setVolume(Math.max(0, Math.min(100, Math.round(volume))));
+      player.setVolume(level);
     }
   } catch {
     // The API can briefly reject commands between iframe creation and ready.
