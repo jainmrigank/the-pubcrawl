@@ -15,7 +15,7 @@ test.describe('responsive controls', () => {
     expect((await page.locator('.mobile-theme-toggle').textContent())?.trim()).toBe('');
     await expect(page.locator('.mobile-secondary-action')).toHaveCount(2);
     await expect(page.locator('.mobile-secondary-action').first()).toHaveAttribute('aria-label', 'Bar Basics');
-    await expect(page.locator('.mobile-secondary-action').nth(1)).toHaveAttribute('aria-label', 'Tab');
+    await expect(page.locator('.mobile-secondary-action').nth(1)).toHaveAttribute('aria-label', 'Tab, 0 saved drinks');
     await expect(page.locator('.mobile-top-actions > *')).toHaveCount(4);
     await expect(page.locator('button.contextual-help:visible')).toHaveCount(1);
     await expect(page.locator('button.contextual-help:visible')).toHaveAttribute('aria-label', 'Show Menu tutorial');
@@ -88,7 +88,7 @@ test.describe('responsive controls', () => {
     await page.setViewportSize({ width: 1440, height: 900 });
     await openRoute(page, '/#/menu');
     await expect(page.locator('.nav-links')).toContainText('MENU');
-    await expect(page.locator('.nav-links')).toContainText('BAR');
+    await expect(page.locator('.nav-links a[href="#/bar"]')).toHaveText('SHELF');
     await expect(page.locator('.nav-links')).toContainText('TAB');
     await expect(page.locator('.nav .wordmark')).toHaveText('The PubCrawl');
     await expect(page.locator('#menu-list .sec-title')).toHaveText('MENU');

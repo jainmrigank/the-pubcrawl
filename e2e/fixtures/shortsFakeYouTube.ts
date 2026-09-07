@@ -9,6 +9,7 @@ export type FakePlayerOptions = {
   loopProgressDelayMs?: number;
   resetSoundToZeroOnLoad?: boolean;
   rejectMutedStarts?: boolean;
+  soundAckDelayMs?: number;
 };
 
 export type FakeLogEntry = {
@@ -65,15 +66,16 @@ export async function installFakeYouTube(page: Page, options: FakePlayerOptions 
     let instanceCounter = 0;
 
     const identity = (element: HTMLElement, videoId: string, instanceId: string) => {
-      const card = element.closest<HTMLElement>('[data-short-id]');
-      const rawGeneration = Number(card?.dataset.leaseGeneration);
+      const card = document.querySelector<HTMLElement>(`.shorts-card[data-short-id="${videoId}"]`);
+      const host = element.closest<HTMLElement>('[data-short-id]');
+      const rawGeneration = host?.dataset.shortId === videoId ? Number(host.dataset.leaseGeneration) : NaN;
       const now = performance.now();
       return {
         at: now,
         timestamp: now,
         instanceId,
         index: Number(card?.dataset.shortIndex || 0),
-        shortId: card?.dataset.shortId || videoId,
+        shortId: videoId,
         generation: Number.isInteger(rawGeneration) ? rawGeneration : null,
         origin: 'application' as const,
       };
@@ -140,7 +142,7 @@ export async function installFakeYouTube(page: Page, options: FakePlayerOptions 
           this.currentTime = loop ? 0 : 0.2;
           this.loopPending = false;
           this.events.onStateChange?.({ target: this, data: 1 });
-          if (loop && loopProgressDelayMs > 0) {
+          if (loop) {
             window.setTimeout(() => {
               if (this.destroyed) return;
               this.currentTime = 0.2;
@@ -170,13 +172,18 @@ export async function installFakeYouTube(page: Page, options: FakePlayerOptions 
         this.setState(2);
       }
 
-      mute() { if (!this.destroyed) { this.record('mute'); this.muted = true; } }
-      unMute() { if (!this.destroyed) { this.record('unMute'); this.muted = false; } }
+      private soundAck(change: () => void) {
+        if (config.soundAckDelayMs) window.setTimeout(() => { if (!this.destroyed) change(); }, config.soundAckDelayMs);
+        else change();
+      }
+      mute() { if (!this.destroyed) { this.record('mute'); this.soundAck(() => { this.muted = true; }); } }
+      unMute() { if (!this.destroyed) { this.record('unMute'); this.soundAck(() => { this.muted = false; }); } }
       isMuted() { return this.muted; }
       setVolume(value: number) {
         if (this.destroyed) return;
-        this.volume = Math.max(0, Math.min(100, Math.round(value)));
-        this.record('setVolume', this.volume);
+        const normalized = Math.max(0, Math.min(100, Math.round(value)));
+        this.soundAck(() => { this.volume = normalized; });
+        this.record('setVolume', normalized);
       }
       getVolume() { return this.volume; }
       getCurrentTime() { return this.currentTime; }
@@ -243,7 +250,7 @@ export async function installFakeYouTube(page: Page, options: FakePlayerOptions 
         this.record('nativeRate', value, 'native-fixture');
         this.events.onPlaybackRateChange?.({ target: this, data: value });
       }
-      nativePause() { this.pauseVideo(); }
+      nativePause() { this.record('nativePause', undefined, 'native-fixture'); ++this.playToken; this.setState(2); }
       nativePlay() { this.record('nativePlay', undefined, 'native-fixture'); this.beginPlay(); }
       emit(state: number) { this.record(`emit:${state}`, undefined, 'native-fixture'); this.setState(state); }
       end() { this.currentTime = 0; this.emit(0); }
@@ -315,8 +322,11 @@ export async function waitForFirstPlay(page: Page) {
   // event that the fake player intentionally does not provide. Wait on the
   // player-specific readiness signal instead.  The fake can become ready
   // before the hashed stylesheet finishes loading, so also wait for the
-  // controls-first grid to be applied before measuring side rails.
-  await page.waitForFunction(() => getComputedStyle(document.querySelector('.shorts-stage') as Element | null).display === 'grid', null, { timeout: 20_000 });
+  // native scroll layout to be applied before measuring the player.
+  await page.waitForFunction(() => {
+    const feed = document.querySelector('.shorts-feed');
+    return feed && getComputedStyle(feed).overflowY === 'auto';
+  }, null, { timeout: 20_000 });
   await page.waitForSelector('.shorts-player-layer[data-player-ready="true"]', { timeout: 20_000 });
   await expect.poll(async () => (await fakeLog(page)).some((entry) => entry.method === 'playVideo' || entry.method === 'loadVideoById')).toBe(true);
   await expect(page.locator('.shorts-player-layer')).toHaveClass(/is-revealed/, { timeout: 20_000 });
@@ -355,39 +365,13 @@ export async function toggleNativeSound(page: Page) {
 
 export async function swipeTo(page: Page, target: number) {
   const current = await activeIndex(page);
-  const direction = target >= current ? 'Next Short' : 'Previous Short';
   const count = Math.abs(target - current);
   for (let index = 0; index < count; index += 1) {
-    await page.getByRole('button', { name: direction }).click();
     const expected = current + (target >= current ? index + 1 : -(index + 1));
+    // Exercise the actual native scroller/settlement path. This is a
+    // deterministic navigation helper, not a claim of physical touch input.
+    await page.locator('.shorts-feed').evaluate((element, destination) => element.scrollTo({ top: destination * element.clientHeight, behavior: 'instant' }), expected);
     await expect(page.locator('.shorts-feed')).toHaveAttribute('data-controller-active', String(expected));
     await expect(page.locator('.shorts-player-layer')).toHaveClass(/is-revealed/, { timeout: 20_000 });
   }
 }
-
-/** Exercise the real side-zone pointer handler instead of the fallback buttons. */
-export async function sideSwipeTo(page: Page, target: number) {
-  const current = await activeIndex(page);
-  if (target === current) return;
-  const forward = target > current;
-  const zone = page.locator(forward ? '.shorts-nav-zone-right' : '.shorts-nav-zone-left');
-  const box = await zone.boundingBox();
-  if (!box) throw new Error('Shorts side navigation zone is not measurable');
-  const x = box.x + box.width / 2;
-  // Start in the open part of the side rail rather than on one of its
-  // buttons.  The rail deliberately contains the Back/Help/Previous (or
-  // Share/Next) controls, so its midpoint can land on a button and the
-  // production handler will correctly ignore that pointer sequence as a
-  // button interaction.  A quarter-height point is stable across the
-  // portrait WebKit viewport while still leaving room for a 120px swipe.
-  const y = box.y + Math.max(24, Math.min(box.height - 24, box.height * 0.25));
-  await page.mouse.move(x, y);
-  await page.mouse.down();
-  await page.mouse.move(x, y + (forward ? -120 : 120), { steps: 4 });
-  await page.mouse.up();
-  await expect(page.locator('.shorts-feed')).toHaveAttribute('data-controller-active', String(target));
-  await expect(page.locator('.shorts-player-layer')).toHaveClass(/is-revealed/, { timeout: 20_000 });
-}
-
-export async function scrollToWithoutTouch(page: Page, target: number) { await swipeTo(page, target); }
-export async function scrollToWithQuietFallback(page: Page, target: number) { await swipeTo(page, target); }

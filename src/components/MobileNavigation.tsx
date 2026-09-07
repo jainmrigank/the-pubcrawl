@@ -1,6 +1,6 @@
 import type { Route } from '../navigation';
 import { createPortal } from 'react-dom';
-import { Camera, Play, PubGlyph, ToolIcon } from '../icons';
+import { BookmarkBook, Camera, Clipboard, Play, PubGlyph, Sun, ToolIcon } from '../icons';
 import type { Theme, TourId } from '../types';
 import { ContextualHelp } from './ContextualHelp';
 
@@ -10,12 +10,11 @@ interface MobileNavigationProps {
   theme: Theme;
   onToggleTheme: () => void;
   helpTour?: TourId;
-  hideHelp?: boolean;
 }
 
 const items: { route: Route; label: string; href: string; icon: 'menu' | 'bar' | 'shorts' | 'watch' | 'quiz' }[] = [
   { route: 'menu', label: 'Menu', href: '#/menu', icon: 'menu' },
-  { route: 'bar', label: 'Bar', href: '#/bar', icon: 'bar' },
+  { route: 'bar', label: 'Shelf', href: '#/bar', icon: 'bar' },
   { route: 'shorts', label: 'Shorts', href: '#/shorts?src=nav', icon: 'shorts' },
   { route: 'watch', label: 'Watch', href: '#/watch?src=nav', icon: 'watch' },
   { route: 'quiz', label: 'Quiz', href: '#/quiz', icon: 'quiz' },
@@ -29,7 +28,7 @@ function ItemIcon({ icon }: { icon: (typeof items)[number]['icon'] }) {
   return <ToolIcon id="star" size={20} />;
 }
 
-export function MobileTopActions({ theme, onToggleTheme, tabCount, active, helpTour = 'menu', hideHelp = false }: MobileNavigationProps) {
+export function MobileTopActions({ theme, onToggleTheme, tabCount, active, helpTour = 'menu' }: MobileNavigationProps) {
   return (
     <div className="mobile-top-actions">
       <button
@@ -41,7 +40,7 @@ export function MobileTopActions({ theme, onToggleTheme, tabCount, active, helpT
         title={theme === 'dark' ? 'Switch to light theme' : 'Switch to dark theme'}
         data-tip={theme === 'dark' ? 'Switch to light theme' : 'Switch to dark theme'}
       >
-        <ToolIcon id="citrus" size={18} />
+        <Sun size={20} />
       </button>
       <a
         className="mobile-secondary-action header-icon-action"
@@ -51,20 +50,20 @@ export function MobileTopActions({ theme, onToggleTheme, tabCount, active, helpT
         title="Bar Basics"
         data-tip="Bar Basics"
       >
-        <ToolIcon id="book" size={18} />
+        <BookmarkBook size={20} />
       </a>
       <a
         className="mobile-secondary-action tab-action header-icon-action"
         href="#/tab"
         aria-current={active === 'tab' ? 'page' : undefined}
-        aria-label="Tab"
+        aria-label={`Tab, ${tabCount} saved ${tabCount === 1 ? 'drink' : 'drinks'}`}
         title="Tab"
         data-tip="Tab"
       >
-        <ToolIcon id="star" size={18} />
-        {tabCount > 0 && <b className="tab-badge" aria-label={`${tabCount} saved`}>{tabCount}</b>}
+        <Clipboard size={20} />
+        {tabCount > 0 && <b className="tab-badge" aria-hidden="true">{tabCount}</b>}
       </a>
-      {!hideHelp && <ContextualHelp tour={helpTour} className="mobile-help-action" />}
+      <ContextualHelp tour={helpTour} className="mobile-help-action" />
     </div>
   );
 }

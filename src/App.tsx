@@ -21,7 +21,7 @@ import { GuidedTour } from './components/GuidedTour';
 import { ShelfResults } from './components/ShelfResults';
 import { ContextualHelp } from './components/ContextualHelp';
 import { EASE, Lines, LOADED_HIDDEN, Reveal } from './motion';
-import { ArrowDown, ArrowRight, Burger, Check, Heart, PubGlyph, Share, Shuffle, SketchDefs, ToolIcon, X } from './icons';
+import { ArrowDown, ArrowRight, Burger, Check, Heart, PubGlyph, Share, Shuffle, SketchDefs, Sun, X } from './icons';
 import { shareContent, tabShareText } from './share';
 import { applyTheme, currentTheme, persistTheme } from './theme';
 import { loadLocalCatalogue, matchLocalRecipes, queryLocalRecipes } from './localData';
@@ -35,7 +35,7 @@ const VIDEO_MODAL_GATE_ID = 'recipe-video';
 const ROUTES: Route[] = ['menu', 'bar', 'basics', 'tab', 'quiz', 'watch', 'shorts'];
 const NAV: { route: Route; label: string }[] = [
   { route: 'menu', label: 'MENU' },
-  { route: 'bar', label: 'BAR' },
+  { route: 'bar', label: 'SHELF' },
   { route: 'tab', label: 'TAB' },
   { route: 'quiz', label: 'QUIZ' },
   { route: 'shorts', label: 'SHORTS' },
@@ -527,6 +527,7 @@ export default function App() {
     if (!pantry.length) {
       setMatch(null);
       setMatching(false);
+      setBarFiltersExpanded(false);
       return;
     }
     setMatching(true);
@@ -598,31 +599,20 @@ export default function App() {
     }
   }
 
-  // the bar page's single mood control filters the pour lists AND steers the
-  // house-special prompt (inventMood); the menu keeps its own filter state
-  const byBarMood = useCallback(
-    (list: Recipe[]) => {
-      if (!inventMood) return list;
-      if (inventMood === 'zeroproof') return list.filter((r) => r.vibe === 'zeroproof');
-      if (inventMood === 'indian') return list.filter((r) => (r.tags || []).includes('India'));
-      return list.filter((r) => r.vibe === inventMood);
-    },
-    [inventMood]
-  );
-  const canMake = useMemo(() => byBarMood(match?.canMake ?? []), [match, byBarMood]);
-  const almost = useMemo(() => byBarMood(match?.almost ?? []), [match, byBarMood]);
   const featured = browse;
   // freshly drafted specials always show, whatever mood is selected — they were
   // just made for this drinker, so filtering them out felt like they vanished
   const inventions = aiDrinks;
   const barResults = useMemo(() => {
     const seen = new Set<string>();
-    return [...inventions, ...canMake, ...almost].filter((recipe) => {
+    // The local matcher applies filters atomically. Do not filter the old
+    // result set again while its replacement is still being calculated.
+    return [...inventions, ...(match?.canMake ?? []), ...(match?.almost ?? [])].filter((recipe) => {
       if (seen.has(recipe.id)) return false;
       seen.add(recipe.id);
       return true;
     });
-  }, [inventions, canMake, almost]);
+  }, [inventions, match]);
   useEffect(() => {
     setBarVisible(12);
   }, [pantry, barQ, inventMood]);
@@ -704,9 +694,9 @@ export default function App() {
             title={theme === 'dark' ? 'Switch to light theme' : 'Switch to dark theme'}
             data-tip={theme === 'dark' ? 'Switch to light theme' : 'Switch to dark theme'}
           >
-            <ToolIcon id="citrus" size={18} />
+            <Sun size={20} />
           </button>
-          {!shortsActive && <ContextualHelp tour={helpTour} className="desktop-help-action" />}
+          <ContextualHelp tour={helpTour} className="desktop-help-action" />
           <span className="nav-status k-label dim">
             {health ? `${health.cocktails} DRINKS ON TAP` : '…'}
           </span>
@@ -722,7 +712,6 @@ export default function App() {
             onToggleTheme={toggleTheme}
             tabCount={tab.length}
             helpTour={helpTour}
-            hideHelp={shortsActive}
           />
         </header>
 
@@ -782,10 +771,6 @@ export default function App() {
                   <Lines className="hero-h1" lines={['WHAT’S YOUR', 'POISON?']} />
                   <div className="hero-lower">
                     <Reveal delay={0.35} className="hero-copy">
-                      <p className="hero-sub">
-                        Snap or type what’s in your kitchen, and see every cocktail you can make
-                        right now.
-                      </p>
                       <div className="hero-cta">
                         <a className="btn btn-solid" href="#/bar" data-tour="landing-make">
                           WHAT CAN I MAKE? <ArrowRight size={14} />
@@ -825,7 +810,6 @@ export default function App() {
                     index="01"
                     title="MENU"
                     note={browseNote}
-                    lead="Every drink we know. Search by name, ingredient, lane, access tier, glass, place, mood or method."
                     loading={browseLoading}
                   />
                   <div className="field menu-search" data-tour="menu-controls">
@@ -910,16 +894,13 @@ export default function App() {
                 <section className="sec page-top" id="shelf">
                   <SectionHead
                     index="01"
-                    title="YOUR SHELF"
-                    note="TYPE IT OR SNAP IT"
-                    lead="Tell us what’s on your shelf and we’ll find the drinks you can pour. Type each thing, or snap one photo of your bottles."
+                    title="SHELF"
+                    note=""
                   />
-                  <BarTalk />
                   <div className="shelf-grid" data-tour="shelf-entry">
                     <div className="shelf-col">
                       <span className="k-label field-label">WHAT HAVE YOU GOT?</span>
                       <Typeahead onAdd={addIngredient} />
-                      <p className="k-label dim hint">GIN, YUZU, MINT. IF YOU’VE GOT IT, WE KNOW IT.</p>
                     </div>
                     <div className="shelf-col">
                       <span className="k-label field-label">OR SHOW US</span>
@@ -950,35 +931,25 @@ export default function App() {
                   )}
                 </section>
 
-                <section className="sec" id="pour" data-tour="shelf-results">
+                {hasPantry && <section className="sec" id="pour" aria-busy={matching}>
                   <SectionHead
                     index="02"
                     title="DRINKS FOR YOUR SHELF"
-                    note={hasPantry ? `${barResults.length} MATCHES` : 'WAITING ON YOUR SHELF'}
+                    note={`${barResults.length} MATCHES`}
                     loading={matching}
                   />
                   <div className="shelf-results-head">
-                    <div>
-                      <span className="k-label shelf-result-count">{Math.min(barVisible, barResults.length)} OF {barResults.length}</span>
-                      <p className="k-label dim invent-note">BEST MATCHES FIRST · USES WHAT’S ON YOUR SHELF</p>
-                    </div>
                     <button
                       type="button"
                       className="btn btn-solid"
                       data-tour="invent-drink"
                       onClick={invent}
-                      disabled={generating || !hasPantry}
+                      disabled={generating}
                     >
                       {generating ? 'INVENTING…' : 'INVENT A DRINK'} <ArrowRight size={14} />
                     </button>
                   </div>
                   {genError && <p className="err" role="alert">{genError}</p>}
-                  {!hasPantry ? (
-                    <div className="empty shelf-empty">
-                      <p className="empty-big">ADD SOMETHING TO YOUR SHELF</p>
-                      <p className="k-label dim">TYPE AN INGREDIENT OR SNAP A PHOTO TO SEE YOUR COCKTAILS.</p>
-                    </div>
-                  ) : (
                     <>
                       <button
                         type="button"
@@ -990,7 +961,7 @@ export default function App() {
                         {barFiltersExpanded ? 'HIDE FILTERS' : 'FILTER RESULTS'} <ArrowDown size={12} />
                       </button>
                       {barFiltersExpanded && (
-                        <div id="bar-result-filters" className="shelf-filters">
+                        <div id="bar-result-filters" className="shelf-filters" role="region" aria-label="Filter shelf results">
                           <div className="bar-controls">
                             <CategoryFilter
                               value={barFilter}
@@ -1021,15 +992,14 @@ export default function App() {
                         />
                       ) : (
                         !matching && (
-                          <div className="empty">
-                            <p className="empty-big">NO MATCHES YET</p>
-                            <p className="k-label dim">TRY ADDING ANOTHER BOTTLE, MIXER OR FRESH INGREDIENT.</p>
+                          <div className="shelf-no-matches" role="status">
+                            <p className="k-label">NO MATCHES</p>
+                            <p>Add another ingredient or change your filters</p>
                           </div>
                         )
                       )}
                     </>
-                  )}
-                </section>
+                </section>}
               </>
             </div>
 
@@ -1049,7 +1019,6 @@ export default function App() {
                   index="01"
                   title="PUB QUIZ"
                   note="ONE POINT A CORRECT ANSWER"
-                  lead="A quiz on cocktails, spirits and the stories behind them. It starts easy and gets meaner."
                 />
                 {route === 'quiz' && <Quiz />}
               </section>
@@ -1172,7 +1141,7 @@ function SectionHead({
       <div className="sec-head-row">
         <span className="k-label sec-index">/{index}</span>
         <Lines as="h2" className="sec-title" lines={[title]} stagger={0} />
-        <span className="k-label dim sec-note">{note}</span>
+        {note && <span className="k-label dim sec-note">{note}</span>}
       </div>
       {lead && <p className="sec-lead">{lead}</p>}
       {loading && <span className="loadline" aria-label="Loading" />}

@@ -20,7 +20,7 @@ export function ShelfResults({ recipes, visible, matching, onLoadMore, renderCar
   if (!recipes.length) return null;
   return (
     <>
-      <div className="grid shelf-results-grid" aria-busy={matching}>
+      <div className="grid shelf-results-grid" data-tour="shelf-results" aria-busy={matching}>
         {recipes.slice(0, visible).map((recipe, index) => renderCard(recipe, index))}
       </div>
       {shown < recipes.length && (
@@ -34,4 +34,3 @@ export function ShelfResults({ recipes, visible, matching, onLoadMore, renderCar
     </>
   );
 }
-

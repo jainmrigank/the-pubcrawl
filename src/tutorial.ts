@@ -38,8 +38,8 @@ export const TOURS: Record<TourId, TourDefinition> = {
     storageKey: TOUR_STORAGE_KEYS.bar,
     steps: [
       { id: 'entry', target: '[data-tour="shelf-entry"]', label: 'ADD WHAT YOU HAVE', body: 'Type an ingredient, or use the camera to add what is already on your shelf.', preferredSide: 'bottom' },
-      { id: 'results', target: '[data-tour="shelf-results"]', label: 'YOUR COCKTAILS APPEAR HERE', body: 'The best matches come first. Tap any card to see what you have and what is missing.', preferredSide: 'top' },
-      { id: 'invent', target: '[data-tour="invent-drink"]', label: 'WANT SOMETHING ORIGINAL?', body: 'Invent a new drink using the ingredients on your shelf.', preferredSide: 'top' },
+      { id: 'results', target: '[data-tour="shelf-results"]', label: 'YOUR COCKTAILS APPEAR HERE', body: 'The best matches come first. Tap any card to see what you have and what is missing.', preferredSide: 'top', optional: true },
+      { id: 'invent', target: '[data-tour="invent-drink"]', label: 'WANT SOMETHING ORIGINAL?', body: 'Invent a new drink using the ingredients on your shelf.', preferredSide: 'top', optional: true },
     ],
   },
   basics: {
@@ -82,8 +82,8 @@ export const TOURS: Record<TourId, TourDefinition> = {
     id: 'shorts',
     storageKey: TOUR_STORAGE_KEYS.shorts,
     steps: [
-      { id: 'feed', target: '[data-tour="shorts-feed"]', label: 'MOVE BETWEEN SHORTS', body: 'Swipe in the side areas, or use Previous and Next, to move through the pour.', preferredSide: 'bottom' },
-      { id: 'actions', target: '[data-tour="shorts-actions"]', label: 'USE THE VIDEO CONTROLS', body: 'Sound and playback settings use YouTube’s own player control. Share stays beside the player.', preferredSide: 'left' },
+      { id: 'feed', target: '[data-tour="shorts-feed"]', label: 'SCROLL TO THE NEXT SHORT', body: 'Swipe up or scroll down for the next video. Reverse direction to go back.', preferredSide: 'bottom' },
+      { id: 'actions', target: '[data-tour="shorts-actions"]', label: 'USE THE VIDEO CONTROLS', body: 'Use YouTube’s controls for sound and playback. Back and Share stay above the video.', preferredSide: 'bottom' },
     ],
   },
 };

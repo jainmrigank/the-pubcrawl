@@ -37,6 +37,22 @@ const S = ({ size = 20, children, ...rest }: P) => (
   </svg>
 );
 
+/** Header actions: familiar silhouettes, kept in the existing SVG system. */
+export const Sun = (props: P) => <S {...props} data-icon="sun">
+  <circle cx="12" cy="12" r="5" fill="currentColor" stroke="none" />
+  <path d="M12 2v1.5M12 20.5V22M2 12h1.5M20.5 12H22M4.93 4.93 6 6M18 18l1.07 1.07M4.93 19.07 6 18M18 6l1.07-1.07" strokeWidth="2.8" />
+</S>;
+
+export const BookmarkBook = (props: P) => <S {...props} data-icon="bookmark-book">
+  <path d="M5 3h15v18H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2ZM3 18h17M7 3v15" />
+  <path d="M12 3v9l2.5-2 2.5 2V3" />
+</S>;
+
+export const Clipboard = (props: P) => <S {...props} data-icon="clipboard">
+  <path d="M8 4H5v18h14V4h-3M8 10h8M8 14h8M8 18h5" />
+  <path d="M8 2h8v5H8z" />
+</S>;
+
 /** The PubCrawl mark — a scribbled martini, same drawing as the favicon. */
 export const PubGlyph = ({ size = 30 }: { size?: number }) => (
   <svg

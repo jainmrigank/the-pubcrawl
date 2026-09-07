@@ -48,11 +48,18 @@ function nearlyEqual(a: number, b: number) {
   return Math.abs(a - b) < 0.5;
 }
 
+function visibleTarget(target: string) {
+  if (!target) return null;
+  const element = document.querySelector<HTMLElement>(target);
+  return element && element.getClientRects().length > 0 && getComputedStyle(element).visibility !== 'hidden' ? element : null;
+}
+
 export function GuidedTour({ id, active }: GuidedTourProps) {
   const definition = TOURS[id];
   const gateId = `guided-tour:${id}`;
   const [open, setOpen] = useState(false);
   const [stepIndex, setStepIndex] = useState(0);
+  const [steps, setSteps] = useState(definition.steps);
   const [geometry, setGeometry] = useState<Geometry | null>(null);
   const popoverRef = useRef<HTMLDivElement>(null);
   const firstButtonRef = useRef<HTMLButtonElement>(null);
@@ -62,19 +69,23 @@ export function GuidedTour({ id, active }: GuidedTourProps) {
   const missingStepsRef = useRef(new Set<string>());
   const reducedMotion = typeof window !== 'undefined' && window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
 
+  const restoreFocus = useCallback(() => {
+    // Background inert is removed by the closing render's effect cleanup.
+    requestAnimationFrame(() => openerRef.current?.focus({ preventScroll: true }));
+  }, []);
+
   const closeWithoutOutcome = useCallback(() => {
     autoReadyRef.current = false;
     pendingReplayRef.current = false;
     setOpen(false);
     setGeometry(null);
     overlayGate.release(gateId);
-    openerRef.current?.focus();
-  }, [gateId]);
+    restoreFocus();
+  }, [gateId, restoreFocus]);
 
   const finish = useCallback((outcome: 'completed' | 'skipped') => {
-    // Missing content must never be recorded as explained. Optional targets
-    // (for example an empty Tab's card actions) can be skipped for this run,
-    // but the page remains eligible for a complete tour after they appear.
+    // Required missing content cannot count as explained. Optional content
+    // absent from an empty page must not prevent this visit's completion.
     if (outcome === 'completed' && missingStepsRef.current.size > 0) {
       closeWithoutOutcome();
       return;
@@ -85,12 +96,12 @@ export function GuidedTour({ id, active }: GuidedTourProps) {
     setOpen(false);
     setGeometry(null);
     overlayGate.release(gateId);
-    openerRef.current?.focus();
-  }, [closeWithoutOutcome, gateId, id]);
+    restoreFocus();
+  }, [closeWithoutOutcome, gateId, id, restoreFocus]);
 
   const calculate = useCallback(() => {
-    const step = definition.steps[stepIndex];
-    const element = step && document.querySelector<HTMLElement>(step.target);
+    const step = steps[stepIndex];
+    const element = step && visibleTarget(step.target);
     if (!element) {
       setGeometry(null);
       return;
@@ -152,19 +163,20 @@ export function GuidedTour({ id, active }: GuidedTourProps) {
       && nearlyEqual(current.popover.left, next.popover.left)
       ? current
       : next);
-  }, [definition.steps, stepIndex]);
+  }, [steps, stepIndex]);
 
   const begin = useCallback((force = false) => {
     if (!active || (!force && readTourOutcome(id))) return;
     // Do not open a modal tour until every required anchor exists. The local
     // catalogue is lazy, so this avoids a slow first Menu visit opening and
     // then permanently skipping the recipe-card explanations.
-    const requiredReady = definition.steps.every((step) => step.optional || document.querySelector(step.target));
+    const requiredReady = definition.steps.every((step) => step.optional || visibleTarget(step.target));
     if (!requiredReady) return;
     if (!overlayGate.acquire(gateId, OVERLAY_PRIORITY.tour)) return;
     openerRef.current = document.activeElement instanceof HTMLElement ? document.activeElement : null;
     pendingReplayRef.current = false;
     missingStepsRef.current.clear();
+    setSteps(definition.steps.filter((step) => !step.optional || visibleTarget(step.target)));
     setStepIndex(0);
     setGeometry(null);
     setOpen(true);
@@ -220,7 +232,7 @@ export function GuidedTour({ id, active }: GuidedTourProps) {
 
   useLayoutEffect(() => {
     if (!open) return;
-    const step = definition.steps[stepIndex];
+    const step = steps[stepIndex];
     let cancelled = false;
     let quietTimer = 0;
     let missingTimer = 0;
@@ -228,10 +240,10 @@ export function GuidedTour({ id, active }: GuidedTourProps) {
 
     const advanceMissing = () => {
       if (cancelled) return;
-      missingStepsRef.current.add(step.id);
       if (!step.optional) {
+        missingStepsRef.current.add(step.id);
         closeWithoutOutcome();
-      } else if (stepIndex + 1 >= definition.steps.length) {
+      } else if (stepIndex + 1 >= steps.length) {
         finish('completed');
       } else {
         setStepIndex((index) => index + 1);
@@ -250,11 +262,11 @@ export function GuidedTour({ id, active }: GuidedTourProps) {
       document.addEventListener('scroll', settle, true);
       settle();
     };
-    const element = document.querySelector<HTMLElement>(step.target);
+    const element = visibleTarget(step.target);
     if (element) align(element);
     else {
       observer = new MutationObserver(() => {
-        const appeared = document.querySelector<HTMLElement>(step.target);
+        const appeared = visibleTarget(step.target);
         if (appeared) align(appeared);
       });
       observer.observe(document.body, { childList: true, subtree: true });
@@ -270,7 +282,7 @@ export function GuidedTour({ id, active }: GuidedTourProps) {
       window.clearTimeout(missingTimer);
       document.removeEventListener('scroll', settle, true);
     };
-  }, [calculate, closeWithoutOutcome, definition.steps, finish, open, reducedMotion, stepIndex]);
+  }, [calculate, closeWithoutOutcome, steps, finish, open, reducedMotion, stepIndex]);
 
   useEffect(() => {
     if (!open) return;
@@ -279,7 +291,7 @@ export function GuidedTour({ id, active }: GuidedTourProps) {
       window.cancelAnimationFrame(frame);
       frame = window.requestAnimationFrame(calculate);
     };
-    const target = document.querySelector<HTMLElement>(definition.steps[stepIndex]?.target || '');
+    const target = visibleTarget(steps[stepIndex]?.target || '');
     const resizeObserver = typeof ResizeObserver === 'undefined' ? null : new ResizeObserver(schedule);
     if (target) resizeObserver?.observe(target);
     if (popoverRef.current) resizeObserver?.observe(popoverRef.current);
@@ -298,7 +310,7 @@ export function GuidedTour({ id, active }: GuidedTourProps) {
       window.visualViewport?.removeEventListener('resize', schedule);
       window.visualViewport?.removeEventListener('scroll', schedule);
     };
-  }, [calculate, definition.steps, open, stepIndex]);
+  }, [calculate, steps, open, stepIndex]);
 
   const geometryReady = Boolean(geometry);
 
@@ -321,28 +333,28 @@ export function GuidedTour({ id, active }: GuidedTourProps) {
 
   const advance = useCallback(() => {
     let next = stepIndex + 1;
-    while (next < definition.steps.length) {
-      const candidate = definition.steps[next];
-      if (document.querySelector(candidate.target)) break;
-      missingStepsRef.current.add(candidate.id);
+    while (next < steps.length) {
+      const candidate = steps[next];
+      if (visibleTarget(candidate.target)) break;
       if (!candidate.optional) {
+        missingStepsRef.current.add(candidate.id);
         closeWithoutOutcome();
         return;
       }
       next += 1;
     }
-    if (next >= definition.steps.length) finish('completed');
+    if (next >= steps.length) finish('completed');
     else setStepIndex(next);
-  }, [closeWithoutOutcome, definition.steps, finish, stepIndex]);
+  }, [closeWithoutOutcome, steps, finish, stepIndex]);
 
   const retreat = useCallback(() => {
     let previous = stepIndex - 1;
-    while (previous > 0 && !document.querySelector(definition.steps[previous].target)) previous -= 1;
+    while (previous > 0 && !visibleTarget(steps[previous].target)) previous -= 1;
     setStepIndex(Math.max(0, previous));
-  }, [definition.steps, stepIndex]);
+  }, [steps, stepIndex]);
 
   if (!open || !geometry || typeof document === 'undefined') return null;
-  const step = definition.steps[stepIndex];
+  const step = steps[stepIndex];
   if (!step) return null;
   const { target, popover, side } = geometry;
   const scrim = { position: 'fixed' as const, background: 'rgb(0 0 0 / 0.72)', zIndex: 140 };
@@ -356,14 +368,14 @@ export function GuidedTour({ id, active }: GuidedTourProps) {
       <div className="guided-tour-focus" style={{ top: target.top - 8, left: target.left - 8, width: target.width + 16, height: target.height + 16 }} aria-hidden="true" />
       <div ref={popoverRef} className="guided-tour-popover" data-side={side} style={{ top: popover.top, left: popover.left, width: popover.width }}>
         <span className="guided-tour-arrow" aria-hidden="true"><ArrowRight size={20} /></span>
-        <span className="k-label dim">{stepIndex + 1} / {definition.steps.length}</span>
+        <span className="k-label dim">{stepIndex + 1} / {steps.length}</span>
         <h2 id={`guided-tour-${id}-title`}>{step.label}</h2>
         <p>{step.body}</p>
         <div className="guided-tour-actions">
           <button ref={firstButtonRef} type="button" className="text-btn" onClick={() => finish('skipped')}>SKIP</button>
           {stepIndex > 0 && <button type="button" className="text-btn" onClick={retreat}>BACK</button>}
           <button type="button" className="btn btn-solid" onClick={advance}>
-            {stepIndex + 1 >= definition.steps.length ? 'DONE' : 'NEXT'}
+            {stepIndex + 1 >= steps.length ? 'DONE' : 'NEXT'}
           </button>
         </div>
       </div>

@@ -30,11 +30,13 @@ test('tutorial steps have stable unique ids, targets, labels, and placement', ()
   }
 });
 
-test('Tab and Watch have the requested stable tutorial coverage', () => {
+test('Tab, Watch, and Shorts have the requested stable tutorial coverage', () => {
   assert.deepEqual(TOURS.tab.steps.map((step) => step.id), ['lineup', 'cards', 'actions']);
   assert.equal(TOURS.tab.steps[0].optional, undefined);
   assert.equal(TOURS.tab.steps[1].optional, true);
   assert.equal(TOURS.tab.steps[2].optional, true);
   assert.deepEqual(TOURS.watch.steps.map((step) => step.id), ['controls', 'ranking', 'videos']);
-  assert.match(TOURS.shorts.steps[1].body, /YouTube’s own player control/);
+  assert.match(TOURS.shorts.steps[0].body, /Swipe up or scroll down/);
+  assert.match(TOURS.shorts.steps[1].body, /YouTube’s controls for sound and playback/);
+  assert.doesNotMatch(TOURS.shorts.steps.map((step) => step.body).join(' '), /side areas|Previous and Next|Make This/i);
 });

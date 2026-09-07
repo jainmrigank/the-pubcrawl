@@ -1,6 +1,6 @@
 import { test, expect } from '@playwright/test';
 import { openRoute, seedStableDevice } from './helpers';
-import { fakeLog, installFakeYouTube, setNativeSound, sideSwipeTo, swipeTo, waitForFirstPlay } from './fixtures/shortsFakeYouTube';
+import { fakeLog, installFakeYouTube, setNativeSound, swipeTo, waitForFirstPlay } from './fixtures/shortsFakeYouTube';
 
 test.describe('Shorts WebKit lifecycle', () => {
   test.use({ viewport: { width: 390, height: 844 }, isMobile: true, hasTouch: true });
@@ -12,12 +12,13 @@ test.describe('Shorts WebKit lifecycle', () => {
     await waitForFirstPlay(page);
     const geometry = await page.evaluate(() => {
       const iframe = document.querySelector<HTMLIFrameElement>('.shorts-player-host iframe')?.getBoundingClientRect();
-      const zones = [...document.querySelectorAll<HTMLElement>('.shorts-nav-zone')].map((node) => node.getBoundingClientRect());
+      const zones = [...document.querySelectorAll<HTMLElement>('.shorts-chrome button, .contextual-help')].filter(node => node.getClientRects().length).map((node) => node.getBoundingClientRect());
       return iframe ? { iframe, zones } : null;
     });
     expect(geometry).not.toBeNull();
+    expect(geometry!.zones.length).toBe(3);
     for (const zone of geometry!.zones) {
-      expect(zone.right <= geometry!.iframe.left || zone.left >= geometry!.iframe.right).toBe(true);
+      expect(zone.right <= geometry!.iframe.left || zone.left >= geometry!.iframe.right || zone.bottom <= geometry!.iframe.top || zone.top >= geometry!.iframe.bottom).toBe(true);
     }
     expect(await page.locator('.shorts-player-host iframe').count()).toBe(1);
   });
@@ -36,7 +37,7 @@ test.describe('Shorts WebKit lifecycle', () => {
     await page.evaluate(() => document.dispatchEvent(new Event('visibilitychange')));
     await expect.poll(async () => (await fakeLog(page)).filter((entry) => entry.method === 'playVideo').length).toBeGreaterThan(1);
     expect((await fakeLog(page)).filter((entry) => entry.method === 'construct').map((entry) => entry.instanceId)).toEqual([before]);
-    await expect.poll(() => page.evaluate(() => (window as any).__PUBCRAWL_FAKE_YT__?.sound())).toEqual({ muted: true, volume: 66 });
+    await expect.poll(() => page.evaluate(() => (window as any).__PUBCRAWL_FAKE_YT__?.sound())).toEqual({ muted: false, volume: 66 });
   });
 
   test('same player loops without recuing or hiding the revealed frame', async ({ page }) => {
@@ -91,30 +92,29 @@ test.describe('Shorts WebKit lifecycle', () => {
     );
   });
 
-  test('a partial side swipe leaves the selected video and iframe untouched', async ({ page }) => {
+  test('a partial native scroll snapping back leaves the activation untouched', async ({ page }) => {
     await installFakeYouTube(page);
     await seedStableDevice(page);
     await openRoute(page, '/#/shorts');
     await waitForFirstPlay(page);
     const before = await page.locator('.shorts-feed').getAttribute('data-controller-lease');
-    const zone = page.locator('.shorts-nav-zone-right');
-    const box = await zone.boundingBox();
-    expect(box).not.toBeNull();
-    await zone.dispatchEvent('pointerdown', { pointerId: 1, clientX: (box?.x || 0) + 12, clientY: (box?.y || 0) + 100, bubbles: true });
-    await zone.dispatchEvent('pointerup', { pointerId: 1, clientX: (box?.x || 0) + 18, clientY: (box?.y || 0) + 124, bubbles: true });
+    const commands = (await fakeLog(page)).filter(e => /playVideo|pauseVideo|seekTo/.test(e.method)).length;
+    await page.locator('.shorts-feed').evaluate(element => element.scrollTo({ top: element.clientHeight * 0.2, behavior: 'smooth' }));
+    await page.waitForTimeout(450);
     await expect(page.locator('.shorts-feed')).toHaveAttribute('data-controller-lease', before || '');
     expect((await fakeLog(page)).filter((entry) => entry.method === 'loadVideoById')).toHaveLength(0);
+    expect((await fakeLog(page)).filter(e => /playVideo|pauseVideo|seekTo/.test(e.method))).toHaveLength(commands);
   });
 
-  test('a complete side swipe uses the real pointer path in both directions', async ({ page }) => {
+  test('native scroll settlement retains sound in both directions', async ({ page }) => {
     await installFakeYouTube(page);
     await seedStableDevice(page);
     await openRoute(page, '/#/shorts');
     await waitForFirstPlay(page);
     await setNativeSound(page, true, 58);
-    await sideSwipeTo(page, 1);
+    await swipeTo(page, 1);
     await expect.poll(() => page.evaluate(() => (window as any).__PUBCRAWL_FAKE_YT__?.sound())).toEqual({ muted: false, volume: 58 });
-    await sideSwipeTo(page, 0);
+    await swipeTo(page, 0);
     await expect.poll(() => page.evaluate(() => (window as any).__PUBCRAWL_FAKE_YT__?.sound())).toEqual({ muted: false, volume: 58 });
     expect((await fakeLog(page)).filter((entry) => entry.method === 'construct')).toHaveLength(1);
   });
@@ -128,7 +128,7 @@ test.describe('Shorts WebKit lifecycle', () => {
     await page.evaluate(() => (window as any).__PUBCRAWL_FAKE_YT__?.end());
     await expect.poll(async () => (await fakeLog(page)).slice(before).filter((entry) => entry.method === 'seekTo').length).toBe(1);
     await expect(page.locator('.shorts-player-layer')).toHaveClass(/is-revealed/);
-    await page.waitForTimeout(280);
+    await page.waitForTimeout(600);
     await page.evaluate(() => (window as any).__PUBCRAWL_FAKE_YT__?.end());
     await expect.poll(async () => (await fakeLog(page)).slice(before).filter((entry) => entry.method === 'seekTo').length).toBe(2);
     await expect.poll(async () => (await fakeLog(page)).slice(before).filter((entry) => entry.method === 'playVideo').length).toBe(2);

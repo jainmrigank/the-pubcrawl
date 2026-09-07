@@ -123,7 +123,7 @@ function playerVars(): Record<string, string | number> {
     autoplay: 0,
     controls: 1,
     enablejsapi: 1,
-    // Shorts owns natural looping in the active host. Enabling YouTube's loop
+    // Shorts owns natural looping in its controller. Enabling YouTube's loop
     // at the same time produces duplicate restarts and visible rebuffering.
     loop: 0,
     playsinline: 1,
@@ -160,38 +160,4 @@ export async function createYouTubePlayer(
   // disabled. Later selections reuse this iframe through loadVideoById().
   if (id) options.videoId = id;
   return new YT.Player(element, options);
-}
-
-export function applySound(player: YouTubePlayer, muted: boolean, volume: number): void {
-  try {
-    const level = Math.max(0, Math.min(100, Math.round(volume)));
-    if (muted) {
-      player.setVolume(level);
-      player.mute();
-    } else {
-      // Prime the retained level before and after unmuting. Some WebKit builds
-      // ignore a volume write while muted, while others reset the level during
-      // the unmute transition. Both writes stay in the same user-activation
-      // task, so the native control never exposes sound-on-at-zero.
-      player.setVolume(level);
-      player.unMute();
-      player.setVolume(level);
-    }
-  } catch {
-    // The API can briefly reject commands between iframe creation and ready.
-  }
-}
-
-/**
- * Apply the safe preparation state used by every non-active Shorts iframe.
- * Keeping this separate from applySound makes it impossible for a queue or
- * React effect to accidentally unmute a player outside a user gesture.
- */
-export function applyMutedSound(player: YouTubePlayer, volume: number): void {
-  try {
-    player.setVolume(Math.max(0, Math.min(100, Math.round(volume))));
-    player.mute();
-  } catch {
-    // The API can briefly reject commands between iframe creation and ready.
-  }
 }

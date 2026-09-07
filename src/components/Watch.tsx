@@ -325,10 +325,6 @@ function WatchShelf({ data, active, initialId, source }: WatchShelfProps) {
             {q || lane ? `${filtered.length} OF ${data.videos.length}` : `${data.videos.length} VIDEOS`}
           </span>
         </div>
-        <p className="sec-lead">
-          Everything worth watching about drinking. The craft, the history, the comedy, and people finding
-          out what they like.
-        </p>
       </div>
 
       <div className="wv-search field" data-tour="watch-controls">

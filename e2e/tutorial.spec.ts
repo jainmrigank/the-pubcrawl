@@ -4,7 +4,7 @@ import { openRoute, seedStableDevice } from './helpers';
 test.describe('contextual tours', () => {
   test.use({ viewport: { width: 320, height: 700 }, isMobile: true, hasTouch: true });
 
-  test('runs the Bar tour once, keeps Skip on every step, and supports replay', async ({ page }) => {
+  test('completes the available empty Shelf step once and supports replay', async ({ page }) => {
     await seedStableDevice(page);
     await page.addInitScript(() => {
       localStorage.removeItem('pubcrawl.tour.bar.v1');
@@ -16,14 +16,18 @@ test.describe('contextual tours', () => {
     const box = await tour.locator('.guided-tour-popover').boundingBox();
     expect(box).not.toBeNull();
     expect((box?.x || 0) + (box?.width || 0)).toBeLessThanOrEqual(320);
-    await tour.getByRole('button', { name: 'NEXT' }).click();
-    await expect(tour.getByRole('button', { name: 'SKIP' })).toBeVisible();
-    await tour.getByRole('button', { name: 'SKIP' }).click();
+    await expect(tour.locator('.guided-tour-popover')).toContainText('1 / 1');
+    await tour.getByRole('button', { name: 'DONE' }).click();
     await expect(tour).toHaveCount(0);
-    await expect.poll(() => page.evaluate(() => localStorage.getItem('pubcrawl.tour.bar.v1'))).toBe('skipped');
-    await page.getByRole('button', { name: 'Show Bar tutorial' }).click();
+    await expect.poll(() => page.evaluate(() => localStorage.getItem('pubcrawl.tour.bar.v1'))).toBe('completed');
+    await page.waitForTimeout(850);
+    await expect(tour).toHaveCount(0);
+    const help = page.getByRole('button', { name: 'Show Shelf tutorial' });
+    await help.click();
     await expect(tour).toBeVisible();
     await expect(tour.locator('.guided-tour-arrow')).toBeVisible();
+    await page.keyboard.press('Escape');
+    await expect(help).toBeFocused();
   });
 
   test('auto-runs every page tour independently and remembers Skip', async ({ page }) => {
@@ -57,7 +61,7 @@ test.describe('contextual tours', () => {
     const routes = [
       { label: 'landing page', route: '/' },
       { label: 'Menu', route: '/#/menu' },
-      { label: 'Bar', route: '/#/bar' },
+      { label: 'Shelf', route: '/#/bar' },
       { label: 'Bar Basics', route: '/#/basics' },
       { label: 'Tab', route: '/#/tab' },
       { label: 'Quiz', route: '/#/quiz' },
@@ -89,17 +93,18 @@ test.describe('contextual tours', () => {
     await expect(page.locator('[aria-modal="true"]')).toHaveCount(1);
   });
 
-  test('does not mark an empty Tab tutorial complete when optional anchors are unavailable', async ({ page }) => {
+  test('persists an empty Tab tour completion despite absent optional anchors', async ({ page }) => {
     await seedStableDevice(page, { tours: false });
-    await page.addInitScript(() => {
-      localStorage.setItem('pubcrawl.tab', '[]');
-      localStorage.removeItem('pubcrawl.tour.tab.v1');
-    });
+    // Each test context starts empty. An init script deleting the outcome on
+    // every reload would erase the very persistence this test verifies.
     await openRoute(page, '/#/tab');
     const tour = page.locator('.guided-tour[role="dialog"]');
     await expect(tour).toBeVisible({ timeout: 4_000 });
-    await tour.getByRole('button', { name: 'NEXT' }).click();
+    await tour.getByRole('button', { name: 'DONE' }).click();
     await expect(tour).toHaveCount(0, { timeout: 2_000 });
-    await expect.poll(() => page.evaluate(() => localStorage.getItem('pubcrawl.tour.tab.v1'))).toBeNull();
+    await expect.poll(() => page.evaluate(() => localStorage.getItem('pubcrawl.tour.tab.v1'))).toBe('completed');
+    await page.reload({ waitUntil: 'domcontentloaded' });
+    await page.waitForTimeout(850);
+    await expect(tour).toHaveCount(0);
   });
 });

@@ -76,7 +76,7 @@ test('sound writes retain the desired audible flag and normalized level', () => 
   assert.deepEqual(readShortsSoundPreference(storage), muted);
 });
 
-test('rate preferences have a stable one-to-two range and session storage key', () => {
+test('rate preferences have a supported quarter-to-two range and session storage key', () => {
   assert.deepEqual(defaultShortsRatePreference(), { version: 1, preferredRate: 1 });
   assert.equal(clampShortsRate(0), 1);
   assert.equal(clampShortsRate(0.1), 0.25);
@@ -108,4 +108,19 @@ test('storage failures fall back to safe defaults instead of breaking Shorts', (
     version: 1,
     preferredRate: 1.5,
   });
+});
+
+test('a browser that denies access to the sessionStorage property cannot crash Shorts', (t) => {
+  const descriptor = Object.getOwnPropertyDescriptor(globalThis, 'window');
+  Object.defineProperty(globalThis, 'window', { configurable: true, value: {
+    get sessionStorage() { throw new Error('SecurityError'); },
+  } });
+  t.after(() => {
+    if (descriptor) Object.defineProperty(globalThis, 'window', descriptor);
+    else delete globalThis.window;
+  });
+  assert.deepEqual(readShortsSoundPreference(), defaultShortsSoundPreference());
+  assert.deepEqual(readShortsRatePreference(), defaultShortsRatePreference());
+  assert.doesNotThrow(() => writeShortsSoundPreference(defaultShortsSoundPreference()));
+  assert.doesNotThrow(() => writeShortsRatePreference(defaultShortsRatePreference()));
 });

@@ -10,7 +10,9 @@ import {
 } from './fixtures/shortsFakeYouTube';
 
 test.describe('Shorts single-player route', () => {
-  test.use({ viewport: { width: 390, height: 844 }, isMobile: true, hasTouch: true });
+  // Intercepted metrics belong to this fake-player fixture, not a service
+  // worker. The separate preview suite exercises the real worker lifecycle.
+  test.use({ viewport: { width: 390, height: 844 }, isMobile: true, hasTouch: true, serviceWorkers: 'block' });
 
   test('renders one native-control iframe with no Make This or PubCrawl sound UI', async ({ page }) => {
     await installFakeYouTube(page);
@@ -22,8 +24,8 @@ test.describe('Shorts single-player route', () => {
     await expect(page.locator('.shorts-sound-toggle, .shorts-sound-prompt, .shorts-tap, .shorts-make, [aria-label*="Make This"]')).toHaveCount(0);
     await expect(page.getByRole('button', { name: 'Back' })).toHaveCount(1);
     await expect(page.getByRole('button', { name: 'Share' })).toHaveCount(1);
-    await expect(page.getByRole('button', { name: 'Previous Short' })).toHaveCount(1);
-    await expect(page.getByRole('button', { name: 'Next Short' })).toHaveCount(1);
+    await expect(page.getByRole('button', { name: 'Previous Short' })).toHaveCount(0);
+    await expect(page.getByRole('button', { name: 'Next Short' })).toHaveCount(0);
     await expect(page.getByRole('button', { name: 'Show Shorts tutorial' })).toHaveCount(1);
   });
 
@@ -79,6 +81,28 @@ test.describe('Shorts single-player route', () => {
     expect(after.filter((entry) => entry.method === 'construct')).toHaveLength(1);
   });
 
+  test('delayed sound acknowledgments and load resets cannot erase the saved native preference', async ({ page }) => {
+    await installFakeYouTube(page, { soundAckDelayMs: 1200, resetSoundToZeroOnLoad: true });
+    await seedStableDevice(page);
+    await openRoute(page, '/#/shorts');
+    await waitForFirstPlay(page);
+    await expect(page.locator('.shorts-player-layer')).toHaveAttribute('data-sound-acknowledged', 'true');
+    await setNativeSound(page, true, 81);
+    await swipeTo(page, 1);
+    // Motion can precede API sound acknowledgment by more than the retired
+    // 700ms guard. Neither polling nor the next navigation may learn zero.
+    await expect.poll(() => page.evaluate(() => sessionStorage.getItem('pubcrawl.shorts.sound.v1'))).toBe(
+      JSON.stringify({ version: 1, desiredAudible: true, volume: 81 }),
+    );
+    await expect(page.locator('.shorts-player-layer')).toHaveAttribute('data-sound-acknowledged', 'false');
+    await page.waitForTimeout(800);
+    expect(await page.evaluate(() => JSON.parse(sessionStorage.getItem('pubcrawl.shorts.sound.v1')!))).toEqual({ version: 1, desiredAudible: true, volume: 81 });
+    await swipeTo(page, 2);
+    await expect(page.locator('.shorts-player-layer')).toHaveAttribute('data-sound-acknowledged', 'true');
+    expect(await page.evaluate(() => (window as any).__PUBCRAWL_FAKE_YT__?.sound())).toEqual({ muted: false, volume: 81 });
+    expect((await fakeLog(page)).filter(entry => entry.method === 'construct')).toHaveLength(1);
+  });
+
   test('automatically moves through ten forward and five backward destinations', async ({ page }) => {
     await installFakeYouTube(page);
     await seedStableDevice(page);
@@ -97,24 +121,25 @@ test.describe('Shorts single-player route', () => {
     expect(await page.locator('.shorts-player-host iframe').count()).toBe(1);
   });
 
-  test('uses the black loading surface until motion and keeps loading status readable', async ({ page }) => {
+  test('uses centered loading before readiness and adjacent status without covering ready controls', async ({ page }) => {
     await installFakeYouTube(page, { readyDelayMs: 500, startDelayMs: 1_200 });
     await seedStableDevice(page);
     await openRoute(page, '/#/shorts');
-    await page.waitForSelector('.shorts-player-layer[data-player-ready="false"] .shorts-player-status');
-    await expect(page.locator('.shorts-player-status')).toHaveText('LOADING..');
-    await expect(page.locator('.shorts-startup-surface')).toBeVisible();
+    await expect(page.locator('.shorts-initial-status')).toHaveText('LOADING..');
+    await expect(page.locator('.shorts-player-layer')).toHaveAttribute('data-player-ready', 'true');
+    await expect(page.locator('.shorts-initial-status')).toHaveCount(0);
+    await expect(page.locator('.shorts-status')).toHaveText('LOADING..');
     await expect(page.locator('.shorts-player-layer')).toHaveClass(/is-revealed/, { timeout: 4_000 });
-    await expect(page.locator('.shorts-player-status')).toHaveCount(0);
+    await expect(page.locator('.shorts-status')).toBeEmpty();
   });
 
   test('latest navigation wins when the single player becomes ready late', async ({ page }) => {
-    await installFakeYouTube(page, { readyDelayMs: 500, startDelayMs: 40 });
+    await installFakeYouTube(page, { readyDelayMs: 1500, startDelayMs: 40 });
     await seedStableDevice(page);
     await openRoute(page, '/#/shorts');
-    for (let index = 0; index < 4; index += 1) {
-      await page.getByRole('button', { name: 'Next Short' }).click();
-    }
+    await expect(page.locator('.shorts-feed')).toHaveAttribute('data-layout-ready', 'true');
+    await expect(page.locator('.shorts-player-layer')).toHaveAttribute('data-player-ready', 'false');
+    await page.locator('.shorts-feed').evaluate(element => element.scrollTo({ top: element.clientHeight * 4, behavior: 'instant' }));
     await expect(page.locator('.shorts-feed')).toHaveAttribute('data-controller-active', '4');
     await waitForFirstPlay(page);
     const state = await page.evaluate(() => (window as any).__PUBCRAWL_FAKE_YT__?.state());
@@ -142,8 +167,8 @@ test.describe('Shorts single-player route', () => {
     await waitForFirstPlay(page);
     await setNativeSound(page, true, 68);
     await page.evaluate(() => (window as any).__PUBCRAWL_FAKE_YT__?.setRejectMutedStarts(true));
-    await page.getByRole('button', { name: 'Next Short' }).click();
-    await expect(page.locator('.shorts-player-status')).toHaveText('TAP TO PLAY', { timeout: 3_000 });
+    await page.locator('.shorts-feed').evaluate(element => element.scrollTo({ top: element.clientHeight, behavior: 'instant' }));
+    await expect(page.locator('.shorts-status')).toHaveText('AUTOPLAY BLOCKED · USE THE VIDEO CONTROLS', { timeout: 3_000 });
     await page.waitForTimeout(1_700);
     const logs = await fakeLog(page);
     expect(logs.filter((entry) => entry.method === 'playVideo').length).toBeLessThanOrEqual(3);
@@ -159,7 +184,7 @@ test.describe('Shorts single-player route', () => {
     const current = await page.locator('.shorts-card.is-active').getAttribute('data-short-id');
     const before = await fakeLog(page);
     await page.evaluate(() => (window as any).__PUBCRAWL_FAKE_YT__?.error(150));
-    await expect(page.locator('.shorts-player-status')).toHaveText('VIDEO UNAVAILABLE');
+    await expect(page.locator('.shorts-status')).toHaveText('VIDEO UNAVAILABLE');
     await expect(page.locator('.shorts-card.is-active')).toHaveAttribute('data-short-id', current || '');
     const after = await fakeLog(page);
     expect(after.filter((entry) => entry.method === 'construct')).toHaveLength(before.filter((entry) => entry.method === 'construct').length);
@@ -172,8 +197,8 @@ test.describe('Shorts single-player route', () => {
     await openRoute(page, '/#/shorts');
     await waitForFirstPlay(page);
     await context.setOffline(true);
-    await expect(page.getByRole('status')).toContainText('OFFLINE', { timeout: 3_000 });
-    await expect(page.locator('.shorts-player-host iframe')).toHaveCount(0);
+    await expect(page.locator('.shorts-status')).toContainText('OFFLINE', { timeout: 3_000 });
+    await expect(page.locator('.shorts-player-host iframe')).toHaveCount(1);
 
     await context.setOffline(false);
     await waitForFirstPlay(page);
@@ -203,5 +228,37 @@ test.describe('Shorts single-player route', () => {
     await expect(page.locator('html')).toHaveAttribute('data-route', 'watch');
     await expect(page.locator('.shorts-player-host iframe')).toHaveCount(0);
     await expect(page.locator('body > .mobile-bottom-nav')).toBeVisible();
+  });
+
+  test('same-route deep links reuse the player and obsolete make parameters have no workflow', async ({ page }) => {
+    await installFakeYouTube(page);
+    await seedStableDevice(page);
+    await openRoute(page, '/#/shorts');
+    await waitForFirstPlay(page);
+    const destination = await page.locator('.shorts-card').nth(4).getAttribute('data-short-id');
+    await page.evaluate(id => { location.hash = `/shorts?v=${id}&src=deep-link&make=1`; }, destination);
+    await expect(page.locator('.shorts-feed')).toHaveAttribute('data-controller-active', '4');
+    await expect(page.locator('.shorts-player-layer')).toHaveClass(/is-revealed/);
+    expect((await fakeLog(page)).filter(entry => entry.method === 'construct')).toHaveLength(1);
+    expect((await fakeLog(page)).filter(entry => entry.method === 'loadVideoById')).toHaveLength(1);
+    await expect(page.locator('.shorts-recipe-modal,.shorts-make')).toHaveCount(0);
+  });
+
+  test('natural loops do not count as starts and route leave flushes one metrics session', async ({ page }) => {
+    const sessions: any[] = [];
+    await page.route('**/api/shorts/session', async route => {
+      sessions.push(route.request().postDataJSON());
+      await route.fulfill({ json: { ok: true } });
+    });
+    await installFakeYouTube(page);
+    await seedStableDevice(page);
+    await openRoute(page, '/#/shorts');
+    await waitForFirstPlay(page);
+    await swipeTo(page, 1);
+    await page.evaluate(() => (window as any).__PUBCRAWL_FAKE_YT__?.end());
+    await expect.poll(async () => (await fakeLog(page)).filter(e => e.method === 'seekTo').length).toBe(1);
+    await page.getByRole('link', { name: 'Watch', exact: true }).click();
+    await expect.poll(() => sessions.length).toBe(1);
+    expect(sessions[0]).toMatchObject({ videosStarted: 2, advances: 1, recipeClicks: 0 });
   });
 });

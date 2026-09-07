@@ -12,7 +12,7 @@ test.describe('iPhone WebKit shell regression', () => {
     const nav = page.locator('body > .mobile-bottom-nav');
     await expect(nav).toBeVisible();
     await expect(page.locator('.nav-menu-btn')).toBeHidden();
-    await expect(nav.locator('.mobile-nav-item')).toHaveText(['Menu', 'Bar', 'Shorts', 'Watch', 'Quiz']);
+    await expect(nav.locator('.mobile-nav-item')).toHaveText(['Menu', 'Shelf', 'Shorts', 'Watch', 'Quiz']);
 
     await page.setViewportSize({ width: 926, height: 428 });
     await expect(nav).toBeVisible();

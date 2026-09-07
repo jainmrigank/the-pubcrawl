@@ -2,7 +2,7 @@
  * Browser-independent persistence helpers for the Shorts native controls.
  *
  * Playback commands deliberately do not live here. The persistent YouTube
- * host is the only command owner; this module only validates the session
+ * controller is the only command owner; this module only validates the session
  * preferences that the host reads and the native-control observer writes.
  */
 
@@ -67,9 +67,9 @@ export function parseShortsSoundPreference(raw: string | null | undefined): Shor
 export function readShortsSoundPreference(
   storage?: Pick<Storage, 'getItem'> & Partial<Pick<Storage, 'setItem'>> | null,
 ): ShortsSessionSoundPreference {
-  const target = storage ?? (typeof window === 'undefined' ? null : window.sessionStorage);
-  if (!target) return defaultShortsSoundPreference();
   try {
+    const target = storage ?? (typeof window === 'undefined' ? null : window.sessionStorage);
+    if (!target) return defaultShortsSoundPreference();
     const parsed = parseShortsSoundPreference(target.getItem(SHORTS_SOUND_SESSION_KEY));
     const explicitlySelectedZero = target.getItem(SHORTS_SOUND_ZERO_INTENT_KEY) === '1';
     // Existing releases could have already written the normalized marker
@@ -103,8 +103,8 @@ export function writeShortsSoundPreference(
     desiredAudible: Boolean(preference.desiredAudible),
     volume: clampShortsVolume(preference.volume),
   };
-  const target = storage ?? (typeof window === 'undefined' ? null : window.sessionStorage);
   try {
+    const target = storage ?? (typeof window === 'undefined' ? null : window.sessionStorage);
     target?.setItem(SHORTS_SOUND_SESSION_KEY, JSON.stringify(normalized));
     if (normalized.desiredAudible && normalized.volume === 0) {
       target?.setItem(SHORTS_SOUND_ZERO_INTENT_KEY, '1');
@@ -135,9 +135,10 @@ export function parseShortsRatePreference(raw: string | null | undefined): Short
 }
 
 export function readShortsRatePreference(storage?: Pick<Storage, 'getItem'> | null): ShortsSessionRatePreference {
-  const target = storage ?? (typeof window === 'undefined' ? null : window.sessionStorage);
-  if (!target) return defaultShortsRatePreference();
-  try { return parseShortsRatePreference(target.getItem(SHORTS_RATE_SESSION_KEY)); }
+  try {
+    const target = storage ?? (typeof window === 'undefined' ? null : window.sessionStorage);
+    return parseShortsRatePreference(target?.getItem(SHORTS_RATE_SESSION_KEY));
+  }
   catch { return defaultShortsRatePreference(); }
 }
 
@@ -149,7 +150,9 @@ export function writeShortsRatePreference(
     version: 1,
     preferredRate: clampShortsRate(preference.preferredRate),
   };
-  const target = storage ?? (typeof window === 'undefined' ? null : window.sessionStorage);
-  try { target?.setItem(SHORTS_RATE_SESSION_KEY, JSON.stringify(normalized)); } catch {}
+  try {
+    const target = storage ?? (typeof window === 'undefined' ? null : window.sessionStorage);
+    target?.setItem(SHORTS_RATE_SESSION_KEY, JSON.stringify(normalized));
+  } catch {}
   return normalized;
 }

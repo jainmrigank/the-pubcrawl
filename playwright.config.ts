@@ -1,5 +1,9 @@
 import { defineConfig } from '@playwright/test';
 
+// Keep physical QA on 4175 while an independent memory-backed test server runs.
+const testPort = Number(process.env.PUBCRAWL_E2E_PORT || 4175);
+if (!Number.isInteger(testPort) || testPort < 1024 || testPort > 65535) throw new Error('Invalid E2E port');
+
 export default defineConfig({
   testDir: './e2e',
   // The physical-phone scenarios require the dedicated WebKit device
@@ -13,7 +17,7 @@ export default defineConfig({
   workers: 1,
   reporter: process.env.CI ? 'line' : 'list',
   use: {
-    baseURL: 'http://127.0.0.1:4175',
+    baseURL: `http://127.0.0.1:${testPort}`,
     colorScheme: 'dark',
     serviceWorkers: 'allow',
     trace: 'retain-on-failure',
@@ -25,9 +29,9 @@ export default defineConfig({
     // both use the same in-process store; production deployment is exercised
     // separately against the Worker after the physical-device gate.
     command: process.env.PUBCRAWL_E2E_MODE === 'preview'
-      ? 'VITE_API_BASE= PUBCRAWL_STORE_MODE=memory npm run preview -- --host 127.0.0.1 --port 4175'
-      : 'VITE_API_BASE= PUBCRAWL_STORE_MODE=memory npm run dev -- --host 127.0.0.1 --port 4175',
-    url: 'http://127.0.0.1:4175',
+      ? `VITE_API_BASE= PUBCRAWL_STORE_MODE=memory npm run preview -- --host 127.0.0.1 --port ${testPort} --strictPort`
+      : `VITE_API_BASE= PUBCRAWL_STORE_MODE=memory npm run dev -- --host 127.0.0.1 --port ${testPort} --strictPort`,
+    url: `http://127.0.0.1:${testPort}`,
     reuseExistingServer: false,
     timeout: 120_000,
     stdout: 'pipe',
