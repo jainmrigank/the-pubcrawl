@@ -10,10 +10,11 @@
  *   node scripts/refresh_video_stats.mjs
  *   node scripts/refresh_video_stats.mjs --dry-run
  */
-import { readFileSync } from 'node:fs';
+import { readFileSync, writeFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { classifyVideoStatus } from '../server/youtube-health.mjs';
+import { createHealthReport } from './video_health_policy.mjs';
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
 const WATCHLIST = join(ROOT, 'data', 'watchlist.json');
@@ -24,6 +25,10 @@ const KV_URL = String(process.env.KV_REST_API_URL || process.env.UPSTASH_REDIS_R
 const KV_TOKEN = String(process.env.KV_REST_API_TOKEN || process.env.UPSTASH_REDIS_REST_TOKEN || '');
 const STATS_KEY = 'pubcrawl:videostats';
 const REQUEST_TIMEOUT = 15000;
+const REPORT_PATH = process.argv.includes('--report')
+  ? process.argv[process.argv.indexOf('--report') + 1]
+  : '';
+const RUN_STARTED_AT = Date.now();
 
 function readJson(path) {
   return JSON.parse(readFileSync(path, 'utf8'));
@@ -72,7 +77,7 @@ function fatalYouTubeStatus(status) {
 
 function checkedRecord(previous, id, values) {
   const prior = previous[id] && typeof previous[id] === 'object' ? previous[id] : {};
-  const next = { ...prior, ...values, checkedAt: Date.now() };
+  const next = { ...prior, ...values, checkedAt: RUN_STARTED_AT };
   if (typeof values.views === 'number' && values.views !== prior.views) {
     const history = Array.isArray(prior.history) ? [...prior.history] : [];
     history.push({ at: next.checkedAt, views: values.views });
@@ -176,9 +181,18 @@ const unresolvedCount = ids.filter((id) => !Object.prototype.hasOwnProperty.call
 // Keep records for IDs that could not be checked this run. Replacing the
 // entire blob with only successful responses would make a temporary quota or
 // network outage look like a catalogue-wide deletion to the serving API.
-const merged = { ...previous, ...next };
 if (!DRY_RUN && !kvConfigured()) throw new Error('KV_REST_API_URL and KV_REST_API_TOKEN are required');
-if (!DRY_RUN) await kv(['SET', STATS_KEY, JSON.stringify(merged)]);
+if (!DRY_RUN) {
+  const script = "local raw=redis.call('GET',KEYS[1]); local current={}; if raw then current=cjson.decode(raw) end; local updates=cjson.decode(ARGV[1]); for id,value in pairs(updates) do local before=current[id]; if not before or (tonumber(value.checkedAt) or 0)>=(tonumber(before.checkedAt) or 0) then current[id]=value end end; redis.call('SET',KEYS[1],cjson.encode(current)); return 1";
+  await kv(['EVAL', script, 1, STATS_KEY, JSON.stringify(next)]);
+}
+
+const report = createHealthReport(ids, next, {
+  generatedAt: RUN_STARTED_AT,
+  source: API_KEY ? 'youtube-data-api+oembed' : 'oembed',
+});
+if (REPORT_PATH) writeFileSync(REPORT_PATH, `${JSON.stringify(report, null, 2)}\n`);
 
 console.log(`[video-refresh] checked ${ids.length}, counted ${counted}, dead ${dead}, unresolved ${unresolvedCount}, API batches ${batches}, source ${API_KEY ? 'youtube-data-api+oembed' : 'oembed'}`);
+if (REPORT_PATH) console.log(`[video-refresh] health report written for ${ids.length} candidate IDs`);
 if (DRY_RUN) console.log('[video-refresh] dry-run: no Upstash write performed');

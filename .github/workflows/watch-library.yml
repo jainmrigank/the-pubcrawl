@@ -21,6 +21,10 @@ permissions:
   contents: write
   pull-requests: write
 
+concurrency:
+  group: pubcrawl-video-health-maintenance
+  cancel-in-progress: false
+
 jobs:
   grow:
     runs-on: ubuntu-latest
@@ -30,6 +34,13 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
+
+      - name: Validate required maintenance configuration
+        env:
+          KV_REST_API_URL: ${{ secrets.KV_REST_API_URL }}
+          KV_REST_API_TOKEN: ${{ secrets.KV_REST_API_TOKEN }}
+          YOUTUBE_API_KEY: ${{ secrets.YOUTUBE_API_KEY }}
+        run: node scripts/validate_ci_config.mjs --required KV_REST_API_URL,KV_REST_API_TOKEN --optional YOUTUBE_API_KEY
 
       - name: Sweep trusted channels for new uploads
         run: node scripts/sweep_channels.mjs --days 14
@@ -69,17 +80,22 @@ jobs:
           YOUTUBE_API_KEY: ${{ secrets.YOUTUBE_API_KEY }}
           KV_REST_API_URL: ${{ secrets.KV_REST_API_URL }}
           KV_REST_API_TOKEN: ${{ secrets.KV_REST_API_TOKEN }}
-        run: node scripts/refresh_video_stats.mjs
+        run: node scripts/refresh_video_stats.mjs --report "$RUNNER_TEMP/pubcrawl-video-health.json"
 
       - name: Prune the dead and the stagnant
-        env:
-          API_BASE: ${{ secrets.API_BASE }}
-        run: node scripts/prune_watchlist.mjs
+        run: node scripts/prune_watchlist.mjs --health-report "$RUNNER_TEMP/pubcrawl-video-health.json"
 
       - name: Prune dead and stale Shorts
-        env:
-          API_BASE: ${{ secrets.API_BASE }}
-        run: node scripts/prune_shorts.mjs --days 120
+        run: node scripts/prune_shorts.mjs --health-report "$RUNNER_TEMP/pubcrawl-video-health.json" --days 120
+
+      - name: Preserve same-run health evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: pubcrawl-video-health-${{ github.run_id }}
+          path: ${{ runner.temp }}/pubcrawl-video-health.json
+          if-no-files-found: ignore
+          retention-days: 14
 
       - name: Guard the reviewed Shorts catalogue
         run: node --test test/shorts.test.mjs
@@ -103,10 +119,23 @@ jobs:
 
           git config user.name  'github-actions[bot]'
           git config user.email 'github-actions[bot]@users.noreply.github.com'
+          remote_sha=""
+          if git ls-remote --exit-code --heads origin "$branch" >/dev/null 2>&1; then
+            git fetch origin "$branch"
+            remote_sha=$(git rev-parse "origin/$branch")
+            if git log --format='%ae' "origin/main..origin/$branch" | grep -Ev 'github-actions\[bot\]@users\.noreply\.github\.com' | grep -q .; then
+              echo "Refusing to replace $branch because it contains non-bot commits."
+              exit 1
+            fi
+          fi
           git checkout -B "$branch"
           git add data/watchlist.json data/shorts.json
           git commit -m "Watch + Shorts library: +${watch_added}/-${watch_gone} Watch, +${short_added}/-${short_gone} Shorts"
-          git push -f origin "$branch"
+          if [ -n "$remote_sha" ]; then
+            git push --force-with-lease="refs/heads/$branch:$remote_sha" origin "$branch"
+          else
+            git push -u origin "$branch"
+          fi
 
           # reuse the open PR for this branch if there is one
           if ! gh pr view "$branch" --json number >/dev/null 2>&1; then

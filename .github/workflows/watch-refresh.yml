@@ -9,6 +9,10 @@ on:
     - cron: '0 6 * * 1' # Monday, 06:00 UTC
   workflow_dispatch:
 
+concurrency:
+  group: pubcrawl-video-health-maintenance
+  cancel-in-progress: false
+
 jobs:
   refresh:
     runs-on: ubuntu-latest
@@ -19,9 +23,25 @@ jobs:
         with:
           node-version: '22'
 
+      - name: Validate required maintenance configuration
+        env:
+          KV_REST_API_URL: ${{ secrets.KV_REST_API_URL }}
+          KV_REST_API_TOKEN: ${{ secrets.KV_REST_API_TOKEN }}
+          YOUTUBE_API_KEY: ${{ secrets.YOUTUBE_API_KEY }}
+        run: node scripts/validate_ci_config.mjs --required KV_REST_API_URL,KV_REST_API_TOKEN --optional YOUTUBE_API_KEY
+
       - name: Refresh counts and check Watch/Shorts embeds
         env:
           YOUTUBE_API_KEY: ${{ secrets.YOUTUBE_API_KEY }}
           KV_REST_API_URL: ${{ secrets.KV_REST_API_URL }}
           KV_REST_API_TOKEN: ${{ secrets.KV_REST_API_TOKEN }}
-        run: node scripts/refresh_video_stats.mjs
+        run: node scripts/refresh_video_stats.mjs --report "$RUNNER_TEMP/pubcrawl-video-health.json"
+
+      - name: Preserve same-run health evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: pubcrawl-video-health-${{ github.run_id }}
+          path: ${{ runner.temp }}/pubcrawl-video-health.json
+          if-no-files-found: ignore
+          retention-days: 14
