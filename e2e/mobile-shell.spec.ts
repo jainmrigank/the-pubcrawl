@@ -92,10 +92,12 @@ test.describe('mobile shell and navigation', () => {
     }
   });
 
-  test('removes landing teasers without leaving a replacement gap', async ({ page }) => {
+  test('renders the dedicated landing discovery page without mounting Menu', async ({ page }) => {
     await openRoute(page, '/#/');
-    await expect(page.locator('.watch-teaser, .shorts-teaser')).toHaveCount(0);
-    await expect(page.locator('.hero')).toBeVisible();
+    await expect(page.locator('#menu-list:visible')).toHaveCount(0);
+    await expect(page.locator('.landing-hero')).toBeVisible();
+    await expect(page.locator('.landing-shorts-rail')).toBeVisible();
+    await expect(page.locator('.landing-watch-rail')).toBeVisible();
     await expect(page.getByRole('link', { name: /WHAT CAN I MAKE/ })).toBeVisible();
   });
 });

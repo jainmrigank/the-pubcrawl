@@ -420,82 +420,173 @@ main { flex: 1; width: 100%; max-width: 1440px; margin: 0 auto; padding: 0 clamp
 .drawer-foot { margin-top: auto; }
 
 /* ==========================================================================
-   hero
+   landing discovery
    ========================================================================== */
-.hero { padding: clamp(40px, 7vh, 88px) 0 clamp(48px, 8vh, 110px); }
-
-/* on the landing page the coaster sits well clear of the hero buttons and
-   close to the rule above THE MENU, so it reads as a lead-in to the list */
-.hero .bartalk { margin: clamp(64px, 11vh, 120px) 4px 0; }
-.hero:has(.bartalk) { padding-bottom: clamp(10px, 1.4vh, 16px); }
-.hero:has(.bartalk) + .sec { padding-top: clamp(14px, 1.8vh, 22px); }
-
-.hero-kicker {
-  display: flex;
-  justify-content: space-between;
-  gap: 16px;
-  padding-bottom: 18px;
-  border-bottom: 1px solid var(--line-strong);
-  margin-bottom: clamp(28px, 5vh, 56px);
+.landing-page {
+  width: 100%;
+  min-width: 0;
+  padding: 40px 0 64px;
 }
 
-.hero-h1 {
+.landing-hero { max-width: 1120px; }
+.landing-kicker { margin: 0 0 32px; }
+.landing-title {
   margin: 0;
   font-stretch: 70%;
   font-weight: 800;
-  font-size: clamp(64px, 13.5vw, 200px);
-  line-height: 0.92;
+  font-size: clamp(64px, 13.5vw, 188px);
+  line-height: 0.9;
   letter-spacing: -0.015em;
   text-transform: uppercase;
 }
-
-.hero-lower {
-  display: grid;
-  grid-template-columns: minmax(280px, 460px) 1fr;
-  gap: clamp(28px, 5vw, 80px);
-  align-items: end;
-  margin-top: clamp(24px, 4vh, 56px);
+.landing-title span { display: block; white-space: nowrap; }
+.landing-actions {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 32px;
 }
 
-/* The landing hero stays focused on the shelf workflow. Watch and Shorts are
-   destination pages, not preview carousels. */
-.hero-copy { grid-column: 1; grid-row: 1; }
-.hero-lower > .hero-steps { grid-column: 1 / -1; grid-row: 2; }
-
-.hero-cta { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
-
-
-/* how-it-works — teaches the app's purpose at a glance */
-.hero-steps {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-  display: grid;
-  gap: 0;
+.landing-discovery-section { margin-top: 64px; min-width: 0; }
+.landing-section-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px 20px;
+  padding-top: 16px;
   border-top: 1px solid var(--line-strong);
+  margin-bottom: 20px;
 }
-.hero-steps li {
+.landing-section-toolbar h2 {
+  margin: 0;
+  font-stretch: 72%;
+  font-size: clamp(36px, 5vw, 64px);
+  line-height: 1;
+  letter-spacing: -0.01em;
+}
+.landing-section-actions { display: flex; align-items: center; gap: 10px; }
+.landing-preview-toggle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  min-width: 44px;
+  height: 44px;
+  padding: 0;
+  border: 1px solid var(--ink);
+  border-radius: 0;
+  background: transparent;
+  color: var(--ink);
+  cursor: pointer;
+  transition: background var(--t-fast) var(--ease), color var(--t-fast) var(--ease);
+}
+.landing-preview-toggle:hover { background: var(--ink); color: var(--paper); }
+.landing-open { min-height: 44px; }
+.landing-media-rail {
+  display: flex;
+  gap: 16px;
+  width: 100%;
+  min-width: 0;
+  padding: 2px 2px 16px;
+  overflow-x: auto;
+  overflow-y: hidden;
+  overscroll-behavior-inline: contain;
+  scroll-snap-type: x proximity;
+  scroll-padding-inline: 2px;
+  scrollbar-width: thin;
+}
+.landing-media-rail article { scroll-snap-align: start; min-width: 0; }
+.landing-media-rail a {
+  display: block;
+  color: var(--ink);
+  text-decoration: none;
+}
+.landing-short-card { flex: 1 0 200px; max-width: 230px; }
+.landing-short-media,
+.landing-watch-media {
+  position: relative;
+  display: block;
+  width: 100%;
+  overflow: hidden;
+  background: var(--paper-2);
+  border: 1px solid var(--line-strong);
+}
+.landing-short-media { aspect-ratio: 9 / 16; }
+.landing-watch-media { aspect-ratio: 16 / 9; }
+.landing-short-media img,
+.landing-watch-media img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.landing-preview-player { background: #000; }
+.landing-preview-player-host,
+.landing-preview-player-host > div,
+.landing-preview-player-host iframe {
+  display: block;
+  width: 100%;
+  height: 100%;
+  min-width: 0;
+  border: 0;
+  background: #000;
+}
+.landing-preview-loading {
+  position: absolute;
+  inset: 0;
   display: grid;
-  grid-template-columns: auto 1fr;
-  column-gap: 14px;
-  align-items: baseline;
-  padding: 16px 0;
-  border-bottom: 1px solid var(--line);
+  place-items: center;
+  background: #000;
+  color: #f1eee5;
+  pointer-events: none;
 }
-.hero-steps li strong {
-  font-stretch: 78%;
-  font-weight: 700;
-  font-size: 17px;
+.landing-preview-adjacent {
+  display: block;
+  min-height: 18px;
+  margin-top: 7px;
+}
+.landing-card-title {
+  display: -webkit-box;
+  min-width: 0;
+  margin-top: 11px;
+  overflow: hidden;
+  overflow-wrap: anywhere;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  font-stretch: 76%;
+  font-weight: 750;
+  font-size: 15px;
+  line-height: 1.18;
   text-transform: uppercase;
-  letter-spacing: 0.01em;
 }
-.hero-steps li span:last-child {
-  grid-column: 2;
-  font-size: 14.5px;
-  color: var(--ink-60);
-  margin-top: 2px;
+.landing-card-by { display: block; margin-top: 7px; overflow-wrap: anywhere; }
+.landing-watch-card { flex: 1 0 min(380px, 82vw); }
+
+.landing-secondary-links {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  margin-top: 64px;
+  border-top: 1px solid var(--line-strong);
+  border-bottom: 1px solid var(--line-strong);
 }
-.hero-steps li .k-label { grid-row: span 2; color: var(--accent); }
+.landing-secondary-links a {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  min-height: 72px;
+  padding: 12px 18px;
+  color: var(--ink);
+  font-stretch: 74%;
+  font-weight: 800;
+  font-size: clamp(20px, 2.4vw, 32px);
+  line-height: 1;
+  text-decoration: none;
+}
+.landing-secondary-links a + a { border-left: 1px solid var(--line-strong); }
+.landing-secondary-links svg { flex: none; transition: transform var(--t-fast) var(--ease); }
+.landing-secondary-links a:hover svg { transform: translateX(3px); }
 
 
 /* ==========================================================================
@@ -1150,7 +1241,8 @@ main { flex: 1; width: 100%; max-width: 1440px; margin: 0 auto; padding: 0 clamp
 .empty-link { color: var(--accent); }
 
 /* routed pages start tighter under the nav */
-.page-top { padding-top: clamp(28px, 5vh, 56px); }
+.page-top,
+.menu-page { padding-top: clamp(28px, 5vh, 56px); }
 
 /* ==========================================================================
    index section
@@ -1557,12 +1649,6 @@ main { flex: 1; width: 100%; max-width: 1440px; margin: 0 auto; padding: 0 clamp
   .brand { flex: none; }
   .wordmark { font-size: 22px; white-space: nowrap; }
 
-  .hero-lower { grid-template-columns: 1fr; gap: 20px; }
-  .hero-copy { grid-column: 1; grid-row: 1; }
-  .hero-lower > .hero-steps { grid-column: 1; grid-row: 2; }
-  .hero-steps { border-top: none; }
-  .hero-steps li { padding: 13px 0; }
-
   .shelf-grid { grid-template-columns: 1fr; }
   .shelf-col { padding-right: 0; }
   .shelf-col + .shelf-col {
@@ -1854,6 +1940,21 @@ main { flex: 1; width: 100%; max-width: 1440px; margin: 0 auto; padding: 0 clamp
   main { padding-bottom: calc(var(--mobile-bottom-nav-height) + env(safe-area-inset-bottom) + 18px); }
   .foot { padding-bottom: calc(32px + var(--mobile-bottom-nav-height) + env(safe-area-inset-bottom)); }
 
+  /* One owner for the requested mobile page-start rhythm. The first heading
+     row no longer adds its desktop-only 14px inset on top of page padding. */
+  .landing-page,
+  #shelf.page-top,
+  #basics.page-top,
+  #quiz-page.page-top,
+  #tab-page.page-top,
+  .watch.page-top { padding-top: 20px; }
+  #shelf > .sec-head > .sec-head-row,
+  #basics > .sec-head > .sec-head-row,
+  #quiz-page > .sec-head > .sec-head-row,
+  #tab-page > .sec-head > .sec-head-row,
+  .watch > .sec-head > .sec-head-row { padding-top: 0; }
+  .watch > .watch-page-head > .rule { display: none; }
+
   /* Keep the compact header (including icon-only Theme, Bar Basics and Tab)
      on Shorts too.  The media stage starts below it and ends above the
      portalled bottom navigation. */
@@ -1900,7 +2001,18 @@ main { flex: 1; width: 100%; max-width: 1440px; margin: 0 auto; padding: 0 clamp
 }
 
 @media (max-width: 480px) {
-  .hero-kicker { flex-direction: column; gap: 6px; }
+  .landing-actions { align-items: stretch; flex-direction: column; gap: 12px; }
+  .landing-actions .btn { width: 100%; min-height: 44px; justify-content: space-between; }
+  .landing-kicker { margin-bottom: 24px; }
+  .landing-title { font-size: clamp(54px, 18vw, 80px); }
+  .landing-actions { margin-top: 24px; }
+  .landing-discovery-section { margin-top: 40px; }
+  .landing-secondary-links {
+    grid-template-columns: minmax(0, 1fr);
+    margin-top: 40px;
+  }
+  .landing-secondary-links a { min-height: 60px; padding-inline: 0; }
+  .landing-secondary-links a + a { border-left: 0; border-top: 1px solid var(--line-strong); }
   .fc { height: 480px; }
   .fc-name { font-size: 23px; }
   .grid { grid-template-columns: 1fr; }

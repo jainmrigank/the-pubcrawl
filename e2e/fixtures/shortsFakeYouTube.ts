@@ -48,6 +48,7 @@ export async function installFakeYouTube(page: Page, options: FakePlayerOptions 
         staleCallbacks(videoId?: string): void;
         error(code?: number): void;
         setRejectMutedStarts(reject: boolean): void;
+        advanceTime(seconds: number): void;
         sound(): { muted: boolean; volume: number } | null;
         state(): { state: number; muted: boolean; volume: number; shortId: string } | null;
         iframeCount(): number;
@@ -282,6 +283,9 @@ export async function installFakeYouTube(page: Page, options: FakePlayerOptions 
         this.events.onError?.({ target: this, data: code });
       }
       setRejectMutedStarts(reject: boolean) { rejectMutedStarts = Boolean(reject); }
+      advanceTime(seconds: number) {
+        if (!this.destroyed && this.playerState === 1) this.currentTime += Math.max(0, Number(seconds) || 0);
+      }
       sound() { return { muted: this.muted, volume: this.volume }; }
       snapshot() { return { state: this.playerState, muted: this.muted, volume: this.volume, shortId: this.videoId }; }
     }
@@ -309,6 +313,7 @@ export async function installFakeYouTube(page: Page, options: FakePlayerOptions 
       staleCallbacks: (videoId) => player?.staleCallbacks(videoId),
       error: (code) => player?.error(code),
       setRejectMutedStarts: (reject) => player?.setRejectMutedStarts(reject),
+      advanceTime: (seconds) => player?.advanceTime(seconds),
       sound: () => player?.sound() || null,
       state: () => player?.snapshot() || null,
       iframeCount: () => document.querySelectorAll('iframe[data-fake-youtube]').length,

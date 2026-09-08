@@ -192,7 +192,7 @@ export function Watch({ active = true, initialId = '', source = 'direct' }: Watc
 
   if (error && !data)
     return (
-      <section className="sec page-top">
+      <section className="sec watch page-top">
         <p className="err" role="alert">
           The projector is not warming up. Try again in a moment.
         </p>
@@ -201,7 +201,7 @@ export function Watch({ active = true, initialId = '', source = 'direct' }: Watc
 
   if (!data)
     return (
-      <section className="sec page-top">
+      <section className="sec watch page-top">
         <span className="loadline" aria-label="Loading" />
       </section>
     );
@@ -316,7 +316,7 @@ function WatchShelf({ data, active, initialId, source }: WatchShelfProps) {
 
   return (
     <div className="watch page-top">
-      <div className="sec-head">
+      <div className="sec-head watch-page-head">
         <div className="rule" />
         <div className="sec-head-row">
           <span className="k-label sec-index">/01</span>

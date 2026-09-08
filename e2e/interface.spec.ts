@@ -59,7 +59,7 @@ test.describe('minimal interface', () => {
 
   test('removes only the requested page introductions and keeps route compatibility', async ({ page }) => {
     await openRoute(page, '/');
-    await expect(page.locator('.hero h1')).toContainText('POISON');
+    await expect(page.locator('.landing-title')).toContainText('POISON');
     await expect(page.locator('.hero-sub')).toHaveCount(0);
     for (const [route, selector] of [['menu', '#menu-list'], ['bar', '#shelf'], ['quiz', '#quiz-page'], ['watch', '.watch']]) {
       await openRoute(page, `/#/${route}`);

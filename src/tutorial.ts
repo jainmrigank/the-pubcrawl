@@ -21,7 +21,7 @@ export const TOURS: Record<TourId, TourDefinition> = {
     steps: [
       { id: 'make', target: '[data-tour="landing-make"]', label: 'START WITH WHAT YOU HAVE', body: 'Add ingredients from your kitchen and see the cocktails you can make right now.', preferredSide: 'bottom' },
       { id: 'browse', target: '[data-tour="landing-browse"]', label: 'BROWSE THE FULL MENU', body: 'Explore every reviewed drink when you already know what you want.', preferredSide: 'bottom' },
-      { id: 'steps', target: '[data-tour="landing-steps"]', label: 'THREE STEPS TO A POUR', body: 'Add ingredients, see your matches, then save a lineup or invent something original.', preferredSide: 'top' },
+      { id: 'discovery', target: '[data-tour="landing-discovery"]', label: 'DISCOVER THE REST', body: 'Preview Shorts and Watch, or open Quiz, Bar Basics, and your saved Tab.', preferredSide: 'top' },
     ],
   },
   menu: {

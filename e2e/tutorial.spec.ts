@@ -30,10 +30,9 @@ test.describe('contextual tours', () => {
     await expect(help).toBeFocused();
   });
 
-  test('auto-runs every page tour independently and remembers Skip', async ({ page }) => {
+  test('auto-runs every destination-page tour independently and remembers Skip', async ({ page }) => {
     await seedStableDevice(page, { tours: false });
     const contexts = [
-      { id: 'landing', route: '/' },
       { id: 'menu', route: '/#/menu' },
       { id: 'bar', route: '/#/bar' },
       { id: 'basics', route: '/#/basics' },

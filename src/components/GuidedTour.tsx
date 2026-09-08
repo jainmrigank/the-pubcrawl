@@ -8,6 +8,8 @@ import { OVERLAY_PRIORITY, overlayGate, setBackgroundInert } from '../overlayGat
 interface GuidedTourProps {
   id: TourId;
   active: boolean;
+  /** Existing pages teach themselves once; Home deliberately waits for Help. */
+  autoStart?: boolean;
 }
 
 interface Rect {
@@ -54,7 +56,7 @@ function visibleTarget(target: string) {
   return element && element.getClientRects().length > 0 && getComputedStyle(element).visibility !== 'hidden' ? element : null;
 }
 
-export function GuidedTour({ id, active }: GuidedTourProps) {
+export function GuidedTour({ id, active, autoStart = true }: GuidedTourProps) {
   const definition = TOURS[id];
   const gateId = `guided-tour:${id}`;
   const [open, setOpen] = useState(false);
@@ -191,10 +193,12 @@ export function GuidedTour({ id, active }: GuidedTourProps) {
       overlayGate.release(gateId);
       return;
     }
-    const timer = window.setTimeout(() => {
-      autoReadyRef.current = true;
-      begin(false);
-    }, 700);
+    const timer = autoStart
+      ? window.setTimeout(() => {
+          autoReadyRef.current = true;
+          begin(false);
+        }, 700)
+      : 0;
     const retryWaitingTour = () => {
       if (overlayGate.active === gateId) return;
       if (pendingReplayRef.current) begin(true);
@@ -210,12 +214,12 @@ export function GuidedTour({ id, active }: GuidedTourProps) {
     observer.observe(document.body, { childList: true, subtree: true });
     window.addEventListener('pubcrawl:replay-tour', replay);
     return () => {
-      window.clearTimeout(timer);
+      if (timer) window.clearTimeout(timer);
       unsubscribe();
       observer.disconnect();
       window.removeEventListener('pubcrawl:replay-tour', replay);
     };
-  }, [active, begin, gateId, id]);
+  }, [active, autoStart, begin, gateId, id]);
 
   useEffect(() => overlayGate.subscribe(() => {
     if (open && overlayGate.active !== gateId) {

@@ -34,6 +34,7 @@ export default defineConfig({
         '**/bar.spec.ts',
         '**/tutorial.spec.ts',
         '**/interface.spec.ts',
+        '**/landing.spec.ts',
       ],
     },
   ],

@@ -18,6 +18,7 @@ import { CategoryFilter } from './components/CategoryFilter';
 import { MobileNavigation, MobileTopActions } from './components/MobileNavigation';
 import { DailyQuestion } from './components/DailyQuestion';
 import { GuidedTour } from './components/GuidedTour';
+import { LandingPage } from './components/LandingPage';
 import { ShelfResults } from './components/ShelfResults';
 import { ContextualHelp } from './components/ContextualHelp';
 import { EASE, Lines, LOADED_HIDDEN, Reveal } from './motion';
@@ -54,9 +55,8 @@ function parseRoute(): Route {
 }
 
 /**
- * The landing page and the drinks list live on the same route, so the hash
- * decides which one you arrive at: a bare URL (or the wordmark) opens the
- * landing view, while #/menu goes straight to the list.
+ * A bare URL (or the wordmark) opens the landing view, while #/menu opens the
+ * separately rendered catalogue without mounting Menu beneath the hero.
  */
 function isLandingView(): boolean {
   return hashPath() === '';
@@ -95,17 +95,9 @@ function watchSource(): string {
   return hashParams().get('src') || 'direct';
 }
 
-/** top of the drinks list, allowing for the sticky nav */
-function menuListTop(): number {
-  const el = document.getElementById('menu-list');
-  if (!el) return 0;
-  const nav = document.querySelector('.nav')?.getBoundingClientRect().height ?? 58;
-  return Math.max(el.getBoundingClientRect().top + window.scrollY - nav - 8, 0);
-}
-
 /** the landing view and the drinks list are separate places to come back to */
 const viewKey = (route: Route, landing: boolean) => (landing ? 'landing' : route);
-let preserveLandingPositionOnce = false;
+let preserveLandingPositionOnNextEntry = false;
 
 function useRoute(): { route: Route; landing: boolean } {
   const [view, setView] = useState(() => ({ route: parseRoute(), landing: isLandingView() }));
@@ -120,8 +112,10 @@ function useRoute(): { route: Route; landing: boolean } {
       const landing = isLandingView();
       current = viewKey(route, landing);
       // the wordmark means "take me home", so always open at the top
-      if (landing && !preserveLandingPositionOnce) delete positions.current.landing;
-      preserveLandingPositionOnce = false;
+      if (landing) {
+        if (!preserveLandingPositionOnNextEntry) delete positions.current.landing;
+        preserveLandingPositionOnNextEntry = false;
+      }
       setView({ route, landing });
     };
     window.addEventListener('hashchange', onChange);
@@ -139,16 +133,6 @@ function useRoute(): { route: Route; landing: boolean } {
     if (remembered != null) {
       window.scrollTo({ top: remembered, behavior: 'instant' as ScrollBehavior });
       return;
-    }
-    // arriving fresh at #/menu (a notification, a shared link, the nav): open
-    // on the drinks themselves rather than the hero
-    if (view.route === 'menu' && !view.landing) {
-      const jump = () => window.scrollTo({ top: menuListTop(), behavior: 'instant' as ScrollBehavior });
-      jump();
-      // the list is still loading on a cold open, so settle once it has height
-      requestAnimationFrame(jump);
-      const t = setTimeout(jump, 260);
-      return () => clearTimeout(t);
     }
     window.scrollTo({ top: 0, behavior: 'instant' as ScrollBehavior });
   }, [view]);
@@ -175,6 +159,7 @@ export default function App() {
   const [browseError, setBrowseError] = useState(false);
   const [browseAppending, setBrowseAppending] = useState(false);
   const [browseAppendError, setBrowseAppendError] = useState(false);
+  const [menuActivated, setMenuActivated] = useState(() => route === 'menu' && !landing);
   const browseControllerRef = useRef<AbortController | null>(null);
   const browseRequestIdRef = useRef(0);
   const [aiDrinks, setAiDrinks] = useState<Recipe[]>([]);
@@ -233,12 +218,6 @@ export default function App() {
   }, []);
 
   useEffect(() => {
-    // Vibes and the immutable catalogue are bundled locally. Keep the API
-    // call as a compatibility fallback for an older/stale build, but do not
-    // make first paint wait for a sleeping Render service.
-    loadLocalCatalogue()
-      .then((bundle) => setVibes(bundle.vibes))
-      .catch(() => fetchVibes().then(setVibes).catch(() => {}));
     fetchHealth().then(setHealth).catch(() => {});
     fetchLikes().then(setLikes).catch(() => {});
     // Kept AI specials are dynamic extensions to the local catalogue. Fetch
@@ -248,6 +227,21 @@ export default function App() {
       if (Array.isArray(recipes)) setKeptRecipes(recipes);
     }).catch(() => {});
   }, []);
+
+  const catalogueRequestedRef = useRef(false);
+  useEffect(() => {
+    if (catalogueRequestedRef.current || landing || !['menu', 'bar', 'tab'].includes(route)) return;
+    catalogueRequestedRef.current = true;
+    // Vibes and the immutable catalogue remain local-first, but Home no
+    // longer pulls the full recipe chunk merely to render discovery cards.
+    loadLocalCatalogue()
+      .then((bundle) => setVibes(bundle.vibes))
+      .catch(() => fetchVibes().then(setVibes).catch(() => {}));
+  }, [landing, route]);
+
+  useEffect(() => {
+    if (route === 'menu' && !landing) setMenuActivated(true);
+  }, [landing, route]);
 
   useEffect(() => {
     applyTheme(theme);
@@ -320,7 +314,7 @@ export default function App() {
     // A bare-hash landing navigation normally means the wordmark and opens at
     // the top. BACK is different: keep the landing position remembered by the
     // route hook for this one transition.
-    preserveLandingPositionOnce = target === '#/' || target === '#' || target === '';
+    preserveLandingPositionOnNextEntry = target === '#/' || target === '#' || target === '';
     window.location.hash = target;
   }, []);
 
@@ -382,6 +376,7 @@ export default function App() {
   /* menu search / browse. Mood + search both apply server-side over the full catalogue,
      so a mood is never silently filtering a search down to nothing. */
   useEffect(() => {
+    if (!menuActivated) return;
     browseControllerRef.current?.abort();
     const controller = new AbortController();
     const requestId = ++browseRequestIdRef.current;
@@ -445,7 +440,7 @@ export default function App() {
       controller.abort();
       if (browseControllerRef.current === controller) browseControllerRef.current = null;
     };
-  }, [browseQ, browseLimit, browseSeed, browseFilter, loved, lovedLikes, lovedRefresh, keptRecipes]);
+  }, [menuActivated, browseQ, browseLimit, browseSeed, browseFilter, loved, lovedLikes, lovedRefresh, keptRecipes]);
 
   const loadMore = useCallback(() => {
     if (browseLoading || browseAppending || !browseHasMore) return;
@@ -657,7 +652,7 @@ export default function App() {
         {!shortsActive && <DailyQuestion force={dailyForced} />}
         {!shortsActive && <InstallBanner />}
         {!shortsActive && <NudgePrompt />}
-        <GuidedTour id="landing" active={landing} />
+        <GuidedTour id="landing" active={landing} autoStart={false} />
         <GuidedTour id="menu" active={route === 'menu' && !landing} />
         <GuidedTour id="bar" active={route === 'bar'} />
         <GuidedTour id="basics" active={route === 'basics'} />
@@ -668,7 +663,14 @@ export default function App() {
 
         {/* ================= nav ================= */}
         <header className="nav">
-          <a className="brand" href="#/">
+          <a
+            className="brand"
+            href="#/"
+            onClick={() => {
+              preserveLandingPositionOnNextEntry = false;
+              if (landing) window.scrollTo({ top: 0, behavior: 'instant' as ScrollBehavior });
+            }}
+          >
             <PubGlyph size={30} />
             <span className="wordmark">The PubCrawl</span>
           </a>
@@ -760,52 +762,15 @@ export default function App() {
         <main>
           {/* every page stays mounted (hidden when inactive) so lists, search,
               flipped cards and accordion state survive switching between them */}
-            <div hidden={route !== 'menu'}>
-              <>
-                {/* ================= the menu (landing) ================= */}
-                <section className="hero">
-                  <div className="hero-kicker">
-                    <span className="k-label">EVERY BAR, ONE KITCHEN</span>
-                    <span className="k-label dim">EST. 2026</span>
-                  </div>
-                  <Lines className="hero-h1" lines={['WHAT’S YOUR', 'POISON?']} />
-                  <div className="hero-lower">
-                    <Reveal delay={0.35} className="hero-copy">
-                      <div className="hero-cta">
-                        <a className="btn btn-solid" href="#/bar" data-tour="landing-make">
-                          WHAT CAN I MAKE? <ArrowRight size={14} />
-                        </a>
-                        <button
-                          className="btn"
-                          data-tour="landing-browse"
-                          onClick={() => document.querySelector('#menu-list')?.scrollIntoView({ behavior: 'smooth', block: 'start' })}
-                        >
-                          BROWSE ALL DRINKS <ArrowDown size={14} />
-                        </button>
-                      </div>
-                    </Reveal>
-                    <ol className="hero-steps" aria-label="How it works" data-tour="landing-steps">
-                      <li>
-                        <span className="k-label dim">01</span>
-                        <strong>Add your ingredients</strong>
-                        <span>Type them, or snap a photo of your shelf.</span>
-                      </li>
-                      <li>
-                        <span className="k-label dim">02</span>
-                        <strong>See what you can pour</strong>
-                        <span>Real drinks you can make tonight.</span>
-                      </li>
-                      <li>
-                        <span className="k-label dim">03</span>
-                        <strong>Save it or invent one</strong>
-                        <span>Keep a menu for the night, or let the bar invent something new.</span>
-                      </li>
-                    </ol>
-                  </div>
-                  <BarTalk />
-                </section>
+            <div hidden={!landing}>
+              <LandingPage
+                active={landing}
+                onNavigate={() => { preserveLandingPositionOnNextEntry = true; }}
+              />
+            </div>
 
-                <section className="sec" id="menu-list">
+            <div hidden={route !== 'menu' || landing}>
+                <section className="sec menu-page" id="menu-list">
                   <SectionHead
                     index="01"
                     title="MENU"
@@ -885,7 +850,6 @@ export default function App() {
                     </>
                   )}
                 </section>
-              </>
             </div>
 
             <div hidden={route !== 'bar'}>
