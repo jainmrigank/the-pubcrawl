@@ -8,6 +8,7 @@
 import { readFileSync, existsSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { WELCOME_NOTIFICATION } from '../shared/push-campaign.mjs';
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
 const factsPath = join(ROOT, 'data', 'facts.json');
@@ -46,12 +47,7 @@ const AWAY = [
 ];
 
 /* 6 — welcome, once, right after they turn nudges on */
-export const WELCOME = {
-  title: "You're in.",
-  body: "Tell us what's on your shelf and we'll pour you something.",
-  url: MENU,
-  tag: 'welcome',
-};
+export const WELCOME = WELCOME_NOTIFICATION;
 
 /* daily 5pm nudge toward the question of the day */
 const DAILY_LINES = [

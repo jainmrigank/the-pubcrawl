@@ -154,3 +154,25 @@ test('AI routes fail closed when the rate-limit salt is not configured', async (
   assert.equal(generate.response.status, 503);
   assert.deepEqual(generate.body, { error: 'This feature is temporarily unavailable.' });
 });
+
+test('Worker queues the opt-in welcome only for a newly stored subscription', async () => {
+  const queued = [];
+  const queueEnv = {
+    ...env,
+    PUSH_DELIVERY_QUEUE: {
+      async send(body) { queued.push(body); },
+      async sendBatch() {},
+    },
+  };
+  const subscription = {
+    endpoint: 'https://push.example/welcome-contract',
+    keys: { auth: 'welcome-auth', p256dh: 'welcome-key' },
+  };
+  const request = { method: 'POST', body: JSON.stringify({ subscription }) };
+  assert.equal((await call('/api/push/subscribe', request, queueEnv)).response.status, 200);
+  assert.equal((await call('/api/push/subscribe', request, queueEnv)).response.status, 200);
+  assert.equal(queued.length, 1);
+  assert.equal(queued[0].kind, 'welcome');
+  assert.equal(queued[0].subscription.endpoint, subscription.endpoint);
+  assert.match(queued[0].recipientHash, /^[a-f0-9]{32}$/);
+});

@@ -5,6 +5,7 @@ import shortsData from '../data/shorts.json' with { type: 'json' };
 import { norm, queryRecipes, shelfMatchRecipes } from '../shared/catalog-engine.mjs';
 import { generateDrink, identifyIngredients } from './ai.mjs';
 import { dailyQuizQuestion, quizPlaylist } from '../shared/quiz-engine.mjs';
+import { enqueueWelcomeNotification } from './push-delivery.mjs';
 import {
   STORE_KEYS,
   appendUniqueAtomic,
@@ -405,7 +406,12 @@ async function handleApi(request, env, context) {
     try { body = await parseJsonBody(request); } catch { return json({ error: 'content-type must be application/json' }, 400, origin); }
     const subscription = body?.subscription;
     if (!subscription || typeof subscription.endpoint !== 'string' || !subscription.endpoint.startsWith('https://')) return json({ error: 'invalid subscription' }, 400, origin);
-    await upsertSubscriptionAtomic(env, SUBS_KEY, subscription, Date.now(), 500);
+    const isNew = await upsertSubscriptionAtomic(env, SUBS_KEY, subscription, Date.now(), 500);
+    if (isNew && env.PUSH_DELIVERY_QUEUE) {
+      const queueWelcome = enqueueWelcomeNotification(env, subscription).catch(() => false);
+      if (typeof context?.waitUntil === 'function') context.waitUntil(queueWelcome);
+      else await queueWelcome;
+    }
     return json({ ok: true }, 200, origin, { 'Cache-Control': 'no-store' });
   }
 

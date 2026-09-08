@@ -35,6 +35,11 @@ function clone(value) {
 }
 
 function memoryValue(key, fallback) {
+  const expiry = memoryExpiry.get(key) || 0;
+  if (expiry && expiry <= Date.now()) {
+    memory.delete(key);
+    memoryExpiry.delete(key);
+  }
   if (!memory.has(key)) memory.set(key, clone(fallback));
   return memory.get(key);
 }
@@ -52,6 +57,105 @@ export async function writeJson(env, key, value) {
   }
   await command(env, ['SET', key, JSON.stringify(value)]);
   return value;
+}
+
+/** Create a JSON value once, with a bounded lifetime. */
+export async function createJsonIfAbsent(env, key, value, ttlSeconds) {
+  const ttl = Math.max(1, Math.floor(Number(ttlSeconds) || 1));
+  if (!storeConfigured(env)) {
+    const now = Date.now();
+    const expiry = memoryExpiry.get(key) || 0;
+    if (expiry > now && memory.has(key)) return false;
+    memory.set(key, clone(value));
+    memoryExpiry.set(key, now + ttl * 1000);
+    return true;
+  }
+  const result = await command(env, ['SET', key, JSON.stringify(value), 'NX', 'EX', String(ttl)]);
+  return result === 'OK';
+}
+
+/** Store JSON with expiry without exposing provider-specific commands above the store. */
+export async function writeJsonWithExpiry(env, key, value, ttlSeconds) {
+  const ttl = Math.max(1, Math.floor(Number(ttlSeconds) || 1));
+  if (!storeConfigured(env)) {
+    memory.set(key, clone(value));
+    memoryExpiry.set(key, Date.now() + ttl * 1000);
+    return value;
+  }
+  await command(env, ['SET', key, JSON.stringify(value), 'EX', String(ttl)]);
+  return value;
+}
+
+/**
+ * Atomically claim either the first delivery attempt or the explicitly queued
+ * successor to a retryable attempt. This prevents duplicate Queue messages
+ * from making the same external submission.
+ */
+export async function claimDeliveryAttemptAtomic(env, key, attempt, value, ttlSeconds) {
+  const ttl = Math.max(1, Math.floor(Number(ttlSeconds) || 1));
+  const expectedAttempt = Math.max(0, Math.floor(Number(attempt) || 0));
+  if (!storeConfigured(env)) {
+    const current = memory.get(key);
+    const canClaim = !current
+      ? expectedAttempt === 0
+      : current.status === 'retryable' && Number(current.nextAttempt) === expectedAttempt;
+    if (!canClaim) return false;
+    memory.set(key, clone(value));
+    memoryExpiry.set(key, Date.now() + ttl * 1000);
+    return true;
+  }
+  const script = "local raw=redis.call('GET',KEYS[1]); local attempt=tonumber(ARGV[1]); if not raw then if attempt~=0 then return 0 end else local current=cjson.decode(raw); if current.status~='retryable' or tonumber(current.nextAttempt)~=attempt then return 0 end end; redis.call('SET',KEYS[1],ARGV[2],'EX',ARGV[3]); return 1";
+  return Number(await command(env, ['EVAL', script, 1, key, String(expectedAttempt), JSON.stringify(value), String(ttl)])) === 1;
+}
+
+/**
+ * Resolve a delivery left in `submitting` after the runtime disappeared.
+ * The caller chooses a cutoff longer than the outbound request timeout, so a
+ * genuinely active submission is never relabelled while it can still finish.
+ */
+export async function markStaleSubmissionUncertainAtomic(env, key, attempt, staleBefore, value, ttlSeconds) {
+  const ttl = Math.max(1, Math.floor(Number(ttlSeconds) || 1));
+  const expectedAttempt = Math.max(0, Math.floor(Number(attempt) || 0));
+  const cutoff = Number(staleBefore);
+  if (!storeConfigured(env)) {
+    const current = memoryValue(key, null);
+    const canResolve = current?.status === 'submitting'
+      && Number(current.attempt) === expectedAttempt
+      && Number(current.startedAt) <= cutoff;
+    if (!canResolve) return false;
+    memory.set(key, clone(value));
+    memoryExpiry.set(key, Date.now() + ttl * 1000);
+    return true;
+  }
+  const script = "local raw=redis.call('GET',KEYS[1]); if not raw then return 0 end; local current=cjson.decode(raw); if current.status~='submitting' or tonumber(current.attempt)~=tonumber(ARGV[1]) or tonumber(current.startedAt)>tonumber(ARGV[2]) then return 0 end; redis.call('SET',KEYS[1],ARGV[3],'EX',ARGV[4]); return 1";
+  return Number(await command(env, ['EVAL', script, 1, key, String(expectedAttempt), String(cutoff), JSON.stringify(value), String(ttl)])) === 1;
+}
+
+/** Merge campaign progress/counters without replacing a concurrently updated record. */
+export async function updateCampaignAtomic(env, key, patch = {}, increments = {}, ttlSeconds = 2592000) {
+  const ttl = Math.max(1, Math.floor(Number(ttlSeconds) || 1));
+  if (!storeConfigured(env)) {
+    const current = memoryValue(key, {});
+    for (const [name, value] of Object.entries(patch)) {
+      if (name === 'publishedCount') current[name] = Math.max(Number(current[name] || 0), Number(value || 0));
+      else if (name === 'firstProviderAcceptance' || name === 'configurationFailedAt') {
+        const before = Number(current[name]);
+        const proposed = Number(value);
+        if (current[name] == null || !Number.isFinite(before) || (Number.isFinite(proposed) && proposed < before)) current[name] = proposed;
+      }
+      else if (name === 'lastProviderAcceptance') {
+        const before = Number(current[name]);
+        const proposed = Number(value);
+        if (current[name] == null || !Number.isFinite(before) || (Number.isFinite(proposed) && proposed > before)) current[name] = proposed;
+      }
+      else current[name] = clone(value);
+    }
+    for (const [name, value] of Object.entries(increments)) current[name] = Number(current[name] || 0) + Number(value || 0);
+    memoryExpiry.set(key, Date.now() + ttl * 1000);
+    return clone(current);
+  }
+  const script = "local raw=redis.call('GET',KEYS[1]); local v={}; if raw then v=cjson.decode(raw) end; local patch=cjson.decode(ARGV[1]); for k,x in pairs(patch) do if k=='publishedCount' then v[k]=math.max(tonumber(v[k]) or 0,tonumber(x) or 0) elseif k=='firstProviderAcceptance' or k=='configurationFailedAt' then local before=tonumber(v[k]); local proposed=tonumber(x); if v[k]==nil or not before or (proposed and proposed<before) then v[k]=proposed end elseif k=='lastProviderAcceptance' then local before=tonumber(v[k]); local proposed=tonumber(x); if v[k]==nil or not before or (proposed and proposed>before) then v[k]=proposed end else v[k]=x end end; local inc=cjson.decode(ARGV[2]); for k,x in pairs(inc) do v[k]=(tonumber(v[k]) or 0)+(tonumber(x) or 0) end; redis.call('SET',KEYS[1],cjson.encode(v),'EX',ARGV[3]); return cjson.encode(v)";
+  return JSON.parse(await command(env, ['EVAL', script, 1, key, JSON.stringify(patch), JSON.stringify(increments), String(ttl)]));
 }
 
 export async function updateLikeAtomic(env, key, id, delta) {
@@ -166,4 +270,3 @@ export async function consumeWindowCounter(env, key, ttlSeconds) {
   const script = 'local n=redis.call("INCR",KEYS[1]); if n==1 then redis.call("EXPIRE",KEYS[1],ARGV[1]) end; return n';
   return Number(await command(env, ['EVAL', script, 1, key, String(ttlSeconds)])) || 0;
 }
-

@@ -18,7 +18,7 @@ import { VIBES, withVibe } from './vibes.mjs';
 import { recipePage, RecipeQueryError } from './recipe-query.mjs';
 import { chat, extractJson, llmAvailable, llmConfig } from './llm.mjs';
 import { generateFallback, generateZeroProofFallback } from './generator.mjs';
-import { buildNudge, buildDailyQuestionNudge, WELCOME } from './push.mjs';
+import { WELCOME } from './push.mjs';
 import { playlistSlice, questionOfDay, QUESTIONS } from './quiz.mjs';
 import { buildLibrary, VIDEOS } from './videos.mjs';
 import { buildShortLibrary, SHORTS } from './shorts.mjs';
@@ -702,24 +702,13 @@ Respond with JSON exactly like:
     });
   });
 
-  // fired by the schedulers: kind=nudge every couple of days, kind=daily at 5pm
+  // Retired broadcaster. Daily delivery now has one expiry-aware owner in the
+  // Cloudflare scheduled/Queue runtime; keeping a second batch sender here
+  // would make duplicate campaigns possible during a cutover or manual rerun.
   app.post('/api/push/send', async (req, res) => {
-    if (!pushReady) return res.status(503).json({ error: 'push disabled' });
     const token = req.get('x-push-secret') || req.body?.secret || '';
     if (!PUSH_SECRET || token !== PUSH_SECRET) return res.status(401).json({ error: 'unauthorized' });
-
-    const kind = String(req.query.kind || req.body?.kind || 'nudge');
-    const records = [...getSubs()];
-    let sent = 0;
-    for (const rec of records) {
-      const payload =
-        kind === 'daily'
-          ? buildDailyQuestionNudge()
-          : buildNudge(cocktails, (Date.now() - (rec.lastSeen || rec.createdAt || 0)) / 86400000);
-      if (await deliver(rec, payload)) sent++;
-    }
-    console.log(`[push] ${kind}: sent ${sent}/${records.length}`);
-    res.json({ kind, sent, total: records.length });
+    return res.status(410).json({ error: 'Legacy batch sender disabled.' });
   });
 
   return app;

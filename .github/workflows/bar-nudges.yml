@@ -1,12 +1,9 @@
-name: Bar nudges
+name: Legacy bar-nudge diagnostic
 
-# Every other day at 12:00 UTC (5:30pm IST) — the hour people start thinking
-# about a drink. GitHub's scheduler is free and drifts by a few minutes, which
-# suits a "once every couple of days" nudge just fine.
+# Production scheduling moved to the expiry-aware Cloudflare campaign. This
+# workflow remains only as a manual, no-send compatibility check.
 on:
-  schedule:
-    - cron: '0 12 */2 * *'
-  workflow_dispatch: # lets you fire one by hand to test
+  workflow_dispatch:
 
 jobs:
   nudge:
@@ -21,11 +18,5 @@ jobs:
       - name: Install push sender dependencies
         run: npm ci --ignore-scripts
 
-      - name: Send the nudge
-        env:
-          KV_REST_API_URL: ${{ secrets.KV_REST_API_URL }}
-          KV_REST_API_TOKEN: ${{ secrets.KV_REST_API_TOKEN }}
-          VAPID_PUBLIC_KEY: ${{ secrets.VAPID_PUBLIC_KEY }}
-          VAPID_PRIVATE_KEY: ${{ secrets.VAPID_PRIVATE_KEY }}
-          VAPID_SUBJECT: ${{ secrets.VAPID_SUBJECT }}
-        run: node scripts/send_push_notifications.mjs --kind regular
+      - name: Verify campaign selection without sending
+        run: node scripts/send_push_notifications.mjs --dry-run
