@@ -7,15 +7,18 @@ import { readFileSync, existsSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { LANES, movement } from './videos.mjs';
-import { recipeQueryHasPhoto, validateShort } from './shorts-schema.mjs';
+import { MAX_SHORTS, recipeQueryHasPhoto, validateShort } from './shorts-schema.mjs';
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
 const path = join(ROOT, 'data', 'shorts.json');
 const raw = existsSync(path) ? JSON.parse(readFileSync(path, 'utf8')) : { shorts: [] };
 
-export const SHORTS = (raw.shorts || [])
-  .filter((short) => validateShort(short).ok && (!short.recipeQuery || recipeQueryHasPhoto(short.recipeQuery)))
-  .slice(0, 180);
+const reviewed = (raw.shorts || [])
+  .filter((short) => validateShort(short).ok && (!short.recipeQuery || recipeQueryHasPhoto(short.recipeQuery)));
+if (reviewed.length > MAX_SHORTS) {
+  throw new Error(`Shorts catalogue has ${reviewed.length} valid entries; maximum is ${MAX_SHORTS}`);
+}
+export const SHORTS = reviewed;
 
 export function buildShortLibrary(stats = {}) {
   const shorts = SHORTS.filter((short) => !stats[short.id]?.dead).map((short) => {

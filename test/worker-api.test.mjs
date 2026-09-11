@@ -1,9 +1,17 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
-import { handleRequest } from '../worker/router.mjs';
+import { assertWorkerShortsCapacity, handleRequest } from '../worker/router.mjs';
 
 const origin = 'https://the-pubcrawl.vercel.app';
 const env = { FRONTEND_ORIGIN: origin, RATE_LIMIT_SALT: 'worker-contract-test' };
+
+test('Worker rejects a Shorts catalogue above the shared publication ceiling', () => {
+  assert.equal(assertWorkerShortsCapacity({ shorts: Array.from({ length: 300 }) }), 300);
+  assert.throws(
+    () => assertWorkerShortsCapacity({ shorts: Array.from({ length: 301 }) }),
+    /301 entries.*maximum is 300/,
+  );
+});
 
 async function call(path, options = {}, customEnv = env) {
   const headers = new Headers(options.headers || {});
@@ -41,6 +49,11 @@ test('Worker API preserves catalogue, dynamic state, CORS, AI fallback, and vali
   assert.equal(recipes.body.total, 691);
   assert.equal(recipes.response.headers.get('cache-control'), 'no-store');
   const knownId = recipes.body.recipes[0].id;
+
+  const shorts = await call('/api/shorts');
+  assert.equal(shorts.response.status, 200);
+  assert.equal(shorts.body.shorts.length, 204);
+  assert.equal(shorts.body.shorts.at(180).id, '3TSVMx-V7NY');
 
   const zeroProof = await call('/api/recipes?category=zeroproof&limit=48');
   assert.ok(zeroProof.body.recipes.length > 0);

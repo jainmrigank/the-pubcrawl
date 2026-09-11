@@ -1,7 +1,7 @@
 /** Remove dead Shorts and non-evergreen entries older than the review window. */
 import { readFileSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
-import { ROOT } from './shorts_common.mjs';
+import { MAX_CATALOGUE_ENTRIES, ROOT } from './shorts_common.mjs';
 import { evidenceFor, parseHealthReport, shortPruneReason } from './video_health_policy.mjs';
 
 const arg = (name, fallback) => (process.argv.includes(`--${name}`) ? process.argv[process.argv.indexOf(`--${name}`) + 1] : fallback);
@@ -27,8 +27,11 @@ const keepBeforeLimit = (list.shorts || []).filter((short) => {
   removed.push({ ...short, reason });
   return false;
 });
-const keep = keepBeforeLimit.slice(0, 180);
-for (const short of keepBeforeLimit.slice(180)) removed.push({ ...short, reason: 'over 180 active-entry limit' });
+const keep = keepBeforeLimit;
+if (keep.length > MAX_CATALOGUE_ENTRIES) {
+  console.error(`Refusing to silently evict reviewed Shorts: ${keep.length} remain after health pruning, above the ${MAX_CATALOGUE_ENTRIES}-entry limit.`);
+  process.exit(1);
+}
 
 /* A malformed API response or a broad outage must never erase the shelf. */
 if (removed.length > Math.max(12, (list.shorts || []).length * 0.25)) {
@@ -45,6 +48,6 @@ if (!removed.length) {
 }
 if (DRY) console.log('\n--dry: nothing written');
 else {
-  writeFileSync(SHORTS_FILE, JSON.stringify({ ...list, shorts: keep.slice(0, 180) }, null, 1) + '\n');
+  writeFileSync(SHORTS_FILE, JSON.stringify({ ...list, shorts: keep }, null, 1) + '\n');
   console.log(`\nShorts catalogue is now ${keep.length} entries.`);
 }

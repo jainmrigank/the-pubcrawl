@@ -1,11 +1,12 @@
 import { readFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { recipeQueryHasPhoto } from '../server/shorts-schema.mjs';
+import { MAX_SHORT_DURATION_SECONDS, MAX_SHORTS, recipeQueryHasPhoto } from '../server/shorts-schema.mjs';
 
 export const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
 export const H = { 'user-agent': 'PubCrawl/1.0 (personal cocktail app; https://github.com/jainmrigank/the-pubcrawl)' };
-export const MAX_DURATION_SECONDS = 180;
+export const MAX_DURATION_SECONDS = MAX_SHORT_DURATION_SECONDS;
+export const MAX_CATALOGUE_ENTRIES = MAX_SHORTS;
 export const LANES = ['craft', 'education', 'comedy', 'people'];
 export const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
@@ -15,7 +16,7 @@ export const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 export const hasPhotographedRecipe = recipeQueryHasPhoto;
 
 export const ON_TOPIC =
-  /\b(cocktails?|bartend\w*|mixolog\w*|whisk(?:e?y)|bourbon|scotch|rum|gin|vodka|tequila|mezcal|brandy|cognac|liqueurs?|drinking|drunk|alcohol|booze|spirits?|margarita|martini|mojito|negroni|daiquiri|old.fashioned|highball|hangover|tipsy|distiller\w*|sake|soju|absinthe|vermouth|aperol|campari|liquor|sommelier|speakeasy|pub|shots?|beer|wine|amaro|bitters|syrup|garnish|shaker|bar tricks?)\b/i;
+  /\b(cocktails?|bartend\w*|mixolog\w*|whisk(?:e?y)|bourbon|scotch|rum|gin|vodka|tequila|mezcal|brandy|cognac|liqueurs?|drinking|drunk|alcohol|booze|spirits?|margarita|martini|mojito|negroni|daiquiri|old.fashioned|highball|hangover|tipsy|distiller\w*|sake|soju|absinthe|vermouth|aperol|campari|liquor|sommelier|speakeasy|pub|shots?|beer|wine|amaro|bitters|syrup|garnish|shaker|bar tricks?|daaru|daru|sharaab|sharab|peg|theka)\b/i;
 
 export const OFF_TOPIC =
   /\b(coca.?cola|pepsi|energy drinks?|soft drinks?|soda taste|boba|bubble tea|protein shake|smoothie recipe|coffee recipe|kids?|teen(?:s|age)?|minor(?:s)?|school(?:boy|girl)?|college kid|prank|mukbang|weight loss|vlog|food guide|places to eat|city guide|travel guide|things to do in|street food|full movie|episode \d+|driving|chug\w*|binge\w*|healthy|health benefits?|medical|cure|pregnan\w*|shoot your shot|shooting|dangerous|stunt|can kill|don'?t try|do not try|never pay|steal)\b|\b(?:movie|film)\b.*\b(?:explained|reaction|moments|scenes?|ranked|trailer|ending)\b|the hangover|hangover part|dramatizeme|dhar mann|bollywood|underage|age.?restricted|made for kids/i;
@@ -104,12 +105,20 @@ export async function inspectShort(candidate) {
     return { ok: false, reason: error instanceof Error ? error.message : 'oembed-failed' };
   }
   const thumbnail = oembed.thumbnail_url || `https://i.ytimg.com/vi/${candidate.id}/hqdefault.jpg`;
+  const channelId = page.match(/"channelId":"(UC[\w-]{22})"/)?.[1] || candidate.channelId || '';
+  const publishedAt = page.match(/"publishDate":"([^"]+)"/)?.[1]
+    || page.match(/"uploadDate":"([^"]+)"/)?.[1]
+    || candidate.published
+    || '';
   return {
     ok: true,
     durationSeconds: duration,
     thumbnail,
     title: oembed.title || candidate.title,
     channel: oembed.author_name || candidate.channel,
+    channelId,
+    publishedAt,
+    hasSubtitles: /"captionTracks":\[/.test(page),
   };
 }
 
@@ -119,5 +128,9 @@ export function recipeQueryFor(title) {
 }
 
 export function readTrustedChannels() {
-  return JSON.parse(readFileSync(join(ROOT, 'data', 'channels.json'), 'utf8')).channels || [];
+  const derived = JSON.parse(readFileSync(join(ROOT, 'data', 'channels.json'), 'utf8')).channels || [];
+  const supplement = JSON.parse(readFileSync(join(ROOT, 'data', 'shorts-channels.json'), 'utf8')).channels || [];
+  const merged = new Map(derived.map((channel) => [channel.id, channel]));
+  for (const channel of supplement) merged.set(channel.id, { ...merged.get(channel.id), ...channel });
+  return [...merged.values()];
 }

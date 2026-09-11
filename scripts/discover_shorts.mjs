@@ -5,6 +5,7 @@
 import { readFileSync, writeFileSync, existsSync } from 'node:fs';
 import { join } from 'node:path';
 import {
+  MAX_CATALOGUE_ENTRIES,
   MAX_DURATION_SECONDS,
   ON_TOPIC,
   OFF_TOPIC,
@@ -32,6 +33,10 @@ if (!KEY) {
 }
 
 const QUERIES = [
+  ['comedy', 'Indian drinking comedy shorts Hindi'], ['comedy', 'daaru comedy shorts Hinglish'],
+  ['comedy', 'peg party friends comedy shorts India'], ['comedy', 'theka bar comedy shorts Hindi'],
+  ['education', 'Indian whisky knowledge shorts Hindi'], ['education', 'Indian cocktail bartender shorts Hinglish'],
+  ['education', 'sharaab spirits explained shorts India'], ['craft', 'Indian ingredients cocktail shorts bartender'],
   ['craft', 'cocktail technique short bartender'], ['craft', 'bar tricks cocktail short'], ['craft', 'signature cocktail short bartender'],
   ['craft', 'cocktail garnish short'], ['craft', 'home bar cocktail short'], ['craft', 'ice cocktail short bartender'],
   ['education', 'how to make classic cocktail short'], ['education', 'cocktail basics short bartender'], ['education', 'spirits explained short'],
@@ -113,7 +118,11 @@ for (const candidate of verified.sort((a, b) => Date.parse(b.published) - Date.p
 
 for (const short of additions) console.log(`  + [${short.lane}] ${short.title.slice(0, 66)} | ${short.channel}`);
 if (!additions.length) process.exit(0);
-const next = [...(list.shorts || []), ...additions].slice(-180);
+const next = [...(list.shorts || []), ...additions];
+if (next.length > MAX_CATALOGUE_ENTRIES) {
+  console.error(`Refusing to publish ${next.length} Shorts. Review additions below the ${MAX_CATALOGUE_ENTRIES}-entry limit.`);
+  process.exit(1);
+}
 next.forEach((short, index) => (short.rank = index + 1));
 if (DRY) console.log(`\n--dry: nothing written (would hold ${next.length} Shorts)`);
 else {

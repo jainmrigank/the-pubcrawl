@@ -1,0 +1,15 @@
+{
+  "_comment": "Shorts-only trusted-channel supplement. build_channels.mjs may rebuild the Watch-derived list, but it must not overwrite this reviewed supplement.",
+  "channels": [
+    {
+      "id": "UCCrmxFzA1VMf8K86OM3zfRw",
+      "name": "Cocktails INDIA",
+      "lane": "education"
+    },
+    {
+      "id": "UC5GKTkrYYNHnLjcwTAZYaMw",
+      "name": "nilgiri kashyap",
+      "lane": "education"
+    }
+  ]
+}

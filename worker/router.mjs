@@ -2,6 +2,7 @@ import catalogue from '../src/generated/client_catalog.json' with { type: 'json'
 import questionBank from '../src/generated/client_quiz.json' with { type: 'json' };
 import watchData from '../data/watchlist.json' with { type: 'json' };
 import shortsData from '../data/shorts.json' with { type: 'json' };
+import shortsPolicy from '../data/shorts-policy.json' with { type: 'json' };
 import { norm, queryRecipes, shelfMatchRecipes } from '../shared/catalog-engine.mjs';
 import { generateDrink, identifyIngredients } from './ai.mjs';
 import { dailyQuizQuestion, quizPlaylist } from '../shared/quiz-engine.mjs';
@@ -53,6 +54,17 @@ const SHORT_SESSION_FIELDS = Object.freeze([
   'videosStarted', 'advances', 'shares', 'recipeClicks',
   'autoplayFailures', 'unavailableSkips', 'bufferingEvents', 'startupMsTotal',
 ]);
+
+/** Worker imports bypass the Express schema, so enforce the same shared cap here. */
+export function assertWorkerShortsCapacity(input, max = shortsPolicy.maxEntries) {
+  const entries = Array.isArray(input?.shorts) ? input.shorts : [];
+  if (entries.length > max) {
+    throw new Error(`Shorts catalogue has ${entries.length} entries; maximum is ${max}`);
+  }
+  return entries.length;
+}
+
+assertWorkerShortsCapacity(shortsData);
 
 function corsHeaders(origin) {
   const headers = new Headers({

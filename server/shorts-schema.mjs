@@ -1,8 +1,10 @@
 import { hasRecipeImage, loadCatalog, norm } from './catalog.mjs';
+import { readFileSync } from 'node:fs';
 
 export const SHORT_LANES = ['craft', 'education', 'comedy', 'people'];
-export const MAX_SHORTS = 180;
-export const MAX_SHORT_DURATION_SECONDS = 180;
+const SHORTS_POLICY = JSON.parse(readFileSync(new URL('../data/shorts-policy.json', import.meta.url), 'utf8'));
+export const MAX_SHORTS = SHORTS_POLICY.maxEntries;
+export const MAX_SHORT_DURATION_SECONDS = SHORTS_POLICY.maxDurationSeconds;
 export const SESSION_CAP = 50;
 
 const idPattern = /^[A-Za-z0-9_-]{11}$/;
@@ -63,9 +65,11 @@ export function filterDeadShorts(shorts, stats = {}) {
   return (Array.isArray(shorts) ? shorts : []).filter((video) => !stats?.[video.id]?.dead);
 }
 
-/** Keep the newest reviewed entries without silently changing their order. */
+/** Repair ranks, but fail loudly rather than silently evicting reviewed work. */
 export function limitShorts(shorts, max = MAX_SHORTS) {
-  return (Array.isArray(shorts) ? shorts : []).slice(0, max).map((video, index) => ({ ...video, rank: index + 1 }));
+  const entries = Array.isArray(shorts) ? shorts : [];
+  if (entries.length > max) throw new Error(`Shorts catalogue has ${entries.length} entries; review it below the ${max}-entry limit before publishing`);
+  return entries.map((video, index) => ({ ...video, rank: index + 1 }));
 }
 
 const counterFields = [

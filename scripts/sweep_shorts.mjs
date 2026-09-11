@@ -11,6 +11,7 @@ import { readFileSync, writeFileSync, existsSync } from 'node:fs';
 import { join } from 'node:path';
 import {
   H,
+  MAX_CATALOGUE_ENTRIES,
   MAX_DURATION_SECONDS,
   ON_TOPIC,
   OFF_TOPIC,
@@ -27,7 +28,7 @@ import {
 const arg = (name, fallback) => (process.argv.includes(`--${name}`) ? process.argv[process.argv.indexOf(`--${name}`) + 1] : fallback);
 const DAYS = Number(arg('days', process.argv.includes('--bootstrap') ? 730 : 14));
 const PER_CHANNEL = Number(arg('perchannel', process.argv.includes('--bootstrap') ? 6 : 2));
-const MAX_ADD = Number(arg('max', process.argv.includes('--bootstrap') ? 180 : 12));
+const MAX_ADD = Number(arg('max', process.argv.includes('--bootstrap') ? MAX_CATALOGUE_ENTRIES : 12));
 const DRY = process.argv.includes('--dry');
 const SHORTS_FILE = join(ROOT, 'data', 'shorts.json');
 const list = existsSync(SHORTS_FILE) ? JSON.parse(readFileSync(SHORTS_FILE, 'utf8')) : { shorts: [] };
@@ -111,7 +112,11 @@ if (!additions.length) {
   process.exit(0);
 }
 
-const next = [...(list.shorts || []), ...additions].slice(-180);
+const next = [...(list.shorts || []), ...additions];
+if (next.length > MAX_CATALOGUE_ENTRIES) {
+  console.error(`Refusing to publish ${next.length} Shorts. Review additions below the ${MAX_CATALOGUE_ENTRIES}-entry limit.`);
+  process.exit(1);
+}
 next.forEach((short, index) => (short.rank = index + 1));
 if (DRY) {
   console.log(`\n--dry: nothing written (would hold ${next.length} Shorts)`);
