@@ -1,18 +1,18 @@
 import type { ShortVideo } from './types.ts';
+import { sampleUnique, type RandomSource } from './random.ts';
 
 export const LANDING_SHORTS_COUNT = 6;
 
-export function selectLandingShorts(shorts: readonly ShortVideo[]): ShortVideo[] {
-  const seen = new Set<string>();
-  return shorts
-    .filter((short) => {
-      if (!/^[A-Za-z0-9_-]{11}$/.test(short.id) || seen.has(short.id)) return false;
-      seen.add(short.id);
-      return true;
-    })
-    .slice()
-    .sort((a, b) => a.rank - b.rank)
-    .slice(0, LANDING_SHORTS_COUNT);
+export function selectLandingShorts(
+  shorts: readonly ShortVideo[],
+  random: RandomSource = Math.random,
+): ShortVideo[] {
+  return sampleUnique(
+    shorts.filter((short) => /^[A-Za-z0-9_-]{11}$/.test(short.id)),
+    LANDING_SHORTS_COUNT,
+    (short) => short.id,
+    random,
+  );
 }
 
 export interface Rectangle {

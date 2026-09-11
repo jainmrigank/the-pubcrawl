@@ -1,17 +1,25 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { motion, useReducedMotion } from 'framer-motion';
 import { ArrowRight, Pause, Play } from '../icons';
 import { LandingPreviewController, type LandingPreviewPhase } from '../landingPreviewController';
-import { nextEligiblePreview, previewVisibilityRatio, selectLandingShorts, type Rectangle } from '../landingPreviewPolicy';
+import { nextEligiblePreview, previewVisibilityRatio, type Rectangle } from '../landingPreviewPolicy';
 import { EASE, LOADED_HIDDEN } from '../motion';
 import { overlayGate } from '../overlayGate';
 import { createYouTubePlayer, type YouTubePlayer } from '../shortsPlayer';
-import { SHORTS_SEED, thumbnailForShort } from '../shortsData';
+import { thumbnailForShort } from '../shortsData';
 import type { ShortVideo } from '../types';
 
 interface LandingShortsPreviewProps {
   active: boolean;
-  onNavigate: () => void;
+  animateEntrance: boolean;
+  shorts: ShortVideo[];
+  visitId: string;
+}
+
+interface PreviewVisitState {
+  completed: Set<string>;
+  progress: Map<string, number>;
+  railLeft: number;
 }
 
 interface PreviewPlayerProps {
@@ -84,24 +92,26 @@ function PreviewPlayer({ short, token, controller, phase }: PreviewPlayerProps) 
     <>
       <div className="landing-short-media landing-preview-player" data-preview-player={short.id}>
         <div className="landing-preview-player-host" ref={rootRef} />
-        {!ready && <span className="landing-preview-loading k-label">LOADING..</span>}
+        {!ready && <span className="landing-preview-loading k-label">Loading…</span>}
       </div>
       {ready && phase === 'loading' && (
-        <span className="landing-preview-adjacent k-label dim" aria-hidden="true">LOADING..</span>
+        <span className="landing-preview-adjacent k-label dim" aria-hidden="true">Loading…</span>
       )}
     </>
   );
 }
 
 /** A static-first, one-player-at-a-time teaser; full Shorts stays untouched. */
-export function LandingShortsPreview({ active, onNavigate }: LandingShortsPreviewProps) {
+export function LandingShortsPreview({ active, animateEntrance, shorts, visitId }: LandingShortsPreviewProps) {
   const reducedMotion = useReducedMotion();
-  const shorts = useMemo(() => selectLandingShorts(SHORTS_SEED), []);
   const sectionRef = useRef<HTMLElement>(null);
   const railRef = useRef<HTMLDivElement>(null);
   const cardRefs = useRef(new Map<string, HTMLElement>());
   const progressRef = useRef(new Map<string, number>());
   const completedRef = useRef(new Set<string>());
+  const visitStates = useRef(new Map<string, PreviewVisitState>());
+  const visitRef = useRef(visitId);
+  const routeActiveRef = useRef(active);
   const activeIdRef = useRef<string | null>(null);
   const scrollTimerRef = useRef(0);
   const calculateFrameRef = useRef(0);
@@ -118,6 +128,7 @@ export function LandingShortsPreview({ active, onNavigate }: LandingShortsPrevie
   const systemRestricted = Boolean(reducedMotion) || dataSavingEnabled();
 
   activeIdRef.current = activeId;
+  routeActiveRef.current = active;
 
   const controllerRef = useRef<LandingPreviewController | null>(null);
   if (!controllerRef.current) {
@@ -144,6 +155,52 @@ export function LandingShortsPreview({ active, onNavigate }: LandingShortsPrevie
     });
   }
   const controller = controllerRef.current;
+
+  useLayoutEffect(() => {
+    const previousId = visitRef.current;
+    if (previousId && !visitStates.current.has(previousId)) {
+      visitStates.current.set(previousId, {
+        completed: completedRef.current,
+        progress: progressRef.current,
+        railLeft: railRef.current?.scrollLeft ?? 0,
+      });
+    }
+    if (!visitId) return;
+    if (previousId === visitId) {
+      // WebKit resets the scroll offset of an element while an ancestor is
+      // hidden. Reapply the current visit's position when Home becomes active
+      // again, without treating the return as a fresh visit.
+      if (active && railRef.current) {
+        const frame = requestAnimationFrame(() => {
+          if (routeActiveRef.current && railRef.current) {
+            const saved = visitStates.current.get(visitId)?.railLeft ?? 0;
+            railRef.current.scrollLeft = saved;
+          }
+        });
+        return () => cancelAnimationFrame(frame);
+      }
+      return;
+    }
+
+    controller.destroy();
+    const restored = visitStates.current.get(visitId) ?? {
+      completed: new Set<string>(),
+      progress: new Map<string, number>(),
+      railLeft: 0,
+    };
+    visitStates.current.set(visitId, restored);
+    completedRef.current = restored.completed;
+    progressRef.current = restored.progress;
+    visitRef.current = visitId;
+    activeIdRef.current = null;
+    setActiveId(null);
+    setEligibleIds([]);
+    setToken(0);
+    setPhase('idle');
+    requestAnimationFrame(() => {
+      if (railRef.current) railRef.current.scrollLeft = restored.railLeft;
+    });
+  }, [active, controller, visitId]);
 
   const calculateEligibility = useCallback(() => {
     const rail = railRef.current;
@@ -185,18 +242,26 @@ export function LandingShortsPreview({ active, onNavigate }: LandingShortsPrevie
   useEffect(() => {
     const section = sectionRef.current;
     if (!section) return;
+    setNearViewport(false);
     const observer = new IntersectionObserver(
       ([entry]) => setNearViewport(entry.isIntersecting),
       { rootMargin: '400px 0px' },
     );
     observer.observe(section);
     return () => observer.disconnect();
-  }, []);
+  }, [visitId]);
 
   useEffect(() => {
     const rail = railRef.current;
     if (!rail) return;
     const onRailScroll = () => {
+      // WebKit may emit a zero-offset scroll when a hidden ancestor collapses.
+      // It is not a user movement and must not overwrite the visit snapshot.
+      if (!routeActiveRef.current) return;
+      const state = visitStates.current.get(visitRef.current);
+      if (state) {
+        state.railLeft = rail.scrollLeft;
+      }
       setRailMoving(true);
       controller.suspend();
       window.clearTimeout(scrollTimerRef.current);
@@ -219,6 +284,25 @@ export function LandingShortsPreview({ active, onNavigate }: LandingShortsPrevie
       cancelAnimationFrame(calculateFrameRef.current);
     };
   }, [calculateEligibility, controller, scheduleCalculation]);
+
+  useEffect(() => {
+    const captureBeforeRouteChange = () => {
+      if (!routeActiveRef.current || !railRef.current) return;
+      const state = visitStates.current.get(visitRef.current);
+      if (state) {
+        state.railLeft = railRef.current.scrollLeft;
+      }
+    };
+    // hashchange listeners finish before React commits the newly hidden route,
+    // while capture-phase clicks cover WebKit builds that flush the parent
+    // route update before later hash listeners observe the old layout.
+    document.addEventListener('click', captureBeforeRouteChange, true);
+    window.addEventListener('hashchange', captureBeforeRouteChange);
+    return () => {
+      document.removeEventListener('click', captureBeforeRouteChange, true);
+      window.removeEventListener('hashchange', captureBeforeRouteChange);
+    };
+  }, []);
 
   useEffect(() => {
     const syncVisibility = () => setDocumentVisible(!document.hidden);
@@ -271,11 +355,13 @@ export function LandingShortsPreview({ active, onNavigate }: LandingShortsPrevie
 
   useEffect(() => {
     if (!activeId) return;
-    const nextToken = controller.activate(activeId, progressRef.current.get(activeId) || 0);
+    const visitProgress = progressRef.current;
+    const visitCompleted = completedRef.current;
+    const nextToken = controller.activate(activeId, visitProgress.get(activeId) || 0);
     setToken(nextToken);
     return () => {
       const progress = controller.deactivate();
-      if (!completedRef.current.has(activeId)) progressRef.current.set(activeId, progress);
+      if (!visitCompleted.has(activeId)) visitProgress.set(activeId, progress);
     };
   }, [activeId, controller]);
 
@@ -301,20 +387,21 @@ export function LandingShortsPreview({ active, onNavigate }: LandingShortsPrevie
     setManualPaused(true);
   };
   const previewsPaused = manualPaused || (systemRestricted && !explicitMotion);
-  const initial = reducedMotion || LOADED_HIDDEN ? false : { opacity: 0, y: 12 };
+  const initial = reducedMotion || LOADED_HIDDEN || !animateEntrance ? false : { opacity: 0, y: 8 };
 
   return (
     <motion.section
+      key={visitId}
       ref={sectionRef}
       className="landing-discovery-section"
       data-tour="landing-discovery"
       initial={initial}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: '-48px' }}
-      transition={{ duration: 0.4, ease: EASE }}
+      transition={{ duration: 0.32, ease: EASE }}
     >
       <div className="landing-section-toolbar">
-        <h2>SHORTS</h2>
+        <h2>Shorts</h2>
         <div className="landing-section-actions">
           <button
             className="landing-preview-toggle"
@@ -325,8 +412,8 @@ export function LandingShortsPreview({ active, onNavigate }: LandingShortsPrevie
           >
             {previewsPaused ? <Play size={17} /> : <Pause size={17} />}
           </button>
-          <a className="btn landing-open" href="#/shorts?src=landing" onClick={onNavigate}>
-            OPEN SHORTS <ArrowRight size={14} />
+          <a className="btn landing-open" href="#/shorts?src=landing">
+            Open Shorts <ArrowRight size={14} />
           </a>
         </div>
       </div>
@@ -350,7 +437,6 @@ export function LandingShortsPreview({ active, onNavigate }: LandingShortsPrevie
                   className="landing-preview-thumb-link"
                   href={`#/shorts?v=${encodeURIComponent(short.id)}&src=landing`}
                   aria-label={`Open ${short.title} in Shorts`}
-                  onClick={onNavigate}
                 >
                   <span className="landing-short-media">
                     <img src={thumbnailForShort(short)} alt="" loading="lazy" />
@@ -360,7 +446,6 @@ export function LandingShortsPreview({ active, onNavigate }: LandingShortsPrevie
               <a
                 className="landing-card-title"
                 href={`#/shorts?v=${encodeURIComponent(short.id)}&src=landing`}
-                onClick={onNavigate}
               >
                 {short.title}
               </a>

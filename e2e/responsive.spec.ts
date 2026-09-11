@@ -10,6 +10,7 @@ test.describe('responsive controls', () => {
     await page.setViewportSize({ width: 430, height: 932 });
     await openRoute(page, '/#/menu');
     await expect(page.locator('.category-filter-select')).toBeVisible();
+    expect(await page.locator('.category-filter-select').evaluate((element) => parseFloat(getComputedStyle(element).fontSize))).toBeGreaterThanOrEqual(16);
     await expect(page.locator('.vibe-pills')).toBeHidden();
     await expect(page.locator('.mobile-bottom-nav')).toBeVisible();
     expect((await page.locator('.mobile-theme-toggle').textContent())?.trim()).toBe('');
@@ -31,6 +32,9 @@ test.describe('responsive controls', () => {
       }));
       expect(targets.every((box) => box.width >= 44 && box.height >= 44)).toBe(true);
     }
+    await openRoute(page, '/#/watch');
+    await expect(page.locator('.wv-kind-select')).toBeVisible();
+    expect(await page.locator('.wv-kind-select').evaluate((element) => parseFloat(getComputedStyle(element).fontSize))).toBeGreaterThanOrEqual(16);
   });
 
   test('tablet keeps category pills while retaining bottom navigation', async ({ page }) => {
@@ -65,7 +69,7 @@ test.describe('responsive controls', () => {
     await page.setViewportSize({ width: 1440, height: 900 });
     await openRoute(page, '/#/watch');
     const watch = page.locator('.watch');
-    const button = page.getByRole('button', { name: 'SHOW MORE' });
+    const button = page.getByRole('button', { name: 'Show more' });
     await expect(button).toBeVisible();
     const centerDelta = async () => {
       const [containerBox, buttonBox] = await Promise.all([watch.boundingBox(), button.boundingBox()]);
@@ -87,17 +91,17 @@ test.describe('responsive controls', () => {
   test('uses concise page names while preserving the PubCrawl brand', async ({ page }) => {
     await page.setViewportSize({ width: 1440, height: 900 });
     await openRoute(page, '/#/menu');
-    await expect(page.locator('.nav-links')).toContainText('MENU');
-    await expect(page.locator('.nav-links a[href="#/bar"]')).toHaveText('SHELF');
-    await expect(page.locator('.nav-links')).toContainText('TAB');
+    await expect(page.locator('.nav-links')).toContainText('Menu');
+    await expect(page.locator('.nav-links a[href="#/bar"]')).toHaveText('Shelf');
+    await expect(page.locator('.nav-links')).toContainText('Tab');
     await expect(page.locator('.nav .wordmark')).toHaveText('The PubCrawl');
-    await expect(page.locator('#menu-list .sec-title')).toHaveText('MENU');
-    await expect(page.locator('#menu-list .sec-title')).not.toHaveText('THE MENU');
+    await expect(page.locator('#menu-list .sec-title')).toHaveText('Menu');
+    await expect(page.locator('#menu-list .sec-title')).not.toHaveText('The Menu');
 
     await openRoute(page, '/#/tab');
-    await expect(page.locator('#tab-page .sec-title')).toHaveText('TAB');
+    await expect(page.locator('#tab-page .sec-title')).toHaveText('Tab');
     await openRoute(page, '/#/quiz');
-    await expect(page.locator('.quiz-eyebrow')).toHaveText('PUB QUIZ');
+    await expect(page.locator('.quiz-eyebrow')).toHaveText('Pub Quiz');
   });
 
   test('keeps install instructions readable on the inverse banner in dark mode', async ({ page }) => {
@@ -106,7 +110,7 @@ test.describe('responsive controls', () => {
     await openRoute(page, '/#/menu');
     const banner = page.locator('.install-banner');
     await expect(banner).toBeVisible();
-    await banner.getByRole('button', { name: 'HOW TO INSTALL' }).click();
+    await banner.getByRole('button', { name: 'How to install' }).click();
     await expect(banner.locator('.ib-steps')).toBeVisible();
     const colors = await banner.evaluate((element) => {
       const style = getComputedStyle(element);

@@ -125,10 +125,10 @@ test.describe('Shorts single-player route', () => {
     await installFakeYouTube(page, { readyDelayMs: 500, startDelayMs: 1_200 });
     await seedStableDevice(page);
     await openRoute(page, '/#/shorts');
-    await expect(page.locator('.shorts-initial-status')).toHaveText('LOADING..');
+    await expect(page.locator('.shorts-initial-status')).toHaveText('Loading…');
     await expect(page.locator('.shorts-player-layer')).toHaveAttribute('data-player-ready', 'true');
     await expect(page.locator('.shorts-initial-status')).toHaveCount(0);
-    await expect(page.locator('.shorts-status')).toHaveText('LOADING..');
+    await expect(page.locator('.shorts-status')).toHaveText('Loading…');
     await expect(page.locator('.shorts-player-layer')).toHaveClass(/is-revealed/, { timeout: 4_000 });
     await expect(page.locator('.shorts-status')).toBeEmpty();
   });
@@ -168,7 +168,7 @@ test.describe('Shorts single-player route', () => {
     await setNativeSound(page, true, 68);
     await page.evaluate(() => (window as any).__PUBCRAWL_FAKE_YT__?.setRejectMutedStarts(true));
     await page.locator('.shorts-feed').evaluate(element => element.scrollTo({ top: element.clientHeight, behavior: 'instant' }));
-    await expect(page.locator('.shorts-status')).toHaveText('AUTOPLAY BLOCKED · USE THE VIDEO CONTROLS', { timeout: 3_000 });
+    await expect(page.locator('.shorts-status')).toHaveText('Autoplay blocked · Use the video controls', { timeout: 3_000 });
     await page.waitForTimeout(1_700);
     const logs = await fakeLog(page);
     expect(logs.filter((entry) => entry.method === 'playVideo').length).toBeLessThanOrEqual(3);
@@ -184,7 +184,7 @@ test.describe('Shorts single-player route', () => {
     const current = await page.locator('.shorts-card.is-active').getAttribute('data-short-id');
     const before = await fakeLog(page);
     await page.evaluate(() => (window as any).__PUBCRAWL_FAKE_YT__?.error(150));
-    await expect(page.locator('.shorts-status')).toHaveText('VIDEO UNAVAILABLE');
+    await expect(page.locator('.shorts-status')).toHaveText('Video unavailable');
     await expect(page.locator('.shorts-card.is-active')).toHaveAttribute('data-short-id', current || '');
     const after = await fakeLog(page);
     expect(after.filter((entry) => entry.method === 'construct')).toHaveLength(before.filter((entry) => entry.method === 'construct').length);
@@ -197,7 +197,7 @@ test.describe('Shorts single-player route', () => {
     await openRoute(page, '/#/shorts');
     await waitForFirstPlay(page);
     await context.setOffline(true);
-    await expect(page.locator('.shorts-status')).toContainText('OFFLINE', { timeout: 3_000 });
+    await expect(page.locator('.shorts-status')).toContainText('Offline', { timeout: 3_000 });
     await expect(page.locator('.shorts-player-host iframe')).toHaveCount(1);
 
     await context.setOffline(false);

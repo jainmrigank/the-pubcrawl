@@ -376,10 +376,10 @@ export function GuidedTour({ id, active, autoStart = true }: GuidedTourProps) {
         <h2 id={`guided-tour-${id}-title`}>{step.label}</h2>
         <p>{step.body}</p>
         <div className="guided-tour-actions">
-          <button ref={firstButtonRef} type="button" className="text-btn" onClick={() => finish('skipped')}>SKIP</button>
-          {stepIndex > 0 && <button type="button" className="text-btn" onClick={retreat}>BACK</button>}
+          <button ref={firstButtonRef} type="button" className="text-btn" onClick={() => finish('skipped')}>Skip</button>
+          {stepIndex > 0 && <button type="button" className="text-btn" onClick={retreat}>Back</button>}
           <button type="button" className="btn btn-solid" onClick={advance}>
-            {stepIndex + 1 >= steps.length ? 'DONE' : 'NEXT'}
+            {stepIndex + 1 >= steps.length ? 'Done' : 'Next'}
           </button>
         </div>
       </div>

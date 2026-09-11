@@ -98,6 +98,6 @@ test.describe('mobile shell and navigation', () => {
     await expect(page.locator('.landing-hero')).toBeVisible();
     await expect(page.locator('.landing-shorts-rail')).toBeVisible();
     await expect(page.locator('.landing-watch-rail')).toBeVisible();
-    await expect(page.getByRole('link', { name: /WHAT CAN I MAKE/ })).toBeVisible();
+    await expect(page.getByRole('link', { name: /What can I make/i })).toBeVisible();
   });
 });

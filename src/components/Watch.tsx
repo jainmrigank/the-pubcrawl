@@ -8,9 +8,9 @@ import { WATCH_BOOTSTRAP_LIBRARY } from '../watchData';
 type Tab = 'watched' | 'new' | 'surprise';
 
 const TABS: { id: Tab; label: string; note: string }[] = [
-  { id: 'watched', label: 'MOST WATCHED', note: 'The biggest of them, by views' },
-  { id: 'new', label: 'NEW & RISING', note: 'Climbing fastest, and just added' },
-  { id: 'surprise', label: 'SURPRISE ME', note: 'Three at random, no decisions' },
+  { id: 'watched', label: 'Most watched', note: 'The biggest of them, by views' },
+  { id: 'new', label: 'New & rising', note: 'Climbing fastest, and just added' },
+  { id: 'surprise', label: 'Surprise me', note: 'Three at random, no decisions' },
 ];
 
 const PAGE = 24;
@@ -85,7 +85,7 @@ function VideoCard({ v, lanes, active, autoPlay }: { v: WatchVideo; lanes: Watch
             className={`wv-share ${shared !== 'idle' ? 'said' : ''}`}
             onClick={doShare}
             aria-label={`Share ${v.title}`}
-            data-tip={shared === 'copied' ? 'COPIED!' : shared === 'failed' ? 'SHARING BLOCKED HERE' : 'SHARE THIS VIDEO'}
+            data-tip={shared === 'copied' ? 'Copied' : shared === 'failed' ? 'Sharing blocked here' : 'Share this video'}
           >
             {shared === 'copied' ? <Check size={14} /> : <Share size={14} />}
           </button>
@@ -320,9 +320,9 @@ function WatchShelf({ data, active, initialId, source }: WatchShelfProps) {
         <div className="rule" />
         <div className="sec-head-row">
           <span className="k-label sec-index">/01</span>
-          <h2 className="sec-title">WATCH</h2>
+          <h2 className="sec-title">Watch</h2>
           <span className="k-label dim sec-note">
-            {q || lane ? `${filtered.length} OF ${data.videos.length}` : `${data.videos.length} VIDEOS`}
+            {q || lane ? `${filtered.length} of ${data.videos.length}` : `${data.videos.length} videos`}
           </span>
         </div>
       </div>
@@ -343,7 +343,7 @@ function WatchShelf({ data, active, initialId, source }: WatchShelfProps) {
       </div>
 
       <div className="wv-filters">
-        <span className="k-label dim wv-filters-label">KIND</span>
+        <span className="k-label dim wv-filters-label">Kind</span>
         <select
           className="wv-kind-select"
           value={lane}
@@ -362,7 +362,7 @@ function WatchShelf({ data, active, initialId, source }: WatchShelfProps) {
             aria-pressed={lane === ''}
             onClick={() => setLane('')}
           >
-            ALL
+            All
           </button>
           {data.lanes.map((l) => (
             <button
@@ -374,7 +374,7 @@ function WatchShelf({ data, active, initialId, source }: WatchShelfProps) {
               onClick={() => setLane(lane === l.id ? '' : l.id)}
             >
               <i className="swatch" />
-              {l.label.toUpperCase()}
+              {l.label}
             </button>
           ))}
         </div>
@@ -398,7 +398,7 @@ function WatchShelf({ data, active, initialId, source }: WatchShelfProps) {
         {current.note}
         {tab === 'surprise' && (
           <button className="text-btn wv-shuffle-btn" onClick={shuffle}>
-            SHUFFLE <Shuffle size={13} />
+            Shuffle <Shuffle size={13} />
           </button>
         )}
       </p>
@@ -417,10 +417,10 @@ function WatchShelf({ data, active, initialId, source }: WatchShelfProps) {
         <div className="wv-more" data-tour="watch-more">
           <span className="wv-more-spacer" aria-hidden="true" />
           <button className="btn btn-solid" onClick={() => setShown((n) => n + PAGE)}>
-            SHOW MORE
+            Show more
           </button>
           <span className="k-label dim">
-            {list.length} OF {ordered.length}
+            {list.length} of {ordered.length}
           </span>
         </div>
       )}

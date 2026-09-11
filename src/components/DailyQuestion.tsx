@@ -127,7 +127,7 @@ export function DailyQuestion({ force = false }: { force?: boolean }) {
             transition={{ duration: 0.36, ease: EASE }}
           >
             <div className="daily-head">
-              <span className="k-label">ONE FOR THE ROAD · TODAY'S QUESTION</span>
+              <span className="k-label">One for the road · Today’s question</span>
               <button className="chip-x" onClick={close} aria-label="Close">
                 <X size={12} />
               </button>
@@ -163,17 +163,17 @@ export function DailyQuestion({ force = false }: { force?: boolean }) {
                 <p>{question.r}</p>
                 <div className="daily-actions">
                   <a className="btn btn-solid" href="#/quiz" onClick={close}>
-                    PLAY THE FULL ROUND <ArrowRight size={13} />
+                    Play the full round <ArrowRight size={13} />
                   </a>
                   <button className="text-btn" onClick={close}>
-                    BACK TO THE BAR
+                    Back to the bar
                   </button>
                 </div>
               </div>
             ) : (
               <div className="daily-skip">
                 <button className="text-btn" onClick={close}>
-                  SKIP FOR TODAY
+                  Skip for today
                 </button>
               </div>
             )}

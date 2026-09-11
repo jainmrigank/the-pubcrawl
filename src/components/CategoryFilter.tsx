@@ -31,7 +31,7 @@ export function CategoryFilter({ value, vibes, includeIndia, includeHouse, onCha
   const orderedVibes = VIBE_ORDER.map((id) => sourceVibes.find((v) => v.id === id)).filter(Boolean) as Vibe[];
   return (
     <div className="category-filter" role="group" aria-label={label}>
-      <span className="k-label dim category-filter-label">CATEGORY</span>
+      <span className="k-label dim category-filter-label">Category</span>
       <select
         className="category-filter-select"
         aria-label={label}
@@ -60,7 +60,7 @@ export function CategoryFilter({ value, vibes, includeIndia, includeHouse, onCha
           onClick={() => onChange({ kind: 'all' })}
           aria-pressed={value.kind === 'all'}
         >
-          ALL
+          All
         </button>
         {orderedVibes.map((vibe) => {
           const selected = value.kind === 'category' && value.id === vibe.id;
@@ -74,7 +74,7 @@ export function CategoryFilter({ value, vibes, includeIndia, includeHouse, onCha
               aria-pressed={selected}
             >
               <i className="swatch" />
-              {vibe.label.toUpperCase()}
+              {vibe.label}
             </button>
           );
         })}
@@ -86,7 +86,7 @@ export function CategoryFilter({ value, vibes, includeIndia, includeHouse, onCha
             onClick={() => onChange(value.kind === 'collection' && value.id === 'india' ? { kind: 'all' } : { kind: 'collection', id: 'india' })}
             aria-pressed={value.kind === 'collection' && value.id === 'india'}
           >
-            <i className="swatch" /> INDIA
+            <i className="swatch" /> India
           </button>
         )}
         {includeHouse && (
@@ -97,7 +97,7 @@ export function CategoryFilter({ value, vibes, includeIndia, includeHouse, onCha
             onClick={() => onChange(value.kind === 'collection' && value.id === 'house' ? { kind: 'all' } : { kind: 'collection', id: 'house' })}
             aria-pressed={value.kind === 'collection' && value.id === 'house'}
           >
-            <i className="swatch" /> HOUSE SPECIALS
+            <i className="swatch" /> House Specials
           </button>
         )}
       </div>

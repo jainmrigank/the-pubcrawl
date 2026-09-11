@@ -56,9 +56,9 @@ export function NudgeToggle() {
     <div className="nudge">
       <button className="text-btn" onClick={on ? disable : enable} disabled={busy}>
         {on ? (
-          <>NOTIFICATIONS ON <Check size={11} /></>
+          <>Notifications on <Check size={11} /></>
         ) : (
-          <>TURN ON NOTIFICATIONS <X size={11} style={{ opacity: 0.35 }} /></>
+          <>Turn on notifications <X size={11} style={{ opacity: 0.35 }} /></>
         )}
       </button>
       {!on && !canSubscribeHere() && (

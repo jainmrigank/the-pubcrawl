@@ -19,9 +19,9 @@ export function BarTalk() {
       <span className="bartalk-mark" aria-hidden>“</span>
       <div className="bartalk-body">
         <div className="bartalk-head">
-          <span className="k-label">BAR TALK · Nº {String(i + 1).padStart(2, '0')}</span>
+          <span className="k-label">Bar Talk · Nº {String(i + 1).padStart(2, '0')}</span>
           <button className="text-btn" onClick={another}>
-            ANOTHER ONE <Shuffle size={12} />
+            Another one <Shuffle size={12} />
           </button>
         </div>
         <p>{FACTS[i]}</p>

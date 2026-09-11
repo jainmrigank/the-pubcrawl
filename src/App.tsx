@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import { AnimatePresence, motion, MotionConfig } from 'framer-motion';
 import { fetchHealth, fetchKeptRecipes, fetchLikes, fetchRecipes, fetchVibes, generateRecipe, keepRecipe, matchRecipes, postLike } from './api';
-import type { BrowseFilter, Health, Ingredient, MatchResult, Recipe, Theme, TourId, Vibe, VibeId } from './types';
+import type { BrowseFilter, Health, Ingredient, MatchResult, Recipe, ShortVideo, Theme, TourId, Vibe, VibeId } from './types';
 import { Typeahead } from './components/Typeahead';
 import { UploadZone } from './components/UploadZone';
 import { RecipeCard } from './components/RecipeCard';
@@ -22,12 +22,14 @@ import { LandingPage } from './components/LandingPage';
 import { ShelfResults } from './components/ShelfResults';
 import { ContextualHelp } from './components/ContextualHelp';
 import { EASE, Lines, LOADED_HIDDEN, Reveal } from './motion';
-import { ArrowDown, ArrowRight, Burger, Check, Heart, PubGlyph, Share, Shuffle, SketchDefs, Sun, X } from './icons';
+import { ArrowDown, ArrowRight, Burger, Check, Heart, PubGlyph, Share, Shuffle, SketchDefs, ThemeGlyph, X } from './icons';
 import { shareContent, tabShareText } from './share';
 import { applyTheme, currentTheme, persistTheme } from './theme';
 import { loadLocalCatalogue, matchLocalRecipes, queryLocalRecipes } from './localData';
 import type { Route } from './navigation';
 import { OVERLAY_PRIORITY, overlayGate, setBackgroundInert } from './overlayGate';
+import { selectLandingShorts } from './landingPreviewPolicy';
+import { SHORTS_SEED } from './shortsData';
 import './App.css';
 
 const FALLBACK_VIBE: Vibe = { id: 'boozy', label: 'Spirit-Forward', color: '#8A5A24' };
@@ -35,13 +37,13 @@ const VIDEO_MODAL_GATE_ID = 'recipe-video';
 
 const ROUTES: Route[] = ['menu', 'bar', 'basics', 'tab', 'quiz', 'watch', 'shorts'];
 const NAV: { route: Route; label: string }[] = [
-  { route: 'menu', label: 'MENU' },
-  { route: 'bar', label: 'SHELF' },
-  { route: 'tab', label: 'TAB' },
-  { route: 'quiz', label: 'QUIZ' },
-  { route: 'shorts', label: 'SHORTS' },
-  { route: 'watch', label: 'WATCH' },
-  { route: 'basics', label: 'BAR BASICS' },
+  { route: 'menu', label: 'Menu' },
+  { route: 'bar', label: 'Shelf' },
+  { route: 'tab', label: 'Tab' },
+  { route: 'quiz', label: 'Quiz' },
+  { route: 'shorts', label: 'Shorts' },
+  { route: 'watch', label: 'Watch' },
+  { route: 'basics', label: 'Bar Basics' },
 ];
 
 /** the path part of the hash, without the query: '' | 'menu' | 'bar' | … */
@@ -95,31 +97,96 @@ function watchSource(): string {
   return hashParams().get('src') || 'direct';
 }
 
-/** the landing view and the drinks list are separate places to come back to */
-const viewKey = (route: Route, landing: boolean) => (landing ? 'landing' : route);
-let preserveLandingPositionOnNextEntry = false;
+interface HomeVisit {
+  id: string;
+  shorts: ShortVideo[];
+}
 
-function useRoute(): { route: Route; landing: boolean } {
-  const [view, setView] = useState(() => ({ route: parseRoute(), landing: isLandingView() }));
+interface RoutedView {
+  route: Route;
+  landing: boolean;
+  homeVisit: HomeVisit | null;
+}
+
+type HomeIntent = { kind: 'fresh' } | { kind: 'restore'; id: string };
+
+const HOME_HISTORY_KEY = '__pubcrawlHomeVisit';
+const randomToken = () => globalThis.crypto?.randomUUID?.() ?? `${Date.now()}-${Math.random()}`;
+
+function homeHistoryId(sessionId: string): string | null {
+  const value = window.history.state?.[HOME_HISTORY_KEY];
+  return value && value.sessionId === sessionId && typeof value.id === 'string' ? value.id : null;
+}
+
+function writeHomeHistory(sessionId: string, id: string) {
+  const state = window.history.state && typeof window.history.state === 'object' ? window.history.state : {};
+  window.history.replaceState({ ...state, [HOME_HISTORY_KEY]: { sessionId, id } }, '', window.location.href);
+}
+
+/** Home has explicit visit identity so Back can restore discovery without making it permanent history. */
+function useRoute(): RoutedView & {
+  beginFreshHome: () => boolean;
+  restoreLastHomeOnNextEntry: () => void;
+} {
+  const sessionId = useRef(randomToken());
+  const visitSerial = useRef(0);
+  const visits = useRef(new Map<string, HomeVisit>());
+  const intent = useRef<HomeIntent | null>(null);
+  const lastHomeId = useRef<string | null>(null);
   const positions = useRef<Record<string, number>>({});
 
+  const createVisit = useCallback((id = `${sessionId.current}:${++visitSerial.current}`): HomeVisit => {
+    const existing = visits.current.get(id);
+    if (existing) return existing;
+    const visit = { id, shorts: selectLandingShorts(SHORTS_SEED) };
+    visits.current.set(id, visit);
+    return visit;
+  }, []);
+
+  const [view, setView] = useState<RoutedView>(() => {
+    const landing = isLandingView();
+    const homeVisit = landing ? createVisit() : null;
+    if (homeVisit) lastHomeId.current = homeVisit.id;
+    return { route: parseRoute(), landing, homeVisit };
+  });
+  const viewRef = useRef(view);
+  viewRef.current = view;
+
+  const keyFor = useCallback((value: RoutedView) => value.landing && value.homeVisit
+    ? `landing:${value.homeVisit.id}`
+    : value.route, []);
+
+  const commitView = useCallback((next: RoutedView) => {
+    viewRef.current = next;
+    if (next.homeVisit) lastHomeId.current = next.homeVisit.id;
+    setView(next);
+  }, []);
+
   useEffect(() => {
-    let current = viewKey(parseRoute(), isLandingView());
     const onChange = () => {
-      // remember where the user left each view
-      positions.current[current] = window.scrollY;
+      positions.current[keyFor(viewRef.current)] = window.scrollY;
       const route = parseRoute();
       const landing = isLandingView();
-      current = viewKey(route, landing);
-      // the wordmark means "take me home", so always open at the top
+      let homeVisit: HomeVisit | null = null;
       if (landing) {
-        if (!preserveLandingPositionOnNextEntry) delete positions.current.landing;
-        preserveLandingPositionOnNextEntry = false;
+        const requested = intent.current;
+        const remembered = requested?.kind === 'restore'
+          ? requested.id
+          : requested?.kind === 'fresh'
+            ? null
+            : homeHistoryId(sessionId.current);
+        homeVisit = createVisit(remembered ?? undefined);
+        writeHomeHistory(sessionId.current, homeVisit.id);
       }
-      setView({ route, landing });
+      intent.current = null;
+      commitView({ route, landing, homeVisit });
     };
     window.addEventListener('hashchange', onChange);
     return () => window.removeEventListener('hashchange', onChange);
+  }, [commitView, createVisit, keyFor]);
+
+  useLayoutEffect(() => {
+    if (view.landing && view.homeVisit) writeHomeHistory(sessionId.current, view.homeVisit.id);
   }, []);
 
   // restore synchronously after the new page renders and before paint — racing
@@ -129,19 +196,36 @@ function useRoute(): { route: Route; landing: boolean } {
     // a deep link to a drink (#/menu?q=…) is an explicit request, so it wins
     // over wherever this view was last left
     const deepLink = hashQuery() !== '';
-    const remembered = deepLink ? null : positions.current[viewKey(view.route, view.landing)];
+    const remembered = deepLink ? null : positions.current[keyFor(view)];
     if (remembered != null) {
       window.scrollTo({ top: remembered, behavior: 'instant' as ScrollBehavior });
       return;
     }
     window.scrollTo({ top: 0, behavior: 'instant' as ScrollBehavior });
-  }, [view]);
+  }, [keyFor, view]);
 
-  return view;
+  const beginFreshHome = useCallback(() => {
+    intent.current = { kind: 'fresh' };
+    if (!viewRef.current.landing) return false;
+    positions.current[keyFor(viewRef.current)] = window.scrollY;
+    const homeVisit = createVisit();
+    writeHomeHistory(sessionId.current, homeVisit.id);
+    intent.current = null;
+    commitView({ route: 'menu', landing: true, homeVisit });
+    return true;
+  }, [commitView, createVisit, keyFor]);
+
+  const restoreLastHomeOnNextEntry = useCallback(() => {
+    intent.current = lastHomeId.current ? { kind: 'restore', id: lastHomeId.current } : { kind: 'fresh' };
+  }, []);
+
+  return { ...view, beginFreshHome, restoreLastHomeOnNextEntry };
 }
 
 export default function App() {
-  const { route, landing } = useRoute();
+  const { route, landing, homeVisit, beginFreshHome, restoreLastHomeOnNextEntry } = useRoute();
+  const retainedHomeVisit = useRef<HomeVisit | null>(homeVisit);
+  if (homeVisit) retainedHomeVisit.current = homeVisit;
   const shortsActive = route === 'shorts';
   const lastNonShortsHash = useRef('#/');
   const [vibes, setVibes] = useState<Vibe[]>([]);
@@ -311,12 +395,9 @@ export default function App() {
 
   const leaveShorts = useCallback(() => {
     const target = lastNonShortsHash.current || '#/';
-    // A bare-hash landing navigation normally means the wordmark and opens at
-    // the top. BACK is different: keep the landing position remembered by the
-    // route hook for this one transition.
-    preserveLandingPositionOnNextEntry = target === '#/' || target === '#' || target === '';
+    if (target === '#/' || target === '#' || target === '') restoreLastHomeOnNextEntry();
     window.location.hash = target;
-  }, []);
+  }, [restoreLastHomeOnNextEntry]);
 
   useEffect(() => {
     try {
@@ -621,11 +702,11 @@ export default function App() {
     setInventMood(value.kind === 'all' ? '' : value.id);
   }, []);
   const browseContext = browseFilter.kind === 'category'
-    ? vibes.find((v) => v.id === browseFilter.id)?.label.toUpperCase()
+    ? vibes.find((v) => v.id === browseFilter.id)?.label
     : browseFilter.kind === 'collection'
-      ? browseFilter.id === 'india' ? 'INDIA' : 'HOUSE SPECIALS'
-      : loved ? 'MOST LOVED' : browseQ ? `“${browseQ.toUpperCase()}”` : '';
-  const browseNote = `SHOWING ${featured.length} OF ${browseTotal}${browseContext ? ` · ${browseContext}` : ''}`;
+      ? browseFilter.id === 'india' ? 'India' : 'House Specials'
+      : loved ? 'Most loved' : browseQ ? `“${browseQ}”` : '';
+  const browseNote = `Showing ${featured.length} of ${browseTotal}${browseContext ? ` · ${browseContext}` : ''}`;
 
   const card = (r: Recipe, i: number, removeMode = false, tourActions?: string) => (
     <RecipeCard
@@ -647,7 +728,7 @@ export default function App() {
 
   return (
     <MotionConfig reducedMotion="user">
-      <div className={`site ${shortsActive ? 'shorts-active' : ''}`}>
+      <div className={`site ${shortsActive ? 'shorts-active' : ''} ${landing ? 'landing-active' : ''}`}>
         <SketchDefs />
         {!shortsActive && <DailyQuestion force={dailyForced} />}
         {!shortsActive && <InstallBanner />}
@@ -666,9 +747,8 @@ export default function App() {
           <a
             className="brand"
             href="#/"
-            onClick={() => {
-              preserveLandingPositionOnNextEntry = false;
-              if (landing) window.scrollTo({ top: 0, behavior: 'instant' as ScrollBehavior });
+            onClick={(event) => {
+              if (beginFreshHome()) event.preventDefault();
             }}
           >
             <PubGlyph size={30} />
@@ -696,14 +776,14 @@ export default function App() {
             title={theme === 'dark' ? 'Switch to light theme' : 'Switch to dark theme'}
             data-tip={theme === 'dark' ? 'Switch to light theme' : 'Switch to dark theme'}
           >
-            <Sun size={20} />
+            <ThemeGlyph theme={theme} size={20} />
           </button>
           <ContextualHelp tour={helpTour} className="desktop-help-action" />
           <span className="nav-status k-label dim">
-            {health ? `${health.cocktails} DRINKS ON TAP` : '…'}
+            {health ? `${health.cocktails} drinks on tap` : '…'}
           </span>
           <a className="nav-make k-label" href="#/bar">
-            WHAT CAN I MAKE?
+            What can I make?
           </a>
           <button className="nav-menu-btn" onClick={() => setMenuOpen(true)} aria-label="Open menu">
             <Burger size={22} />
@@ -733,7 +813,7 @@ export default function App() {
                   <span className="wordmark">The PubCrawl</span>
                 </span>
                 <button className="text-btn" onClick={() => setMenuOpen(false)} aria-label="Close menu">
-                  CLOSE <X size={12} />
+                  Close <X size={12} />
                 </button>
               </div>
               <nav className="drawer-links" aria-label="Pages">
@@ -752,7 +832,7 @@ export default function App() {
                   </motion.a>
                 ))}
               </nav>
-              <p className="k-label dim drawer-foot">EVERY BAR, ONE KITCHEN.</p>
+              <p className="k-label dim drawer-foot">Every bar, one kitchen</p>
             </motion.div>
           )}
         </AnimatePresence>
@@ -765,7 +845,8 @@ export default function App() {
             <div hidden={!landing}>
               <LandingPage
                 active={landing}
-                onNavigate={() => { preserveLandingPositionOnNextEntry = true; }}
+                visitId={retainedHomeVisit.current?.id ?? ''}
+                shorts={retainedHomeVisit.current?.shorts ?? []}
               />
             </div>
 
@@ -773,7 +854,7 @@ export default function App() {
                 <section className="sec menu-page" id="menu-list">
                   <SectionHead
                     index="01"
-                    title="MENU"
+                    title="Menu"
                     note={browseNote}
                     loading={browseLoading}
                   />
@@ -781,7 +862,7 @@ export default function App() {
                     <input
                       value={browseQ}
                       onChange={(e) => setBrowseQ(e.target.value)}
-                      placeholder="SEARCH… PICANTE, REGIONAL, TIER 1, COUPE"
+                      placeholder="Search… Picante, regional, Tier 1, coupe"
                       aria-label="Search menu by name, ingredient, lane, access tier, glass, place, mood or method"
                     />
                   </div>
@@ -803,30 +884,30 @@ export default function App() {
                         }}
                         aria-pressed={loved}
                       >
-                        MOST LOVED <Heart size={12} />
+                        Most loved <Heart size={12} />
                       </button>
                       <button className="text-btn" onClick={surpriseMe}>
-                        SURPRISE ME <Shuffle size={13} />
+                        Surprise me <Shuffle size={13} />
                       </button>
                     </div>
                   </div>
                   {featured.length === 0 && browseLoading ? (
                     <div className="empty">
-                      <p className="empty-big">OPENING THE BAR…</p>
-                      <p className="k-label dim">LOADING THE LOCAL MENU…</p>
+                      <p className="empty-big">Opening the bar…</p>
+                      <p className="k-label dim">Loading the local menu…</p>
                     </div>
                   ) : featured.length === 0 && browseError ? (
                     <div className="empty">
-                      <p className="empty-big">THE BAR’S STILL WAKING UP.</p>
-                      <p className="k-label dim">GIVE IT A MOMENT, THEN KNOCK AGAIN.</p>
+                      <p className="empty-big">The bar’s still waking up</p>
+                      <p className="k-label dim">Give it a moment, then knock again</p>
                       <button className="btn empty-retry" onClick={() => setBrowseSeed(String(Math.random()))}>
-                        KNOCK AGAIN <ArrowRight size={14} />
+                        Knock again <ArrowRight size={14} />
                       </button>
                     </div>
                   ) : featured.length === 0 && !browseLoading ? (
                     <div className="empty">
-                      <p className="empty-big">NOTHING BY THAT NAME.</p>
-                      <p className="k-label dim">TRY “REGIONAL”, “TIER 1”, “HIGHBALL” OR “RUM”, OR CLEAR THE MOOD FILTER.</p>
+                      <p className="empty-big">Nothing by that name</p>
+                      <p className="k-label dim">Try “regional”, “Tier 1”, “highball” or “rum”, or clear the mood filter</p>
                     </div>
                   ) : (
                     <>
@@ -836,14 +917,14 @@ export default function App() {
                       {moreLeft && !browseLoading && (
                         <div className="more-row">
                           <button className="btn" onClick={loadMore} disabled={browseAppending}>
-                            {browseAppending ? 'LOADING…' : browseAppendError ? 'RETRY' : 'SHOW MORE'} {!browseAppending && <ArrowDown size={14} />}
+                            {browseAppending ? 'Loading…' : browseAppendError ? 'Retry' : 'Show more'} {!browseAppending && <ArrowDown size={14} />}
                           </button>
                           <span className="k-label dim">
-                            {browse.length} OF {browseTotal} ON SHOW
+                            {browse.length} of {browseTotal} on show
                           </span>
-                          {browseAppendError && <span className="k-label err-inline" role="status">LOAD FAILED — TRY AGAIN</span>}
+                          {browseAppendError && <span className="k-label err-inline" role="status">Load failed — try again</span>}
                           <button className="text-btn" onClick={surpriseMe}>
-                            OR SURPRISE ME <Shuffle size={12} />
+                            Or surprise me <Shuffle size={12} />
                           </button>
                         </div>
                       )}
@@ -858,16 +939,16 @@ export default function App() {
                 <section className="sec page-top" id="shelf">
                   <SectionHead
                     index="01"
-                    title="SHELF"
+                    title="Shelf"
                     note=""
                   />
                   <div className="shelf-grid" data-tour="shelf-entry">
                     <div className="shelf-col">
-                      <span className="k-label field-label">WHAT HAVE YOU GOT?</span>
+                      <span className="k-label field-label">What have you got?</span>
                       <Typeahead onAdd={addIngredient} />
                     </div>
                     <div className="shelf-col">
-                      <span className="k-label field-label">OR SHOW US</span>
+                      <span className="k-label field-label">Or show us</span>
                       <UploadZone onAdd={addIngredient} onAddAll={addAll} pantry={pantry} />
                     </div>
                   </div>
@@ -875,9 +956,9 @@ export default function App() {
                   {hasPantry && (
                     <div className="pantry">
                       <div className="pantry-head">
-                        <span className="k-label">ON THE SHELF: {String(pantry.length).padStart(2, '0')}</span>
+                        <span className="k-label">On the shelf: {String(pantry.length).padStart(2, '0')}</span>
                         <button className="text-btn" onClick={() => setPantry([])}>
-                          CLEAR ALL <X size={11} />
+                          Clear all <X size={11} />
                         </button>
                       </div>
                       <div className="chip-row">
@@ -898,8 +979,8 @@ export default function App() {
                 {hasPantry && <section className="sec" id="pour" aria-busy={matching}>
                   <SectionHead
                     index="02"
-                    title="DRINKS FOR YOUR SHELF"
-                    note={`${barResults.length} MATCHES`}
+                    title="Drinks for your Shelf"
+                    note={`${barResults.length} matches`}
                     loading={matching}
                   />
                   <div className="shelf-results-head">
@@ -910,7 +991,7 @@ export default function App() {
                       onClick={invent}
                       disabled={generating}
                     >
-                      {generating ? 'INVENTING…' : 'INVENT A DRINK'} <ArrowRight size={14} />
+                      {generating ? 'Inventing…' : 'Invent a drink'} <ArrowRight size={14} />
                     </button>
                   </div>
                   {genError && <p className="err" role="alert">{genError}</p>}
@@ -922,7 +1003,7 @@ export default function App() {
                         aria-controls="bar-result-filters"
                         onClick={() => setBarFiltersExpanded((expanded) => !expanded)}
                       >
-                        {barFiltersExpanded ? 'HIDE FILTERS' : 'FILTER RESULTS'} <ArrowDown size={12} />
+                        {barFiltersExpanded ? 'Hide filters' : 'Filter results'} <ArrowDown size={12} />
                       </button>
                       {barFiltersExpanded && (
                         <div id="bar-result-filters" className="shelf-filters" role="region" aria-label="Filter shelf results">
@@ -940,7 +1021,7 @@ export default function App() {
                             <input
                               value={barQ}
                               onChange={(e) => setBarQ(e.target.value)}
-                              placeholder="SEARCH YOUR SHELF… HIGHBALL, TIER 1, REGIONAL"
+                              placeholder="Search your Shelf… highball, Tier 1, regional"
                               aria-label="Search matched drinks by name, ingredient, lane, access, glass or style"
                             />
                           </div>
@@ -957,7 +1038,7 @@ export default function App() {
                       ) : (
                         !matching && (
                           <div className="shelf-no-matches" role="status">
-                            <p className="k-label">NO MATCHES</p>
+                            <p className="k-label">No matches</p>
                             <p>Add another ingredient or change your filters</p>
                           </div>
                         )
@@ -969,7 +1050,7 @@ export default function App() {
 
             <div hidden={route !== 'basics'}>
               <section className="sec page-top" id="basics">
-                <SectionHead index="01" title="BAR BASICS" note="EVERYTHING WORTH KNOWING, NO SNOBBERY" />
+                <SectionHead index="01" title="Bar Basics" note="Everything worth knowing, no snobbery" />
                 <BarTalk />
                 <Reveal>
                   <Knowledge />
@@ -981,8 +1062,8 @@ export default function App() {
               <section className="sec page-top" id="quiz-page">
                 <SectionHead
                   index="01"
-                  title="PUB QUIZ"
-                  note="ONE POINT A CORRECT ANSWER"
+                  title="Pub Quiz"
+                  note="One point a correct answer"
                 />
                 {route === 'quiz' && <Quiz />}
               </section>
@@ -1005,23 +1086,23 @@ export default function App() {
               <section className="sec page-top" id="tab-page">
                 <SectionHead
                   index="01"
-                  title="TAB"
-                  note={tab.length ? `${tab.length} ON YOUR TAB TONIGHT` : 'YOUR MENU FOR THE NIGHT'}
+                  title="Tab"
+                  note={tab.length ? `${tab.length} on your Tab tonight` : 'Your menu for the night'}
                 />
                 <BarTalk />
                 <div data-tour="tab-lineup">
                 {tab.length === 0 ? (
                   <div className="empty">
-                    <p className="empty-big">NOTHING ON THE TAB YET.</p>
+                    <p className="empty-big">Nothing on the Tab yet</p>
                     <p className="k-label dim">
-                      TAP THE + ON ANY DRINK CARD TO START TONIGHT’S LINEUP.{' '}
-                      <a className="empty-link" href="#/menu">BROWSE THE MENU</a>
+                      Tap the + on any drink card to start tonight’s lineup.{' '}
+                      <a className="empty-link" href="#/menu">Browse the Menu</a>
                     </p>
                   </div>
                 ) : (
                   <>
                     <div className="tab-head">
-                      <span className="k-label dim">SAVED ON THIS DEVICE. IT KEEPS BETWEEN VISITS.</span>
+                      <span className="k-label dim">Saved on this device. It keeps between visits.</span>
                       <div className="tab-head-actions" data-tour="tab-actions">
                         <button
                           className="text-btn"
@@ -1034,13 +1115,13 @@ export default function App() {
                           }}
                         >
                           {tabShared ? (
-                            <>COPIED <Check size={11} /></>
+                            <>Copied <Check size={11} /></>
                           ) : (
-                            <>SHARE THE TAB <Share size={11} /></>
+                            <>Share the Tab <Share size={11} /></>
                           )}
                         </button>
                         <button className="text-btn" onClick={() => setTab([])}>
-                          CLEAR THE TAB <X size={11} />
+                          Clear the Tab <X size={11} />
                         </button>
                       </div>
                     </div>
@@ -1055,14 +1136,14 @@ export default function App() {
         {/* ================= footer ================= */}
         {!shortsActive && (
           <footer className="foot">
-            <Lines as="p" className="foot-big" lines={['POUR SOMETHING', 'PROPER.']} stagger={0.08} />
+            <Lines as="p" className="foot-big" lines={['Pour something', 'proper']} stagger={0.08} />
             <div className="foot-nudge">
               <NudgeToggle />
             </div>
             <div className="foot-meta">
-              <span className="k-label">RECIPES FROM THECOCKTAILDB</span>
-              <span className="k-label">HOUSE SPECIALS MAY BE ORIGINAL OR ROBOT-MADE. TASTE BEFORE SERVING.</span>
-              <span className="k-label">THE PUBCRAWL © 2026</span>
+              <span className="k-label">Recipes from TheCocktailDB</span>
+              <span className="k-label">House Specials may be original or robot-made. Taste before serving.</span>
+              <span className="k-label">The PubCrawl © 2026</span>
             </div>
           </footer>
         )}
@@ -1117,7 +1198,7 @@ function SectionHead({
 function VideoModal({ recipe, onClose }: { recipe: Recipe; onClose: () => void }) {
   const id = recipe.video.match(/(?:v=|youtu\.be\/|embed\/)([\w-]{11})/)?.[1];
   const src = id ? `https://www.youtube.com/embed/${id}?autoplay=1` : '';
-  const videoLabel = 'WATCH IT MADE';
+  const videoLabel = 'Watch it made';
   const dialogRef = useRef<HTMLDivElement>(null);
   const closeRef = useRef<HTMLButtonElement>(null);
   useEffect(() => {
@@ -1162,9 +1243,9 @@ function VideoModal({ recipe, onClose }: { recipe: Recipe; onClose: () => void }
         transition={{ duration: 0.34, ease: EASE }}
       >
         <div className="modal-head">
-          <span className="k-label">{videoLabel}: {recipe.name.toUpperCase()}</span>
+          <span className="k-label">{videoLabel}: {recipe.name}</span>
           <button ref={closeRef} className="text-btn" onClick={onClose}>
-            CLOSE <X size={12} />
+            Close <X size={12} />
           </button>
         </div>
         {src ? (
@@ -1175,7 +1256,7 @@ function VideoModal({ recipe, onClose }: { recipe: Recipe; onClose: () => void }
             allowFullScreen
           />
         ) : (
-          <div className="modal-empty" role="status">NO VERIFIED VIDEO AVAILABLE.</div>
+          <div className="modal-empty" role="status">No verified video available</div>
         )}
       </motion.div>
     </motion.div>

@@ -43,6 +43,23 @@ export const Sun = (props: P) => <S {...props} data-icon="sun">
   <path d="M12 2v1.5M12 20.5V22M2 12h1.5M20.5 12H22M4.93 4.93 6 6M18 18l1.07 1.07M4.93 19.07 6 18M18 6l1.07-1.07" strokeWidth="2.8" />
 </S>;
 
+export const Moon = (props: P) => <S {...props} data-icon="moon">
+  <path
+    d="M19.4 15.4A8.3 8.3 0 0 1 8.6 4.6 8.5 8.5 0 1 0 19.4 15.4Z"
+    fill="currentColor"
+    stroke="none"
+  />
+</S>;
+
+export function ThemeGlyph({ theme, size = 20 }: { theme: 'light' | 'dark'; size?: number }) {
+  return (
+    <span className="theme-glyph" style={{ width: size, height: size }} aria-hidden="true">
+      <Sun size={size} className={theme === 'dark' ? 'is-visible' : ''} />
+      <Moon size={size} className={theme === 'light' ? 'is-visible' : ''} />
+    </span>
+  );
+}
+
 export const BookmarkBook = (props: P) => <S {...props} data-icon="bookmark-book">
   <path d="M5 3h15v18H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2ZM3 18h17M7 3v15" />
   <path d="M12 3v9l2.5-2 2.5 2V3" />

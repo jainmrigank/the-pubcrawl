@@ -84,7 +84,7 @@ export function Typeahead({ onAdd }: Props) {
           onChange={(e) => setQ(e.target.value)}
           onKeyDown={onKey}
           onFocus={() => q.trim() && setOpen(true)}
-          placeholder="GIN, MINT, WHATEVER YOU'VE GOT…"
+          placeholder="Gin, mint, whatever you’ve got…"
           aria-label="Search ingredients"
         />
       </div>
@@ -119,7 +119,7 @@ export function Typeahead({ onAdd }: Props) {
               }}
             >
               <Plus size={14} />
-              <span className="ta-name">ADD “{q.trim().toUpperCase()}” ANYWAY</span>
+              <span className="ta-name">Add “{q.trim()}” anyway</span>
             </li>
           )}
         </ul>

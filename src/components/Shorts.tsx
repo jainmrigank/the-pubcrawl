@@ -3,26 +3,19 @@ import { fetchShorts, postShortSession } from '../api';
 import { ArrowLeft, Share } from '../icons';
 import { shareContent, shortShareText } from '../share';
 import { SHORTS_SEED } from '../shortsData';
+import { createShortsVisitOrder } from '../shortsVisit';
 import type { ShortsSnapshot } from '../shortsController';
+import type { ShortVideo } from '../types';
 import { ShortPlayerHost, type ShortPlayerHostHandle } from './shorts/ShortPlayerHost';
 
 export interface ShortsProps { active: boolean; initialId?: string; source?: string; onBack: () => void }
-
-function visitOrder() {
-  const list = [...SHORTS_SEED];
-  for (let i = list.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [list[i], list[j]] = [list[j], list[i]];
-  }
-  return list;
-}
 
 const emptyMetrics = () => ({ videosStarted: 0, advances: 0, shares: 0, recipeClicks: 0,
   autoplayFailures: 0, unavailableSkips: 0, bufferingEvents: 0, startupMsTotal: 0 });
 
 /** Native scrolling owns movement; one persistent player owns media. */
 export function Shorts({ active, initialId, source = 'direct', onBack }: ShortsProps) {
-  const [shorts, setShorts] = useState(visitOrder);
+  const [shorts, setShorts] = useState<ShortVideo[]>(() => [...SHORTS_SEED]);
   const [selected, setSelected] = useState(0);
   const [ready, setReady] = useState(false);
   const [height, setHeight] = useState(0);
@@ -44,6 +37,7 @@ export function Shorts({ active, initialId, source = 'direct', onBack }: ShortsP
   catalogueRef.current = shorts;
   const handledLink = useRef(initialId);
   const mountedEpoch = useRef(0);
+  const enrichment = useRef(new Map<string, ShortVideo>());
   const selectedShort = shorts[selected];
   const selection = useMemo(() => ({ videoId: selectedShort.id, index: selected }), [selectedShort.id, selected]);
   const queue = useMemo(() => shorts.slice(Math.max(0, selected - 5), selected + 6), [shorts, selected]);
@@ -62,6 +56,7 @@ export function Shorts({ active, initialId, source = 'direct', onBack }: ShortsP
     void fetchShorts().then((library) => {
       if (cancelled) return;
       const metadata = new Map(library.shorts.map((short) => [short.id, short]));
+      enrichment.current = metadata;
       // Enrich existing slots only. Never shift the selected video's index or
       // reshuffle a visit while a remote response arrives.
       setShorts((list) => list.map((short) => metadata.get(short.id) ?? short));
@@ -81,12 +76,15 @@ export function Shorts({ active, initialId, source = 'direct', onBack }: ShortsP
     handledLink.current = initialId;
     sent.current = false;
     metrics.current = emptyMetrics();
-    const requested = shorts.findIndex((short) => short.id === initialId);
-    indexRef.current = Math.max(0, requested);
-    setSelected(indexRef.current);
+    const order = createShortsVisitOrder(SHORTS_SEED, initialId)
+      .map((short) => enrichment.current.get(short.id) ?? short);
+    catalogueRef.current = order;
+    indexRef.current = 0;
+    setShorts(order);
+    setSelected(0);
     setSnapshot(null);
     setReady(true);
-  }, [active, initialId, shorts, flush]);
+  }, [active, initialId, flush]);
 
   useEffect(() => {
     const epoch = ++mountedEpoch.current;
@@ -211,16 +209,16 @@ export function Shorts({ active, initialId, source = 'direct', onBack }: ShortsP
   const share = async () => {
     const result = await shareContent(selectedShort.title, shortShareText(selectedShort.title, selectedShort.channel, selectedShort.id));
     if (result === 'shared' || result === 'copied') metrics.current.shares += 1;
-    setShareStatus(result === 'copied' ? 'LINK COPIED' : result === 'failed' ? 'SHARE FAILED' : '');
+    setShareStatus(result === 'copied' ? 'Link copied' : result === 'failed' ? 'Share failed' : '');
     if (shareTimer.current) clearTimeout(shareTimer.current);
     shareTimer.current = setTimeout(() => setShareStatus(''), 1800);
   };
 
   if (!active) return null;
-  const status = snapshot?.phase === 'offline' ? 'OFFLINE · RECONNECT TO PLAY'
-    : snapshot?.phase === 'blocked' ? 'AUTOPLAY BLOCKED · USE THE VIDEO CONTROLS'
-      : snapshot?.phase === 'error' ? 'VIDEO UNAVAILABLE'
-        : snapshot && ['loading', 'buffering', 'initializing'].includes(snapshot.phase) ? 'LOADING..' : '';
+  const status = snapshot?.phase === 'offline' ? 'Offline · Reconnect to play'
+    : snapshot?.phase === 'blocked' ? 'Autoplay blocked · Use the video controls'
+      : snapshot?.phase === 'error' ? 'Video unavailable'
+        : snapshot && ['loading', 'buffering', 'initializing'].includes(snapshot.phase) ? 'Loading…' : '';
   const mediaWidth = Math.max(200, Math.floor(height * 9 / 16));
 
   return (
@@ -239,7 +237,7 @@ export function Shorts({ active, initialId, source = 'direct', onBack }: ShortsP
             <article key={short.id} className={`shorts-card ${selected === index ? 'is-active' : ''}`}
               style={{ height: height || '100%' }} data-short-index={index} data-short-id={short.id}
               aria-hidden={index !== selected} aria-label={index === selected ? `Short ${index + 1}` : undefined}>
-              {index !== selected && Math.abs(index - selected) <= 5 && <span className="shorts-card-loading" aria-hidden="true">LOADING..</span>}
+              {index !== selected && Math.abs(index - selected) <= 5 && <span className="shorts-card-loading" aria-hidden="true">Loading…</span>}
             </article>
           ))}
           <div ref={floating} className="shorts-player-frame" style={{ top: selected * height, height: height || '100%' }}

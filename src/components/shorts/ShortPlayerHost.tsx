@@ -99,7 +99,7 @@ export const ShortPlayerHost = forwardRef<ShortPlayerHostHandle, Props>(function
       data-sound-acknowledged={snapshot?.soundAcknowledged ? 'true' : 'false'}>
       <div className="shorts-player-host" ref={container} />
       {!snapshot?.ready && <div className="shorts-initial-status" role="status">
-        {failed ? 'VIDEO COULD NOT LOAD · RECONNECT AND REOPEN SHORTS' : 'LOADING..'}
+        {failed ? 'Video could not load · Reconnect and reopen Shorts' : 'Loading…'}
       </div>}
     </div>
   );

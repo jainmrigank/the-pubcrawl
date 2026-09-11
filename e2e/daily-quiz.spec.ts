@@ -23,7 +23,7 @@ test.describe('Daily Question and Quiz', () => {
   test('keeps unanswered quiz options neutral and exposes keyboard focus', async ({ page }) => {
     await seedStableDevice(page);
     await openRoute(page, '/#/quiz');
-    await page.getByRole('button', { name: /START THE ROUND/ }).click();
+    await page.getByRole('button', { name: /Start the round/i }).click();
     const options = page.locator('.quiz-card .quiz-opt');
     await expect(options.first()).toBeVisible();
     const classes = await options.evaluateAll((elements) => elements.map((element) => element.className));

@@ -49,8 +49,8 @@ export const WATCH_BOOTSTRAP_LIBRARY: WatchLibrary = {
 };
 
 export const watchLaneLabel: Record<string, string> = {
-  craft: 'THE CRAFT',
-  education: 'LEARN IT',
-  comedy: 'FOR THE LAUGH',
-  people: 'PEOPLE & DRINK',
+  craft: 'The Craft',
+  education: 'Learn It',
+  comedy: 'For the Laugh',
+  people: 'People & Drink',
 };

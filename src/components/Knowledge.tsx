@@ -32,19 +32,19 @@ export function Knowledge() {
         <input
           value={q}
           onChange={(e) => setQ(e.target.value)}
-          placeholder="SEARCH THE MANUAL… OZ, SHAKE, VERMOUTH"
+          placeholder="Search the manual… oz, shake, vermouth"
           aria-label="Search the manual"
         />
       </div>
       {nq && (
         <p className="k-label dim manual-hits">
-          {totalHits ? `${totalHits} ENTR${totalHits === 1 ? 'Y' : 'IES'} FOR “${q.trim().toUpperCase()}”` : ''}
+          {totalHits ? `${totalHits} ${totalHits === 1 ? 'entry' : 'entries'} for “${q.trim()}”` : ''}
         </p>
       )}
       {groups.length === 0 && (
         <div className="empty">
-          <p className="empty-big">NOTHING BY THAT NAME IN THE MANUAL.</p>
-          <p className="k-label dim">TRY “OZ”, “SHAKE” OR “VERMOUTH”.</p>
+          <p className="empty-big">Nothing by that name in the manual</p>
+          <p className="k-label dim">Try “oz”, “shake” or “vermouth”</p>
         </div>
       )}
       <div data-tour="basics-groups">
@@ -60,9 +60,9 @@ export function Knowledge() {
               <span className="manual-index">{group.index}</span>
               <span className="manual-group-title">
                 <span className="manual-title">{group.title}</span>
-                <span className="k-label dim">{group.note.toUpperCase()}</span>
+                <span className="k-label dim">{group.note}</span>
               </span>
-              <span className="k-label dim manual-count">{String(group.terms.length).padStart(2, '0')} ENTRIES</span>
+              <span className="k-label dim manual-count">{String(group.terms.length).padStart(2, '0')} entries</span>
               <span className="manual-plus" aria-hidden>
                 {expanded ? '−' : '+'}
               </span>

@@ -12,7 +12,7 @@ test.describe('contextual tours', () => {
     await openRoute(page, '/#/bar');
     const tour = page.locator('.guided-tour[role="dialog"]');
     await expect(tour).toBeVisible({ timeout: 3_000 });
-    await expect(tour.getByRole('button', { name: 'SKIP' })).toBeVisible();
+    await expect(tour.getByRole('button', { name: 'Skip' })).toBeVisible();
     const box = await tour.locator('.guided-tour-popover').boundingBox();
     expect(box).not.toBeNull();
     expect((box?.x || 0) + (box?.width || 0)).toBeLessThanOrEqual(320);
@@ -46,8 +46,8 @@ test.describe('contextual tours', () => {
       await openRoute(page, context.route);
       const tour = page.locator('.guided-tour[role="dialog"]');
       await expect(tour).toBeVisible({ timeout: 4_000 });
-      await expect(tour.getByRole('button', { name: 'SKIP' })).toBeVisible();
-      await tour.getByRole('button', { name: 'SKIP' }).click();
+      await expect(tour.getByRole('button', { name: 'Skip' })).toBeVisible();
+      await tour.getByRole('button', { name: 'Skip' }).click();
       await expect.poll(() => page.evaluate((id) => localStorage.getItem(`pubcrawl.tour.${id}.v1`), context.id)).toBe('skipped');
       await page.reload({ waitUntil: 'domcontentloaded' });
       await page.waitForTimeout(850);
@@ -79,7 +79,7 @@ test.describe('contextual tours', () => {
       await help.click();
       const tour = page.locator('.guided-tour[role="dialog"]');
       await expect(tour).toBeVisible({ timeout: 4_000 });
-      await tour.getByRole('button', { name: 'SKIP' }).click();
+      await tour.getByRole('button', { name: 'Skip' }).click();
     }
   });
 

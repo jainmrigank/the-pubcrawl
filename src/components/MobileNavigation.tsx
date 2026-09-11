@@ -1,6 +1,6 @@
 import type { Route } from '../navigation';
 import { createPortal } from 'react-dom';
-import { BookmarkBook, Camera, Clipboard, Play, PubGlyph, Sun, ToolIcon } from '../icons';
+import { BookmarkBook, Camera, Clipboard, Play, PubGlyph, ThemeGlyph, ToolIcon } from '../icons';
 import type { Theme, TourId } from '../types';
 import { ContextualHelp } from './ContextualHelp';
 
@@ -40,7 +40,7 @@ export function MobileTopActions({ theme, onToggleTheme, tabCount, active, helpT
         title={theme === 'dark' ? 'Switch to light theme' : 'Switch to dark theme'}
         data-tip={theme === 'dark' ? 'Switch to light theme' : 'Switch to dark theme'}
       >
-        <Sun size={20} />
+        <ThemeGlyph theme={theme} size={20} />
       </button>
       <a
         className="mobile-secondary-action header-icon-action"

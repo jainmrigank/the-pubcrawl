@@ -9,7 +9,7 @@ import { EASE, LOADED_HIDDEN } from '../motion';
 const BATCH = 20;
 const REFILL_AT = 5; // fetch more once the queue runs this low
 
-const tierLabel = (d: number) => (d <= 5 ? 'EASY' : d <= 8 ? 'TRICKY' : 'EXPERT');
+const tierLabel = (d: number) => (d <= 5 ? 'Easy' : d <= 8 ? 'Tricky' : 'Expert');
 
 /** How the bar rates the run that just ended. */
 function verdict(score: number) {
@@ -210,7 +210,7 @@ export function Quiz() {
       <div className="quiz" data-tour="quiz-round">
         <div className="quiz-intro">
           <p className="k-label quiz-eyebrow">
-            {swept ? 'THE WHOLE BANK' : over ? 'THAT IS YOUR ROUND' : 'PUB QUIZ'}
+            {swept ? 'The whole bank' : over ? 'That is your round' : 'Pub Quiz'}
           </p>
           <h3 className="quiz-title">
             {swept ? 'You drank the bar dry.' : over ? v.title : 'Think you know your drinks?'}
@@ -247,7 +247,7 @@ export function Quiz() {
             ) : (
               <div className="hall-sign">
                 <label className="k-label dim" htmlFor="hall-name">
-                  THE NAME FOR THE WALL
+                  The name for the wall
                 </label>
                 <div className="hall-sign-row">
                   <input
@@ -265,7 +265,7 @@ export function Quiz() {
                     onClick={sign}
                     disabled={signing || !name.trim()}
                   >
-                    {signing ? 'WRITING…' : 'PUT ME UP'} <ArrowRight size={14} />
+                    {signing ? 'Writing…' : 'Put me up'} <ArrowRight size={14} />
                   </button>
                 </div>
               </div>
@@ -273,10 +273,10 @@ export function Quiz() {
 
           <div className="quiz-start-row" data-tour="quiz-start">
             <button className="btn btn-solid" onClick={start} disabled={loading}>
-              {loading ? 'POURING…' : over ? 'GO AGAIN' : 'START THE ROUND'} <ArrowRight size={14} />
+              {loading ? 'Pouring…' : over ? 'Go again' : 'Start the round'} <ArrowRight size={14} />
             </button>
             <span className="quiz-high" data-tour="quiz-score">
-              <span className="k-label dim">HOUSE RECORD</span>
+              <span className="k-label dim">House record</span>
               <b>{high ?? '—'}</b>
             </span>
           </div>
@@ -284,7 +284,7 @@ export function Quiz() {
 
           {hall.length > 0 && (
             <div className="hall">
-              <p className="k-label hall-label">BALL KNOWLEDGE INDUCTEES</p>
+              <p className="k-label hall-label">Ball knowledge inductees</p>
               <p className="hall-names">{hall.map((m) => m.name).join(' · ')}</p>
               <p className="hall-note">
                 Answered all {bank || hall[0].score} questions in one run without a miss.
@@ -304,9 +304,9 @@ export function Quiz() {
   return (
     <div className="quiz" data-tour="quiz-round">
       <div className="quiz-meta" data-tour="quiz-score">
-        <span className="k-label dim">HOUSE RECORD {high ?? '—'}</span>
+        <span className="k-label dim">House record {high ?? '—'}</span>
         <span className="quiz-score">
-          <span className="k-label dim">SCORE</span> <b>{score}</b>
+          <span className="k-label dim">Score</span> <b>{score}</b>
         </span>
       </div>
 
@@ -353,12 +353,12 @@ export function Quiz() {
               <p>{current.r}</p>
               <button className="btn btn-solid quiz-next" onClick={next} disabled={advancing}>
                 {advancing
-                  ? 'POURING…'
+                  ? 'Pouring…'
                   : gotIt
                     ? queue.length || !exhausted
-                      ? 'KEEP GOING'
-                      : 'THAT IS THE WHOLE BANK'
-                    : 'AND THAT IS THAT'}{' '}
+                      ? 'Keep going'
+                      : 'That is the whole bank'
+                    : 'And that is that'}{' '}
                 <ArrowRight size={14} />
               </button>
             </motion.div>

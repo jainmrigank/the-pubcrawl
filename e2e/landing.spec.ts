@@ -2,12 +2,6 @@ import { expect, test } from '@playwright/test';
 import { installFakeYouTube, fakeLog } from './fixtures/shortsFakeYouTube';
 import { openRoute, seedStableDevice } from './helpers';
 
-const expectedShorts = [
-  'mejHe0BJkLI', 'rIrPkH8UrYk', 'Bao5cwHCfKo',
-  'bZW6CPKz8vE', 'Hkw-milaxes', 'TALPXtgnQjM',
-];
-const expectedWatch = ['i1iqVGORUck', 'b0IuTL3Z-kk', 'GE8vyfKyZfQ'];
-
 test.describe('landing discovery', () => {
   test.beforeEach(async ({ page }) => {
     await seedStableDevice(page);
@@ -17,31 +11,36 @@ test.describe('landing discovery', () => {
     await openRoute(page, '/#/');
     await expect(page.locator('.landing-hero')).toBeVisible();
     await expect(page.locator('#menu-list:visible')).toHaveCount(0);
-    await expect(page.getByText('EST. 2026')).toHaveCount(0);
-    await expect(page.getByText('ADD YOUR INGREDIENTS')).toHaveCount(0);
-    await expect(page.getByRole('main').getByRole('link', { name: /WHAT CAN I MAKE/ })).toHaveAttribute('href', '#/bar');
-    await expect(page.getByRole('link', { name: /BROWSE ALL DRINKS/ })).toHaveAttribute('href', '#/menu');
-    await expect(page.getByRole('link', { name: /OPEN SHORTS/ })).toHaveAttribute('href', '#/shorts?src=landing');
-    await expect(page.getByRole('link', { name: /OPEN WATCH/ })).toHaveAttribute('href', '#/watch?src=landing');
+    await expect(page.getByText(/EST\. 2026/i)).toHaveCount(0);
+    await expect(page.getByText(/ADD YOUR INGREDIENTS/i)).toHaveCount(0);
+    await expect(page.getByRole('main').getByRole('link', { name: /What can I make/i })).toHaveAttribute('href', '#/bar');
+    await expect(page.getByRole('link', { name: /Browse all drinks/i })).toHaveAttribute('href', '#/menu');
+    await expect(page.getByRole('link', { name: /Open Shorts/i })).toHaveAttribute('href', '#/shorts?src=landing');
+    await expect(page.getByRole('link', { name: /Open Watch/i })).toHaveAttribute('href', '#/watch?src=landing');
     const more = page.getByRole('navigation', { name: 'More to explore' });
-    await expect(more.getByRole('link', { name: 'PUB QUIZ', exact: true })).toHaveAttribute('href', '#/quiz');
-    await expect(more.getByRole('link', { name: 'BAR BASICS', exact: true })).toHaveAttribute('href', '#/basics');
-    await expect(more.getByRole('link', { name: 'YOUR TAB', exact: true })).toHaveAttribute('href', '#/tab');
+    await expect(more.getByRole('link', { name: 'Pub Quiz', exact: true })).toHaveAttribute('href', '#/quiz');
+    await expect(more.getByRole('link', { name: 'Bar Basics', exact: true })).toHaveAttribute('href', '#/basics');
+    await expect(more.getByRole('link', { name: 'Your Tab', exact: true })).toHaveAttribute('href', '#/tab');
 
-    expect(await page.locator('.landing-short-card').evaluateAll((cards) => cards.map((card) => card.getAttribute('data-preview-id')))).toEqual(expectedShorts);
+    const shortIds = await page.locator('.landing-short-card').evaluateAll((cards) => cards.map((card) => card.getAttribute('data-preview-id')));
+    expect(shortIds).toHaveLength(6);
+    expect(new Set(shortIds).size).toBe(6);
+    expect(shortIds.every((id) => /^[\w-]{11}$/.test(id || ''))).toBe(true);
     const watchLinks = await page.locator('.landing-watch-card > a').evaluateAll((links) => links.map((link) => new URL((link as HTMLAnchorElement).href).hash.match(/[?&]v=([^&]+)/)?.[1]));
-    expect(watchLinks).toEqual(expectedWatch);
+    expect(watchLinks).toHaveLength(3);
+    expect(new Set(watchLinks).size).toBe(3);
+    expect(watchLinks.every((id) => /^[\w-]{11}$/.test(id || ''))).toBe(true);
 
-    const openShorts = page.getByRole('link', { name: /OPEN SHORTS/ });
+    const openShorts = page.getByRole('link', { name: /Open Shorts/i });
     await openShorts.scrollIntoViewIfNeeded();
     await page.locator('.landing-media-rail').first().evaluate((rail) => { rail.scrollLeft = rail.scrollWidth; });
     await expect(openShorts).toBeInViewport();
-    const openWatch = page.getByRole('link', { name: /OPEN WATCH/ });
+    const openWatch = page.getByRole('link', { name: /Open Watch/i });
     await openWatch.scrollIntoViewIfNeeded();
     await page.locator('.landing-watch-rail').evaluate((rail) => { rail.scrollLeft = rail.scrollWidth; });
     await expect(openWatch).toBeInViewport();
 
-    await page.getByRole('link', { name: /BROWSE ALL DRINKS/ }).click();
+    await page.getByRole('link', { name: /Browse all drinks/i }).click();
     await expect(page.locator('#menu-list')).toBeVisible();
     await expect(page.locator('.landing-hero:visible')).toHaveCount(0);
   });
@@ -53,18 +52,39 @@ test.describe('landing discovery', () => {
     await page.locator('.brand').first().click();
     await expect(page.locator('.landing-page')).toBeVisible();
     await page.locator('.landing-watch-card').first().scrollIntoViewIfNeeded();
-    await page.locator('.landing-shorts-rail').evaluate((rail) => { rail.scrollLeft = 120; });
-    const before = await page.evaluate(() => ({ y: scrollY, x: document.querySelector<HTMLElement>('.landing-shorts-rail')?.scrollLeft || 0 }));
-    await page.getByRole('link', { name: /OPEN WATCH/ }).click();
+    await page.locator('.landing-shorts-rail').evaluate((rail) => {
+      const next = rail.querySelector<HTMLElement>('.landing-short-card:nth-child(2)');
+      rail.scrollTo({ left: next?.offsetLeft ?? rail.clientWidth, behavior: 'instant' });
+    });
+    await page.locator('.landing-watch-rail').evaluate((rail) => {
+      const next = rail.querySelector<HTMLElement>('.landing-watch-card:nth-child(2)');
+      rail.scrollTo({ left: next?.offsetLeft ?? rail.clientWidth, behavior: 'instant' });
+    });
+    // WebKit dispatches programmatic scroll asynchronously. Wait through the
+    // same 120ms quiet boundary used for a real rail gesture before leaving.
+    await page.waitForTimeout(160);
+    const before = await page.evaluate(() => ({
+      y: scrollY,
+      shortsX: document.querySelector<HTMLElement>('.landing-shorts-rail')?.scrollLeft || 0,
+      watchX: document.querySelector<HTMLElement>('.landing-watch-rail')?.scrollLeft || 0,
+    }));
+    const homeVisit = await page.locator('.landing-page').getAttribute('data-home-visit');
+    const homeShorts = await page.locator('.landing-short-card').evaluateAll((cards) => cards.map((card) => card.getAttribute('data-preview-id')));
+    const homeWatch = await page.locator('.landing-watch-card > a').evaluateAll((links) => links.map((link) => new URL((link as HTMLAnchorElement).href).hash.match(/[?&]v=([^&]+)/)?.[1]));
+    await page.getByRole('link', { name: /Open Watch/i }).click();
     await expect(page.locator('.watch')).toBeVisible();
     await page.goBack();
     await expect(page.locator('.landing-page')).toBeVisible();
+    await expect(page.locator('.landing-page')).toHaveAttribute('data-home-visit', homeVisit || '');
+    expect(await page.locator('.landing-short-card').evaluateAll((cards) => cards.map((card) => card.getAttribute('data-preview-id')))).toEqual(homeShorts);
+    expect(await page.locator('.landing-watch-card > a').evaluateAll((links) => links.map((link) => new URL((link as HTMLAnchorElement).href).hash.match(/[?&]v=([^&]+)/)?.[1]))).toEqual(homeWatch);
     // An iframe becoming active/inactive can change the rail's status line by
     // a few pixels. Preserve the visitor's visual position within that small
     // non-layout-navigation tolerance rather than requiring byte-level scrollY.
     await expect.poll(() => page.evaluate((expected) => Math.abs(scrollY - expected), before.y)).toBeLessThanOrEqual(12);
-    expect(Math.abs(await page.locator('.landing-shorts-rail').evaluate((rail) => rail.scrollLeft) - before.x)).toBeLessThanOrEqual(3);
-    await page.getByRole('link', { name: /BROWSE ALL DRINKS/ }).click();
+    expect(Math.abs(await page.locator('.landing-shorts-rail').evaluate((rail) => rail.scrollLeft) - before.shortsX)).toBeLessThanOrEqual(3);
+    expect(Math.abs(await page.locator('.landing-watch-rail').evaluate((rail) => rail.scrollLeft) - before.watchX)).toBeLessThanOrEqual(3);
+    await page.getByRole('link', { name: /Browse all drinks/i }).click();
     await expect(search).toHaveValue('martini');
   });
 
@@ -83,6 +103,11 @@ test.describe('landing discovery', () => {
       await page.evaluate(() => (window as any).__PUBCRAWL_FAKE_YT__?.advanceTime(0.25));
       await page.waitForTimeout(210);
     }
+    await expect(page.locator(`[data-preview-id="${firstId}"].is-previewing`)).toHaveCount(0);
+    await page.locator('.landing-shorts-rail').evaluate((rail) => {
+      const next = rail.querySelector<HTMLElement>('.landing-short-card:nth-child(2)');
+      rail.scrollTo({ left: next?.offsetLeft ?? rail.clientWidth, behavior: 'instant' });
+    });
     await expect.poll(async () => (await fakeLog(page)).filter((entry) => entry.method === 'construct').length).toBeGreaterThanOrEqual(2);
     expect(await page.locator('.landing-preview-player iframe').count()).toBeLessThanOrEqual(1);
     const log = await fakeLog(page);
@@ -92,11 +117,11 @@ test.describe('landing discovery', () => {
     expect(firstDestroy).toBeGreaterThan(firstConstruct);
     expect(secondConstruct).toBeGreaterThan(firstDestroy);
     expect(log.filter((entry) => entry.method === 'unMute')).toHaveLength(0);
-    expect(firstId).toBe(expectedShorts[0]);
+    expect(firstId).toMatch(/^[\w-]{11}$/);
     expect(await page.evaluate(() => sessionStorage.getItem('pubcrawl.shorts.sound.v1'))).toBe(JSON.stringify({ version: 1, desiredAudible: true, volume: 73 }));
     expect(await page.evaluate(() => sessionStorage.getItem('pubcrawl.shorts.rate.v1'))).toBe(JSON.stringify({ version: 1, preferredRate: 1.5 }));
 
-    await page.getByRole('link', { name: /OPEN WATCH/ }).click();
+    await page.getByRole('link', { name: /Open Watch/i }).click();
     await expect(page.locator('.landing-preview-player iframe')).toHaveCount(0);
     const finalLog = await fakeLog(page);
     expect(finalLog.at(-1)?.method).toBe('destroy');
@@ -113,6 +138,33 @@ test.describe('landing discovery', () => {
     await expect(page.locator('.landing-preview-player iframe')).toHaveCount(1);
   });
 
+  test('fresh Home visits do not inherit partial preview progress', async ({ page }) => {
+    await installFakeYouTube(page);
+    await page.addInitScript(() => { Math.random = () => 0; });
+    await openRoute(page, '/#/');
+    await page.locator('.landing-short-card').first().scrollIntoViewIfNeeded();
+    await expect(page.locator('.landing-preview-player iframe')).toHaveCount(1, { timeout: 10_000 });
+    const previewId = await page.locator('.landing-short-card.is-previewing').getAttribute('data-preview-id');
+    for (let step = 0; step < 7; step += 1) {
+      await page.evaluate(() => (window as any).__PUBCRAWL_FAKE_YT__?.advanceTime(0.2));
+      await page.waitForTimeout(210);
+    }
+
+    const priorVisit = await page.locator('.landing-page').getAttribute('data-home-visit');
+    await page.locator('.brand').first().click();
+    await expect.poll(() => page.locator('.landing-page').getAttribute('data-home-visit')).not.toBe(priorVisit);
+    // A fresh Home action intentionally resets the page to the top. Recreate
+    // the same visibility conditions before comparing per-visit progress.
+    await page.locator(`[data-preview-id="${previewId}"]`).scrollIntoViewIfNeeded();
+    const freshPreview = page.locator(`[data-preview-id="${previewId}"].is-previewing`);
+    await expect(freshPreview).toHaveCount(1, { timeout: 10_000 });
+    for (let step = 0; step < 9; step += 1) {
+      await page.evaluate(() => (window as any).__PUBCRAWL_FAKE_YT__?.advanceTime(0.2));
+      await page.waitForTimeout(210);
+    }
+    await expect(freshPreview).toHaveCount(1);
+  });
+
   test('landing tutorial is Help-only and remains replayable', async ({ page }) => {
     await page.addInitScript(() => localStorage.removeItem('pubcrawl.tour.landing.v1'));
     await openRoute(page, '/#/');
@@ -121,10 +173,48 @@ test.describe('landing discovery', () => {
     const help = page.getByRole('button', { name: 'Show landing page tutorial' });
     await help.click();
     await expect(page.locator('.guided-tour-popover')).toBeVisible();
-    await page.getByRole('button', { name: 'SKIP', exact: true }).click();
+    await page.getByRole('button', { name: 'Skip', exact: true }).click();
     await expect(page.locator('.guided-tour-popover')).toHaveCount(0);
     await help.click();
     await expect(page.locator('.guided-tour-popover')).toBeVisible();
+  });
+
+  test('creates an explicit fresh visit for same-hash Home actions', async ({ page }) => {
+    await openRoute(page, '/#/');
+    const before = await page.locator('.landing-page').getAttribute('data-home-visit');
+    await page.locator('.brand').first().click();
+    await expect.poll(() => page.locator('.landing-page').getAttribute('data-home-visit')).not.toBe(before);
+    await expect.poll(() => page.evaluate(() => scrollY)).toBe(0);
+  });
+
+  test('restores an older Home history entry after a later fresh visit', async ({ page }) => {
+    await openRoute(page, '/#/');
+    const originalVisit = await page.locator('.landing-page').getAttribute('data-home-visit');
+    const originalShorts = await page.locator('.landing-short-card').evaluateAll((cards) =>
+      cards.map((card) => card.getAttribute('data-preview-id')),
+    );
+    await page.locator('.landing-shorts-rail').evaluate((rail) => {
+      const third = rail.querySelector<HTMLElement>('.landing-short-card:nth-child(3)');
+      rail.scrollTo({ left: third?.offsetLeft ?? rail.clientWidth * 2, behavior: 'instant' });
+    });
+    await page.waitForTimeout(160);
+    const originalRailLeft = await page.locator('.landing-shorts-rail').evaluate((rail) => rail.scrollLeft);
+
+    await page.getByRole('link', { name: /Browse all drinks/i }).click();
+    await page.locator('.brand').first().click();
+    await expect(page.locator('.landing-page')).toBeVisible();
+    await expect.poll(() => page.locator('.landing-page').getAttribute('data-home-visit')).not.toBe(originalVisit);
+
+    await page.goBack();
+    await expect(page.locator('#menu-list')).toBeVisible();
+    await page.goBack();
+    await expect(page.locator('.landing-page')).toHaveAttribute('data-home-visit', originalVisit || '');
+    expect(await page.locator('.landing-short-card').evaluateAll((cards) =>
+      cards.map((card) => card.getAttribute('data-preview-id')),
+    )).toEqual(originalShorts);
+    await expect.poll(async () => Math.abs(
+      await page.locator('.landing-shorts-rail').evaluate((rail) => rail.scrollLeft) - originalRailLeft,
+    )).toBeLessThanOrEqual(3);
   });
 });
 

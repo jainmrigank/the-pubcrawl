@@ -47,9 +47,9 @@ export function RecipeCardActions({
     if (outcome === 'shared' || outcome === 'copied') onKeep?.(recipe);
   }
 
-  const tabTip = removeMode ? 'TAKE IT OFF MY TAB' : inTab ? 'ON MY TAB. TAP TO REMOVE' : 'PUT IT ON MY TAB';
-  const shareTip = shareState === 'copied' ? 'COPIED!' : shareState === 'failed' ? 'SHARING BLOCKED HERE' : 'SHARE THIS DRINK';
-  const likeTip = liked ? 'LOVED. TAP TO TAKE IT BACK' : 'GIVE IT SOME LOVE';
+  const tabTip = removeMode ? 'Take it off my Tab' : inTab ? 'On my Tab. Tap to remove' : 'Put it on my Tab';
+  const shareTip = shareState === 'copied' ? 'Copied' : shareState === 'failed' ? 'Sharing blocked here' : 'Share this drink';
+  const likeTip = liked ? 'Loved. Tap to take it back' : 'Give it some love';
 
   return (
     <>
@@ -102,9 +102,9 @@ export function RecipeCard(props: Props) {
   const isHouseOriginal = recipe.houseOriginal === true;
   const isIndia = (recipe.tags || []).includes('India');
   let cardLabel = `Nº ${String(index + 1).padStart(3, '0')}`;
-  if (isIndia) cardLabel = 'INDIA COLLECTION';
-  if (isHouseOriginal) cardLabel = 'HOUSE SPECIAL';
-  if (isAI) cardLabel = recipe.source === 'ai' ? 'HOUSE SPECIAL' : 'OFF-MENU SPECIAL';
+  if (isIndia) cardLabel = 'India collection';
+  if (isHouseOriginal) cardLabel = 'House special';
+  if (isAI) cardLabel = recipe.source === 'ai' ? 'House special' : 'Off-menu special';
   const buttons = <RecipeCardActions {...props} />;
 
   return (
@@ -139,7 +139,7 @@ export function RecipeCard(props: Props) {
             </div>
           ) : (
             <div className="fc-img fc-img-ai" role="img" aria-label="No verified photo available">
-              <span className="fc-ai-mark">NO PHOTO</span>
+              <span className="fc-ai-mark">No photo</span>
               <GlassIcon glass={recipe.glass} size={72} />
             </div>
           )}
@@ -157,7 +157,7 @@ export function RecipeCard(props: Props) {
                 <GlassIcon glass={recipe.glass} size={16} />
                 {recipe.glass || 'Any glass'}
               </span>
-              {recipe.iba && <span className="k-label dim">CLASSIC</span>}
+              {recipe.iba && <span className="k-label dim">Classic</span>}
             </div>
           </div>
         </div>
@@ -177,9 +177,9 @@ export function RecipeCard(props: Props) {
               {recipe.ingredients.map((i, idx) => (
                 <li key={`${i.name}-${idx}`} className={i.have === false ? 'need' : ''}>
                   <span className="fb-ing-name">
-                    {i.have === false && <span className="k-label miss-mark">OUT</span>}
+                    {i.have === false && <span className="k-label miss-mark">Out</span>}
                     {i.name}
-                    {i.optional && <span className="k-label opt-mark">OPTIONAL</span>}
+                    {i.optional && <span className="k-label opt-mark">Optional</span>}
                   </span>
                   <span className="fb-ing-measure">{formatMeasure(i.measure) || '—'}</span>
                 </li>
@@ -200,7 +200,7 @@ export function RecipeCard(props: Props) {
                   onVideo(recipe);
                 }}
               >
-                WATCH IT MADE{' '}
+                Watch it made{' '}
                 <Play size={11} />
               </button>
             )}

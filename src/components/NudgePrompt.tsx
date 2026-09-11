@@ -134,7 +134,7 @@ export function NudgePrompt() {
             transition={{ duration: 0.36, ease: EASE }}
           >
             <div className="daily-head">
-              <span className="k-label">FROM THE BAR</span>
+              <span className="k-label">From the bar</span>
               <button className="chip-x" onClick={close} aria-label="Close">
                 <X size={12} />
               </button>
@@ -157,12 +157,12 @@ export function NudgePrompt() {
                 </p>
                 {!blocked && (
                   <button className="btn btn-solid nudge-modal-btn" onClick={turnOn} disabled={busy}>
-                    {busy ? 'ONE MOMENT…' : 'TURN ON NOTIFICATIONS'} <ArrowRight size={13} />
+                    {busy ? 'One moment…' : 'Turn on notifications'} <ArrowRight size={13} />
                   </button>
                 )}
                 <div className="daily-skip">
                   <button className="text-btn" onClick={close}>
-                    {blocked ? 'CLOSE' : 'NOT NOW'}
+                    {blocked ? 'Close' : 'Not now'}
                   </button>
                 </div>
               </>

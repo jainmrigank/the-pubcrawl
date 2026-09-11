@@ -74,14 +74,14 @@ export function InstallBanner() {
   return (
     <div className="install-banner">
       <div className="ib-row">
-        <span className="k-label ib-lead">GET THE APP — KEEP THE BAR IN YOUR POCKET</span>
+        <span className="k-label ib-lead">Get the app — keep the bar in your pocket</span>
         {prompt ? (
           <button className="ib-btn" onClick={install}>
-            INSTALL <ArrowDown size={13} />
+            Install <ArrowDown size={13} />
           </button>
         ) : (
           <button className="ib-btn" onClick={() => setTip((t) => !t)} aria-expanded={tip}>
-            HOW TO INSTALL <ArrowDown size={13} />
+            How to install <ArrowDown size={13} />
           </button>
         )}
         <button className="ib-x" onClick={dismiss} aria-label="Dismiss">

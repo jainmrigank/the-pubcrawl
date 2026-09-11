@@ -11,7 +11,17 @@ test.describe('minimal interface', () => {
       for (const theme of ['dark', 'light']) {
         const toggle = page.locator('.mobile-theme-toggle');
         if (await page.locator('html').getAttribute('data-theme') !== theme) await toggle.click();
-        await expect(toggle.locator('[data-icon="sun"]')).toHaveCount(1);
+        const expectedIcon = theme === 'dark' ? 'sun' : 'moon';
+        const hiddenIcon = theme === 'dark' ? 'moon' : 'sun';
+        const expectedName = theme === 'dark' ? 'Switch to light theme' : 'Switch to dark theme';
+        const visibleGlyph = toggle.locator(`[data-icon="${expectedIcon}"]`);
+        await expect(visibleGlyph).toBeVisible();
+        await expect.poll(() => visibleGlyph.evaluate((element) => getComputedStyle(element).opacity)).toBe('1');
+        await expect.poll(() => toggle.locator(`[data-icon="${hiddenIcon}"]`).evaluate((element) => getComputedStyle(element).opacity)).toBe('0');
+        await expect(toggle).toHaveAttribute('aria-label', expectedName);
+        const glyph = await visibleGlyph.boundingBox();
+        expect(glyph?.width).toBeCloseTo(20, 3);
+        expect(glyph?.height).toBeCloseTo(20, 3);
         await expect(page.getByRole('link', { name: 'Bar Basics', exact: true }).locator('[data-icon="bookmark-book"]')).toHaveCount(1);
         await expect(page.locator('.tab-action [data-icon="clipboard"]')).toHaveCount(1);
         await expect(page.locator('.mobile-top-actions > *')).toHaveCount(4);
@@ -24,6 +34,13 @@ test.describe('minimal interface', () => {
         expect(boxes.every((b, i) => i === 0 || b.left >= boxes[i - 1].right)).toBe(true);
       }
     }
+    await page.setViewportSize({ width: 1440, height: 900 });
+    const desktopToggle = page.locator('.desktop-theme-toggle');
+    await expect(desktopToggle).toHaveAttribute('aria-label', 'Switch to dark theme');
+    await expect.poll(() => desktopToggle.locator('[data-icon="moon"]').evaluate((element) => getComputedStyle(element).opacity)).toBe('1');
+    await desktopToggle.click();
+    await expect(desktopToggle).toHaveAttribute('aria-label', 'Switch to light theme');
+    await expect.poll(() => desktopToggle.locator('[data-icon="sun"]').evaluate((element) => getComputedStyle(element).opacity)).toBe('1');
   });
 
   test('clipboard count updates for add, remove, clear, and restored saved drinks', async ({ page }) => {
@@ -33,14 +50,14 @@ test.describe('minimal interface', () => {
     await expect(tab).toHaveAttribute('aria-label', 'Tab, 0 saved drinks');
     await expect(tab.locator('.tab-badge')).toHaveCount(0);
     const first = page.locator('#menu-list .fc').first();
-    await first.locator('.front').getByRole('button', { name: 'PUT IT ON MY TAB', exact: true }).click();
+    await first.locator('.front').getByRole('button', { name: 'Put it on my Tab', exact: true }).click();
     await expect(tab).toHaveAttribute('aria-label', 'Tab, 1 saved drink');
     await expect(tab.locator('.tab-badge')).toHaveText('1');
     await expect(tab.locator('.tab-badge')).toHaveAttribute('aria-hidden', 'true');
-    await first.locator('.front').getByRole('button', { name: 'ON MY TAB. TAP TO REMOVE', exact: true }).click();
+    await first.locator('.front').getByRole('button', { name: 'On my Tab. Tap to remove', exact: true }).click();
     await expect(tab.locator('.tab-badge')).toHaveCount(0);
-    await first.locator('.front').getByRole('button', { name: 'PUT IT ON MY TAB', exact: true }).click();
-    await page.locator('#menu-list .fc').nth(1).locator('.front').getByRole('button', { name: 'PUT IT ON MY TAB', exact: true }).click();
+    await first.locator('.front').getByRole('button', { name: 'Put it on my Tab', exact: true }).click();
+    await page.locator('#menu-list .fc').nth(1).locator('.front').getByRole('button', { name: 'Put it on my Tab', exact: true }).click();
     await expect(tab.locator('.tab-badge')).toHaveText('2');
     await page.reload();
     await expect(tab).toHaveAttribute('aria-label', 'Tab, 2 saved drinks');
@@ -51,7 +68,7 @@ test.describe('minimal interface', () => {
     });
     expect(contained).toBe(true);
     await tab.click();
-    await page.getByRole('button', { name: 'CLEAR THE TAB', exact: true }).click();
+    await page.getByRole('button', { name: 'Clear the Tab', exact: true }).click();
     await expect(tab).toHaveAttribute('aria-label', 'Tab, 0 saved drinks');
     await expect(tab.locator('.tab-badge')).toHaveCount(0);
     expect(await page.evaluate(() => JSON.parse(localStorage.getItem('pubcrawl.tab') || '[]'))).toEqual([]);
@@ -59,7 +76,7 @@ test.describe('minimal interface', () => {
 
   test('removes only the requested page introductions and keeps route compatibility', async ({ page }) => {
     await openRoute(page, '/');
-    await expect(page.locator('.landing-title')).toContainText('POISON');
+    await expect(page.locator('.landing-title')).toContainText('poison');
     await expect(page.locator('.hero-sub')).toHaveCount(0);
     for (const [route, selector] of [['menu', '#menu-list'], ['bar', '#shelf'], ['quiz', '#quiz-page'], ['watch', '.watch']]) {
       await openRoute(page, `/#/${route}`);
@@ -67,7 +84,7 @@ test.describe('minimal interface', () => {
       await expect(page.locator(`${selector} .sec-lead`)).toHaveCount(0);
     }
     await openRoute(page, '/#/bar');
-    await expect(page.locator('#shelf .sec-title')).toHaveText('SHELF');
+    await expect(page.locator('#shelf .sec-title')).toHaveText('Shelf');
     await expect(page.locator('html')).toHaveAttribute('data-route', 'bar');
     await expect(page.getByText('BEST MATCHES FIRST · USES WHAT’S ON YOUR SHELF')).toHaveCount(0);
     await expect(page.locator('#pour')).toHaveCount(0);

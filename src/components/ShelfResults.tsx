@@ -26,9 +26,9 @@ export function ShelfResults({ recipes, visible, matching, onLoadMore, renderCar
       {shown < recipes.length && (
         <div className="more-row shelf-more-row">
           <button type="button" className="btn" onClick={onLoadMore}>
-            SHOW MORE <ArrowDown size={14} />
+            Show more <ArrowDown size={14} />
           </button>
-          <span className="k-label dim">{shown} OF {recipes.length} ON YOUR SHELF</span>
+          <span className="k-label dim">{shown} of {recipes.length} on your shelf</span>
         </div>
       )}
     </>

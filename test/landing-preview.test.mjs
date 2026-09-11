@@ -24,15 +24,18 @@ function playerFixture() {
   return { calls, native, player };
 }
 
-test('landing Shorts selection is stable, ranked, unique, and limited to six', () => {
+test('landing Shorts selection is unbiased by rank, unique, limited to six, and non-mutating', () => {
   const rows = [
     { id: 'ccccccccccc', rank: 3 }, { id: 'aaaaaaaaaaa', rank: 1 }, { id: 'aaaaaaaaaaa', rank: 2 },
     { id: '', rank: 4 }, { id: 'bbbbbbbbbbb', rank: 2 }, { id: 'ddddddddddd', rank: 4 },
     { id: 'eeeeeeeeeee', rank: 5 }, { id: 'fffffffffff', rank: 6 }, { id: 'ggggggggggg', rank: 7 },
   ];
-  assert.deepEqual(selectLandingShorts(rows).map((row) => row.id), [
-    'aaaaaaaaaaa', 'bbbbbbbbbbb', 'ccccccccccc', 'ddddddddddd', 'eeeeeeeeeee', 'fffffffffff',
-  ]);
+  const before = structuredClone(rows);
+  const selected = selectLandingShorts(rows, () => 0).map((row) => row.id);
+  assert.equal(selected.length, 6);
+  assert.equal(new Set(selected).size, 6);
+  assert.ok(selected.includes('ggggggggggg'), 'an entry beyond the previous ranked six can be selected');
+  assert.deepEqual(rows, before);
 });
 
 test('preview visibility uses the intersection of viewport and horizontal rail', () => {

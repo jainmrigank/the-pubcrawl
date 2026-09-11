@@ -209,7 +209,7 @@ export function UploadZone({ onAddAll }: Props) {
         />
         {preview ? <img className="dz-preview" src={preview} alt="your shelf" /> : <Camera size={26} />}
         <div className="dz-text">
-          <strong>{busy ? 'HAVING A LOOK…' : 'SNAP YOUR SHELF'}</strong>
+          <strong>{busy ? 'Having a look…' : 'Snap your shelf'}</strong>
           <span>
             {busy
               ? 'Checking your bottles and bits.'
@@ -228,7 +228,7 @@ export function UploadZone({ onAddAll }: Props) {
       {added.length > 0 && (
         <div className="detected" role="status">
           <div className="detected-head">
-            <span className="k-label">SPOTTED AND SHELVED: {added.length}</span>
+            <span className="k-label">Spotted and shelved: {added.length}</span>
           </div>
           <div className="chip-row">
             {added.map((d) => (
