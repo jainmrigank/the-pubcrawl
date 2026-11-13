@@ -25,6 +25,8 @@ export const OVERLAY_PRIORITY = {
   daily: 30,
   shortsRecipe: 40,
   recipeVideo: 50,
+  recipeFocus: 60,
+  navigation: 65,
 } as const;
 
 interface Holder {

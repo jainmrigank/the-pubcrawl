@@ -156,7 +156,7 @@ test.describe('Shorts WebKit lifecycle', () => {
     await seedStableDevice(page);
     await openRoute(page, '/#/shorts');
     await waitForFirstPlay(page);
-    await page.locator('.mobile-nav-item[href="#/menu"]').click();
+    await page.locator('.house-mobile-links .house-nav-link[href="#/menu"]').click();
     await expect(page.locator('.shorts-player-host iframe')).toHaveCount(0);
     await page.waitForTimeout(100);
     const last = (await fakeLog(page)).at(-1);

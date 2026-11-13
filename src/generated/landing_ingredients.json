@@ -1,0 +1,234 @@
+{
+  "catalogueCount": 691,
+  "dataVersion": "03fd44c13defe68d",
+  "ingredients": [
+    {
+      "count": 113,
+      "name": "Vodka",
+      "recipes": [
+        {
+          "id": "16176",
+          "name": "Bellini Martini"
+        },
+        {
+          "id": "11102",
+          "name": "Black Russian"
+        },
+        {
+          "id": "11113",
+          "name": "Bloody Mary"
+        },
+        {
+          "id": "17181",
+          "name": "Dirty Martini"
+        },
+        {
+          "id": "17212",
+          "name": "Espresso Martini"
+        },
+        {
+          "id": "17213",
+          "name": "French Martini"
+        },
+        {
+          "id": "11462",
+          "name": "Harvey Wallbanger"
+        },
+        {
+          "id": "11600",
+          "name": "Kamikaze"
+        }
+      ]
+    },
+    {
+      "count": 109,
+      "name": "Gin",
+      "recipes": [
+        {
+          "id": "11014",
+          "name": "Alexander"
+        },
+        {
+          "id": "11034",
+          "name": "Angel Face"
+        },
+        {
+          "id": "17180",
+          "name": "Aviation"
+        },
+        {
+          "id": "17210",
+          "name": "Bramble"
+        },
+        {
+          "id": "17185",
+          "name": "Casino"
+        },
+        {
+          "id": "17186",
+          "name": "Clover Club"
+        },
+        {
+          "id": "17187",
+          "name": "Derby"
+        },
+        {
+          "id": "11005",
+          "name": "Dry Martini"
+        }
+      ]
+    },
+    {
+      "count": 82,
+      "name": "Sugar",
+      "recipes": [
+        {
+          "id": "11202",
+          "name": "Caipirinha"
+        },
+        {
+          "id": "11227",
+          "name": "Champagne Cocktail"
+        },
+        {
+          "id": "17197",
+          "name": "French 75"
+        },
+        {
+          "id": "13971",
+          "name": "Irish Coffee"
+        },
+        {
+          "id": "11000",
+          "name": "Mojito"
+        },
+        {
+          "id": "13214",
+          "name": "Pisco Sour"
+        },
+        {
+          "id": "12127",
+          "name": "Sazerac"
+        },
+        {
+          "id": "x-aampanna",
+          "name": "Aam Panna"
+        }
+      ]
+    },
+    {
+      "count": 77,
+      "name": "Lemon juice",
+      "recipes": [
+        {
+          "id": "17180",
+          "name": "Aviation"
+        },
+        {
+          "id": "17184",
+          "name": "Between The Sheets"
+        },
+        {
+          "id": "11113",
+          "name": "Bloody Mary"
+        },
+        {
+          "id": "17210",
+          "name": "Bramble"
+        },
+        {
+          "id": "17185",
+          "name": "Casino"
+        },
+        {
+          "id": "17197",
+          "name": "French 75"
+        },
+        {
+          "id": "17204",
+          "name": "Long Island Iced Tea"
+        },
+        {
+          "id": "13214",
+          "name": "Pisco Sour"
+        }
+      ]
+    },
+    {
+      "count": 77,
+      "name": "Lime juice",
+      "recipes": [
+        {
+          "id": "17183",
+          "name": "Bacardi Cocktail"
+        },
+        {
+          "id": "17209",
+          "name": "Barracuda"
+        },
+        {
+          "id": "17196",
+          "name": "Cosmopolitan"
+        },
+        {
+          "id": "11288",
+          "name": "Cuba Libre"
+        },
+        {
+          "id": "17201",
+          "name": "Hemingway Special"
+        },
+        {
+          "id": "11600",
+          "name": "Kamikaze"
+        },
+        {
+          "id": "11007",
+          "name": "Margarita"
+        },
+        {
+          "id": "11000",
+          "name": "Mojito"
+        }
+      ]
+    },
+    {
+      "count": 71,
+      "name": "Orange juice",
+      "recipes": [
+        {
+          "id": "11462",
+          "name": "Harvey Wallbanger"
+        },
+        {
+          "id": "17205",
+          "name": "Mimosa"
+        },
+        {
+          "id": "17189",
+          "name": "Monkey Gland"
+        },
+        {
+          "id": "17190",
+          "name": "Paradise"
+        },
+        {
+          "id": "17191",
+          "name": "Planter's Punch"
+        },
+        {
+          "id": "12162",
+          "name": "Screwdriver"
+        },
+        {
+          "id": "13621",
+          "name": "Tequila Sunrise"
+        },
+        {
+          "id": "17217",
+          "name": "Vampiro"
+        }
+      ]
+    }
+  ]
+}

@@ -10,7 +10,7 @@
     <meta name="referrer" content="strict-origin-when-cross-origin" />
     <title>The PubCrawl — what's your poison?</title>
     <meta name="description" content="What's your poison? Every cocktail you can make with what's on your shelf." />
-    <meta name="theme-color" content="#141310" />
+    <meta name="theme-color" content="#1d2521" />
     <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
@@ -21,24 +21,21 @@
         let stored = null;
         try { stored = localStorage.getItem(key); } catch (_) {}
         const valid = stored === 'light' || stored === 'dark';
-        // Dark is the product default. Only a previously saved explicit
-        // choice can select light before React mounts.
-        const dark = valid ? stored === 'dark' : true;
+        // Match the device before first paint; an explicit choice wins.
+        const dark = valid ? stored === 'dark' : window.matchMedia('(prefers-color-scheme: dark)').matches;
         const theme = dark ? 'dark' : 'light';
         document.documentElement.dataset.theme = theme;
         document.documentElement.style.colorScheme = theme;
         const meta = document.querySelector('meta[name="theme-color"]');
-        if (meta) meta.content = theme === 'dark' ? '#141310' : '#ECE9E0';
+        if (meta) meta.content = theme === 'dark' ? '#1d2521' : '#f0e9dc';
         const apple = document.querySelector('meta[name="apple-mobile-web-app-status-bar-style"]');
         if (apple) apple.content = theme === 'dark' ? 'black-translucent' : 'default';
       })();
     </script>
+    <link rel="preload" href="/fonts/InstrumentSans-Regular.ttf" as="font" type="font/ttf" crossorigin />
     <link rel="preconnect" href="https://www.youtube-nocookie.com" />
     <link rel="preconnect" href="https://www.youtube.com" />
     <link rel="preconnect" href="https://i.ytimg.com" crossorigin />
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@600;700&display=swap" rel="stylesheet" />
   </head>
   <body>
     <div id="root"></div>

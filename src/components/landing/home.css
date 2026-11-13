@@ -1,0 +1,192 @@
+/* Home edition: one clear introduction, then four useful, independently browsable studies. */
+.landing-page.home-edition { --home-nav-top: 80px; --home-nav-bottom: 0px; padding-block: 0 40px; }
+.home-opening { position: relative; display: grid; grid-template-columns: 1.35fr 1fr; gap: 32px 64px; align-items: center; min-height: calc(100svh - var(--home-nav-top) - var(--home-nav-bottom)); padding-block: 48px 90px; box-sizing: border-box; }
+.home-opening h1 { font: 400 clamp(96px, 12.5vw, 180px)/.94 var(--display); letter-spacing: -.035em; margin: 24px 0 0; max-width: 8ch; }
+.home-opening h1 em { display: block; color: var(--accent); font-weight: 400; }
+.home-opening-note > p { font-size: 19px; line-height: 1.65; margin: 0; color: var(--ink-60); }
+.home-opening-note { align-self: center; padding-top: 90px; }
+.home-scroll-cue { position: absolute; left: 0; bottom: 28px; display: flex; align-items: center; gap: 18px; font: 12px/1.6 var(--mono); color: var(--grey); }
+.home-actions { display: flex; gap: 10px 24px; flex-wrap: wrap; margin-top: 25px; }
+.home-actions a { display: inline-flex; align-items: center; justify-content: space-between; min-height: 48px; gap: 24px; border-bottom: 1px solid var(--line-strong); text-decoration: none; color: var(--ink); font-size: 15px; }
+.home-actions a:first-child { color: var(--accent); border-color: var(--accent); }
+.home-actions a:hover { color: var(--accent); }
+.home-group-heading { display: grid; grid-template-columns: 1.15fr 1fr; align-items: end; gap: 24px 64px; padding-block: 48px 40px; border-top: 1px solid var(--line-strong); }
+.home-group-heading h2 { font: 400 clamp(48px, 5.5vw, 76px)/1.05 var(--display); letter-spacing: -.03em; margin: 18px 0 0; }
+.home-group-description { font: 17px/1.75 var(--sans); color: var(--ink-60); max-width: 48ch; margin: 0; }
+.home-explore { padding-top: 24px; }
+.home-explore .editorial-links { margin-top: 0; }
+.home-story { padding-block: 48px 60px; border-top: 1px solid var(--line); scroll-margin-top: 100px; }
+.home-story-heading { margin: 0; }
+.home-section-number { font: 12px/1.65 var(--mono); color: var(--accent); padding-top: 2px; }
+.home-story-heading h2, .home-highlights .home-story-heading h2 { font: 400 clamp(38px, 4.7vw, 64px)/1.08 var(--display); letter-spacing: -.025em; margin: 12px 0 16px; }
+.home-story-intro, .home-highlights .home-story-intro { color: var(--ink-60); font-size: 17px; line-height: 1.65; margin: 0; max-width: 68ch; }
+.home-story-heading .home-study-heading, .home-highlights .home-story-heading .home-study-heading { font: 400 clamp(38px, 4.7vw, 64px)/1.08 var(--display); margin: 0; }
+.home-story .home-study-toggle { display: grid; grid-template-columns: 40px minmax(0, 1fr) 92px; align-items: start; gap: 16px; width: 100%; padding: 0; text-align: left; color: var(--ink); background: transparent; border: 0; border-radius: 0; cursor: pointer; font-family: var(--sans); }
+.home-study-toggle .home-study-copy { display: flex; flex-direction: column; min-width: 0; }
+.home-study-toggle .house-eyebrow { font: 11px/1.65 var(--mono); letter-spacing: .06em; }
+.home-study-title { display: block; font: 400 clamp(38px, 4.7vw, 64px)/1.08 var(--display); letter-spacing: -.025em; margin: 12px 0 16px; }
+.home-study-meta { color: var(--grey); font: 12px/1.65 var(--mono); margin-top: 20px; }
+.home-study-action { display: flex; align-items: center; flex-direction: column; gap: 12px; padding-top: 24px; white-space: nowrap; font: 11px/1.5 var(--mono); color: var(--grey); }
+.home-study-mark { display: grid; place-items: center; width: 48px; height: 48px; border: 1px solid var(--line-strong); border-radius: 50%; color: var(--ink); transition: border-color .18s ease, color .18s ease; }
+.home-study-mark svg { width: 24px; height: 24px; transition: transform .28s cubic-bezier(.22,.9,.3,1); }
+.home-study[data-open='true'] .home-study-mark svg { transform: rotate(45deg); }
+.home-study-toggle:hover .home-study-mark, .home-study-toggle:focus-visible .home-study-mark { color: var(--accent); border-color: var(--accent); }
+.home-study-toggle:focus-visible { outline: 2px solid var(--accent); outline-offset: 8px; }
+.home-study-panel { overflow: hidden; }
+.home-study-content { padding-top: 36px; }
+.home-story .home-study-fold { display: flex; align-items: center; justify-content: space-between; min-height: 48px; width: 100%; padding: 12px 0; margin-top: 28px; border: 0; border-top: 1px solid var(--line); background: transparent; color: var(--grey); cursor: pointer; font: 12px/1.5 var(--mono); }
+.home-study-fold span { font-size: 20px; color: var(--ink); }
+.home-story .home-study-fold:hover { color: var(--accent); }
+.home-study-fold:focus-visible { outline: 2px solid var(--accent); outline-offset: 4px; }
+.bar-atlas.home-highlights { padding-bottom: 0; }
+.home-highlights .home-story-heading .house-eyebrow { line-height: 1.65; }
+.home-highlights .atlas-choices button, .home-highlights .atlas-pantry-shelf button { font-size: 14px; min-height: 44px; }
+.home-highlights .atlas-choices { margin-block: 24px; }
+.home-highlights .atlas-footnote, .home-highlights .atlas-network-notes p, .home-highlights .atlas-insight p, .home-highlights .atlas-insight a, .home-highlights .atlas-axis-note { font-size: 14px; line-height: 1.65; }
+.home-highlights .atlas-network-notes h3 { font-family: var(--display); font-weight: 400; font-size: 32px; line-height: 1.15; margin-block: 16px; }
+.home-highlights .atlas-select span { font-size: 14px; }
+.home-highlights .atlas-legend { font-size: 13px; gap: 12px 22px; margin-bottom: 28px; }
+.home-highlights .atlas-pan-hint { font-size: 13px; }
+.home-highlights .atlas-universe-group small, .home-highlights .atlas-legend li { font-size: 13px; line-height: 1.6; }
+.home-highlights .atlas-recipe-links a { font-size: 14px; min-height: 44px; align-items: center; display: inline-flex; }
+.home-highlights .atlas-dna-list button { min-height: 76px; }
+.home-highlights .atlas-dna-list button > span:first-child { font-size: 16px; }
+.home-highlights .atlas-dna-list small { font-size: 13px; }
+.home-highlights .atlas-dna-bar { height: 27px; }
+.home-highlights .atlas-dna-bar i span { font: 12px var(--mono); }
+.home-highlights .atlas-data, .home-highlights .atlas-sources { margin-top: 24px; }
+.home-highlights .atlas-data summary, .home-highlights .atlas-sources > summary { min-height: 44px; padding-block: 14px; font-size: 15px; }
+.home-highlights .atlas-sources > p, .home-highlights .atlas-sources li { font-size: 14px; line-height: 1.7; }
+.home-loading { min-height: 320px; padding-block: 48px; color: var(--grey); }
+
+.calorie-comparison { font-variant-numeric: tabular-nums; }
+.calorie-insight { display: grid; grid-template-columns: 210px minmax(0, 1fr); align-items: center; gap: 16px 40px; padding: 24px 0 32px; margin: 0 0 12px; border-bottom: 1px solid var(--line); }
+.calorie-insight > span > strong { font: 400 80px/.95 var(--display); letter-spacing: -.03em; color: var(--accent); }
+.calorie-insight > span > span { display: block; font-size: 13px; color: var(--grey); margin-top: 12px; }
+.calorie-insight > p { font-size: 17px; line-height: 1.7; max-width: 64ch; margin: 0; }
+.calorie-toolbar { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 20px; padding-block: 20px; }
+.calorie-filters { display: flex; flex-wrap: wrap; gap: 4px; }
+.calorie-filters button { border: 0; border-bottom: 2px solid transparent; background: transparent; color: var(--ink-60); min-height: 44px; padding: 8px 14px; cursor: pointer; font: 15px var(--sans); }
+.calorie-filters button:first-child { padding-left: 0; }
+.calorie-filters button[aria-pressed='true'] { color: var(--accent); border-color: var(--accent); }
+.calorie-sort { display: flex; align-items: center; gap: 10px; color: var(--grey); font-size: 14px; }
+.calorie-sort select { min-height: 44px; max-width: 100%; border: 1px solid var(--control); background: var(--paper); color: var(--ink); padding: 8px 30px 8px 10px; font-size: 15px; border-radius: 0; }
+.calorie-legend { display: flex; flex-wrap: wrap; gap: 10px 24px; align-items: center; font-size: 13px; padding: 10px 0 28px; color: var(--ink-60); }
+.calorie-legend > span { display: flex; gap: 8px; align-items: center; }
+.calorie-legend i { display: inline-block; width: 12px; height: 12px; }
+.calorie-alcohol { background: var(--accent); }
+.calorie-other { background: var(--ink); opacity: .55; }
+.calorie-columns { display: grid; grid-template-columns: 1fr 1fr; gap: 56px; align-items: start; }
+.calorie-columns.is-filtered { max-width: 880px; grid-template-columns: minmax(0, 1fr); }
+.calorie-columns.is-filtered > .calorie-comparators:empty { display: none; }
+.calorie-group > header { padding-bottom: 20px; }
+.calorie-group h3 { font: 400 30px/1.2 var(--display); margin: 0 0 6px; letter-spacing: -.01em; }
+.calorie-group > header p { color: var(--grey); font-size: 13px; margin: 0; line-height: 1.6; }
+.calorie-group-shot { margin-top: 35px; }
+.is-filtered .calorie-group-shot { margin-top: 0; }
+.calorie-axis { display: grid; grid-template-columns: minmax(0, .95fr) minmax(0, 1.3fr) 48px; gap: 12px; padding-bottom: 12px; color: var(--grey); font: 11px/1.5 var(--mono); }
+.calorie-axis > div { grid-column: 2; display: flex; justify-content: space-between; }
+.calorie-axis > div > span { white-space: nowrap; }
+.calorie-rows { list-style: none; margin: 0; padding: 0; }
+.calorie-rows > li { border-top: 1px solid var(--line); }
+.calorie-row { display: grid; grid-template-columns: minmax(0, .95fr) minmax(0, 1.3fr) 48px; align-items: center; gap: 12px; text-align: left; width: 100%; min-height: 53px; padding: 10px 0; border: 0; background: transparent; color: var(--ink); cursor: pointer; }
+.calorie-name { font-size: 14px; line-height: 1.4; }
+.calorie-name small { display: block; font-size: 11px; color: var(--grey); padding-top: 2px; }
+.calorie-track { display: flex; height: 12px; background-image: linear-gradient(to right, transparent calc(50% - .5px), var(--line) calc(50% - .5px), var(--line) calc(50% + .5px), transparent calc(50% + .5px)); }
+.calorie-track i { display: block; height: 100%; flex-shrink: 0; }
+.calorie-value { display: flex; gap: 6px; justify-content: space-between; font: 12px/1.5 var(--mono); }
+.calorie-row-sign { color: var(--grey); }
+.calorie-row:hover, .calorie-rows .is-selected > .calorie-row { color: var(--accent); }
+.calorie-row:focus-visible, .calorie-comparison button:focus-visible, .calorie-comparison a:focus-visible, .calorie-comparison select:focus-visible, .home-actions a:focus-visible, .calorie-comparison summary:focus-visible { outline: 2px solid var(--accent); outline-offset: 4px; }
+.calorie-recipe { padding: 12px 16px 22px; margin-bottom: 12px; background: var(--paper-2); border-left: 2px solid var(--accent); font-size: 14px; line-height: 1.7; }
+.calorie-recipe p { margin: 0 0 16px; }
+.calorie-recipe p:last-child { margin-bottom: 0; }
+.calorie-recipe dl { margin: 12px 0 18px; }
+.calorie-recipe dl > div { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 0 12px; padding-block: 6px; border-top: 1px solid var(--line); }
+.calorie-recipe dt { color: var(--ink); }
+.calorie-recipe dd { margin: 0; color: var(--grey); text-align: right; }
+.calorie-recipe dd span { display: inline-block; margin-left: 10px; font-size: 12px; }
+.calorie-recipe a, .calorie-method a { color: var(--ink); text-underline-offset: 4px; }
+.calorie-recipe-links { display: flex; gap: 12px 25px; flex-wrap: wrap; margin-top: 12px; }
+.calorie-recipe-links a { display: inline-flex; gap: 12px; align-items: center; min-height: 44px; }
+.calorie-ingredient-notes > summary { min-height: 44px; cursor: pointer; padding-block: 10px; }
+.calorie-ingredient-notes ul { padding-left: 18px; margin: 12px 0; }
+.calorie-ingredient-notes li { margin-bottom: 12px; }
+.calorie-footnote { font-size: 14px; line-height: 1.7; color: var(--grey); margin: 30px 0 24px; max-width: 90ch; }
+.calorie-method, .calorie-data { border-top: 1px solid var(--line); }
+.calorie-method > summary, .calorie-data > summary { cursor: pointer; min-height: 48px; padding: 14px 0; font-size: 15px; line-height: 1.5; }
+.calorie-method p { font-size: 14px; line-height: 1.8; max-width: 90ch; }
+.calorie-method ul { padding-left: 20px; column-count: 2; column-gap: 35px; }
+.calorie-method li { break-inside: avoid; padding-bottom: 12px; font-size: 14px; }
+.calorie-table-scroll { overflow-x: auto; }
+.calorie-table-scroll table { width: 100%; border-collapse: collapse; font-size: 14px; min-width: 450px; margin-bottom: 24px; }
+.calorie-table-scroll caption { padding: 16px 0; text-align: left; color: var(--grey); }
+.calorie-table-scroll th, .calorie-table-scroll td { text-align: left; padding: 12px 14px 12px 0; border-bottom: 1px solid var(--line); font-weight: 400; }
+.calorie-table-scroll thead th { font-weight: 600; }
+@media (max-width: 1000px) {
+  .home-opening { gap: 32px; }
+  .calorie-columns { gap: 32px; }
+  .calorie-row { grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr) 42px; gap: 10px; }
+  .calorie-axis { grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr) 42px; gap: 10px; }
+}
+@media (max-width: 860px), (max-width: 1180px) and (max-height: 600px) and (hover: none) and (pointer: coarse) {
+  .landing-page.home-edition { --home-nav-top: calc(68px + env(safe-area-inset-top)); --home-nav-bottom: calc(68px + env(safe-area-inset-bottom)); }
+}
+@media (max-width: 700px) {
+  .home-opening { grid-template-columns: minmax(0, 1fr); gap: 32px; align-content: center; padding-block: 36px 76px; }
+  .home-opening h1 { font-size: clamp(72px, 21vw, 140px); max-width: none; margin-top: 20px; }
+  .home-opening h1 > span { white-space: nowrap; }
+  .home-opening h1 em { display: block; }
+  .home-opening-note { padding-top: 0; }
+  .home-opening-note > p { font-size: 16px; }
+  .home-actions { gap: 8px 22px; margin-top: 20px; }
+  .home-actions a { font-size: 14px; gap: 14px; }
+  .home-story { padding-block: 34px 44px; }
+  .home-group-heading { grid-template-columns: minmax(0, 1fr); align-items: start; gap: 20px; padding-block: 36px 32px; }
+  .home-group-heading h2 { font-size: clamp(44px, 11vw, 60px); margin-top: 14px; }
+  .home-group-description { font-size: 16px; }
+  .home-explore { padding-top: 0; }
+  .home-story .home-study-toggle { grid-template-columns: 26px minmax(0, 1fr) 44px; gap: 10px; }
+  .home-study-toggle .home-study-copy { display: contents; }
+  .home-study-toggle .home-section-number { grid-area: 1 / 1; padding-top: 0; }
+  .home-study-toggle .house-eyebrow { grid-area: 1 / 2 / 2 / 4; }
+  .home-study-title { grid-area: 2 / 2; font-size: clamp(34px, 8vw, 48px); margin-block: 4px; }
+  .home-study-toggle .home-story-intro { grid-area: 3 / 2 / 4 / 4; margin-top: 4px; }
+  .home-study-action { grid-area: 2 / 3; padding-top: 0; }
+  .home-study-action > span:last-child { max-width: 44px; white-space: normal; text-align: center; font-size: 10px; }
+  .home-study-mark { width: 44px; height: 44px; }
+  .home-study-meta { grid-area: 4 / 2 / 5 / 4; font-size: 11px; margin-top: 8px; }
+  .home-study-content { padding-top: 28px; }
+  .home-story-heading h2, .home-highlights .home-story-heading h2 { font-size: clamp(35px, 8vw, 48px); margin-block: 12px; }
+  .home-story-intro, .home-highlights .home-story-intro { font-size: 16px; }
+  .home-story-heading .house-eyebrow { font-size: 10px; letter-spacing: .06em; }
+  .calorie-insight { grid-template-columns: 1fr; padding-top: 0; gap: 16px; }
+  .calorie-insight > span { display: flex; align-items: center; gap: 18px; }
+  .calorie-insight > span > strong { font-size: 64px; }
+  .calorie-insight > span > span { margin-top: 0; max-width: 13ch; }
+  .calorie-insight > p { font-size: 15px; }
+  .calorie-toolbar { gap: 14px; }
+  .calorie-filters { gap: 0; width: 100%; justify-content: space-between; }
+  .calorie-filters button { font-size: 13px; padding-inline: 8px; }
+  .calorie-filters button:last-child { padding-right: 0; }
+  .calorie-sort { margin-left: auto; }
+  .calorie-legend { gap: 10px 18px; font-size: 12px; }
+  .calorie-legend > span:last-child { flex-basis: 100%; }
+  .calorie-columns { grid-template-columns: minmax(0, 1fr); gap: 40px; }
+  .calorie-row { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) 44px; gap: 10px; min-height: 56px; }
+  .calorie-name { font-size: 13px; }
+  .calorie-axis { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) 44px; gap: 10px; }
+  .calorie-method ul { column-count: 1; }
+  .home-highlights .atlas-pantry-shelf { gap: 6px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .home-study-mark, .home-study-mark svg { transition: none; }
+}
+@media (max-height: 520px) and (min-width: 701px) {
+  .home-opening { min-height: calc(100svh - var(--home-nav-top) - var(--home-nav-bottom)); padding-block: 26px 66px; gap: 28px; }
+  .home-opening h1 { font-size: clamp(64px, 9vw, 100px); margin-top: 12px; }
+  .home-opening-note { padding-top: 0; }
+  .home-opening-note > p { font-size: 16px; }
+  .home-actions { margin-top: 12px; }
+  .home-scroll-cue { bottom: 16px; }
+}

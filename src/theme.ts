@@ -34,7 +34,7 @@ export function applyTheme(theme: Theme, doc: Document = document): void {
   root.dataset.theme = theme;
   root.style.colorScheme = theme;
   const meta = doc.querySelector<HTMLMetaElement>('meta[name="theme-color"]');
-  if (meta) meta.content = theme === 'dark' ? '#141310' : '#ECE9E0';
+  if (meta) meta.content = theme === 'dark' ? '#1d2521' : '#f0e9dc';
   const apple = doc.querySelector<HTMLMetaElement>('meta[name="apple-mobile-web-app-status-bar-style"]');
   if (apple) apple.content = theme === 'dark' ? 'black-translucent' : 'default';
 }
@@ -49,12 +49,16 @@ export function persistTheme(theme: Theme, storage?: Storage | null): void {
   }
 }
 
+export function clearStoredTheme(storage?: Storage | null): void {
+  try {
+    const target = storage === undefined && typeof window !== 'undefined' ? window.localStorage : storage;
+    target?.removeItem(THEME_STORAGE_KEY);
+  } catch { /* The device preference still applies for this session. */ }
+}
+
 export function bootstrapTheme(doc: Document = document, storage?: Storage | null): Theme {
   const stored = readStoredTheme(storage);
-  // PubCrawl opens in its dark editorial treatment. An explicit local choice
-  // remains authoritative, but an unset preference must not inherit a light
-  // OS setting and unexpectedly change the first frame.
-  const theme = stored || 'dark';
+  const theme = stored || systemTheme();
   applyTheme(theme, doc);
   return theme;
 }

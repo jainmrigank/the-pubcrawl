@@ -19,7 +19,7 @@ export default defineConfig({
       srcDir: 'src',
       filename: 'sw.js',
       injectManifest: {
-        globPatterns: ['**/*.{js,css,html,svg,png,woff2}'],
+        globPatterns: ['**/*.{js,css,html,svg,png,woff2,ttf}'],
         maximumFileSizeToCacheInBytes: 4 * 1024 * 1024,
       },
       includeAssets: ['apple-touch-icon.png'],
@@ -30,8 +30,8 @@ export default defineConfig({
         start_url: '/',
         display: 'standalone',
         orientation: 'any',
-        background_color: '#141310',
-        theme_color: '#141310',
+        background_color: '#1d2521',
+        theme_color: '#1d2521',
         categories: ['food', 'lifestyle', 'entertainment'],
         icons: [
           { src: 'icon-192.png', sizes: '192x192', type: 'image/png' },

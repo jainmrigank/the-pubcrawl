@@ -144,7 +144,7 @@ export function NudgePrompt() {
               <>
                 <p className="nudge-modal-title">You're in.</p>
                 <p className="nudge-modal-copy">
-                  <Check size={14} /> We'll send a drink worth making every few days.
+                  <Check size={14} /> Drink ideas, a few times a week.
                 </p>
               </>
             ) : (
@@ -152,8 +152,8 @@ export function NudgePrompt() {
                 <p className="nudge-modal-title">A drink idea every few days?</p>
                 <p className="nudge-modal-copy">
                   {blocked
-                    ? 'Your device is blocking notifications for The PubCrawl. Allow them in your settings, then reopen the app.'
-                    : 'A cocktail worth trying, a story from behind the bar, and the question of the day. Never more than a couple a week.'}
+                    ? 'Notifications blocked. Allow PubCrawl in device settings, then reopen.'
+                    : 'Cocktail ideas, stories and the daily quiz. Up to twice a week.'}
                 </p>
                 {!blocked && (
                   <button className="btn btn-solid nudge-modal-btn" onClick={turnOn} disabled={busy}>

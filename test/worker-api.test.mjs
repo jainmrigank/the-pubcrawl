@@ -1,9 +1,10 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
+import questionBank from '../src/generated/client_quiz.json' with { type: 'json' };
 import { assertWorkerShortsCapacity, handleRequest } from '../worker/router.mjs';
 
 const origin = 'https://the-pubcrawl.vercel.app';
-const env = { FRONTEND_ORIGIN: origin, RATE_LIMIT_SALT: 'worker-contract-test' };
+const env = { FRONTEND_ORIGIN: origin, RATE_LIMIT_SALT: 'worker-contract-test', PUBCRAWL_STORE_MODE: 'memory' };
 
 test('Worker rejects a Shorts catalogue above the shared publication ceiling', () => {
   assert.equal(assertWorkerShortsCapacity({ shorts: Array.from({ length: 300 }) }), 300);
@@ -99,13 +100,34 @@ test('Worker API preserves catalogue, dynamic state, CORS, AI fallback, and vali
   assert.equal(quiz.body.questions.length, 25);
   assert.ok(quiz.body.questions.every((question) => question.d >= 3 && question.d <= 5));
   const high = await call('/api/quiz/high', { method: 'POST', body: JSON.stringify({ score: 17 }) });
-  assert.equal(high.body.score, 17);
-  assert.equal(high.body.beaten, true);
+  assert.equal(high.response.status, 410);
   const lower = await call('/api/quiz/high', { method: 'POST', body: JSON.stringify({ score: 2 }) });
-  assert.equal(lower.body.score, 17);
-  assert.equal(lower.body.beaten, false);
+  assert.equal(lower.response.status, 410);
   const badHall = await call('/api/quiz/hall', { method: 'POST', body: JSON.stringify({ name: 'Tester', score: 4 }) });
-  assert.equal(badHall.response.status, 400);
+  assert.equal(badHall.response.status, 410);
+
+  const run = await call('/api/quiz/run', { method: 'POST', body: '{}' });
+  assert.equal(run.response.status, 200);
+  assert.equal('a' in run.body.question, false);
+  const right = questionBank.find((q) => q.id === run.body.question.id).a;
+  const goodAnswer = { token: run.body.token, questionId: run.body.question.id, pick: right };
+  const good = await call('/api/quiz/answer', { method: 'POST', body: JSON.stringify(goodAnswer) });
+  assert.equal(good.body.score, 1);
+  const retry = await call('/api/quiz/answer', { method: 'POST', body: JSON.stringify(goodAnswer) });
+  assert.equal(retry.body.score, 1);
+  const correctNext = questionBank.find((q) => q.id === good.body.question.id).a;
+  const wrong = await call('/api/quiz/answer', { method: 'POST', body: JSON.stringify({ token: run.body.token, questionId: good.body.question.id, pick: (correctNext + 1) % 4, score: 1000 }) });
+  assert.equal(wrong.body.score, 1);
+  assert.equal(wrong.body.beaten, true);
+  const named = await call('/api/quiz/claim', { method: 'POST', body: JSON.stringify({ token: run.body.token, name: 'Worker Champ' }) });
+  assert.equal(named.body.name, 'Worker Champ');
+  const board = await call('/api/quiz/high');
+  assert.equal(board.body.name, 'Worker Champ');
+  assert.equal('owner' in board.body, false);
+  const unconfigured = await call('/api/quiz/run', { method: 'POST', body: '{}' }, { FRONTEND_ORIGIN: origin });
+  assert.equal(unconfigured.response.status, 503);
+  const tooBig = await call('/api/quiz/run', { method: 'POST', body: JSON.stringify({ padding: 'a'.repeat(3000) }) });
+  assert.equal(tooBig.response.status, 413);
 
   const watchEvent = await call('/api/watch/event', { method: 'POST', body: JSON.stringify({ type: 'open', source: 'nav' }) });
   assert.equal(watchEvent.body.metrics.opens, 1);

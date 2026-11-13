@@ -6,18 +6,19 @@ import shortsPolicy from '../data/shorts-policy.json' with { type: 'json' };
 import { norm, queryRecipes, shelfMatchRecipes } from '../shared/catalog-engine.mjs';
 import { generateDrink, identifyIngredients } from './ai.mjs';
 import { dailyQuizQuestion, quizPlaylist } from '../shared/quiz-engine.mjs';
+import { createQuizSession, quizClientKey, QuizError } from '../shared/quiz-session.mjs';
+import { createQuizRecordStore } from '../shared/quiz-record-store.mjs';
 import { enqueueWelcomeNotification } from './push-delivery.mjs';
 import {
   STORE_KEYS,
   appendUniqueAtomic,
   consumeWindowCounter,
   incrementCountersAtomic,
-  prependCappedAtomic,
+  command,
   readJson,
   removeSubscriptionAtomic,
   storeConfigured,
   touchSubscriptionAtomic,
-  updateHighScoreAtomic,
   updateLikeAtomic,
   upsertSubscriptionAtomic,
 } from './store.mjs';
@@ -36,6 +37,37 @@ const HALL_KEY = STORE_KEYS.hall;
 const SHORT_METRICS_KEY = STORE_KEYS.shortMetrics;
 const WATCH_METRICS_KEY = STORE_KEYS.watchMetrics;
 const SUBS_KEY = STORE_KEYS.subs;
+const quizServices = new WeakMap();
+function quizService(env) {
+  if (!quizServices.has(env)) {
+    const configured = storeConfigured(env);
+    quizServices.set(env, createQuizSession(questionBank, createQuizRecordStore({
+      command: configured ? (args) => command(env, args) : undefined,
+      // Never present an isolate's temporary memory as a shared live record.
+      available: configured || env.PUBCRAWL_STORE_MODE === 'memory',
+    })));
+  }
+  return quizServices.get(env);
+}
+
+async function quizBody(request) {
+  if (!request.headers.get('content-type')?.toLowerCase().includes('application/json')) throw new QuizError(400, 'Use application/json');
+  const reader = request.body?.getReader();
+  let size = 0;
+  let text = '';
+  const decoder = new TextDecoder();
+  if (reader) {
+    while (true) {
+      const { value, done } = await reader.read();
+      if (done) break;
+      size += value.byteLength;
+      if (size > 2048) { await reader.cancel(); throw new QuizError(413, 'Request too large'); }
+      text += decoder.decode(value, { stream: true });
+    }
+  }
+  try { return JSON.parse(text + decoder.decode()); }
+  catch { throw new QuizError(400, 'Invalid JSON'); }
+}
 
 const VIBE_IDS = new Set(['tropical', 'refreshing', 'boozy', 'sweet', 'cozy', 'party', 'zeroproof']);
 const COLLECTION_IDS = new Set(['india', 'house']);
@@ -340,31 +372,27 @@ async function handleApi(request, env, context) {
 
   if (path === '/api/quiz/high' && request.method === 'GET') {
     const [high, hall] = await Promise.all([
-      readBlob(env, HIGH_KEY, { score: 0, at: 0 }),
+      quizService(env).high(),
       readBlob(env, HALL_KEY, []),
     ]);
-    return json({ ...high, hall: Array.isArray(hall) ? hall : [], bank: questionBank.length }, 200, origin, { 'Cache-Control': 'no-store' });
+    return json({ ...high, hall: Array.isArray(hall) ? hall : [] }, 200, origin, { 'Cache-Control': 'no-store' });
   }
 
-  if (path === '/api/quiz/high' && request.method === 'POST') {
-    let body;
-    try { body = await parseJsonBody(request); } catch { return json({ error: 'content-type must be application/json' }, 400, origin); }
-    const score = safeNumber(body?.score, NaN);
-    if (!Number.isFinite(score) || score < 0 || score > 1000) return json({ error: 'bad score' }, 400, origin);
-    const next = await updateHighScoreAtomic(env, HIGH_KEY, score, Date.now());
-    return json(next, 200, origin, { 'Cache-Control': 'no-store' });
+  if (['/api/quiz/run', '/api/quiz/answer', '/api/quiz/claim'].includes(path) && request.method === 'POST') {
+    try {
+      const body = await quizBody(request);
+      const service = quizService(env);
+      const client = await quizClientKey(clientAddress(request), env.RATE_LIMIT_SALT || 'local-quiz');
+      const result = path.endsWith('/run') ? await service.start(client)
+        : path.endsWith('/answer') ? await service.answer(body) : await service.claim(body, client);
+      return json(result, 200, origin, { 'Cache-Control': 'no-store' });
+    } catch (error) {
+      if (!error.status) throw error;
+      return json({ error: error.message }, error.status, origin, { 'Cache-Control': 'no-store' });
+    }
   }
-
-  if (path === '/api/quiz/hall' && request.method === 'POST') {
-    let body;
-    try { body = await parseJsonBody(request); } catch { return json({ error: 'content-type must be application/json' }, 400, origin); }
-    const score = safeNumber(body?.score, NaN);
-    const name = String(body?.name || '').replace(/\s+/g, ' ').trim().slice(0, 24);
-    if (score !== questionBank.length) return json({ error: 'not a clean sweep' }, 400, origin);
-    if (!name) return json({ error: 'need a name' }, 400, origin);
-    const entry = { name, score, at: Date.now() };
-    const hall = await prependCappedAtomic(env, HALL_KEY, entry, 50);
-    return json({ hall, entry }, 200, origin, { 'Cache-Control': 'no-store' });
+  if (['/api/quiz/high', '/api/quiz/hall'].includes(path) && request.method === 'POST') {
+    return json({ error: 'Reload PubCrawl to start a verified round.' }, 410, origin, { 'Cache-Control': 'no-store' });
   }
 
   /* ---------------- immutable Watch and Shorts catalogues ---------------- */

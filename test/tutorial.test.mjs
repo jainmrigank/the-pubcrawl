@@ -2,7 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { TOUR_STORAGE_KEYS, TOURS, tourStep } from '../src/tutorial.ts';
 
-const ids = ['landing', 'menu', 'bar', 'basics', 'tab', 'quiz', 'watch', 'shorts'];
+const ids = ['landing', 'menu', 'taste-map', 'bar', 'basics', 'tab', 'quiz', 'watch', 'shorts'];
 
 test('every user-facing page owns one independent versioned tutorial key', () => {
   assert.deepEqual(Object.keys(TOURS), ids);

@@ -119,3 +119,18 @@ export function formatMeasure(measure: string): string {
   const qualifier = resolved.approximate ? '~' : '';
   return `${trimmed} (${qualifier}${millilitres} ml)`;
 }
+
+/** Compare definite volumes using the same house conversion as the reader.
+ * Variable measures (parts, dashes, shots) and free text only match verbatim;
+ * their approximate metric references must not imply equal quantities.
+ */
+export function sameRecipeMeasure(left: string, right: string): boolean {
+  const key = (value: string) => {
+    const text = String(value ?? '').trim().toLowerCase().replace(/\s+/g, ' ');
+    const explicit = text.match(/^(\d+(?:\.\d+)?)\s*ml(?:$|\s*\/)/);
+    const converted = formatMeasure(text).match(/\((\d+(?:\.\d+)?) ml\)$/);
+    const volume = explicit || converted;
+    return volume ? `ml:${Number(volume[1])}` : text;
+  };
+  return key(left) === key(right);
+}

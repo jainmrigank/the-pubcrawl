@@ -1,0 +1,3328 @@
+{
+  "title": "PubCrawl — 170 alcohol facts",
+  "researched_on": "2026-11-12",
+  "fact_count": 170,
+  "scope": "Original 120 preserved verbatim, followed by 50 source-checked additions from the signed-in X research.",
+  "source_register": "combined-source-register.json",
+  "facts": [
+    {
+      "id": "F001",
+      "category": "01 · What the world is pouring",
+      "hook": "194 billion litres. Give or take.",
+      "fact": "Kirin estimates that the world consumed 194.12 billion litres of beer in 2024, up 0.5% on its revised 2023 figure.",
+      "context": "Beer volume; revised prior-year baseline. Not pure alcohol.",
+      "display_idea": "One large number with a small year-on-year bar.",
+      "source_ids": [
+        "kirin2024"
+      ],
+      "fact_kind": "market-statistic",
+      "quantitative": true,
+      "numeric_payload": {
+        "year": 2024,
+        "litres_billion": 194.12,
+        "change_percent": 0.5
+      },
+      "shortlist_rank": null
+    },
+    {
+      "id": "F002",
+      "category": "01 · What the world is pouring",
+      "hook": "Biggest crowd. Different winner.",
+      "fact": "China led total beer consumption for the 22nd consecutive year in 2024, even as its volume fell 3.7%.",
+      "context": "Total volume, not consumption per person.",
+      "display_idea": "Pair a total-volume map with the next fact.",
+      "source_ids": [
+        "kirin2024"
+      ],
+      "fact_kind": "market-statistic",
+      "quantitative": true,
+      "numeric_payload": {
+        "year": 2024,
+        "total_volume_rank": 1,
+        "consecutive_years": 22,
+        "change_percent": -3.7
+      },
+      "shortlist_rank": null
+    },
+    {
+      "id": "F003",
+      "category": "01 · What the world is pouring",
+      "hook": "The Czech round is a different size.",
+      "fact": "Czechia's 2024 beer consumption was 148.8 litres per resident, the highest per-capita figure for the 32nd consecutive year.",
+      "context": "Population average; not an average drinker's intake.",
+      "display_idea": "Per-capita dot plot, clearly labelled litres per resident.",
+      "source_ids": [
+        "kirin2024"
+      ],
+      "fact_kind": "market-statistic",
+      "quantitative": true,
+      "numeric_payload": {
+        "year": 2024,
+        "litres_per_capita": 148.8,
+        "rank": 1,
+        "consecutive_years": 32
+      },
+      "shortlist_rank": 1
+    },
+    {
+      "id": "F004",
+      "category": "01 · What the world is pouring",
+      "hook": "India's next round is growing.",
+      "fact": "India's beer consumption rose 14.6% in 2024, the fastest growth among Kirin's top 25 beer-consuming countries.",
+      "context": "Year-on-year beer volume; top-25 comparison only.",
+      "display_idea": "Sorted growth bars; give India the accent colour.",
+      "source_ids": [
+        "kirin2024"
+      ],
+      "fact_kind": "market-statistic",
+      "quantitative": true,
+      "numeric_payload": {
+        "year": 2024,
+        "change_percent": 14.6,
+        "comparison_top_n": 25
+      },
+      "shortlist_rank": 2
+    },
+    {
+      "id": "F005",
+      "category": "01 · What the world is pouring",
+      "hook": "A third of the beer is over here.",
+      "fact": "Asia accounted for 32.6% of global beer consumption in 2024, remaining the largest consuming region for the 17th year running.",
+      "context": "Regional volume share.",
+      "display_idea": "A restrained regional share bar.",
+      "source_ids": [
+        "kirin2024"
+      ],
+      "fact_kind": "market-statistic",
+      "quantitative": true,
+      "numeric_payload": {
+        "year": 2024,
+        "global_share_percent": 32.6,
+        "consecutive_years": 17
+      },
+      "shortlist_rank": null
+    },
+    {
+      "id": "F006",
+      "category": "01 · What the world is pouring",
+      "hook": "Wine is having a quieter year.",
+      "fact": "OIV estimates global wine consumption at 208 million hectolitres in 2025, down 2.7% from 2024.",
+      "context": "Estimate; one hectolitre equals 100 litres.",
+      "display_idea": "Trend line with estimated years visibly marked.",
+      "source_ids": [
+        "oiv2025"
+      ],
+      "fact_kind": "market-statistic",
+      "quantitative": true,
+      "numeric_payload": {
+        "year": 2025,
+        "million_hectolitres": 208,
+        "change_percent": -2.7
+      },
+      "shortlist_rank": null
+    },
+    {
+      "id": "F007",
+      "category": "01 · What the world is pouring",
+      "hook": "The vintage stayed small.",
+      "fact": "World wine production was estimated at 227 million hectolitres in 2025: a 0.6% rebound, but a third consecutive comparatively low vintage.",
+      "context": "Production is not consumption; industrial uses also matter.",
+      "display_idea": "Production and consumption as separately labelled series.",
+      "source_ids": [
+        "oiv2025"
+      ],
+      "fact_kind": "market-statistic",
+      "quantitative": true,
+      "numeric_payload": {
+        "year": 2025,
+        "million_hectolitres": 227,
+        "change_percent": 0.6
+      },
+      "shortlist_rank": null
+    },
+    {
+      "id": "F008",
+      "category": "01 · What the world is pouring",
+      "hook": "Even the vineyard map is shrinking.",
+      "fact": "Global vineyard area fell to 7.0 million hectares in 2025, down 0.8%, its sixth consecutive annual decline.",
+      "context": "All vineyard area in OIV's measure; not only wine-grape plots.",
+      "display_idea": "A six-year land-area slope, if underlying series is added.",
+      "source_ids": [
+        "oiv2025"
+      ],
+      "fact_kind": "market-statistic",
+      "quantitative": true,
+      "numeric_payload": {
+        "year": 2025,
+        "million_hectares": 7,
+        "change_percent": -0.8,
+        "consecutive_declines": 6
+      },
+      "shortlist_rank": null
+    },
+    {
+      "id": "F009",
+      "category": "01 · What the world is pouring",
+      "hook": "A well-travelled bottle.",
+      "fact": "Global wine exports reached 94.8 million hectolitres and €33.8 billion in 2025; volume fell 4.7% and value 6.7%.",
+      "context": "Export value, not retail spending.",
+      "display_idea": "Two small bars: traded volume and traded value.",
+      "source_ids": [
+        "oiv2025"
+      ],
+      "fact_kind": "market-statistic",
+      "quantitative": true,
+      "numeric_payload": {
+        "year": 2025,
+        "exports_million_hectolitres": 94.8,
+        "exports_billion_eur": 33.8,
+        "volume_change_percent": -4.7,
+        "value_change_percent": -6.7
+      },
+      "shortlist_rank": null
+    },
+    {
+      "id": "F010",
+      "category": "01 · What the world is pouring",
+      "hook": "Scotland ships 43 a second.",
+      "fact": "Scotch exports were worth £5.3 billion in 2025. The SWA reports about 1.34 billion 70 cl bottle equivalents, or 43 per second.",
+      "context": "Exports and equivalent bottles; rounded figures.",
+      "display_idea": "A measured bottle-flow animation with a static alternative.",
+      "source_ids": [
+        "swa2025",
+        "swamarch"
+      ],
+      "fact_kind": "market-statistic",
+      "quantitative": true,
+      "numeric_payload": {
+        "year": 2025,
+        "exports_billion_gbp": 5.3,
+        "bottle_equivalents_billion": 1.34,
+        "bottle_ml": 700,
+        "bottles_per_second_reported": 43
+      },
+      "shortlist_rank": null
+    },
+    {
+      "id": "F011",
+      "category": "01 · What the world is pouring",
+      "hook": "India leads this queue.",
+      "fact": "India was Scotch's largest export destination by volume in 2025: 220 million 70 cl bottle equivalents, up 15%.",
+      "context": "Scotch export volume, not all whisky sold or consumed in India.",
+      "display_idea": "Volume-versus-value toggle alongside F012.",
+      "source_ids": [
+        "swa2025",
+        "swamarch"
+      ],
+      "fact_kind": "market-statistic",
+      "quantitative": true,
+      "numeric_payload": {
+        "year": 2025,
+        "market": "India",
+        "bottle_equivalents_million": 220,
+        "change_percent": 15,
+        "volume_rank": 1
+      },
+      "shortlist_rank": 3
+    },
+    {
+      "id": "F012",
+      "category": "01 · What the world is pouring",
+      "hook": "America picks up the larger bill.",
+      "fact": "The United States was Scotch's biggest export market by value in 2025, at £933 million, versus India's £286 million.",
+      "context": "Export value; different from volume leadership.",
+      "display_idea": "Paired India/U.S. bars with independent volume and value axes.",
+      "source_ids": [
+        "swa2025",
+        "swamarch"
+      ],
+      "fact_kind": "market-statistic",
+      "quantitative": true,
+      "numeric_payload": {
+        "year": 2025,
+        "export_value_million_gbp": {
+          "United_States": 933,
+          "India": 286
+        }
+      },
+      "shortlist_rank": null
+    },
+    {
+      "id": "F013",
+      "category": "01 · What the world is pouring",
+      "hook": "The room is drinking less.",
+      "fact": "In Gallup's 2025 poll, 54% of U.S. adults said they drank alcohol, down from 62% in 2023 and 58% in 2024.",
+      "context": "U.S. adult self-report, not a global consumption measure.",
+      "display_idea": "Three-point line; change expressed in percentage points.",
+      "source_ids": [
+        "gallup2025"
+      ],
+      "fact_kind": "survey",
+      "quantitative": true,
+      "numeric_payload": {
+        "percent_reporting_drinking": {
+          "2023": 62,
+          "2024": 58,
+          "2025": 54
+        },
+        "geography": "United States"
+      },
+      "shortlist_rank": null
+    },
+    {
+      "id": "F014",
+      "category": "01 · What the world is pouring",
+      "hook": "The zero-proof shelf has momentum.",
+      "fact": "IWSR estimated no-alcohol analogue volumes grew 9% in 2025 and forecast 36% growth between 2024 and 2029.",
+      "context": "The first figure is an estimate; the second is a forecast, not a result.",
+      "display_idea": "Solid estimate marker, dashed forecast. Never join as measured annual data.",
+      "source_ids": [
+        "iwsr2026"
+      ],
+      "fact_kind": "estimate-and-forecast",
+      "quantitative": true,
+      "numeric_payload": {
+        "estimated_2025_growth_percent": 9,
+        "forecast_2024_2029_growth_percent": 36
+      },
+      "shortlist_rank": null
+    },
+    {
+      "id": "F015",
+      "category": "01 · What the world is pouring",
+      "hook": "Still ordering the usual?",
+      "fact": "The Negroni ranked first in Drinks International's 2026 classic-cocktail report, its fifth consecutive year at number one.",
+      "context": "Changing panel of 100 award-winning bars; not worldwide unit sales.",
+      "display_idea": "Rank line labelled 'surveyed bars'.",
+      "source_ids": [
+        "di2026",
+        "dimethod"
+      ],
+      "fact_kind": "trade-survey-ranking",
+      "quantitative": true,
+      "numeric_payload": {
+        "report_year": 2026,
+        "rank": 1,
+        "consecutive_years": 5,
+        "survey_panel_bars": 100
+      },
+      "shortlist_rank": 4
+    },
+    {
+      "id": "F016",
+      "category": "01 · What the world is pouring",
+      "hook": "The Margarita moved up a seat.",
+      "fact": "The Margarita was second and the Old Fashioned third in the 2026 report, reversing their long-established order behind the Negroni.",
+      "context": "The same bar survey as F015; treat as one shared dataset.",
+      "display_idea": "A labelled rank swap; don't fabricate sales gaps from rank distances.",
+      "source_ids": [
+        "di2026",
+        "dimethod"
+      ],
+      "fact_kind": "trade-survey-ranking",
+      "quantitative": true,
+      "numeric_payload": {
+        "report_year": 2026,
+        "ranks": {
+          "Margarita": 2,
+          "Old_Fashioned": 3
+        }
+      },
+      "shortlist_rank": null
+    },
+    {
+      "id": "F017",
+      "category": "02 · Glass physics and flavour",
+      "hook": "A small beer. A million exits.",
+      "fact": "A 2021 model estimated roughly 200,000 to nearly two million bubbles could form before a 250 ml lager went flat.",
+      "context": "Study conditions included beer at 6°C; glass cavities change the estimate.",
+      "display_idea": "Bubble-density illustration with a range, not an exact counter.",
+      "source_ids": [
+        "beerbubbles",
+        "beernumber"
+      ],
+      "fact_kind": "research-finding",
+      "quantitative": true,
+      "numeric_payload": {
+        "year": 2021,
+        "beer_ml": 250,
+        "temperature_c": 6,
+        "bubble_count_range": [
+          200000,
+          2000000
+        ]
+      },
+      "shortlist_rank": 5
+    },
+    {
+      "id": "F018",
+      "category": "02 · Glass physics and flavour",
+      "hook": "That cork has pressure behind it.",
+      "fact": "A Champagne bottle is typically under about 5–6 bar of pressure.",
+      "context": "Approximate pressure; temperature and bottle conditions matter.",
+      "display_idea": "Glass silhouette with a pressure gauge.",
+      "source_ids": [
+        "champagnefaq"
+      ],
+      "fact_kind": "physical-measurement",
+      "quantitative": true,
+      "numeric_payload": {
+        "pressure_bar_range": [
+          5,
+          6
+        ]
+      },
+      "shortlist_rank": null
+    },
+    {
+      "id": "F019",
+      "category": "02 · Glass physics and flavour",
+      "hook": "The angle changes the fizz.",
+      "fact": "Champagne poured down the side of a tilted glass loses less dissolved CO₂ during pouring than a central, upright pour.",
+      "context": "Based on comparative pouring experiments; no universal percentage promised.",
+      "display_idea": "Two side-by-side pours with gas-loss annotations.",
+      "source_ids": [
+        "tiltedpour",
+        "beerbubbles"
+      ],
+      "fact_kind": "research-finding",
+      "quantitative": false,
+      "numeric_payload": null,
+      "shortlist_rank": null
+    },
+    {
+      "id": "F020",
+      "category": "02 · Glass physics and flavour",
+      "hook": "The legs are doing physics.",
+      "fact": "Wine tears form when evaporation creates surface-tension gradients that drive liquid up the glass; the accumulating ridge then sheds droplets.",
+      "context": "The Marangoni effect; this mechanism is not a wine-quality score.",
+      "display_idea": "A fine-line loop showing upward film and falling tears.",
+      "source_ids": [
+        "winetears"
+      ],
+      "fact_kind": "science-explainer",
+      "quantitative": false,
+      "numeric_payload": null,
+      "shortlist_rank": 6
+    },
+    {
+      "id": "F021",
+      "category": "02 · Glass physics and flavour",
+      "hook": "Your tonic has a second colour.",
+      "fact": "Quinine in tonic water fluoresces blue under ultraviolet light.",
+      "context": "Fluorescence, not evidence that the gin itself glows.",
+      "display_idea": "An optional light/dark reveal on one glass.",
+      "source_ids": [
+        "tonicuv"
+      ],
+      "fact_kind": "science-explainer",
+      "quantitative": false,
+      "numeric_payload": null,
+      "shortlist_rank": null
+    },
+    {
+      "id": "F022",
+      "category": "02 · Glass physics and flavour",
+      "hook": "Clear spirit. Cloudy intentions.",
+      "fact": "Diluting anise spirits can make dissolved anethole form tiny oil droplets, turning the drink cloudy: the ouzo effect.",
+      "context": "A change in solubility and dispersion; not newly formed crystals.",
+      "display_idea": "A water slider that reveals a milky dispersion.",
+      "source_ids": [
+        "anethole"
+      ],
+      "fact_kind": "science-explainer",
+      "quantitative": false,
+      "numeric_payload": null,
+      "shortlist_rank": 7
+    },
+    {
+      "id": "F023",
+      "category": "02 · Glass physics and flavour",
+      "hook": "Water changes more than the strength.",
+      "fact": "A molecular-simulation study found dilution can move whisky's guaiacol aroma molecule toward the liquid–air interface.",
+      "context": "A 2017 model of one aroma compound, not proof of one ideal dilution for every whisky.",
+      "display_idea": "Surface-versus-bulk molecule diagram.",
+      "source_ids": [
+        "whiskywater"
+      ],
+      "fact_kind": "research-finding",
+      "quantitative": false,
+      "numeric_payload": null,
+      "shortlist_rank": 8
+    },
+    {
+      "id": "F024",
+      "category": "02 · Glass physics and flavour",
+      "hook": "Some bubbles take the stairs down.",
+      "fact": "Small bubbles can travel downward near the side of a poured Guinness as rising bubbles drive a circulating liquid flow.",
+      "context": "The downward motion is carried by the liquid; buoyancy has not reversed.",
+      "display_idea": "A looping flow diagram with centre-up and edge-down arrows.",
+      "source_ids": [
+        "guinnessflow"
+      ],
+      "fact_kind": "science-explainer",
+      "quantitative": false,
+      "numeric_payload": null,
+      "shortlist_rank": null
+    },
+    {
+      "id": "F025",
+      "category": "02 · Glass physics and flavour",
+      "hook": "Sunlight can skunk your beer.",
+      "fact": "Light can trigger reactions involving hop-derived iso-alpha acids that produce the potent skunky compound 3-methyl-2-butene-1-thiol.",
+      "context": "Brown glass offers more protection than clear or green glass; opaque cans block light.",
+      "display_idea": "Bottle/can comparison connected to a short reaction diagram.",
+      "source_ids": [
+        "beerskunk"
+      ],
+      "fact_kind": "science-explainer",
+      "quantitative": false,
+      "numeric_payload": null,
+      "shortlist_rank": 9
+    },
+    {
+      "id": "F026",
+      "category": "02 · Glass physics and flavour",
+      "hook": "That pepper note isn't imaginary.",
+      "fact": "A 2008 study identified rotundone's pepper aroma at a 16 ng/l threshold in red wine; about 20% of its panel could not detect even 4,000 ng/l in water.",
+      "context": "Specific panel and test media; not a universal 20% prevalence estimate.",
+      "display_idea": "Show two tasters perceiving the same glass differently.",
+      "source_ids": [
+        "rotundone"
+      ],
+      "fact_kind": "research-finding",
+      "quantitative": true,
+      "numeric_payload": {
+        "year": 2008,
+        "red_wine_detection_threshold_ng_per_l": 16,
+        "non_detecting_panel_percent_approx": 20,
+        "highest_water_test_ng_per_l": 4000
+      },
+      "shortlist_rank": 10
+    },
+    {
+      "id": "F027",
+      "category": "02 · Glass physics and flavour",
+      "hook": "Cork taint can arrive without a cork.",
+      "fact": "AWRI found TCA could suppress fruit aroma at 1 ng/l in a Semillon; TCA can also originate from oak and winery contamination.",
+      "context": "One sensory experiment; screwcaps don't guarantee freedom from TCA.",
+      "display_idea": "A tiny concentration scale, plus possible contamination routes.",
+      "source_ids": [
+        "tcawine"
+      ],
+      "fact_kind": "research-finding",
+      "quantitative": true,
+      "numeric_payload": {
+        "TCA_ng_per_l_in_reported_test": 1
+      },
+      "shortlist_rank": null
+    },
+    {
+      "id": "F028",
+      "category": "02 · Glass physics and flavour",
+      "hook": "Temperature is an ingredient.",
+      "fact": "A 2005 study found the sweet-taste channel TRPM5 strongly temperature-sensitive between 15 and 35°C, with corresponding sweet-response effects in mice.",
+      "context": "A mechanism relevant to taste, not a guarantee every warming cocktail tastes sweeter.",
+      "display_idea": "A temperature strip linked to perceived sweetness, with study caveat.",
+      "source_ids": [
+        "trpm5"
+      ],
+      "fact_kind": "research-finding",
+      "quantitative": true,
+      "numeric_payload": {
+        "year": 2005,
+        "temperature_c_range": [
+          15,
+          35
+        ]
+      },
+      "shortlist_rank": null
+    },
+    {
+      "id": "F029",
+      "category": "02 · Glass physics and flavour",
+      "hook": "Sometimes you're tasting the price tag.",
+      "fact": "In a 2008 experiment, identical wine presented with a higher price produced higher pleasantness ratings and altered activity in a brain region associated with pleasantness.",
+      "context": "A controlled expectation study; examples included the same wine labelled $5 and $45.",
+      "display_idea": "Two identical glasses; reveal that only the labels changed.",
+      "source_ids": [
+        "pricebrain"
+      ],
+      "fact_kind": "research-finding",
+      "quantitative": true,
+      "numeric_payload": {
+        "year": 2008,
+        "example_price_labels_usd": [
+          5,
+          45
+        ]
+      },
+      "shortlist_rank": 11
+    },
+    {
+      "id": "F030",
+      "category": "02 · Glass physics and flavour",
+      "hook": "Your eyes get the first sip.",
+      "fact": "In a 2001 experiment, 54 tasters described white wine coloured red with red-wine-associated smell vocabulary.",
+      "context": "An odour-description task, not proof that expertise is worthless.",
+      "display_idea": "A colour-switch reveal with the number of tasters visible.",
+      "source_ids": [
+        "colorodors"
+      ],
+      "fact_kind": "research-finding",
+      "quantitative": true,
+      "numeric_payload": {
+        "year": 2001,
+        "tasters": 54
+      },
+      "shortlist_rank": 12
+    },
+    {
+      "id": "F031",
+      "category": "02 · Glass physics and flavour",
+      "hook": "Expensive isn't a flavour.",
+      "fact": "Across more than 6,000 blind tastings, a 2008 study found a small negative price–rating relationship overall; trained tasters showed a different pattern.",
+      "context": "Tastings, not 6,000 people. An association in this sample, not a verdict on every expensive wine.",
+      "display_idea": "Price versus enjoyment graphic with separate expertise groups.",
+      "source_ids": [
+        "blindprice"
+      ],
+      "fact_kind": "research-finding",
+      "quantitative": true,
+      "numeric_payload": {
+        "year": 2008,
+        "blind_tastings_minimum": 6000
+      },
+      "shortlist_rank": 13
+    },
+    {
+      "id": "F032",
+      "category": "02 · Glass physics and flavour",
+      "hook": "Hops have more than one job.",
+      "fact": "Hops contribute both aroma and bitterness, but different compounds do the work: aromatic oils and bittering acids aren't interchangeable.",
+      "context": "Boiling changes alpha acids into bitter iso-alpha acids.",
+      "display_idea": "Split one hop drawing into aroma and bitterness pathways.",
+      "source_ids": [
+        "beerchem",
+        "beerskunk"
+      ],
+      "fact_kind": "science-explainer",
+      "quantitative": false,
+      "numeric_payload": null,
+      "shortlist_rank": null
+    },
+    {
+      "id": "F033",
+      "category": "03 · Read the bottle",
+      "hook": "Scotch has a minimum age.",
+      "fact": "Scotch must be distilled and matured in Scotland for at least three years and bottled at no less than 40% ABV.",
+      "context": "Minimum identity requirements, not a quality ranking.",
+      "display_idea": "A three-year timeline ending at a 40% minimum marker.",
+      "source_ids": [
+        "swacategories"
+      ],
+      "fact_kind": "label-rule",
+      "quantitative": true,
+      "numeric_payload": {
+        "minimum_maturation_years": 3,
+        "minimum_bottling_abv_percent": 40
+      },
+      "shortlist_rank": null
+    },
+    {
+      "id": "F034",
+      "category": "03 · Read the bottle",
+      "hook": "Single means one distillery.",
+      "fact": "Single Malt Scotch comes from one distillery, uses malted barley without other cereals, and is batch-distilled in pot stills.",
+      "context": "'Single malt' does not mean one barrel or one vintage.",
+      "display_idea": "One distillery feeding several casks into one bottle.",
+      "source_ids": [
+        "swacategories",
+        "swaage"
+      ],
+      "fact_kind": "label-rule",
+      "quantitative": false,
+      "numeric_payload": null,
+      "shortlist_rank": null
+    },
+    {
+      "id": "F035",
+      "category": "03 · Read the bottle",
+      "hook": "The youngest one gets the label.",
+      "fact": "A Scotch age statement refers to the youngest whisky in the bottle, not the average or the oldest component.",
+      "context": "A hypothetical blend of 8-, 12- and 20-year-old whisky is labelled 8 years old.",
+      "display_idea": "Three casks feeding a bottle whose age follows the youngest.",
+      "source_ids": [
+        "swaage"
+      ],
+      "fact_kind": "label-rule",
+      "quantitative": true,
+      "numeric_payload": {
+        "illustrative_component_ages_years": [
+          8,
+          12,
+          20
+        ],
+        "illustrative_label_age_years": 8,
+        "calculation": "Illustration of the rule, not a commercial recipe."
+      },
+      "shortlist_rank": null
+    },
+    {
+      "id": "F036",
+      "category": "03 · Read the bottle",
+      "hook": "Bourbon isn't a Kentucky postcode.",
+      "fact": "U.S. rules require bourbon to be distilled and aged in the United States, with at least 51% corn in its mash and new charred oak storage.",
+      "context": "Kentucky is not mandatory. This is a summary, not the complete production standard.",
+      "display_idea": "A corn-share bar and a U.S. map without a Kentucky-only boundary.",
+      "source_ids": [
+        "bourbonlaw"
+      ],
+      "fact_kind": "label-rule",
+      "quantitative": true,
+      "numeric_payload": {
+        "minimum_corn_mash_percent": 51
+      },
+      "shortlist_rank": null
+    },
+    {
+      "id": "F037",
+      "category": "03 · Read the bottle",
+      "hook": "Straight adds time.",
+      "fact": "Straight bourbon must spend at least two years in new charred oak; ordinary bourbon has no equivalent two-year minimum.",
+      "context": "Other bourbon production and labelling requirements still apply.",
+      "display_idea": "Compare the age floor for bourbon and straight bourbon.",
+      "source_ids": [
+        "bourbonlaw"
+      ],
+      "fact_kind": "label-rule",
+      "quantitative": true,
+      "numeric_payload": {
+        "straight_bourbon_minimum_years": 2
+      },
+      "shortlist_rank": null
+    },
+    {
+      "id": "F038",
+      "category": "03 · Read the bottle",
+      "hook": "Tequila has two sugar categories.",
+      "fact": "CRT distinguishes '100% agave' tequila from tequila made with at least 51% blue-agave sugars, with other permitted sugars making up the balance.",
+      "context": "Percentages describe fermentable sugars, not the percentage of alcohol in the bottle.",
+      "display_idea": "Two labelled sugar-source bars; avoid implying one is automatically superior.",
+      "source_ids": [
+        "tequila"
+      ],
+      "fact_kind": "label-rule",
+      "quantitative": true,
+      "numeric_payload": {
+        "blue_agave_sugar_percent": {
+          "Tequila_minimum": 51,
+          "Tequila_100_percent_agave": 100
+        }
+      },
+      "shortlist_rank": null
+    },
+    {
+      "id": "F039",
+      "category": "03 · Read the bottle",
+      "hook": "A little Spanish. A lot of time.",
+      "fact": "Tequila's minimum oak-contact periods are two months for reposado, one year for añejo and three years for extra añejo.",
+      "context": "Maturation class and the 100%-agave category are separate dimensions.",
+      "display_idea": "One linear timeline with three minimum-age markers.",
+      "source_ids": [
+        "tequila"
+      ],
+      "fact_kind": "label-rule",
+      "quantitative": true,
+      "numeric_payload": {
+        "minimum_maturation_months": {
+          "reposado": 2,
+          "anejo": 12,
+          "extra_anejo": 36
+        }
+      },
+      "shortlist_rank": null
+    },
+    {
+      "id": "F040",
+      "category": "03 · Read the bottle",
+      "hook": "Those initials keep time.",
+      "fact": "Cognac's minimum ages are VS: 2 years, VSOP: 4, XO: 10 and XXO: 14, referring to the youngest eau-de-vie in a blend.",
+      "context": "An age floor, not the average age or a promise of personal preference.",
+      "display_idea": "A stepped age ladder with plain-language labels.",
+      "source_ids": [
+        "cognac",
+        "cognacfaq"
+      ],
+      "fact_kind": "label-rule",
+      "quantitative": true,
+      "numeric_payload": {
+        "minimum_years": {
+          "VS": 2,
+          "VSOP": 4,
+          "XO": 10,
+          "XXO": 14
+        }
+      },
+      "shortlist_rank": null
+    },
+    {
+      "id": "F041",
+      "category": "03 · Read the bottle",
+      "hook": "London Dry can leave London.",
+      "fact": "London gin is a production style and can be made outside London.",
+      "context": "Do not confuse a style name with a geographical indication.",
+      "display_idea": "A London label with origin pins elsewhere.",
+      "source_ids": [
+        "ginguidance"
+      ],
+      "fact_kind": "label-rule",
+      "quantitative": false,
+      "numeric_payload": null,
+      "shortlist_rank": null
+    },
+    {
+      "id": "F042",
+      "category": "03 · Read the bottle",
+      "hook": "The berry is the common thread.",
+      "fact": "Juniper is the defining botanical shared by gin styles, even when citrus, herbs and spices change the rest of the flavour profile.",
+      "context": "Botanical recipes vary; juniper is the common reference point.",
+      "display_idea": "One central juniper branch with optional botanical spokes.",
+      "source_ids": [
+        "ginguidance"
+      ],
+      "fact_kind": "label-rule",
+      "quantitative": false,
+      "numeric_payload": null,
+      "shortlist_rank": null
+    },
+    {
+      "id": "F043",
+      "category": "03 · Read the bottle",
+      "hook": "Extra Dry is the sweeter answer.",
+      "fact": "Champagne labelled Extra Dry contains 12–17 g/l of sugar; Brut is below 12 g/l.",
+      "context": "These are Champagne category thresholds, not universal rules for every wine.",
+      "display_idea": "A sweetness scale that reverses the expectation created by the names.",
+      "source_ids": [
+        "champagnefaq"
+      ],
+      "fact_kind": "label-rule",
+      "quantitative": true,
+      "numeric_payload": {
+        "sugar_g_per_l": {
+          "Extra_Dry_range": [
+            12,
+            17
+          ],
+          "Brut_upper_limit_exclusive": 12
+        }
+      },
+      "shortlist_rank": null
+    },
+    {
+      "id": "F044",
+      "category": "03 · Read the bottle",
+      "hook": "White wine. Dark grapes.",
+      "fact": "Blanc de Noirs Champagne is made exclusively from dark-skinned grapes such as Pinot Noir and/or Meunier.",
+      "context": "It describes the grape source; the wine can still look white.",
+      "display_idea": "Black grape skin opening to pale juice and a white wine glass.",
+      "source_ids": [
+        "champagnefaq"
+      ],
+      "fact_kind": "label-rule",
+      "quantitative": false,
+      "numeric_payload": null,
+      "shortlist_rank": null
+    },
+    {
+      "id": "F045",
+      "category": "03 · Read the bottle",
+      "hook": "In sake, 50% means what's left.",
+      "fact": "Sake's rice-polishing ratio measures grain weight remaining: daiginjo requires 50% or less, while ginjo requires 60% or less.",
+      "context": "Lower numbers mean more polishing, not less. Other production criteria also apply.",
+      "display_idea": "A rice-grain cutaway showing removed and remaining mass.",
+      "source_ids": [
+        "sakegrades"
+      ],
+      "fact_kind": "label-rule",
+      "quantitative": true,
+      "numeric_payload": {
+        "maximum_remaining_rice_percent": {
+          "daiginjo": 50,
+          "ginjo": 60
+        }
+      },
+      "shortlist_rank": null
+    },
+    {
+      "id": "F046",
+      "category": "03 · Read the bottle",
+      "hook": "Your vermouth started as wine.",
+      "fact": "Vermouth is aromatised, fortified wine, which is why an opened bottle deserves different storage from a bottle of gin.",
+      "context": "Botanicals and fortification do not make it immune to oxidation.",
+      "display_idea": "Wine → botanicals → fortification, then a fridge icon.",
+      "source_ids": [
+        "vermouth"
+      ],
+      "fact_kind": "product-literacy",
+      "quantitative": false,
+      "numeric_payload": null,
+      "shortlist_rank": null
+    },
+    {
+      "id": "F047",
+      "category": "04 · Long before happy hour",
+      "hook": "Brewing before the farm.",
+      "fact": "Researchers interpreted residues in roughly 13,000-year-old stone mortars at Raqefet Cave as evidence of cereal-beer brewing.",
+      "context": "An archaeological interpretation; it does not prove beer caused agriculture.",
+      "display_idea": "An evidence timeline with a visible 'inferred brewing' label.",
+      "source_ids": [
+        "raqefet"
+      ],
+      "fact_kind": "archaeological-history",
+      "quantitative": false,
+      "numeric_payload": null,
+      "shortlist_rank": null
+    },
+    {
+      "id": "F048",
+      "category": "04 · Long before happy hour",
+      "hook": "The old recipe was a blend.",
+      "fact": "Chemical evidence from Jiahu, China, indicates a fermented drink combining rice, honey and fruit in the seventh millennium BCE.",
+      "context": "A mixed fermented beverage, not modern grape wine or a modern cocktail.",
+      "display_idea": "Three ingredients joining one ancient pottery vessel.",
+      "source_ids": [
+        "jiahu"
+      ],
+      "fact_kind": "archaeological-history",
+      "quantitative": false,
+      "numeric_payload": null,
+      "shortlist_rank": null
+    },
+    {
+      "id": "F049",
+      "category": "04 · Long before happy hour",
+      "hook": "Wine left a trace 8,000 years ago.",
+      "fact": "Pottery residues from Georgian sites dated about 6000–5800 BCE provide evidence of early grape wine.",
+      "context": "Evidence at these sites; avoid claiming a final answer to where all winemaking began.",
+      "display_idea": "A dated pottery silhouette beside a chemical-evidence note.",
+      "source_ids": [
+        "georgiawine"
+      ],
+      "fact_kind": "archaeological-history",
+      "quantitative": false,
+      "numeric_payload": null,
+      "shortlist_rank": null
+    },
+    {
+      "id": "F050",
+      "category": "04 · Long before happy hour",
+      "hook": "One early spreadsheet tracked beer.",
+      "fact": "A Mesopotamian tablet from about 3100–3000 BCE records beer distributed to workers as daily rations.",
+      "context": "A museum object interpretation; not a claim that all early writing concerned alcohol.",
+      "display_idea": "An original pictogram-inspired ledger, linked to the museum object.",
+      "source_ids": [
+        "beertablet"
+      ],
+      "fact_kind": "archival-history",
+      "quantitative": false,
+      "numeric_payload": null,
+      "shortlist_rank": 14
+    },
+    {
+      "id": "F051",
+      "category": "04 · Long before happy hour",
+      "hook": "The cocktail got a definition in 1806.",
+      "fact": "A definition published on 13 May 1806 described a cocktail through spirits, sugar, water and bitters.",
+      "context": "A landmark definition, not the first appearance of the word 'cocktail'.",
+      "display_idea": "Four ingredient symbols forming a minimal family tree.",
+      "source_ids": [
+        "definition1806"
+      ],
+      "fact_kind": "documented-history",
+      "quantitative": false,
+      "numeric_payload": null,
+      "shortlist_rank": null
+    },
+    {
+      "id": "F052",
+      "category": "04 · Long before happy hour",
+      "hook": "The bartender's handbook is older than Prohibition.",
+      "fact": "Jerry Thomas's 1862 How to Mix Drinks is recognised as the first American bartending manual.",
+      "context": "First American manual; not the world's first written drink recipe.",
+      "display_idea": "A short book-spine timeline: 1862 before 1920.",
+      "source_ids": [
+        "jerrythomas"
+      ],
+      "fact_kind": "documented-history",
+      "quantitative": false,
+      "numeric_payload": null,
+      "shortlist_rank": null
+    },
+    {
+      "id": "F053",
+      "category": "04 · Long before happy hour",
+      "hook": "Franklin kept a punch recipe.",
+      "fact": "The Massachusetts Historical Society preserves Benjamin Franklin's milk-punch recipe, sent to James Bowdoin on 11 October 1763.",
+      "context": "A surviving recipe, not evidence Franklin invented milk punch.",
+      "display_idea": "A dated letter reveal; link the original and its transcription.",
+      "source_ids": [
+        "franklin"
+      ],
+      "fact_kind": "archival-history",
+      "quantitative": false,
+      "numeric_payload": null,
+      "shortlist_rank": null
+    },
+    {
+      "id": "F054",
+      "category": "04 · Long before happy hour",
+      "hook": "The Navy called last orders in 1970.",
+      "fact": "The Royal Navy's daily rum ration ended on 31 July 1970, remembered as Black Tot Day.",
+      "context": "Royal Navy practice; not a date when rum production ended.",
+      "display_idea": "A naval timeline stopping at one small empty measure.",
+      "source_ids": [
+        "navyrum"
+      ],
+      "fact_kind": "documented-history",
+      "quantitative": false,
+      "numeric_payload": null,
+      "shortlist_rank": null
+    },
+    {
+      "id": "F055",
+      "category": "04 · Long before happy hour",
+      "hook": "Grog was a dilution order.",
+      "fact": "Royal Collection Trust links naval grog to Admiral Edward Vernon's 1740 order to dilute rum with water.",
+      "context": "Historical institutional account; do not attach unverified pirate-health stories.",
+      "display_idea": "A rum measure becoming a larger diluted drink.",
+      "source_ids": [
+        "grog"
+      ],
+      "fact_kind": "documented-history",
+      "quantitative": false,
+      "numeric_payload": null,
+      "shortlist_rank": null
+    },
+    {
+      "id": "F056",
+      "category": "04 · Long before happy hour",
+      "hook": "Prohibition didn't outlaw every private sip.",
+      "fact": "U.S. national Prohibition ran from 1920 to 1933; the constitutional ban targeted manufacture, sale and transport, rather than private consumption itself.",
+      "context": "Other laws and restrictions existed. Avoid reducing the whole legal system to one sentence.",
+      "display_idea": "A 1920–1933 timeline labelled with what the amendment prohibited.",
+      "source_ids": [
+        "prohibition"
+      ],
+      "fact_kind": "documented-history",
+      "quantitative": false,
+      "numeric_payload": null,
+      "shortlist_rank": null
+    },
+    {
+      "id": "F057",
+      "category": "04 · Long before happy hour",
+      "hook": "The beer picture was propaganda too.",
+      "fact": "Hogarth's Gin Lane and Beer Street were published together in 1751, contrasting social ruin with an idealised beer-drinking community.",
+      "context": "Political and moral imagery, not neutral comparative health evidence.",
+      "display_idea": "An original two-panel interpretation with a museum source note.",
+      "source_ids": [
+        "hogarth"
+      ],
+      "fact_kind": "art-history",
+      "quantitative": false,
+      "numeric_payload": null,
+      "shortlist_rank": null
+    },
+    {
+      "id": "F058",
+      "category": "04 · Long before happy hour",
+      "hook": "An optimistic lease.",
+      "fact": "Arthur Guinness signed a 9,000-year lease at St James's Gate in 1759.",
+      "context": "A historical lease story; not a statement about current property arrangements.",
+      "display_idea": "A very long timeline with 1759 marked near the start.",
+      "source_ids": [
+        "guinnesshistory"
+      ],
+      "fact_kind": "producer-historical-account",
+      "quantitative": true,
+      "numeric_payload": {
+        "historical_lease_years": 9000
+      },
+      "shortlist_rank": null
+    },
+    {
+      "id": "F059",
+      "category": "04 · Long before happy hour",
+      "hook": "Pub arguments got their own reference book.",
+      "fact": "Guinness World Records traces its origin to Hugh Beaver's 1951 bird-speed argument; the first record book appeared in 1955.",
+      "context": "The publisher's origin account; no claim every pub dispute became a record.",
+      "display_idea": "A short arrow from pub argument to reference book.",
+      "source_ids": [
+        "recordbook"
+      ],
+      "fact_kind": "publisher-historical-account",
+      "quantitative": false,
+      "numeric_payload": null,
+      "shortlist_rank": null
+    },
+    {
+      "id": "F060",
+      "category": "04 · Long before happy hour",
+      "hook": "The recipe keeps its secrets.",
+      "fact": "Chartreuse's producer traces its manuscript story to 1605; Green Chartreuse uses a blend of 130 plants, flowers, roots, spices and other botanicals.",
+      "context": "Producer account and specification; the complete recipe is not publicly disclosed.",
+      "display_idea": "130 understated marks around a closed botanical notebook.",
+      "source_ids": [
+        "chartreusehistory",
+        "chartreusegreen"
+      ],
+      "fact_kind": "producer-historical-account",
+      "quantitative": true,
+      "numeric_payload": {
+        "botanical_count_reported": 130
+      },
+      "shortlist_rank": null
+    },
+    {
+      "id": "F061",
+      "category": "05 · India's bar has layers",
+      "hook": "Indian single malt made its entrance in Glasgow.",
+      "fact": "Amrut launched its Indian single malt in Glasgow in 2004.",
+      "context": "A documented brand launch; not a claim that whisky production in India began then.",
+      "display_idea": "Bengaluru-to-Glasgow route with a 2004 marker.",
+      "source_ids": [
+        "amrut",
+        "amrutlaunch"
+      ],
+      "fact_kind": "producer-historical-account",
+      "quantitative": false,
+      "numeric_payload": null,
+      "shortlist_rank": null
+    },
+    {
+      "id": "F062",
+      "category": "05 · India's bar has layers",
+      "hook": "Name the award, not the whole world.",
+      "fact": "Indri's Diwali Collector's Edition 2023 won Best in Show, Double Gold at the Whiskies of the World Awards.",
+      "context": "The specific competition and edition matter; 'world's best whisky' is too broad.",
+      "display_idea": "An award label that expands to reveal event, category and year.",
+      "source_ids": [
+        "indri"
+      ],
+      "fact_kind": "producer-award-account",
+      "quantitative": false,
+      "numeric_payload": null,
+      "shortlist_rank": null
+    },
+    {
+      "id": "F063",
+      "category": "05 · India's bar has layers",
+      "hook": "Feni has a place on the register.",
+      "fact": "India's official GI register lists Feni as a registered geographical indication associated with Goa.",
+      "context": "The 19 December 2007 date shown in this state-wise list is its filing date, not a certificate-issue date.",
+      "display_idea": "A Goa origin marker beside the drink, with the register available on tap.",
+      "source_ids": [
+        "fenicertificate"
+      ],
+      "fact_kind": "official-record",
+      "quantitative": false,
+      "numeric_payload": null,
+      "shortlist_rank": null
+    },
+    {
+      "id": "F064",
+      "category": "05 · India's bar has layers",
+      "hook": "Same fruit. Another distillation.",
+      "fact": "Goa Tourism describes urrak as the first distillation of cashew fruit and feni as the second or third.",
+      "context": "Urrak is seasonal and usually less potent; do not assign every batch one exact ABV.",
+      "display_idea": "A process fork: first distillation versus further distillation.",
+      "source_ids": [
+        "goandrinks"
+      ],
+      "fact_kind": "regional-process",
+      "quantitative": true,
+      "numeric_payload": {
+        "distillation_stage": {
+          "urrak": 1,
+          "feni": [
+            2,
+            3
+          ]
+        }
+      },
+      "shortlist_rank": 15
+    },
+    {
+      "id": "F065",
+      "category": "05 · India's bar has layers",
+      "hook": "Before the spirit, there's the juice.",
+      "fact": "Fresh cashew juice is called niro in Goa; Goa Tourism identifies March to May as its season.",
+      "context": "Fresh juice is distinct from the fermented and distilled drinks made downstream.",
+      "display_idea": "Cashew apple → niro → fermentation → urrak/feni.",
+      "source_ids": [
+        "goandrinks"
+      ],
+      "fact_kind": "regional-tradition",
+      "quantitative": false,
+      "numeric_payload": null,
+      "shortlist_rank": null
+    },
+    {
+      "id": "F066",
+      "category": "05 · India's bar has layers",
+      "hook": "Flowers in the glass.",
+      "fact": "Mahua's flowers, rather than its fruit, are fermented and distilled into traditional spirits. CSIR research documents this in Madhya Pradesh; India's National Portal also describes flower-based drinks in Latehar, Jharkhand.",
+      "context": "A regional flower-to-spirit tradition. The cited descriptions do not establish a single recipe or strength for every mahua drink.",
+      "display_idea": "A flower-to-drink illustration with regional context.",
+      "source_ids": [
+        "mahua",
+        "mahuapaper"
+      ],
+      "fact_kind": "regional-tradition",
+      "quantitative": false,
+      "numeric_payload": null,
+      "shortlist_rank": 16
+    },
+    {
+      "id": "F067",
+      "category": "05 · India's bar has layers",
+      "hook": "Warm water. Fermented millet. A bamboo straw.",
+      "fact": "ICAR describes Himalayan millet drinks served in a tongba container, topped up with warm water and sipped through a filtering bamboo straw.",
+      "context": "Tongba also names the vessel; traditions and names vary across Himalayan communities.",
+      "display_idea": "An annotated vessel showing grain, water and the straw.",
+      "source_ids": [
+        "tongba"
+      ],
+      "fact_kind": "regional-tradition",
+      "quantitative": false,
+      "numeric_payload": null,
+      "shortlist_rank": null
+    },
+    {
+      "id": "F068",
+      "category": "05 · India's bar has layers",
+      "hook": "Indian wine has an origin label too.",
+      "fact": "Nashik Valley Wine is listed as a registered geographical indication associated with Maharashtra in India's official GI register.",
+      "context": "This identifies a registered geographical origin; it is not a blanket quality grade for all Indian wine.",
+      "display_idea": "Put Nashik on an origin map beside Goa's Feni and other place-linked drinks.",
+      "source_ids": [
+        "nashikgi"
+      ],
+      "fact_kind": "official-record",
+      "quantitative": false,
+      "numeric_payload": null,
+      "shortlist_rank": null
+    },
+    {
+      "id": "F069",
+      "category": "06 · Cocktail family resemblances",
+      "hook": "Three bottles. No fractions.",
+      "fact": "The IBA Negroni uses 30 ml each of gin, Campari and sweet red vermouth: a 1:1:1 structure.",
+      "context": "Measured liquids before ice and dilution; other house specifications exist.",
+      "display_idea": "Three equal linear bars beside one glass.",
+      "source_ids": [
+        "iba_negroni"
+      ],
+      "fact_kind": "recipe-blueprint",
+      "quantitative": true,
+      "numeric_payload": {
+        "ingredients_ml": {
+          "gin": 30,
+          "Campari": 30,
+          "sweet_red_vermouth": 30
+        }
+      },
+      "shortlist_rank": null
+    },
+    {
+      "id": "F070",
+      "category": "06 · Cocktail family resemblances",
+      "hook": "The Negroni's lighter cousin.",
+      "fact": "The IBA Americano pairs 30 ml Campari with 30 ml sweet red vermouth and a splash of soda; it shares two Negroni ingredients but leaves out gin.",
+      "context": "'Splash' is not a fixed volume, so do not invent a precise Americano ABV.",
+      "display_idea": "A recipe transformation: gin out, soda in.",
+      "source_ids": [
+        "iba_americano",
+        "iba_negroni"
+      ],
+      "fact_kind": "recipe-blueprint",
+      "quantitative": true,
+      "numeric_payload": {
+        "measured_ingredients_ml": {
+          "Campari": 30,
+          "sweet_red_vermouth": 30
+        },
+        "soda": "splash, unspecified volume"
+      },
+      "shortlist_rank": null
+    },
+    {
+      "id": "F071",
+      "category": "06 · Cocktail family resemblances",
+      "hook": "The Spritz has a simple rhythm.",
+      "fact": "The IBA Aperol Spritz uses 90 ml Prosecco, 60 ml Aperol and 30 ml soda: 3:2:1.",
+      "context": "Before ice and dilution; the IBA notes alternative bitter liqueurs.",
+      "display_idea": "A proportional horizontal bar, matching the landing-page glass.",
+      "source_ids": [
+        "iba_spritz"
+      ],
+      "fact_kind": "recipe-blueprint",
+      "quantitative": true,
+      "numeric_payload": {
+        "ingredients_ml": {
+          "Prosecco": 90,
+          "Aperol": 60,
+          "soda": 30
+        },
+        "ratio": [
+          3,
+          2,
+          1
+        ]
+      },
+      "shortlist_rank": null
+    },
+    {
+      "id": "F072",
+      "category": "06 · Cocktail family resemblances",
+      "hook": "A Margarita isn't always three equal parts.",
+      "fact": "The IBA Margarita specifies 50 ml tequila, 20 ml triple sec and 15 ml fresh lime juice.",
+      "context": "One official specification, not the only valid recipe.",
+      "display_idea": "Compare the actual 50:20:15 quantities with an equal-parts ghost outline.",
+      "source_ids": [
+        "iba_margarita"
+      ],
+      "fact_kind": "recipe-blueprint",
+      "quantitative": true,
+      "numeric_payload": {
+        "ingredients_ml": {
+          "tequila": 50,
+          "triple_sec": 20,
+          "lime_juice": 15
+        }
+      },
+      "shortlist_rank": null
+    },
+    {
+      "id": "F073",
+      "category": "06 · Cocktail family resemblances",
+      "hook": "The Cosmo has more cranberry than lime.",
+      "fact": "The IBA Cosmopolitan uses 40 ml citron vodka, 15 ml Cointreau, 15 ml lime juice and 30 ml cranberry juice.",
+      "context": "Measured liquids before ice and dilution.",
+      "display_idea": "Four labelled bars, keeping the pale pink accent restrained.",
+      "source_ids": [
+        "iba_cosmo"
+      ],
+      "fact_kind": "recipe-blueprint",
+      "quantitative": true,
+      "numeric_payload": {
+        "ingredients_ml": {
+          "citron_vodka": 40,
+          "Cointreau": 15,
+          "lime_juice": 15,
+          "cranberry_juice": 30
+        }
+      },
+      "shortlist_rank": null
+    },
+    {
+      "id": "F074",
+      "category": "06 · Cocktail family resemblances",
+      "hook": "The Daiquiri can travel light.",
+      "fact": "The IBA Daiquiri contains 60 ml white Cuban rum, 20 ml lime juice and two barspoons of superfine sugar.",
+      "context": "The classic specification is not a frozen fruit drink; spoon mass is not specified here.",
+      "display_idea": "Three ingredient symbols; keep spoon and liquid units separate.",
+      "source_ids": [
+        "iba_daiquiri"
+      ],
+      "fact_kind": "recipe-blueprint",
+      "quantitative": true,
+      "numeric_payload": {
+        "liquids_ml": {
+          "white_Cuban_rum": 60,
+          "lime_juice": 20
+        },
+        "superfine_sugar_barspoons": 2
+      },
+      "shortlist_rank": null
+    },
+    {
+      "id": "F075",
+      "category": "06 · Cocktail family resemblances",
+      "hook": "Different bottles. The same four-way split.",
+      "fact": "The IBA Paper Plane uses four equal 30 ml measures; the Naked and Famous uses four equal 22.5 ml measures.",
+      "context": "Their ingredients differ: bourbon/amaro/Aperol/lemon versus mezcal/Yellow Chartreuse/Aperol/lime.",
+      "display_idea": "Two parallel four-part bars with linked shared ingredients.",
+      "source_ids": [
+        "iba_plane",
+        "iba_naked"
+      ],
+      "fact_kind": "recipe-blueprint",
+      "quantitative": true,
+      "numeric_payload": {
+        "Paper_Plane_ingredients_ml": {
+          "bourbon": 30,
+          "Amaro_Nonino": 30,
+          "Aperol": 30,
+          "lemon_juice": 30
+        },
+        "Naked_and_Famous_ingredients_ml": {
+          "mezcal": 22.5,
+          "Yellow_Chartreuse": 22.5,
+          "Aperol": 22.5,
+          "lime_juice": 22.5
+        }
+      },
+      "shortlist_rank": 17
+    },
+    {
+      "id": "F076",
+      "category": "06 · Cocktail family resemblances",
+      "hook": "Hemingway takes a different detour.",
+      "fact": "The IBA Hemingway Special combines 60 ml rum, 40 ml grapefruit juice, 15 ml maraschino liqueur and 15 ml lime juice.",
+      "context": "No separately added sugar syrup in this specification; the liqueur still contains sugar.",
+      "display_idea": "A Daiquiri family branch that adds grapefruit and maraschino.",
+      "source_ids": [
+        "iba_hemingway"
+      ],
+      "fact_kind": "recipe-blueprint",
+      "quantitative": true,
+      "numeric_payload": {
+        "ingredients_ml": {
+          "rum": 60,
+          "grapefruit_juice": 40,
+          "maraschino_liqueur": 15,
+          "lime_juice": 15
+        }
+      },
+      "shortlist_rank": null
+    },
+    {
+      "id": "F077",
+      "category": "06 · Cocktail family resemblances",
+      "hook": "The original Mai Tai skipped pineapple.",
+      "fact": "Trader Vic's 1944 creation account lists Jamaican rum, lime, orange curaçao, rock-candy syrup and orgeat, without pineapple or orange juice.",
+      "context": "The creator's company's account; modern versions vary.",
+      "display_idea": "Original-versus-familiar ingredient comparison, without calling adaptations invalid.",
+      "source_ids": [
+        "maitai"
+      ],
+      "fact_kind": "attributed-origin",
+      "quantitative": false,
+      "numeric_payload": null,
+      "shortlist_rank": null
+    },
+    {
+      "id": "F078",
+      "category": "06 · Cocktail family resemblances",
+      "hook": "A hotel bar wrote a national signature.",
+      "fact": "Raffles credits bartender Ngiam Tong Boon with creating the Singapore Sling at its Long Bar in 1915.",
+      "context": "State this as the hotel's historical account, rather than an uncontested archival proof.",
+      "display_idea": "An illustrated hotel-to-drink origin pin.",
+      "source_ids": [
+        "sling"
+      ],
+      "fact_kind": "attributed-origin",
+      "quantitative": false,
+      "numeric_payload": null,
+      "shortlist_rank": null
+    },
+    {
+      "id": "F079",
+      "category": "06 · Cocktail family resemblances",
+      "hook": "The Caesar has a pasta connection.",
+      "fact": "LCBO credits Walter Chell's 1969 Caesar with drawing inspiration from spaghetti alle vongole: tomato and clam flavours became a cocktail.",
+      "context": "LCBO notes earlier vodka–tomato–clam drinks; Chell popularised this version.",
+      "display_idea": "A subtle food-to-drink connection diagram.",
+      "source_ids": [
+        "caesar"
+      ],
+      "fact_kind": "attributed-origin",
+      "quantitative": false,
+      "numeric_payload": null,
+      "shortlist_rank": null
+    },
+    {
+      "id": "F080",
+      "category": "06 · Cocktail family resemblances",
+      "hook": "The Old Fashioned crossed the border.",
+      "fact": "Phil Ward's Oaxaca Old-Fashioned, created at Death & Co in 2007, splits its base between tequila and mezcal.",
+      "context": "Creator-venue attribution; not a historical Mexican folk recipe.",
+      "display_idea": "A whiskey base branching into tequila and mezcal.",
+      "source_ids": [
+        "oaxaca"
+      ],
+      "fact_kind": "documented-modern-cocktail",
+      "quantitative": false,
+      "numeric_payload": null,
+      "shortlist_rank": null
+    },
+    {
+      "id": "F081",
+      "category": "06 · Cocktail family resemblances",
+      "hook": "The Penicillin is a modern prescription.",
+      "fact": "Difford's credits Sam Ross with the Penicillin at Milk & Honey, New York, in 2005: whisky, ginger, honey and lemon, with smoky whisky as an accent.",
+      "context": "A cocktail name and recipe history; no medical benefit implied.",
+      "display_idea": "A 2005 marker beside a honey–ginger–smoke flavour diagram.",
+      "source_ids": [
+        "penicillin"
+      ],
+      "fact_kind": "attributed-origin",
+      "quantitative": false,
+      "numeric_payload": null,
+      "shortlist_rank": null
+    },
+    {
+      "id": "F082",
+      "category": "06 · Cocktail family resemblances",
+      "hook": "The Espresso Martini is younger than it looks.",
+      "fact": "Difford's dates Dick Bradsell's Espresso Martini to London in 1983; its familiar name does not mean the drink contains vermouth.",
+      "context": "Use 'dated by Difford's' for the origin year; recipes and naming evolved.",
+      "display_idea": "A 1980s timeline connected to a coffee-cup silhouette.",
+      "source_ids": [
+        "modernclassics"
+      ],
+      "fact_kind": "attributed-origin",
+      "quantitative": false,
+      "numeric_payload": null,
+      "shortlist_rank": null
+    },
+    {
+      "id": "F083",
+      "category": "07 · Seen or heard this somewhere?",
+      "hook": "Casablanca had a French 75 tab.",
+      "fact": "The French 75 appears in Casablanca, released in 1942.",
+      "context": "A documented screen appearance, not a claim that the film invented or popularised it by a measurable amount.",
+      "display_idea": "A film timeline; tap the original glass drawing to open the recipe.",
+      "source_ids": [
+        "bfi"
+      ],
+      "fact_kind": "screen-appearance",
+      "quantitative": false,
+      "numeric_payload": null,
+      "shortlist_rank": null
+    },
+    {
+      "id": "F084",
+      "category": "07 · Seen or heard this somewhere?",
+      "hook": "The Dude's usual.",
+      "fact": "The White Russian is Jeffrey Lebowski's recurring drink in The Big Lebowski, released in 1998.",
+      "context": "On-screen association; avoid unsupported post-film sales-growth claims.",
+      "display_idea": "A 1998 timeline marker paired with a milk-colour glass.",
+      "source_ids": [
+        "bfi"
+      ],
+      "fact_kind": "screen-appearance",
+      "quantitative": false,
+      "numeric_payload": null,
+      "shortlist_rank": 18
+    },
+    {
+      "id": "F085",
+      "category": "07 · Seen or heard this somewhere?",
+      "hook": "The hot-water bottle was the shaker.",
+      "fact": "In Some Like It Hot (1959), the train-party Manhattan is mixed in a hot-water bottle.",
+      "context": "Scene description, not a recommended piece of bar equipment.",
+      "display_idea": "A quiet line drawing of the improvised shaker beside the recipe.",
+      "source_ids": [
+        "vogue"
+      ],
+      "fact_kind": "screen-appearance",
+      "quantitative": false,
+      "numeric_payload": null,
+      "shortlist_rank": null
+    },
+    {
+      "id": "F086",
+      "category": "07 · Seen or heard this somewhere?",
+      "hook": "One onion changes the scene.",
+      "fact": "A Gibson appears in North by Northwest (1959); its pickled-onion garnish distinguishes it from the familiar olive-or-twist Martini presentation.",
+      "context": "A garnish comparison, not a claim that every Gibson uses one fixed ratio.",
+      "display_idea": "A single garnish swap between two matching glasses.",
+      "source_ids": [
+        "vogue"
+      ],
+      "fact_kind": "screen-appearance",
+      "quantitative": false,
+      "numeric_payload": null,
+      "shortlist_rank": null
+    },
+    {
+      "id": "F087",
+      "category": "07 · Seen or heard this somewhere?",
+      "hook": "Gatsby's summer had a bar menu.",
+      "fact": "Mint Juleps and Gin Rickeys appear in The Great Gatsby's world, from Fitzgerald's 1925 novel to the 2013 film adaptation.",
+      "context": "Literary and film references; they do not establish either drink's origin.",
+      "display_idea": "Two drink silhouettes on a novel-to-screen timeline.",
+      "source_ids": [
+        "vogue"
+      ],
+      "fact_kind": "literary-and-screen-appearance",
+      "quantitative": false,
+      "numeric_payload": null,
+      "shortlist_rank": null
+    },
+    {
+      "id": "F088",
+      "category": "07 · Seen or heard this somewhere?",
+      "hook": "Carrie's other accessory.",
+      "fact": "The Cosmopolitan is closely associated with Sex and the City.",
+      "context": "Cultural association, not a quantified causal sales claim.",
+      "display_idea": "A restrained TV-era timeline that opens the Cosmo recipe.",
+      "source_ids": [
+        "vogue"
+      ],
+      "fact_kind": "screen-appearance",
+      "quantitative": false,
+      "numeric_payload": null,
+      "shortlist_rank": null
+    },
+    {
+      "id": "F089",
+      "category": "07 · Seen or heard this somewhere?",
+      "hook": "The Vesper was on the page first.",
+      "fact": "Bond's Vesper appears in Casino Royale, first published in 1953, and is named for Vesper Lynd.",
+      "context": "The literary drink predates the 2006 film. Keep the novel and film versions distinct when illustrating the scene.",
+      "display_idea": "A 1953-to-2006 line linking the book to the screen.",
+      "source_ids": [
+        "casinobook",
+        "flemingdrinks"
+      ],
+      "fact_kind": "literary-history",
+      "quantitative": false,
+      "numeric_payload": null,
+      "shortlist_rank": null
+    },
+    {
+      "id": "F090",
+      "category": "07 · Seen or heard this somewhere?",
+      "hook": "Even the author had second thoughts.",
+      "fact": "An estate-published account reports that Fleming disliked the Vesper when he eventually tasted the cocktail he had invented.",
+      "context": "A reported literary anecdote; don't turn it into an objective judgement of today's Vesper recipes.",
+      "display_idea": "Reveal the author's reaction after showing the famous order.",
+      "source_ids": [
+        "flemingvesper"
+      ],
+      "fact_kind": "attributed-literary-anecdote",
+      "quantitative": false,
+      "numeric_payload": null,
+      "shortlist_rank": null
+    },
+    {
+      "id": "F091",
+      "category": "07 · Seen or heard this somewhere?",
+      "hook": "Bond's expense account got audited.",
+      "fact": "A 2013 BMJ analysis of Fleming novels estimated Bond's intake at 92 UK alcohol units per week, excluding days he could not drink.",
+      "context": "A content-analysis estimate about fiction, not measured consumption or a target to imitate.",
+      "display_idea": "A clearly labelled fictional-character tally, explaining what a UK unit is.",
+      "source_ids": [
+        "bondstudy"
+      ],
+      "fact_kind": "research-content-analysis",
+      "quantitative": true,
+      "numeric_payload": {
+        "study_year": 2013,
+        "estimated_UK_units_per_week": 92
+      },
+      "shortlist_rank": 19
+    },
+    {
+      "id": "F092",
+      "category": "07 · Seen or heard this somewhere?",
+      "hook": "The Piña Colada song came first.",
+      "fact": "Rupert Holmes said in an interview that he had never tasted a Piña Colada when he wrote the famous song's drink reference.",
+      "context": "The songwriter's own recollection; no song lyrics need to be reproduced.",
+      "display_idea": "A song-title card that reveals the creator's anecdote.",
+      "source_ids": [
+        "holmes"
+      ],
+      "fact_kind": "creator-interview",
+      "quantitative": false,
+      "numeric_payload": null,
+      "shortlist_rank": null
+    },
+    {
+      "id": "F093",
+      "category": "08 · Fermentation has a passport",
+      "hook": "Belgian beer is a living tradition.",
+      "fact": "Belgium's beer culture was inscribed by UNESCO in 2016; its inscription describes almost 1,500 beer types and varied fermentation methods.",
+      "context": "The count belongs to the inscription description, not a live 2026 inventory.",
+      "display_idea": "A fermentation-family map rather than a ranking of national quality.",
+      "source_ids": [
+        "belgium"
+      ],
+      "fact_kind": "heritage-inscription",
+      "quantitative": true,
+      "numeric_payload": {
+        "approximate_beer_types_in_inscription": 1500
+      },
+      "shortlist_rank": null
+    },
+    {
+      "id": "F094",
+      "category": "08 · Fermentation has a passport",
+      "hook": "Sake needs more than yeast.",
+      "fact": "Koji helps convert rice starch into fermentable sugars; yeast then produces alcohol. Japan's traditional koji-based sake-making knowledge received UNESCO recognition in 2024.",
+      "context": "Koji mould and yeast perform different jobs.",
+      "display_idea": "Two linked processes rather than one generic fermentation icon.",
+      "source_ids": [
+        "sakeheritage",
+        "sakeprocess"
+      ],
+      "fact_kind": "heritage-and-process",
+      "quantitative": false,
+      "numeric_payload": null,
+      "shortlist_rank": null
+    },
+    {
+      "id": "F095",
+      "category": "08 · Fermentation has a passport",
+      "hook": "Some cellars are buried pots.",
+      "fact": "UNESCO's Georgian qvevri tradition uses egg-shaped earthenware vessels buried in the ground; its description includes five to six months of fermentation.",
+      "context": "The 2013 inscription describes a traditional process; individual wines and maceration regimes vary.",
+      "display_idea": "A ground cross-section with a bounded five-to-six-month note.",
+      "source_ids": [
+        "qvevri"
+      ],
+      "fact_kind": "heritage-inscription",
+      "quantitative": true,
+      "numeric_payload": {
+        "process_months_in_description": [
+          5,
+          6
+        ]
+      },
+      "shortlist_rank": null
+    },
+    {
+      "id": "F096",
+      "category": "08 · Fermentation has a passport",
+      "hook": "Tequila has a landscape-sized footprint.",
+      "fact": "UNESCO's Agave Landscape and Ancient Industrial Facilities of Tequila covers 34,658 hectares and was inscribed in 2006.",
+      "context": "A World Heritage property; this is not the full legal tequila appellation area.",
+      "display_idea": "A map distinguishing the heritage property from broader production geography.",
+      "source_ids": [
+        "agaveland"
+      ],
+      "fact_kind": "heritage-inscription",
+      "quantitative": true,
+      "numeric_payload": {
+        "heritage_property_hectares": 34658
+      },
+      "shortlist_rank": null
+    },
+    {
+      "id": "F097",
+      "category": "08 · Fermentation has a passport",
+      "hook": "Trappist is about who makes it, too.",
+      "fact": "The Authentic Trappist Product criteria require production near the abbey, monastic supervision, and profits supporting the community, solidarity or charitable work.",
+      "context": "A certification model, not one particular flavour or beer style.",
+      "display_idea": "Three plainly labelled certification conditions.",
+      "source_ids": [
+        "trappist"
+      ],
+      "fact_kind": "certification-literacy",
+      "quantitative": false,
+      "numeric_payload": null,
+      "shortlist_rank": null
+    },
+    {
+      "id": "F098",
+      "category": "08 · Fermentation has a passport",
+      "hook": "A solera is a moving blend.",
+      "fact": "Sherry's criaderas-and-solera system blends wine across ageing stages: wine withdrawn from the oldest scale is replenished from younger scales.",
+      "context": "A dynamic ageing method; a solera's founding date is not the age of every drop.",
+      "display_idea": "A reversible flow diagram through cask tiers.",
+      "source_ids": [
+        "sherry"
+      ],
+      "fact_kind": "production-tradition",
+      "quantitative": false,
+      "numeric_payload": null,
+      "shortlist_rank": null
+    },
+    {
+      "id": "F099",
+      "category": "08 · Fermentation has a passport",
+      "hook": "This yeast layer is meant to be there.",
+      "fact": "During biological sherry ageing, flor forms a surface film that protects wine from oxidation while changing its composition and aromas.",
+      "context": "A deliberate production process; not a rule that every film on an opened bottle is harmless.",
+      "display_idea": "A cutaway of a partially filled sherry cask and its flor layer.",
+      "source_ids": [
+        "sherry"
+      ],
+      "fact_kind": "production-tradition",
+      "quantitative": false,
+      "numeric_payload": null,
+      "shortlist_rank": null
+    },
+    {
+      "id": "F100",
+      "category": "08 · Fermentation has a passport",
+      "hook": "Port keeps sweetness by stopping the process.",
+      "fact": "Port production deliberately interrupts fermentation with certified grape spirit at 77% ABV, preserving some grape sugar.",
+      "context": "77% describes the added spirit, not the finished Port's strength.",
+      "display_idea": "A fermentation curve stopping when fortifying spirit is introduced.",
+      "source_ids": [
+        "port"
+      ],
+      "fact_kind": "production-tradition",
+      "quantitative": true,
+      "numeric_payload": {
+        "fortifying_spirit_abv_percent": 77
+      },
+      "shortlist_rank": null
+    },
+    {
+      "id": "F101",
+      "category": "09 · Better bar instincts",
+      "hook": "A glass isn't a unit.",
+      "fact": "A U.S. standard drink contains about 14 g of pure alcohol: roughly 12 fl oz of 5% beer, 5 fl oz of 12% wine or 1.5 fl oz of 40% spirits.",
+      "context": "These are U.S. measures and examples; larger or stronger servings contain more.",
+      "display_idea": "Three different glasses aligned to the same ethanol amount.",
+      "source_ids": [
+        "niaaa"
+      ],
+      "fact_kind": "measurement-literacy",
+      "quantitative": true,
+      "numeric_payload": {
+        "pure_alcohol_g_per_US_standard_drink": 14,
+        "example_servings": {
+          "beer": {
+            "US_fl_oz": 12,
+            "abv_percent": 5
+          },
+          "wine": {
+            "US_fl_oz": 5,
+            "abv_percent": 12
+          },
+          "spirits": {
+            "US_fl_oz": 1.5,
+            "abv_percent": 40
+          }
+        }
+      },
+      "shortlist_rank": null
+    },
+    {
+      "id": "F102",
+      "category": "09 · Better bar instincts",
+      "hook": "A UK unit is a different measure.",
+      "fact": "One UK alcohol unit is 10 ml, or about 8 g, of pure alcohol.",
+      "context": "A UK unit and a U.S. standard drink are different quantities.",
+      "display_idea": "A side-by-side 8 g versus 14 g comparison, labelled by country.",
+      "source_ids": [
+        "nhs",
+        "niaaa"
+      ],
+      "fact_kind": "measurement-literacy",
+      "quantitative": true,
+      "numeric_payload": {
+        "pure_alcohol_ml_per_UK_unit": 10,
+        "pure_alcohol_g_per_UK_unit": 8
+      },
+      "shortlist_rank": null
+    },
+    {
+      "id": "F103",
+      "category": "09 · Better bar instincts",
+      "hook": "The bottle has more units than glasses.",
+      "fact": "A 750 ml bottle at 13.5% ABV contains approximately 10.1 UK units: 750 × 13.5 ÷ 1,000.",
+      "context": "Our calculation using the NHS formula; not a personal metabolism or safe-driving countdown.",
+      "display_idea": "A bottle that resolves into 10.1 labelled units.",
+      "source_ids": [
+        "nhs"
+      ],
+      "fact_kind": "derived-calculation",
+      "quantitative": true,
+      "numeric_payload": {
+        "bottle_ml": 750,
+        "abv_percent": 13.5,
+        "UK_units_unrounded": 10.125,
+        "formula": "ml × ABV percentage ÷ 1000"
+      },
+      "shortlist_rank": null
+    },
+    {
+      "id": "F104",
+      "category": "09 · Better bar instincts",
+      "hook": "Ice changes the percentage, not the pour.",
+      "fact": "Example: 30 ml each of 40% gin, 25% Campari and 16% vermouth makes a Negroni at about 27% ABV before dilution; adding 30 ml water gives about 20.3%.",
+      "context": "Our volume-based calculation with explicitly assumed bottle strengths; actual brands, ice melt and volume contraction vary.",
+      "display_idea": "A water slider showing ABV falling while ethanol volume stays approximately constant.",
+      "source_ids": [
+        "iba_negroni",
+        "niaaa"
+      ],
+      "fact_kind": "derived-calculation",
+      "quantitative": true,
+      "numeric_payload": {
+        "ingredients_ml": [
+          30,
+          30,
+          30
+        ],
+        "assumed_abv_percent": [
+          40,
+          25,
+          16
+        ],
+        "ethanol_ml": 24.3,
+        "before_water_abv_percent": 27,
+        "added_water_ml": 30,
+        "after_water_abv_percent_rounded": 20.3,
+        "formula": "Σ(volume × ABV fraction) ÷ total liquid volume"
+      },
+      "shortlist_rank": null
+    },
+    {
+      "id": "F105",
+      "category": "09 · Better bar instincts",
+      "hook": "Vermouth goes in the fridge.",
+      "fact": "MARTINI advises refrigerating opened vermouth and describes around a month of good keeping quality before oxidation increasingly dulls its flavour.",
+      "context": "Producer quality guidance, not a universal spoilage deadline.",
+      "display_idea": "A discreet 'opened on' date beside a fridge icon.",
+      "source_ids": [
+        "vermouth"
+      ],
+      "fact_kind": "storage-guidance",
+      "quantitative": false,
+      "numeric_payload": null,
+      "shortlist_rank": null
+    },
+    {
+      "id": "F106",
+      "category": "09 · Better bar instincts",
+      "hook": "Cold. Not frozen out.",
+      "fact": "Comité Champagne recommends serving Champagne at 8–10°C and chilling the bottle in a half-water, half-ice bucket about 30 minutes before serving.",
+      "context": "Service guidance; bottle size and starting temperature affect cooling time.",
+      "display_idea": "A temperature band with one short bucket-chilling instruction.",
+      "source_ids": [
+        "champagne_service"
+      ],
+      "fact_kind": "service-guidance",
+      "quantitative": true,
+      "numeric_payload": {
+        "recommended_serving_c": [
+          8,
+          10
+        ],
+        "ice_water_bucket_minutes_approx": 30
+      },
+      "shortlist_rank": null
+    },
+    {
+      "id": "F107",
+      "category": "09 · Better bar instincts",
+      "hook": "The spoon isn't a stopper.",
+      "fact": "Comité Champagne explicitly says a spoon in the bottle neck does not preserve bubbles; use an airtight closure.",
+      "context": "A practical preservation point, not a promise of indefinite freshness.",
+      "display_idea": "A spoon-versus-stopper reveal.",
+      "source_ids": [
+        "champagne_service"
+      ],
+      "fact_kind": "myth-check",
+      "quantitative": false,
+      "numeric_payload": null,
+      "shortlist_rank": null
+    },
+    {
+      "id": "F108",
+      "category": "09 · Better bar instincts",
+      "hook": "A 12-year-old doesn't turn 20 on your shelf.",
+      "fact": "Whisky does not keep maturing in the bottle the way it does in a cask; its age statement does not increase with storage.",
+      "context": "Bottle condition can still change; this is about cask-age accounting.",
+      "display_idea": "A cask clock that stops when the bottle is filled.",
+      "source_ids": [
+        "swafaq"
+      ],
+      "fact_kind": "storage-literacy",
+      "quantitative": false,
+      "numeric_payload": null,
+      "shortlist_rank": null
+    },
+    {
+      "id": "F109",
+      "category": "09 · Better bar instincts",
+      "hook": "Coffee can wake you. It can't sober you.",
+      "fact": "NIAAA explains that caffeine may reduce drowsiness but does not undo alcohol's effects on coordination or decision-making.",
+      "context": "Do not offer a coffee-based recovery or driving-readiness calculator.",
+      "display_idea": "A short myth/fact card with a clear explanation.",
+      "source_ids": [
+        "coffee"
+      ],
+      "fact_kind": "myth-check",
+      "quantitative": false,
+      "numeric_payload": null,
+      "shortlist_rank": null
+    },
+    {
+      "id": "F110",
+      "category": "09 · Better bar instincts",
+      "hook": "The order didn't rescue the morning.",
+      "fact": "A 2019 randomised crossover trial involving 90 adults found that beer-before-wine versus wine-before-beer did not significantly change hangover severity.",
+      "context": "A limited study under specified conditions; no order is a demonstrated hangover-prevention trick.",
+      "display_idea": "Two drink-order arrows ending at the same trial result.",
+      "source_ids": [
+        "beerwine"
+      ],
+      "fact_kind": "research-finding",
+      "quantitative": true,
+      "numeric_payload": {
+        "year": 2019,
+        "participants": 90
+      },
+      "shortlist_rank": null
+    },
+    {
+      "id": "F111",
+      "category": "09 · Better bar instincts",
+      "hook": "Absinthe's legend met a laboratory.",
+      "fact": "A 2008 analysis of 13 authentic pre-1915 absinthes found total thujone concentrations from 0.5 to 48.3 mg/l, rather than uniformly extreme levels.",
+      "context": "Chemical analysis of a small historical sample, not a clinical test of hallucinations or a claim of safety.",
+      "display_idea": "A measured range beside the 'green fairy' folklore label.",
+      "source_ids": [
+        "absinthe"
+      ],
+      "fact_kind": "research-finding",
+      "quantitative": true,
+      "numeric_payload": {
+        "study_year": 2008,
+        "preban_samples": 13,
+        "total_thujone_mg_per_l_range": [
+          0.5,
+          48.3
+        ]
+      },
+      "shortlist_rank": null
+    },
+    {
+      "id": "F112",
+      "category": "09 · Better bar instincts",
+      "hook": "The monk wasn't the whole invention story.",
+      "fact": "Comité Champagne's history credits Dom Pérignon with improvements in grape quality, blending and winemaking from 1668; Champagne's development involved many people and techniques.",
+      "context": "Avoid the single-inventor legend and the unsupported 'tasting stars' quotation.",
+      "display_idea": "A multi-person invention timeline, not a lone-genius portrait.",
+      "source_ids": [
+        "champagnehistory",
+        "champagnefaq"
+      ],
+      "fact_kind": "myth-check",
+      "quantitative": false,
+      "numeric_payload": null,
+      "shortlist_rank": null
+    },
+    {
+      "id": "F113",
+      "category": "09 · Better bar instincts",
+      "hook": "Small ice can bring its own water.",
+      "fact": "Dave Arnold's experiments found that excess water clinging to crushed ice explained extra initial dilution; drying its surface narrowed the difference from whole ice.",
+      "context": "A bar experiment about surface water and active shaking, not a universal claim that all ice sizes always dilute identically.",
+      "display_idea": "Separate carried-in water from water produced by melting.",
+      "source_ids": [
+        "icecrushed"
+      ],
+      "fact_kind": "bar-experiment",
+      "quantitative": false,
+      "numeric_payload": null,
+      "shortlist_rank": null
+    },
+    {
+      "id": "F114",
+      "category": "09 · Better bar instincts",
+      "hook": "The long shake has diminishing returns.",
+      "fact": "In Dave Arnold's 2009 tests, cooling largely levelled off after about 10–12 seconds of shaking.",
+      "context": "Tested with specified ice and 100 ml liquor; texture and appearance were not evaluated.",
+      "display_idea": "A flattening temperature curve; mark the test conditions.",
+      "source_ids": [
+        "iceshaking"
+      ],
+      "fact_kind": "bar-experiment",
+      "quantitative": true,
+      "numeric_payload": {
+        "year": 2009,
+        "test_liquor_ml": 100,
+        "approximate_cooling_plateau_seconds": [
+          10,
+          12
+        ]
+      },
+      "shortlist_rank": null
+    },
+    {
+      "id": "F115",
+      "category": "10 · Small details, good conversation",
+      "hook": "That black pint is ruby red.",
+      "fact": "Guinness describes Draught's colour as dark ruby red, created by the treatment of its barley, rather than truly black.",
+      "context": "Producer description; the colour is easiest to see with enough light.",
+      "display_idea": "A pint silhouette with a small backlit colour reveal.",
+      "source_ids": [
+        "guinnessfaq"
+      ],
+      "fact_kind": "product-detail",
+      "quantitative": false,
+      "numeric_payload": null,
+      "shortlist_rank": null
+    },
+    {
+      "id": "F116",
+      "category": "10 · Small details, good conversation",
+      "hook": "The can has a small piece of engineering.",
+      "fact": "Guinness introduced its widget in 1988; the device releases trapped gas when the can is opened to help create the draught-style surge and head.",
+      "context": "A product-specific technology, not a device in every beer can.",
+      "display_idea": "An exploded can drawing with the widget in place.",
+      "source_ids": [
+        "widget",
+        "guinnessfaq"
+      ],
+      "fact_kind": "product-history",
+      "quantitative": false,
+      "numeric_payload": null,
+      "shortlist_rank": null
+    },
+    {
+      "id": "F117",
+      "category": "10 · Small details, good conversation",
+      "hook": "The pH scale came out of a brewery lab.",
+      "fact": "S. P. L. Sørensen developed the pH scale at Carlsberg Laboratory in 1909.",
+      "context": "A brewing-laboratory contribution with uses far beyond beer.",
+      "display_idea": "A 1909 lab-to-everyday-science connection.",
+      "source_ids": [
+        "ph"
+      ],
+      "fact_kind": "science-history",
+      "quantitative": false,
+      "numeric_payload": null,
+      "shortlist_rank": 20
+    },
+    {
+      "id": "F118",
+      "category": "10 · Small details, good conversation",
+      "hook": "The yeast outlived the century.",
+      "fact": "Carlsberg reports recovering living yeast from a 133-year-old bottle and using it to recreate beer associated with its original 1883 purified yeast.",
+      "context": "A brewery laboratory's project account, not a recommendation to drink century-old beer.",
+      "display_idea": "A sealed bottle opening into a yeast-culture timeline.",
+      "source_ids": [
+        "yeast1883"
+      ],
+      "fact_kind": "research-project-account",
+      "quantitative": true,
+      "numeric_payload": {
+        "reported_bottle_age_years": 133
+      },
+      "shortlist_rank": null
+    },
+    {
+      "id": "F119",
+      "category": "10 · Small details, good conversation",
+      "hook": "One bottle. £2,187,500.",
+      "fact": "A Macallan 1926 with a Valerio Adami label sold at Sotheby's on 18 November 2023 for a reported £2,187,500.",
+      "context": "A historical auction result, not today's price or a claim of an unchanged current record.",
+      "display_idea": "One bottle-scale illustration beside a clearly dated sale price.",
+      "source_ids": [
+        "macallan"
+      ],
+      "fact_kind": "auction-result",
+      "quantitative": true,
+      "numeric_payload": {
+        "sale_date": "2023-11-18",
+        "reported_sale_price_gbp": 2187500
+      },
+      "shortlist_rank": null
+    },
+    {
+      "id": "F120",
+      "category": "10 · Small details, good conversation",
+      "hook": "There's a word for keeping the tiny caps.",
+      "fact": "A collector of the metal plaques from Champagne wire cages is called a placomusophile.",
+      "context": "The plaque is the small metal disc, not the cork or the entire wire cage.",
+      "display_idea": "A small labelled drawing of cork, cage and plaque.",
+      "source_ids": [
+        "champagne_service"
+      ],
+      "fact_kind": "terminology",
+      "quantitative": false,
+      "numeric_payload": null,
+      "shortlist_rank": null
+    },
+    {
+      "id": "F121",
+      "category": "11 · The past had a tab",
+      "hook": "London once flooded with beer.",
+      "fact": "A brewery-vat failure sent beer through London’s St Giles district in October 1814. Eight people died.",
+      "context": "A documented disaster, not a comic drinking record. Conflicting viral estimates of the volume are omitted.",
+      "display_idea": "An annotated street map and a restrained flood-level line.",
+      "source_ids": [
+        "x_flood"
+      ],
+      "fact_kind": "historical",
+      "quantitative": true,
+      "numeric_payload": {
+        "deaths": 8,
+        "year": 1814
+      },
+      "shortlist_rank": 8,
+      "verified_on": "2026-11-12",
+      "x_posts": [
+        "https://x.com/sciencegirl/status/2015720371807273325"
+      ],
+      "x_lead_type": "claim",
+      "x_research_note": "The X post supplies the disaster and death toll; the archival account supports the core claim."
+    },
+    {
+      "id": "F122",
+      "category": "11 · The past had a tab",
+      "hook": "Your statistics have a brewery connection.",
+      "fact": "William Sealy Gosset worked at Guinness and published the small-sample method now associated with Student’s t-test under the name “Student” in 1908.",
+      "context": "This is a statistics story. It is separate from Carlsberg’s pH scale, already covered in F117.",
+      "display_idea": "A brewery-to-laboratory timeline with a small-sample schematic.",
+      "source_ids": [
+        "x_student"
+      ],
+      "fact_kind": "science-history",
+      "quantitative": false,
+      "numeric_payload": null,
+      "shortlist_rank": 2,
+      "verified_on": "2026-11-12",
+      "x_posts": [
+        "https://x.com/fermatslibrary/status/1977690643532075333"
+      ],
+      "x_lead_type": "claim",
+      "x_research_note": "Expanded the Fermat’s Library post and checked the historical account. The blanket claim that Guinness banned all scientific publishing is not repeated."
+    },
+    {
+      "id": "F123",
+      "category": "11 · The past had a tab",
+      "hook": "The White House had a homebrew phase.",
+      "fact": "In 2011 Barack Obama bought a homebrewing kit for the White House kitchen. The White House published its honey-beer recipes in 2012, using honey from the South Lawn hive.",
+      "context": "The official account says “as far as we know” about being the first alcohol brewed there; that absolute first is not asserted here.",
+      "display_idea": "A kitchen-to-hive-to-bottle illustrated chain.",
+      "source_ids": [
+        "x_obama"
+      ],
+      "fact_kind": "historical",
+      "quantitative": false,
+      "numeric_payload": null,
+      "shortlist_rank": null,
+      "verified_on": "2026-11-12",
+      "x_posts": [
+        "https://x.com/SwampWaterBrand/status/1688682886227001346"
+      ],
+      "x_lead_type": "claim",
+      "x_research_note": "An X thread on presidents and beer led to Sam Kass’s official recipe release; unrelated claims elsewhere in that thread were not accepted."
+    },
+    {
+      "id": "F124",
+      "category": "11 · The past had a tab",
+      "hook": "Washington had a serious side business.",
+      "fact": "George Washington’s Mount Vernon distillery produced nearly 11,000 gallons of whiskey in 1799, using five stills.",
+      "context": "Mount Vernon documents the labour of six enslaved workers alongside the distillery managers. Published profit figures conflict, so none is used.",
+      "display_idea": "Five still outlines and one clearly dated production total.",
+      "source_ids": [
+        "x_washington",
+        "x_washingtonworkers"
+      ],
+      "fact_kind": "historical-statistic",
+      "quantitative": true,
+      "numeric_payload": {
+        "year": 1799,
+        "annual_gallons_approx": 11000,
+        "stills": 5
+      },
+      "shortlist_rank": null,
+      "verified_on": "2026-11-12",
+      "x_posts": [
+        "https://x.com/MountVernon/status/2095507420365595027"
+      ],
+      "x_lead_type": "claim",
+      "x_research_note": "The historic site’s own X post supplies the production claim; its research pages supply capacity and labour context."
+    },
+    {
+      "id": "F125",
+      "category": "11 · The past had a tab",
+      "hook": "A royal wedding helped move the wine.",
+      "fact": "Eleanor of Aquitaine’s 1152 marriage to Henry Plantagenet, the future Henry II of England, helped strengthen the English connection to Bordeaux’s wine trade.",
+      "context": "This encouraged an existing trade; it did not invent wine exports or make Henry king in 1152.",
+      "display_idea": "A Bordeaux-to-England shipping route with one marriage date.",
+      "source_ids": [
+        "x_bordeaux"
+      ],
+      "fact_kind": "historical",
+      "quantitative": false,
+      "numeric_payload": null,
+      "shortlist_rank": null,
+      "verified_on": "2026-11-12",
+      "x_posts": [
+        "https://x.com/InterCellar_/status/1979199925108830715"
+      ],
+      "x_lead_type": "claim",
+      "x_research_note": "Read the Bordeaux thread’s marriage entry; the regional wine organisation explains the export connection."
+    },
+    {
+      "id": "F126",
+      "category": "11 · The past had a tab",
+      "hook": "The can was once the experiment.",
+      "fact": "Krueger’s canned beer went on sale in Richmond, Virginia, on 24 January 1935, marking the commercial US debut of beer in cans.",
+      "context": "Distinguish the public launch from earlier trial cans. No unsupported claim about being invented in Richmond is needed.",
+      "display_idea": "A 1933-test / 1935-launch packaging timeline.",
+      "source_ids": [
+        "x_cans",
+        "x_cansdate"
+      ],
+      "fact_kind": "historical",
+      "quantitative": false,
+      "numeric_payload": null,
+      "shortlist_rank": null,
+      "verified_on": "2026-11-12",
+      "x_posts": [
+        "https://x.com/bplmaps/status/1485477883212709888",
+        "https://x.com/historyinmemes/status/1676632809723625485"
+      ],
+      "x_lead_type": "claim",
+      "x_research_note": "Boston Public Library’s map centre flagged the date; museum and collectors’ histories corroborate the commercial debut."
+    },
+    {
+      "id": "F127",
+      "category": "11 · The past had a tab",
+      "hook": "Butterbeer had a life before Hogwarts.",
+      "fact": "A 1594 English cookbook prints a buttered-beer recipe using three pints of beer, five egg yolks, sugar, spices and butter.",
+      "context": "A historical beer-based preparation, not the modern theme-park drink. The cited edition is not claimed to be the first ever; historic pints are not converted to modern millilitres.",
+      "display_idea": "A tiny illustrated historic recipe card, linked to the transcription.",
+      "source_ids": [
+        "x_butter"
+      ],
+      "fact_kind": "historical-recipe",
+      "quantitative": true,
+      "numeric_payload": {
+        "edition_year": 1594,
+        "beer_historic_pints": 3,
+        "egg_yolks": 5
+      },
+      "shortlist_rank": 11,
+      "verified_on": "2026-11-12",
+      "x_posts": [
+        "https://x.com/FairytalesFood/status/1339586319480025098"
+      ],
+      "x_lead_type": "claim",
+      "x_research_note": "The X post points to the old recipe. The scholarly transcription locates it on page 53a of the 1594 edition."
+    },
+    {
+      "id": "F128",
+      "category": "12 · What the glass is doing",
+      "hook": "Those crystals may be wine diamonds.",
+      "fact": "Wine can deposit crystals of potassium bitartrate, often called wine diamonds. Cold stabilisation is used to reduce this precipitation before bottling.",
+      "context": "Tartrate crystals are a normal wine phenomenon. This identifies a specific deposit, not every unknown particle in a bottle.",
+      "display_idea": "A crystal-to-grape chemistry drawing, with a cold-stability label.",
+      "source_ids": [
+        "x_tartrate"
+      ],
+      "fact_kind": "food-science",
+      "quantitative": false,
+      "numeric_payload": null,
+      "shortlist_rank": null,
+      "verified_on": "2026-11-12",
+      "x_posts": [
+        "https://x.com/Islandwinestore/status/1694696060331925879"
+      ],
+      "x_lead_type": "claim",
+      "x_research_note": "The X post names potassium bitartrate; Wine Australia explains harmless tartrate precipitation and cold stabilisation."
+    },
+    {
+      "id": "F129",
+      "category": "12 · What the glass is doing",
+      "hook": "Milk can be the filter.",
+      "fact": "Clarified milk punch deliberately curdles milk, then filters the drink through the curds. Casein binds phenolic compounds, helping produce a clearer, softer-tasting drink.",
+      "context": "Clear appearance does not establish that a drink is dairy-free or allergen-free. This explains technique, distinct from the Franklin recipe history in F053.",
+      "display_idea": "A cloudy-to-clear process diagram with the curd bed visible.",
+      "source_ids": [
+        "x_milk"
+      ],
+      "fact_kind": "bar-technique",
+      "quantitative": false,
+      "numeric_payload": null,
+      "shortlist_rank": 6,
+      "verified_on": "2026-11-12",
+      "x_posts": [
+        "https://x.com/punch_drink/status/1627827989307072515"
+      ],
+      "x_lead_type": "topic_extension",
+      "x_research_note": "X led to modern milk-punch technique; the Campari Academy guide supplies the protein and filtration explanation."
+    },
+    {
+      "id": "F130",
+      "category": "12 · What the glass is doing",
+      "hook": "The cabin changes the conversation.",
+      "fact": "A 2015 Cornell study found that loud aircraft-like noise, around 85 decibels, suppressed sweetness while enhancing umami taste perception.",
+      "context": "A controlled sensory finding, not proof that every Bloody Mary tastes better in flight. Noise and cabin pressure are different variables.",
+      "display_idea": "Sweet and umami response arrows beside an 85 dB cabin marker.",
+      "source_ids": [
+        "x_noise"
+      ],
+      "fact_kind": "sensory-research",
+      "quantitative": true,
+      "numeric_payload": {
+        "study_year": 2015,
+        "noise_decibels_approx": 85
+      },
+      "shortlist_rank": 4,
+      "verified_on": "2026-11-12",
+      "x_posts": [
+        "https://x.com/BucklesandBulls/status/1483622299626471431"
+      ],
+      "x_lead_type": "topic_extension",
+      "x_research_note": "A post asking why Bloody Marys work on planes led to the university report. No sample size from a separate older experiment is imported."
+    },
+    {
+      "id": "F131",
+      "category": "12 · What the glass is doing",
+      "hook": "Lager’s family tree has two branches.",
+      "fact": "The lager-brewing yeast Saccharomyces pastorianus is a hybrid of Saccharomyces cerevisiae and Saccharomyces eubayanus.",
+      "context": "A yeast-ancestry claim, not a claim that every beer or every lager uses an identical strain.",
+      "display_idea": "Two named yeast branches merging into a lager glass.",
+      "source_ids": [
+        "x_lager"
+      ],
+      "fact_kind": "fermentation-science",
+      "quantitative": false,
+      "numeric_payload": null,
+      "shortlist_rank": null,
+      "verified_on": "2026-11-12",
+      "x_posts": [
+        "https://x.com/ScienceNews/status/1603166697854205952"
+      ],
+      "x_lead_type": "claim",
+      "x_research_note": "The X article on lager’s yeast ancestry led to the 2022 research paper describing the hybrid and a European S. eubayanus isolate."
+    },
+    {
+      "id": "F132",
+      "category": "12 · What the glass is doing",
+      "hook": "Banana. Clove. No fruit bowl required.",
+      "fact": "Yeast fermentation can create banana-like isoamyl acetate and clove-like 4-vinyl guaiacol in wheat beers, without those flavours requiring banana or clove additions.",
+      "context": "Strain and fermentation conditions matter; this is not a statement that no beer ever contains added fruit or spices.",
+      "display_idea": "Two aroma molecules paired with small banana and clove drawings.",
+      "source_ids": [
+        "x_wheat"
+      ],
+      "fact_kind": "fermentation-science",
+      "quantitative": false,
+      "numeric_payload": null,
+      "shortlist_rank": null,
+      "verified_on": "2026-11-12",
+      "x_posts": [
+        "https://x.com/CdnCBE/status/1291214576726417410"
+      ],
+      "x_lead_type": "claim",
+      "x_research_note": "A beer-tasting post explicitly names both compounds; yeast-producer technical guidance confirms the flavour associations."
+    },
+    {
+      "id": "F133",
+      "category": "12 · What the glass is doing",
+      "hook": "Funky and sour are different questions.",
+      "fact": "Brettanomyces is a yeast genus, not a bacterium. Its fermentation can produce phenolic, leathery or farmyard-like character; the word “Brett” alone does not specify a beer’s sourness.",
+      "context": "Mixed fermentations can also involve acid-producing bacteria. Brett can form acids under some conditions, so “Brett never produces acid” would also be wrong.",
+      "display_idea": "Separate flavour and acidity axes, explicitly schematic rather than measured.",
+      "source_ids": [
+        "x_brett",
+        "x_brettguide"
+      ],
+      "fact_kind": "fermentation-science",
+      "quantitative": false,
+      "numeric_payload": null,
+      "shortlist_rank": null,
+      "verified_on": "2026-11-12",
+      "x_posts": [
+        "https://x.com/bccraftbeer/status/1166535742790782977"
+      ],
+      "x_lead_type": "topic_extension",
+      "x_research_note": "The X educational post prompted the yeast-versus-sourness distinction; the brewing review and reference guide support the qualified wording."
+    },
+    {
+      "id": "F134",
+      "category": "12 · What the glass is doing",
+      "hook": "Fifty plus fifty can be ninety-seven.",
+      "fact": "In a university chemistry demonstration, mixing 50 ml of water with 50 ml of ethanol produces about 97 ml of mixture, rather than 100 ml.",
+      "context": "Liquid volumes are not simply additive. The result is approximate and depends on concentration and temperature; mass is conserved.",
+      "display_idea": "Two 50 ml columns combining into an approximately 97 ml cylinder.",
+      "source_ids": [
+        "x_volume"
+      ],
+      "fact_kind": "chemistry-demonstration",
+      "quantitative": true,
+      "numeric_payload": {
+        "water_ml": 50,
+        "ethanol_ml": 50,
+        "mixture_ml_approx": 97
+      },
+      "shortlist_rank": 1,
+      "verified_on": "2026-11-12",
+      "x_posts": [
+        "https://x.com/Mr_Jumbo1/status/2075077325461295451"
+      ],
+      "x_lead_type": "topic_extension",
+      "x_research_note": "An X post about ethanol–water volume contraction led to the measured teaching demonstration. The 97 ml value comes from that source, not the social post."
+    },
+    {
+      "id": "F135",
+      "category": "13 · Read the small print",
+      "hook": "Japanese whisky has an industry checklist.",
+      "fact": "The JSLMA standard requires whisky labelled Japanese whisky to mature in Japan for at least three years in wooden casks no larger than 700 litres, and to be bottled in Japan at 40% ABV or higher.",
+      "context": "These are selected requirements of an association labelling standard, alongside ingredient and production rules. Do not present the code as a Japanese national law covering every seller.",
+      "display_idea": "Three quiet checklist numerals: 3 years · 700 L · 40%.",
+      "source_ids": [
+        "x_japan",
+        "x_japancontext"
+      ],
+      "fact_kind": "product-standard",
+      "quantitative": true,
+      "numeric_payload": {
+        "minimum_age_years": 3,
+        "maximum_cask_litres": 700,
+        "minimum_bottling_abv_percent": 40
+      },
+      "shortlist_rank": null,
+      "verified_on": "2026-11-12",
+      "x_posts": [
+        "https://x.com/drinkintokyo/status/1841444286782689373"
+      ],
+      "x_lead_type": "claim",
+      "x_research_note": "The X discussion of Japanese whisky standards led to the actual JSLMA text, read in the Nikka-hosted PDF."
+    },
+    {
+      "id": "F136",
+      "category": "13 · Read the small print",
+      "hook": "Whisky colour is not an age certificate.",
+      "fact": "Scotch Whisky rules permit plain caramel colouring, E150a, as well as water. A darker colour therefore cannot by itself prove greater age.",
+      "context": "Permission does not mean every Scotch is coloured. Age, cask and natural colour variation also affect appearance; no claim about the share using caramel is made.",
+      "display_idea": "A bottle shade scale with a separate age label.",
+      "source_ids": [
+        "x_scotch"
+      ],
+      "fact_kind": "label-literacy",
+      "quantitative": false,
+      "numeric_payload": null,
+      "shortlist_rank": null,
+      "verified_on": "2026-11-12",
+      "x_posts": [
+        "https://x.com/fentanylbrownie/status/2071674700984668625"
+      ],
+      "x_lead_type": "correction",
+      "x_research_note": "The post mixes a correct Scotch-colouring point with broad claims about US spirits. Only the point independently supported by UK guidance is retained."
+    },
+    {
+      "id": "F137",
+      "category": "13 · Read the small print",
+      "hook": "The famous four began as three.",
+      "fact": "The Bavarian beer decree of 1516 listed barley, hops and water. Yeast was not one of its named ingredients.",
+      "context": "The historical decree applied to the Duchy of Bavaria. Modern summaries listing malt, hops, water and yeast should not be projected word-for-word onto the 1516 text.",
+      "display_idea": "Three ingredients on a 1516 document; yeast on a separate modern annotation.",
+      "source_ids": [
+        "x_purity",
+        "x_puritytext"
+      ],
+      "fact_kind": "historical-label-literacy",
+      "quantitative": true,
+      "numeric_payload": {
+        "decree_year": 1516,
+        "named_ingredients": 3
+      },
+      "shortlist_rank": null,
+      "verified_on": "2026-11-12",
+      "x_posts": [
+        "https://x.com/Plantagenet1455/status/1915064554452644124"
+      ],
+      "x_lead_type": "claim",
+      "x_research_note": "The anniversary post names the three ingredients; regional historical and government sources establish the jurisdiction and wording."
+    },
+    {
+      "id": "F138",
+      "category": "13 · Read the small print",
+      "hook": "Sotol is its own plant story.",
+      "fact": "Sotol is distilled from plants of the genus Dasylirion, commonly called desert spoon, rather than from plants of the genus Agave.",
+      "context": "Dasylirion and Agave are different genera; saying they are unrelated or placing agave among cacti would introduce new errors.",
+      "display_idea": "Two labelled botanical silhouettes with separate genus names.",
+      "source_ids": [
+        "x_sotol",
+        "x_sotolcontext"
+      ],
+      "fact_kind": "botanical-literacy",
+      "quantitative": false,
+      "numeric_payload": null,
+      "shortlist_rank": 9,
+      "verified_on": "2026-11-12",
+      "x_posts": [
+        "https://x.com/SCMPNews/status/1551142657166135297"
+      ],
+      "x_lead_type": "correction",
+      "x_research_note": "A social description grouped sotol with agave spirits. University botanical and Mexican government references allow the genus-level correction."
+    },
+    {
+      "id": "F139",
+      "category": "13 · Read the small print",
+      "hook": "Cachaça starts with fresh cane.",
+      "fact": "Brazil’s definition of cachaça specifies a Brazilian spirit distilled from fermented sugar-cane juice at 38–48% ABV, measured at 20°C.",
+      "context": "Fresh cane juice is a useful distinction from many molasses-based rums, but not all rum is made from molasses. The broader aguardente category has different limits.",
+      "display_idea": "A cane-to-juice-to-still flow, with a 38–48% label.",
+      "source_ids": [
+        "x_cachaca"
+      ],
+      "fact_kind": "product-definition",
+      "quantitative": true,
+      "numeric_payload": {
+        "minimum_abv_percent": 38,
+        "maximum_abv_percent": 48,
+        "reference_temperature_c": 20
+      },
+      "shortlist_rank": null,
+      "verified_on": "2026-11-12",
+      "x_posts": [
+        "https://x.com/Houseofcachaca1/status/1205194155179290625"
+      ],
+      "x_lead_type": "topic_extension",
+      "x_research_note": "The X post states the fresh-juice basis; the official Brazilian definition supplies the precise category and ABV range."
+    },
+    {
+      "id": "F140",
+      "category": "13 · Read the small print",
+      "hook": "A dash is still a measure of alcohol.",
+      "fact": "Angostura aromatic bitters is listed at 44.7% ABV in its product specification. Using only a few dashes reduces the amount added; it does not make the ingredient alcohol-free.",
+      "context": "The finished drink’s ABV depends on the actual dash volume and all other ingredients. No universal “negligible” threshold is assumed.",
+      "display_idea": "A small dash beside the bottle’s 44.7% specification.",
+      "source_ids": [
+        "x_bitters"
+      ],
+      "fact_kind": "ingredient-literacy",
+      "quantitative": true,
+      "numeric_payload": {
+        "ingredient_abv_percent": 44.7
+      },
+      "shortlist_rank": 10,
+      "verified_on": "2026-11-12",
+      "x_posts": [
+        "https://x.com/cocktailwonk/status/1526664583418617857",
+        "https://x.com/vinowineshops/status/1610592872020975617"
+      ],
+      "x_lead_type": "topic_extension",
+      "x_research_note": "An X discussion of Angostura-heavy drinks led to the product specification; the exact number is checked against the distributor sheet."
+    },
+    {
+      "id": "F141",
+      "category": "14 · Agave and other detours",
+      "hook": "Leave a little for the night shift.",
+      "fact": "The Bat Friendly tequila-and-mezcal project asks producers to allow at least 5% of agaves to flower, providing nectar for bats and encouraging pollination.",
+      "context": "Commercial agave is often propagated clonally and harvested before flowering. “No bats, no tequila” misses those agricultural practices and overstates the dependency.",
+      "display_idea": "A field of 100 agave marks with five flowers and a bat flight line.",
+      "source_ids": [
+        "x_bats"
+      ],
+      "fact_kind": "conservation-statistic",
+      "quantitative": true,
+      "numeric_payload": {
+        "minimum_agaves_allowed_to_flower_percent": 5
+      },
+      "shortlist_rank": 3,
+      "verified_on": "2026-11-12",
+      "x_posts": [
+        "https://x.com/theminatt/status/2096590909068501175"
+      ],
+      "x_lead_type": "correction",
+      "x_research_note": "A sweeping X claim about bats led to the conservation project’s measurable 5% flowering practice; the absolute claim is replaced."
+    },
+    {
+      "id": "F142",
+      "category": "14 · Agave and other detours",
+      "hook": "Blue is the outfit. Orange is the flavour.",
+      "fact": "Senior’s blue Curaçao is flavoured with Laraha orange peel. The producer says its blue food colouring does not change the liqueur’s orange taste.",
+      "context": "This is the producer’s specific liqueur explanation; colours, sugar and strength can differ across brands.",
+      "display_idea": "An orange-peel outline inside a translucent blue pour.",
+      "source_ids": [
+        "x_blue"
+      ],
+      "fact_kind": "ingredient-literacy",
+      "quantitative": false,
+      "numeric_payload": null,
+      "shortlist_rank": null,
+      "verified_on": "2026-11-12",
+      "x_posts": [
+        "https://x.com/Vacation_Couple/status/1232475379459223553"
+      ],
+      "x_lead_type": "topic_extension",
+      "x_research_note": "The X travel post identifies the Laraha peel; the producer explains how its blue colour relates to flavour."
+    },
+    {
+      "id": "F143",
+      "category": "14 · Agave and other detours",
+      "hook": "The coffee liqueur took the scenic route.",
+      "fact": "Kahlúa traces its origin to Veracruz, Mexico, in 1936. Its producer describes combining Arabica coffee with rum spirits.",
+      "context": "A producer-attributed origin and ingredient account. Do not infer an Italian origin from the name or apply one market’s current ABV to every bottle.",
+      "display_idea": "A Veracruz origin pin connected to coffee and cane drawings.",
+      "source_ids": [
+        "x_kahlua"
+      ],
+      "fact_kind": "producer-history",
+      "quantitative": false,
+      "numeric_payload": null,
+      "shortlist_rank": null,
+      "verified_on": "2026-11-12",
+      "x_posts": [
+        "https://x.com/HeidelbergDist/status/1233150011703267328"
+      ],
+      "x_lead_type": "claim",
+      "x_research_note": "The distributor’s X post supplied the place and year; the producer’s history and production description verify them."
+    },
+    {
+      "id": "F144",
+      "category": "14 · Agave and other detours",
+      "hook": "Agave can ferment without becoming tequila.",
+      "fact": "Pulque is made by fermenting aguamiel, the sweet sap collected from certain agaves. It is not a distilled spirit made from cooked agave hearts.",
+      "context": "The microbiology review reports usual strengths around 4–7% alcohol, with variation. Tequila and mezcal use different production pathways; agave is not a cactus.",
+      "display_idea": "A branching agave diagram: sap → pulque; cooked hearts → distilled spirits.",
+      "source_ids": [
+        "x_pulque",
+        "x_pulquegov"
+      ],
+      "fact_kind": "fermentation-literacy",
+      "quantitative": true,
+      "numeric_payload": {
+        "typical_abv_percent_range": [
+          4,
+          7
+        ]
+      },
+      "shortlist_rank": 7,
+      "verified_on": "2026-11-12",
+      "x_posts": [
+        "https://x.com/sciencegirl/status/1782685960553013591"
+      ],
+      "x_lead_type": "claim",
+      "x_research_note": "The X post accurately identifies fermented agave sap. Government production notes and the research review supply the production distinction and typical, non-universal strength range."
+    },
+    {
+      "id": "F145",
+      "category": "15 · Screen time, bar time",
+      "hook": "A Martini, in waltz time.",
+      "fact": "In The Thin Man (1934), Nick Charles gives a bartender a musical rule for shaking drinks: the Martini gets waltz time.",
+      "context": "A film joke and character detail, not an evidence-based mixing instruction. No claim is made that shaking is the only correct way to prepare a Martini.",
+      "display_idea": "A three-beat rhythm mark beside an original coupe drawing.",
+      "source_ids": [
+        "x_thinman",
+        "x_thinmanyear"
+      ],
+      "fact_kind": "film-appearance",
+      "quantitative": false,
+      "numeric_payload": null,
+      "shortlist_rank": null,
+      "verified_on": "2026-11-12",
+      "x_posts": [
+        "https://x.com/tcm/status/1656373640450002949"
+      ],
+      "x_lead_type": "claim",
+      "x_research_note": "TCM’s own public clip is the primary scene evidence; its title listing confirms the release year."
+    },
+    {
+      "id": "F146",
+      "category": "15 · Screen time, bar time",
+      "hook": "The place existed before the theme tune.",
+      "fact": "Boston’s Bull & Finch Pub opened in 1969 and inspired the setting of Cheers, which premiered in 1982. The real venue is now Cheers Beacon Hill.",
+      "context": "The real pub and the fictional bar have separate histories. A TV trivia prompt should not imply that Sam Malone renamed the real Bull & Finch.",
+      "display_idea": "A real-venue / fictional-show two-row timeline.",
+      "source_ids": [
+        "x_cheers"
+      ],
+      "fact_kind": "television-history",
+      "quantitative": false,
+      "numeric_payload": null,
+      "shortlist_rank": null,
+      "verified_on": "2026-11-12",
+      "x_posts": [
+        "https://x.com/Hot_Pepper76/status/2018119675595657258"
+      ],
+      "x_lead_type": "correction",
+      "x_research_note": "A quiz post blurred the real pub with the TV story; the venue’s own history separates the two."
+    },
+    {
+      "id": "F147",
+      "category": "15 · Screen time, bar time",
+      "hook": "One film. Two very different sales stories.",
+      "fact": "Researchers studying US wine sales around Sideways found a stronger boost for Pinot Noir than the corresponding damage to Merlot. The popular story that the film simply killed Merlot is too crude.",
+      "context": "The 2009 study examined sales trends and price bands before and after the 2004 film. This is observational market research, not a randomised experiment or a claim about all world wine sales.",
+      "display_idea": "An annotated film-release timeline; add numerical curves only from the actual study tables.",
+      "source_ids": [
+        "x_sideways",
+        "x_sidewayspaper"
+      ],
+      "fact_kind": "pop-culture-economics",
+      "quantitative": false,
+      "numeric_payload": null,
+      "shortlist_rank": 12,
+      "verified_on": "2026-11-12",
+      "x_posts": [
+        "https://x.com/qikipedia/status/1488512461770739713",
+        "https://x.com/TheStingisBack/status/1933609064644391214"
+      ],
+      "x_lead_type": "claim",
+      "x_research_note": "X supplied the film-to-sales claim. The researcher’s account qualifies its magnitude. Viral percentages are not repeated without an unambiguous underlying table."
+    },
+    {
+      "id": "F148",
+      "category": "15 · Screen time, bar time",
+      "hook": "The podium bottle is not always Champagne.",
+      "fact": "Ferrari Trento supplied Italian Trentodoc sparkling wine for Formula 1’s podium celebrations in 2021–2024. Moët & Chandon returned as official Champagne supplier in 2025.",
+      "context": "A dated supplier history, not a claim about every individual ceremony. Ferrari Trento is a wine producer, separate from the Ferrari racing team.",
+      "display_idea": "Two bottle silhouettes on a 2021–2025 supplier timeline.",
+      "source_ids": [
+        "x_f1",
+        "x_ferraritrento"
+      ],
+      "fact_kind": "sport-culture",
+      "quantitative": false,
+      "numeric_payload": null,
+      "shortlist_rank": null,
+      "verified_on": "2026-11-12",
+      "x_posts": [
+        "https://x.com/vincenzolandino/status/1841510691749978125",
+        "https://x.com/sims_LN4/status/1947254659355234324"
+      ],
+      "x_lead_type": "topic_extension",
+      "x_research_note": "The X partnership announcement and posts calling Ferrari Trento “Champagne” led to Formula 1’s announcement and the producer’s four-year report."
+    },
+    {
+      "id": "F149",
+      "category": "15 · Screen time, bar time",
+      "hook": "The spray became part of the ceremony.",
+      "fact": "After winning the 1967 24 Hours of Le Mans with A. J. Foyt, Dan Gurney deliberately sprayed the victory Champagne, helping establish the podium-spray tradition.",
+      "context": "This is the celebrated deliberate 1967 Le Mans moment. Avoid recasting it as the first time any bottle ever sprayed, or as an F1 victory.",
+      "display_idea": "A 1967 finish-line card with one fine-line spray arc.",
+      "source_ids": [
+        "x_gurney"
+      ],
+      "fact_kind": "sport-history",
+      "quantitative": false,
+      "numeric_payload": null,
+      "shortlist_rank": null,
+      "verified_on": "2026-11-12",
+      "x_posts": [
+        "https://x.com/GoodwoodRRC/status/2043584976533311831"
+      ],
+      "x_lead_type": "claim",
+      "x_research_note": "Goodwood’s X history post led to the organiser’s archive account of the Gurney/Foyt victory."
+    },
+    {
+      "id": "F150",
+      "category": "16 · The vineyard plot",
+      "hook": "Europe’s vines needed different roots.",
+      "fact": "Grafting European grape varieties onto resistant American rootstocks became a major solution to the phylloxera crisis that devastated European vineyards in the nineteenth century.",
+      "context": "Rootstock and fruiting grape variety are different parts of a grafted vine. This does not mean that French wine is no longer French, or that every vine worldwide is grafted.",
+      "display_idea": "A labelled rootstock–graft–scion cross-section.",
+      "source_ids": [
+        "x_phylloxera"
+      ],
+      "fact_kind": "agricultural-history",
+      "quantitative": false,
+      "numeric_payload": null,
+      "shortlist_rank": null,
+      "verified_on": "2026-11-12",
+      "x_posts": [
+        "https://x.com/qikipedia/status/1143843850848526336"
+      ],
+      "x_lead_type": "correction",
+      "x_research_note": "The viral post’s nationality framing is replaced with the university-supported botanical explanation."
+    },
+    {
+      "id": "F151",
+      "category": "16 · The vineyard plot",
+      "hook": "Cabernet has a white-wine parent.",
+      "fact": "DNA research published in 1997 identified Cabernet Sauvignon as the offspring of Cabernet Franc and Sauvignon Blanc.",
+      "context": "A grape-parentage finding, not a blend recipe. Cabernet Sauvignon wine is not made by mixing wines from the two parents.",
+      "display_idea": "A two-parent grape family tree.",
+      "source_ids": [
+        "x_cabernet",
+        "x_cabernetpaper"
+      ],
+      "fact_kind": "genetics",
+      "quantitative": false,
+      "numeric_payload": null,
+      "shortlist_rank": null,
+      "verified_on": "2026-11-12",
+      "x_posts": [
+        "https://x.com/WineByKari/status/1497262299110858758"
+      ],
+      "x_lead_type": "claim",
+      "x_research_note": "The X post names the parents. UC Davis and the Nature Genetics paper verify the finding and 1997 publication."
+    },
+    {
+      "id": "F152",
+      "category": "16 · The vineyard plot",
+      "hook": "Orange wine does not need an orange.",
+      "fact": "The orange-wine style is made from white grapes with skin contact: the OIV describes it as white wine with maceration.",
+      "context": "The name describes the resulting style and colour, not citrus fruit. Skin-contact duration varies in market usage; the OIV’s formal category has its own requirements.",
+      "display_idea": "White grapes + skins → an amber glass; no invented duration scale.",
+      "source_ids": [
+        "x_orange",
+        "x_orangecompetition"
+      ],
+      "fact_kind": "wine-literacy",
+      "quantitative": false,
+      "numeric_payload": null,
+      "shortlist_rank": null,
+      "verified_on": "2026-11-12",
+      "x_posts": [
+        "https://x.com/BuyCatalanWines/status/1404417378243522564"
+      ],
+      "x_lead_type": "claim",
+      "x_research_note": "The X post describes brisat / orange skin-contact wine; OIV definitions and competition categories verify the white-grape basis."
+    },
+    {
+      "id": "F153",
+      "category": "16 · The vineyard plot",
+      "hook": "Sometimes rosé really is a blend.",
+      "fact": "Blended rosé Champagne is made by combining white base wines with red Champagne wine before the second fermentation; Comité Champagne gives a red-wine proportion of 5–20%.",
+      "context": "This is an important exception to the blanket claim that rosé is never made by mixing red and white wines. Maceration is another Champagne rosé method.",
+      "display_idea": "A labelled 5–20% red-wine share bar beside the alternative maceration route.",
+      "source_ids": [
+        "x_rose"
+      ],
+      "fact_kind": "wine-myth-correction",
+      "quantitative": true,
+      "numeric_payload": {
+        "red_wine_in_blend_percent_range": [
+          5,
+          20
+        ]
+      },
+      "shortlist_rank": 5,
+      "verified_on": "2026-11-12",
+      "x_posts": [
+        "https://x.com/BuzzFeedFood/status/1037535129218899968"
+      ],
+      "x_lead_type": "correction",
+      "x_research_note": "The X post repeats an absolute no-blending rule. The appellation body directly documents blended rosé Champagne."
+    },
+    {
+      "id": "F154",
+      "category": "16 · The vineyard plot",
+      "hook": "The rot can be noble. Or expensive.",
+      "fact": "Botrytis cinerea is associated both with destructive bunch rot and with the noble rot used in some sweet wines.",
+      "context": "Conditions and the state of the grapes determine whether the outcome is desirable. The presence of mould alone is not a quality signal.",
+      "display_idea": "One fungus branching into two clearly labelled vineyard outcomes.",
+      "source_ids": [
+        "x_botrytis"
+      ],
+      "fact_kind": "viticulture",
+      "quantitative": false,
+      "numeric_payload": null,
+      "shortlist_rank": null,
+      "verified_on": "2026-11-12",
+      "x_posts": [
+        "https://x.com/Islandwinestore/status/1655532671529779201"
+      ],
+      "x_lead_type": "claim",
+      "x_research_note": "The X noble-rot explainer led to the AWRI fact sheet, which explicitly identifies the same fungus with both outcomes."
+    },
+    {
+      "id": "F155",
+      "category": "17 · Numbers to sit with",
+      "hook": "Some wine is meant to take the heat.",
+      "fact": "Madeira’s estufagem method heats wine in tanks to roughly 45–50°C for at least three months.",
+      "context": "Madeira can also age by the canteiro method. Do not say every Madeira follows the same heated-tank process or that other wine should be stored hot.",
+      "display_idea": "A 45–50°C band over a three-month minimum timeline.",
+      "source_ids": [
+        "x_madeira"
+      ],
+      "fact_kind": "production-standard",
+      "quantitative": true,
+      "numeric_payload": {
+        "temperature_c_range": [
+          45,
+          50
+        ],
+        "minimum_months": 3
+      },
+      "shortlist_rank": null,
+      "verified_on": "2026-11-12",
+      "x_posts": [
+        "https://x.com/ibwsshow/status/1559499160294162432"
+      ],
+      "x_lead_type": "claim",
+      "x_research_note": "The X post introduced the heating method; the Madeira wine body supplies the actual time and temperature bounds."
+    },
+    {
+      "id": "F156",
+      "category": "17 · Numbers to sit with",
+      "hook": "The bottle names need a postcode.",
+      "fact": "In Champagne usage, a magnum holds 1.5 litres, a Jeroboam 3 litres and a Mathusalem 6 litres: two, four and eight standard 750 ml bottles.",
+      "context": "Large-format names are not uniform across wine regions. Volumes and equivalents come from the Champagne formats sheet; read a bottle’s labelled capacity.",
+      "display_idea": "Three bottles drawn to a linear volume scale, not a misleading height scale.",
+      "source_ids": [
+        "x_bottles"
+      ],
+      "fact_kind": "serving-literacy",
+      "quantitative": true,
+      "numeric_payload": {
+        "magnum_litres": 1.5,
+        "jeroboam_litres": 3,
+        "mathusalem_litres": 6,
+        "standard_bottle_ml": 750,
+        "standard_bottle_equivalents": [
+          2,
+          4,
+          8
+        ]
+      },
+      "shortlist_rank": null,
+      "verified_on": "2026-11-12",
+      "x_posts": [
+        "https://x.com/mujerdelvino/status/1642528957881888769"
+      ],
+      "x_lead_type": "claim",
+      "x_research_note": "A bottle-format post led to Comité Champagne’s technical sheet. Unverified price claims and F1 brand assumptions are discarded."
+    },
+    {
+      "id": "F157",
+      "category": "17 · Numbers to sit with",
+      "hook": "Sixteen days. About 6.5 million litres.",
+      "fact": "Munich’s preliminary Oktoberfest 2025 closing report put beer consumption at about 6.5 million one-litre Maß, compared with 7 million in 2024.",
+      "context": "An explicitly dated organiser estimate, not a 2026 total or a per-person drinking rate. Do not divide by attendance to imply what each individual drank.",
+      "display_idea": "Two annual volume bars, with “preliminary” visible on 2025.",
+      "source_ids": [
+        "x_oktoberfest"
+      ],
+      "fact_kind": "event-statistic",
+      "quantitative": true,
+      "numeric_payload": {
+        "year": 2025,
+        "beer_litres_approx": 6500000,
+        "comparison_year": 2024,
+        "comparison_beer_litres_approx": 7000000
+      },
+      "shortlist_rank": null,
+      "verified_on": "2026-11-12",
+      "x_posts": [
+        "https://x.com/stats_feed/status/1969264118197604518"
+      ],
+      "x_lead_type": "topic_extension",
+      "x_research_note": "The X post about 2025 Oktoberfest prices prompted the official closing report. The volume comparison is a verified extension of that festival lead."
+    },
+    {
+      "id": "F158",
+      "category": "17 · Numbers to sit with",
+      "hook": "A cellar counted in millions.",
+      "fact": "Guinness World Records lists Moldova’s Mileștii Mici cellar at 1.5 million bottles, with the record dated 2005; its descriptive text says over 1.5 million.",
+      "context": "This is the record register’s dated bottle-count entry, not a newly audited 2026 stocktake or a claim about cellar floor area.",
+      "display_idea": "A 1.5 million bottle marker with the record date beside it.",
+      "source_ids": [
+        "x_milestii"
+      ],
+      "fact_kind": "record-statistic",
+      "quantitative": true,
+      "numeric_payload": {
+        "record_year": 2005,
+        "record_entry_bottles": 1500000
+      },
+      "shortlist_rank": null,
+      "verified_on": "2026-11-12",
+      "x_posts": [
+        "https://x.com/WineBlogRoll/status/950434195041636352"
+      ],
+      "x_lead_type": "claim",
+      "x_research_note": "The X post about the enormous cellar led to the record entry; larger uncited social counts are not substituted."
+    },
+    {
+      "id": "F159",
+      "category": "17 · Numbers to sit with",
+      "hook": "Old wine. Different kind of evidence.",
+      "fact": "A 2024 chemical study identified roughly 2,000-year-old wine preserved as liquid in a Roman funerary urn from Carmona, Spain. The liquid had survived with cremated human remains.",
+      "context": "This is not the fourth-century Speyer bottle, nor the much older pottery-residue evidence in F049. Nothing here suggests the liquid is drinkable.",
+      "display_idea": "Three labelled evidence types: liquid · sealed bottle · absorbed residue.",
+      "source_ids": [
+        "x_carmona",
+        "x_carmonarelease"
+      ],
+      "fact_kind": "archaeological-research",
+      "quantitative": true,
+      "numeric_payload": {
+        "publication_year": 2024,
+        "liquid_age_years_approx": 2000
+      },
+      "shortlist_rank": null,
+      "verified_on": "2026-11-12",
+      "x_posts": [
+        "https://x.com/archeohistories/status/1829581031319703621"
+      ],
+      "x_lead_type": "claim",
+      "x_research_note": "X posts about Carmona and the Speyer bottle are often conflated. The research paper and university release establish the Carmona finding."
+    },
+    {
+      "id": "F160",
+      "category": "18 · Drinks with a backstory",
+      "hook": "The Last Word got in before Prohibition.",
+      "fact": "A 1916 Detroit Athletic Club menu lists the Last Word at 35 cents, predating US national Prohibition.",
+      "context": "The menu establishes the name and price, not a verbatim ingredient formula. The often-told Prohibition-era origin needs that earlier documentary qualification.",
+      "display_idea": "An original typographic menu reconstruction, marked as a reconstruction.",
+      "source_ids": [
+        "x_lastword"
+      ],
+      "fact_kind": "cocktail-history",
+      "quantitative": true,
+      "numeric_payload": {
+        "menu_year": 1916,
+        "price_us_cents": 35
+      },
+      "shortlist_rank": null,
+      "verified_on": "2026-11-12",
+      "x_posts": [
+        "https://x.com/colin_thomas/status/1502021822489018370"
+      ],
+      "x_lead_type": "correction",
+      "x_research_note": "The X post calls it Prohibition-era. The historical reference cites the club’s 1916 menu and 35-cent price."
+    },
+    {
+      "id": "F161",
+      "category": "18 · Drinks with a backstory",
+      "hook": "The Aviation lost its violet for a while.",
+      "fact": "Hugo Ensslin’s 1916 Aviation included crème de violette. The 1930 Savoy Cocktail Book printed an Aviation without it.",
+      "context": "A comparison of documented recipes, not a claim that every modern Aviation must be a particular shade. The colour is not a reason to replace the violet liqueur with blue Curaçao.",
+      "display_idea": "Two dated ingredient lists with the violet ingredient fading between them.",
+      "source_ids": [
+        "x_aviation"
+      ],
+      "fact_kind": "cocktail-history",
+      "quantitative": false,
+      "numeric_payload": null,
+      "shortlist_rank": null,
+      "verified_on": "2026-11-12",
+      "x_posts": [
+        "https://x.com/food_porn/status/1345882086436032512"
+      ],
+      "x_lead_type": "topic_extension",
+      "x_research_note": "A modern Aviation post supplied the violet-liqueur lead; Robert Hess’s recipe comparison supplies the historical change."
+    },
+    {
+      "id": "F162",
+      "category": "18 · Drinks with a backstory",
+      "hook": "The bar does the turning.",
+      "fact": "Hotel Monteleone’s Carousel Bar opened in 1949. Its 25-seat rotating bar completes one revolution every 15 minutes.",
+      "context": "A specification for the revolving bar, not the capacity of the entire lounge. Older Vieux Carré stories at the hotel should not place this 1949 carousel in the 1930s.",
+      "display_idea": "A slow schematic ring with 25 seat dots and a static 15-minute label.",
+      "source_ids": [
+        "x_carousel",
+        "x_carouselseats"
+      ],
+      "fact_kind": "venue-statistic",
+      "quantitative": true,
+      "numeric_payload": {
+        "opened_year": 1949,
+        "rotating_bar_seats": 25,
+        "minutes_per_rotation": 15
+      },
+      "shortlist_rank": null,
+      "verified_on": "2026-11-12",
+      "x_posts": [
+        "https://x.com/hotelmonteleone/status/1238854913532342277"
+      ],
+      "x_lead_type": "topic_extension",
+      "x_research_note": "The hotel’s X post on its signature cocktail led to the venue’s rotating-bar history and press sheet."
+    },
+    {
+      "id": "F163",
+      "category": "18 · Drinks with a backstory",
+      "hook": "Three rums. One Zombie.",
+      "fact": "The IBA Zombie calls for 45 ml Jamaican dark rum, 45 ml gold Puerto Rican rum and 30 ml Demerara rum: 120 ml of rum before its other ingredients.",
+      "context": "That sum measures rum volume, not pure alcohol or a finished-drink ABV. Strengths differ by bottle; the recipe also contains liqueur, juice, syrup, bitters and dilution.",
+      "display_idea": "A three-part linear 45 / 45 / 30 ml bar, with other ingredients separate.",
+      "source_ids": [
+        "x_zombie"
+      ],
+      "fact_kind": "recipe-proportions",
+      "quantitative": true,
+      "numeric_payload": {
+        "rum_ml": [
+          45,
+          45,
+          30
+        ],
+        "rum_ml_total": 120
+      },
+      "shortlist_rank": null,
+      "verified_on": "2026-11-12",
+      "x_posts": [
+        "https://x.com/imbibe/status/1412546965884260359"
+      ],
+      "x_lead_type": "topic_extension",
+      "x_research_note": "An X post about Donn Beach’s classic led to the IBA recipe. The 120 ml total is transparent addition, not a separate published statistic."
+    },
+    {
+      "id": "F164",
+      "category": "19 · Better behind the bar",
+      "hook": "Clear ice is mostly a direction problem.",
+      "fact": "Directional freezing makes clearer ice by insulating all but one side of a container, pushing the cloudy portion toward the last area to freeze.",
+      "context": "Camper English’s experiments demonstrate the method. Boiling water alone is not a universal solution, and a home freezer does not require vacuum-degassing equipment.",
+      "display_idea": "A one-direction freezing cutaway with the cloudy final section marked.",
+      "source_ids": [
+        "x_ice"
+      ],
+      "fact_kind": "bar-technique",
+      "quantitative": false,
+      "numeric_payload": null,
+      "shortlist_rank": null,
+      "verified_on": "2026-11-12",
+      "x_posts": [
+        "https://x.com/SigmaTechRBLX/status/1936030060982718753",
+        "https://x.com/PicturesFoIder/status/1936025194050490684"
+      ],
+      "x_lead_type": "claim",
+      "x_research_note": "Read the expanded technical reply and its viral parent. The primary experimenter’s method supports the one-sided approach; the reply’s extra equipment suggestions are not made into requirements."
+    },
+    {
+      "id": "F165",
+      "category": "19 · Better behind the bar",
+      "hook": "The butter can leave. The flavour can stay.",
+      "fact": "Fat-washing infuses a spirit with a fat, then chills the mixture so the bulk fat can be separated, leaving transferred flavour compounds in the spirit.",
+      "context": "A technique rather than a guarantee of zero residual fat or absence of allergens. It can be used with butter, coconut oil or other fats; no single inventor is asserted.",
+      "display_idea": "Infuse → chill → separate, shown in three small vessels.",
+      "source_ids": [
+        "x_fat"
+      ],
+      "fact_kind": "bar-technique",
+      "quantitative": false,
+      "numeric_payload": null,
+      "shortlist_rank": null,
+      "verified_on": "2026-11-12",
+      "x_posts": [
+        "https://x.com/VinePair/status/1790819822558748946"
+      ],
+      "x_lead_type": "topic_extension",
+      "x_research_note": "The X post on modern fat-washing led to the specialist process guide. Conflicting invention dates are not necessary to explain the useful technique."
+    },
+    {
+      "id": "F166",
+      "category": "19 · Better behind the bar",
+      "hook": "A richer syrup is not twice the sugar.",
+      "fact": "Measured by weight, 1:1 sugar-to-water syrup is 50% sugar by mass; 2:1 syrup is 66.7% sugar by mass, before evaporation.",
+      "context": "Derived from sugar ÷ total mass. These percentages do not give sugar per millilitre, so a volume-for-volume cocktail substitution needs more information.",
+      "display_idea": "Two proportional mass bars labelled 1:1 and 2:1.",
+      "source_ids": [
+        "x_syrup"
+      ],
+      "fact_kind": "derived-recipe-math",
+      "quantitative": true,
+      "numeric_payload": {
+        "sugar_water_mass_ratios": [
+          [
+            1,
+            1
+          ],
+          [
+            2,
+            1
+          ]
+        ],
+        "sugar_mass_percent": [
+          50,
+          66.7
+        ]
+      },
+      "shortlist_rank": null,
+      "verified_on": "2026-11-12",
+      "x_posts": [
+        "https://x.com/AboutBeverages/status/1770617218616938811"
+      ],
+      "x_lead_type": "topic_extension",
+      "x_research_note": "The X discussion supplies the rich-syrup ratio; Morgenthaler specifies weighing. The mass percentages are explicitly calculated rather than attributed as measured data."
+    },
+    {
+      "id": "F167",
+      "category": "20 · Ferment, clarify, label",
+      "hook": "A drink became a rebellion’s name.",
+      "fact": "The Philippines’ Basi Revolt of 1807 is commemorated in a series of fourteen paintings attributed to Esteban Villanueva and dated 1821. Basi is a sugar-cane wine.",
+      "context": "The uprising was connected to colonial controls on basi. The collection contains fourteen paintings; its date is fourteen years after the 1807 revolt.",
+      "display_idea": "A 14-panel miniature gallery and a 1807 → 1821 timeline.",
+      "source_ids": [
+        "x_basi",
+        "x_basimonopoly"
+      ],
+      "fact_kind": "cultural-history",
+      "quantitative": true,
+      "numeric_payload": {
+        "revolt_year": 1807,
+        "paintings_year": 1821,
+        "paintings": 14
+      },
+      "shortlist_rank": null,
+      "verified_on": "2026-11-12",
+      "x_posts": [
+        "https://x.com/nqcPhilippines/status/1282914355479113728"
+      ],
+      "x_lead_type": "claim",
+      "x_research_note": "The National Quincentennial Committee’s X post led to the National Museum’s collection and historical account. The museum verifies the count and date."
+    },
+    {
+      "id": "F168",
+      "category": "20 · Ferment, clarify, label",
+      "hook": "Palm sap has two possible evenings.",
+      "fact": "Fresh, unfermented palm sap is called neera in Indian coconut research; fermented sap is toddy. Keeping sap chilled helps preserve it before fermentation.",
+      "context": "Palm species, collection conditions and local names vary. Neither a universal two-hour fermentation time nor a fixed 5% ABV is assumed.",
+      "display_idea": "A sap-collection fork: kept cold → neera; fermented → toddy.",
+      "source_ids": [
+        "x_toddy"
+      ],
+      "fact_kind": "fermentation-literacy",
+      "quantitative": false,
+      "numeric_payload": null,
+      "shortlist_rank": null,
+      "verified_on": "2026-11-12",
+      "x_posts": [
+        "https://x.com/pitdesi/status/1743656062451138748"
+      ],
+      "x_lead_type": "correction",
+      "x_research_note": "The X post’s precise time-and-strength claim is replaced with the distinction documented by ICAR-CPCRI."
+    },
+    {
+      "id": "F169",
+      "category": "20 · Ferment, clarify, label",
+      "hook": "Grapes do not settle the vegan question.",
+      "fact": "Some wines are fined with animal-derived processing aids such as egg white, milk casein, gelatin or fish-derived isinglass. Other wines use alternatives such as bentonite.",
+      "context": "Fining is a production step; this does not imply visible fish or egg in the finished glass. A wine’s vegan status requires production information, not just its grape ingredients.",
+      "display_idea": "A fining-process diagram with animal-derived and mineral alternatives.",
+      "source_ids": [
+        "x_vegan",
+        "x_vegandef"
+      ],
+      "fact_kind": "production-literacy",
+      "quantitative": false,
+      "numeric_payload": null,
+      "shortlist_rank": null,
+      "verified_on": "2026-11-12",
+      "x_posts": [
+        "https://x.com/jerryjamesstone/status/1861835632206602364"
+      ],
+      "x_lead_type": "claim",
+      "x_research_note": "The X explanation of non-vegan wine led to AWRI’s fining guidance and explicit vegan-friendly alternatives."
+    },
+    {
+      "id": "F170",
+      "category": "20 · Ferment, clarify, label",
+      "hook": "Contains sulfites is a threshold, too.",
+      "fact": "For wine labels regulated by the US TTB, a sulfite declaration is required at 10 or more parts per million, measured as total sulfur dioxide. “No sulfites added” does not mean no naturally occurring sulfites.",
+      "context": "A US labelling threshold, not a global rule or a diagnosis of what causes a particular person’s headache. Fermentation can produce sulfites without an addition.",
+      "display_idea": "A 10 ppm threshold line beside two clearly different label statements.",
+      "source_ids": [
+        "x_sulfites",
+        "x_sulfitesnatural"
+      ],
+      "fact_kind": "label-threshold",
+      "quantitative": true,
+      "numeric_payload": {
+        "us_declaration_threshold_ppm_total_so2": 10
+      },
+      "shortlist_rank": null,
+      "verified_on": "2026-11-12",
+      "x_posts": [
+        "https://x.com/BenJustman/status/1789674404814934433",
+        "https://x.com/BenJustman/status/1789674452474863811"
+      ],
+      "x_lead_type": "topic_extension",
+      "x_research_note": "The winemaker’s X thread led to TTB’s exact declaration rule and official treatment of naturally occurring sulfites. Medical absolutes in surrounding discussions are excluded."
+    }
+  ]
+}

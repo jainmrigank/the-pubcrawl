@@ -37,6 +37,14 @@ const S = ({ size = 20, children, ...rest }: P) => (
   </svg>
 );
 
+/** A small graph for the dedicated Taste Map. The martini remains the brand. */
+export const TasteMapIcon = (props: P) => <S {...props} data-icon="taste-map">
+  <path d="M3 12h18M12 3v18M3 12l2-2m-2 2 2 2M12 3l-2 2m2-2 2 2" />
+  <circle cx="7" cy="7" r="1.5" />
+  <circle cx="17" cy="8" r="1.5" />
+  <circle cx="16" cy="17" r="1.5" />
+</S>;
+
 /** Header actions: familiar silhouettes, kept in the existing SVG system. */
 export const Sun = (props: P) => <S {...props} data-icon="sun">
   <circle cx="12" cy="12" r="5" fill="currentColor" stroke="none" />
@@ -222,6 +230,23 @@ export const ArrowLeft = (p: P) => (
 export const ArrowDown = (p: P) => (
   <S {...p}>
     <path d="M12 4 Q11.6 11 12 19M6 13l6 6 6-6" />
+  </S>
+);
+export const Expand = (p: P) => (
+  <S {...p} data-icon="expand">
+    <path d="M9 4H4v5M15 4h5v5M9 20H4v-5M15 20h5v-5" />
+  </S>
+);
+export const Lock = (p: P) => (
+  <S {...p} data-icon="lock">
+    <rect x="5" y="10" width="14" height="11" rx="1.5" />
+    <path d="M8 10V7a4 4 0 0 1 8 0v3M12 14v3" />
+  </S>
+);
+export const Unlock = (p: P) => (
+  <S {...p} data-icon="unlock">
+    <rect x="5" y="10" width="14" height="11" rx="1.5" />
+    <path d="M8 10V7a4 4 0 0 1 7.2-2.4M12 14v3" />
   </S>
 );
 export const X = (p: P) => (

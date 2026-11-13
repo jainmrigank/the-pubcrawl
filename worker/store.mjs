@@ -24,9 +24,11 @@ export async function command(env, args) {
     method: 'POST',
     headers: { authorization: `Bearer ${env.KV_REST_API_TOKEN}`, 'content-type': 'application/json' },
     body: JSON.stringify(args),
+    signal: AbortSignal.timeout(8000),
   });
   if (!response.ok) throw new Error(`Upstash request failed (${response.status})`);
   const payload = await response.json();
+  if (payload.error) throw new Error('Upstash command failed');
   return payload.result;
 }
 

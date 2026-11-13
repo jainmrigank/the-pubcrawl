@@ -1,8 +1,9 @@
-import { useState } from 'react';
+import { useId, useRef, useState } from 'react';
 import type { Recipe, Vibe } from '../types';
-import { Check, GlassIcon, Heart, Play, Plus, Share, X } from '../icons';
+import { ArrowLeft, ArrowRight, Check, Expand, GlassIcon, Heart, Play, Plus, Share, X } from '../icons';
 import { recipeShareText, shareContent } from '../share';
 import { formatMeasure } from '../measure';
+import type { RecipeFocusOrigin } from '../recipeFocusTypes';
 
 interface Props {
   recipe: Recipe;
@@ -21,6 +22,8 @@ interface Props {
   onKeep?: (recipe: Recipe) => void;
   /** Optional stable tutorial anchor for this card's action rail. */
   tourActions?: string;
+  onExpand?: (origin: RecipeFocusOrigin) => void;
+  /** Only offered for classics with a reviewed taste profile. */
 }
 
 /** The three card actions (tab / share / like), used on both faces. */
@@ -95,9 +98,14 @@ export function RecipeCardActions({
 
 /** Flip flash card. Photo and vibe on the front, the full recipe on the back. */
 export function RecipeCard(props: Props) {
-  const { recipe, vibe, index, onVideo, tourActions } = props;
+  const { recipe, vibe, index, onVideo, onExpand, tourActions } = props;
   const [flipped, setFlipped] = useState(false);
   const [imageFailed, setImageFailed] = useState(false);
+  const rootRef = useRef<HTMLElement>(null);
+  const scrollRef = useRef<HTMLDivElement>(null);
+  const pointerStart = useRef<{ x: number; y: number } | null>(null);
+  const pointerMoved = useRef(false);
+  const instanceId = useId();
   const isAI = recipe.source === 'ai' || recipe.source === 'fallback';
   const isHouseOriginal = recipe.houseOriginal === true;
   const isIndia = (recipe.tags || []).includes('India');
@@ -107,26 +115,66 @@ export function RecipeCard(props: Props) {
   if (isAI) cardLabel = recipe.source === 'ai' ? 'House special' : 'Off-menu special';
   const buttons = <RecipeCardActions {...props} />;
 
+  const toggleFace = (event: React.SyntheticEvent) => {
+    event.stopPropagation();
+    setFlipped((current) => !current);
+  };
+
+  const expand = (event: React.MouseEvent<HTMLButtonElement>) => {
+    event.stopPropagation();
+    const element = rootRef.current;
+    if (!element || !onExpand) return;
+    onExpand({
+      recipe,
+      vibe,
+      instanceId,
+      element,
+      trigger: event.currentTarget,
+      flipped,
+      cardScrollTop: scrollRef.current?.scrollTop ?? 0,
+    });
+  };
+
+  const flipFromSurface = (event: React.MouseEvent<HTMLElement>) => {
+    if (pointerMoved.current) {
+      pointerMoved.current = false;
+      return;
+    }
+    const target = event.target as Element;
+    if (target.closest('button, a, input, select, textarea, [data-card-control]')) return;
+    if (window.getSelection()?.toString()) return;
+    setFlipped((current) => !current);
+  };
+
   return (
-    <div
+    <article
+      ref={rootRef}
       className={`fc ${flipped ? 'flipped' : ''} ${isAI ? 'ai' : ''}`}
       style={{ ['--vc' as string]: vibe.color }}
-      onClick={() => setFlipped((f) => !f)}
-      onKeyDown={(e) => {
-        if (e.key === 'Enter' || e.key === ' ') {
-          e.preventDefault();
-          setFlipped((f) => !f);
-        }
+      onClick={flipFromSurface}
+      onPointerDown={(event) => {
+        pointerStart.current = { x: event.clientX, y: event.clientY };
+        pointerMoved.current = false;
       }}
-      role="button"
-      tabIndex={0}
+      onPointerMove={(event) => {
+        const start = pointerStart.current;
+        if (start && Math.hypot(event.clientX - start.x, event.clientY - start.y) > 8) pointerMoved.current = true;
+      }}
+      onPointerCancel={() => { pointerStart.current = null; pointerMoved.current = false; }}
+      onPointerUp={() => { pointerStart.current = null; }}
       data-recipe-id={recipe.id}
-      aria-label={`${recipe.name}. Flip for the recipe`}
+      data-recipe-instance={instanceId}
+      aria-label={`${recipe.name} recipe card`}
     >
       <div className="fc-inner">
         {/* ---------- front ---------- */}
-        <div className="ff front">
+        <div className="ff front" aria-hidden={flipped}>
           {!flipped && <div className="card-actions" data-tour={tourActions}>{buttons}</div>}
+          {!flipped && onExpand && (
+            <button type="button" className="fc-expand fc-expand-photo" onClick={expand} aria-label={`Open ${recipe.name} full screen`}>
+              <Expand size={21} />
+            </button>
+          )}
           {recipe.thumb && !imageFailed ? (
             <div className="fc-img">
               <img
@@ -151,7 +199,7 @@ export function RecipeCard(props: Props) {
                 {vibe.label}
               </span>
             </div>
-            <h3 className="fc-name" data-recipe-heading tabIndex={-1}>{recipe.name}</h3>
+            <h3 className="fc-name" data-recipe-heading tabIndex={flipped ? undefined : -1}>{recipe.name}</h3>
             <div className="fc-botrow">
               <span className="fc-glass">
                 <GlassIcon glass={recipe.glass} size={16} />
@@ -159,11 +207,18 @@ export function RecipeCard(props: Props) {
               </span>
               {recipe.iba && <span className="k-label dim">Classic</span>}
             </div>
+            {!flipped && (
+              <div className="fc-face-controls" data-card-control>
+                <button type="button" className="fc-flip-control" onClick={toggleFace}>
+                  View recipe <ArrowRight size={14} />
+                </button>
+              </div>
+            )}
           </div>
         </div>
 
         {/* ---------- back ---------- */}
-        <div className="ff back">
+        <div className="ff back" aria-hidden={!flipped}>
           <div className="fb-head">
             <div className="fb-head-top">
               <span className="k-label">{cardLabel}</span>
@@ -172,7 +227,7 @@ export function RecipeCard(props: Props) {
             <h3>{recipe.name}</h3>
             {recipe.tagline && <p className="fb-tagline">{recipe.tagline}</p>}
           </div>
-          <div className="fb-scroll">
+          <div className="fb-scroll" ref={scrollRef}>
             <ul className="fb-ings">
               {recipe.ingredients.map((i, idx) => (
                 <li key={`${i.name}-${idx}`} className={i.have === false ? 'need' : ''}>
@@ -188,25 +243,30 @@ export function RecipeCard(props: Props) {
             <p className="fb-method">{recipe.instructions}</p>
           </div>
           <div className="fb-foot">
-            <span className="fc-glass">
-              <GlassIcon glass={recipe.glass} size={16} />
-              {recipe.glass || 'Any glass'}
-            </span>
-            {recipe.video && (
-              <button
-                className="text-btn"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  onVideo(recipe);
-                }}
-              >
-                Watch it made{' '}
-                <Play size={11} />
-              </button>
-            )}
+            <button type="button" className="fc-flip-control" onClick={toggleFace}>
+              <ArrowLeft size={14} /> Photo
+            </button>
+            <div className="fb-foot-actions" data-card-control>
+              {recipe.video && (
+                <button
+                  className="text-btn"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    onVideo(recipe);
+                  }}
+                >
+                  Watch <Play size={11} />
+                </button>
+              )}
+              {onExpand && (
+                <button type="button" className="fc-expand" onClick={expand} aria-label={`Open ${recipe.name} full screen`}>
+                  <Expand size={21} />
+                </button>
+              )}
+            </div>
           </div>
         </div>
       </div>
-    </div>
+    </article>
   );
 }

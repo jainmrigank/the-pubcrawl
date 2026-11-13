@@ -3,11 +3,12 @@ import { requestTourReplay } from '../tutorial';
 
 const PAGE_NAMES: Record<TourId, string> = {
   landing: 'landing page',
-  menu: 'Menu',
-  bar: 'Shelf',
+  menu: 'Drinks',
+  'taste-map': 'Taste Map',
+  bar: 'My Shelf',
   basics: 'Bar Basics',
-  tab: 'Tab',
-  quiz: 'Quiz',
+  tab: 'Your Tab',
+  quiz: 'Pub Quiz',
   watch: 'Watch',
   shorts: 'Shorts',
 };

@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test';
-import { openRoute, seedStableDevice } from './helpers';
+import { openRoute, seedStableDevice, useDrinksList } from './helpers';
 
 // These checks run only against the production build served by `vite preview`.
 // Keeping them opt-in avoids making the fast development E2E suite depend on
@@ -31,11 +31,13 @@ test.describe('isolated production preview', () => {
     // The first visit installs the worker; a reload lets it take control.
     await page.reload({ waitUntil: 'domcontentloaded' });
     await page.waitForFunction(() => Boolean(navigator.serviceWorker?.controller));
+    await useDrinksList(page);
     await expect(page.locator('#menu-list .grid .fc').first()).toBeVisible({ timeout: 20_000 });
 
     await page.context().setOffline(true);
     await page.reload({ waitUntil: 'domcontentloaded' });
     await expect(page.locator('.site')).toBeVisible();
+    await useDrinksList(page);
     await expect(page.locator('#menu-list .grid .fc').first()).toBeVisible({ timeout: 20_000 });
     await page.context().setOffline(false);
   });

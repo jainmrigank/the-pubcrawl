@@ -20,6 +20,7 @@ import { chat, extractJson, llmAvailable, llmConfig } from './llm.mjs';
 import { generateFallback, generateZeroProofFallback } from './generator.mjs';
 import { WELCOME } from './push.mjs';
 import { playlistSlice, questionOfDay, QUESTIONS } from './quiz.mjs';
+import { createQuizSession, quizClientKey } from '../shared/quiz-session.mjs';
 import { buildLibrary, VIDEOS } from './videos.mjs';
 import { buildShortLibrary, SHORTS } from './shorts.mjs';
 import { validateShortSession } from './shorts-schema.mjs';
@@ -37,7 +38,6 @@ import {
   removeSub,
   touchSub,
   getHall,
-  addToHall,
   getVideoStats,
   saveVideoStats,
   getShortMetrics,
@@ -45,7 +45,7 @@ import {
   getWatchMetrics,
   recordWatchEvent,
   getHighScore,
-  submitScore,
+  quizRecordStore,
   updateLike,
 } from './store.mjs';
 
@@ -53,7 +53,10 @@ export async function createApp() {
   // Catalogue/health routes are available immediately. Durable state is
   // loaded in the background and awaited only by handlers that need it.
   const app = express();
+  const quiz = createQuizSession(QUESTIONS, quizRecordStore);
+  const quizSalt = process.env.RATE_LIMIT_SALT || crypto.randomUUID();
   const PUSH_SECRET = process.env.PUSH_SECRET || '';
+  app.use('/api/quiz', express.json({ limit: '2kb' }));
   app.use(express.json({ limit: '15mb' }));
 
   const configuredOrigins = String(process.env.FRONTEND_ORIGIN || '')
@@ -115,6 +118,7 @@ export async function createApp() {
     path === '/api/likes' || path.startsWith('/api/likes/') ||
     path === '/api/keep' || path === '/api/kept' ||
     path === '/api/quiz/high' || path === '/api/quiz/hall' ||
+    ['/api/quiz/run', '/api/quiz/answer', '/api/quiz/claim'].includes(path) ||
     path === '/api/videos/refresh' ||
     path.startsWith('/api/watch/') || path.startsWith('/api/shorts/') ||
     (path.startsWith('/api/push/') && path !== '/api/push/key')
@@ -436,27 +440,23 @@ Respond with JSON exactly like:
     res.json({ questions, total, high: getHighScore().score });
   });
 
-  app.get('/api/quiz/high', (_req, res) =>
-    res.json({ ...getHighScore(), hall: getHall(), bank: QUESTIONS.length })
+  const quizRoute = (action) => async (req, res) => {
+    res.setHeader('Cache-Control', 'no-store');
+    try {
+      const client = await quizClientKey(req.socket.remoteAddress || 'local', quizSalt);
+      res.json(await action(req, client));
+    } catch (error) {
+      res.status(error.status || 503).json({ error: error.status ? error.message : 'The shared board is unavailable. Try again shortly.' });
+    }
+  };
+  app.get('/api/quiz/high', quizRoute(async () => ({ ...await quiz.high(), hall: getHall() })));
+  app.post('/api/quiz/run', quizRoute((_req, client) => quiz.start(client)));
+  app.post('/api/quiz/answer', quizRoute((req) => quiz.answer(req.body)));
+  app.post('/api/quiz/claim', quizRoute((req, client) => quiz.claim(req.body, client)));
+  // Old clients may still be open. Never accept their unverified score/name.
+  app.post(['/api/quiz/high', '/api/quiz/hall'], (_req, res) =>
+    res.status(410).json({ error: 'Reload PubCrawl to start a verified round.' })
   );
-
-  app.post('/api/quiz/high', (req, res) => {
-    const score = Number(req.body?.score);
-    if (!Number.isFinite(score) || score < 0 || score > 1000)
-      return res.status(400).json({ error: 'bad score' });
-    const beaten = submitScore(score);
-    res.json({ ...getHighScore(), beaten });
-  });
-
-  // the wall: only a run that cleared every question in the bank gets on it
-  app.post('/api/quiz/hall', (req, res) => {
-    const score = Number(req.body?.score);
-    if (score !== QUESTIONS.length)
-      return res.status(400).json({ error: 'not a clean sweep' });
-    const entry = addToHall(req.body?.name, score);
-    if (!entry) return res.status(400).json({ error: 'need a name' });
-    res.json({ hall: getHall(), entry });
-  });
 
   // one question a day, the same for everyone
   app.get('/api/quiz/today', (_req, res) => {

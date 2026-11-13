@@ -1,5 +1,7 @@
 #!/usr/bin/env node
 /** Build the immutable browser data chunks from the audited server catalogue. */
+import { readFileSync } from 'node:fs';
+import { buildAtlasCatalogue, buildAtlasResearch } from './atlas_data.mjs';
 import { createHash } from 'node:crypto';
 import { mkdir, readFile, writeFile } from 'node:fs/promises';
 import { join } from 'node:path';
@@ -7,6 +9,7 @@ import { fileURLToPath } from 'node:url';
 import { loadCatalog } from '../server/catalog.mjs';
 import { VIBES } from '../server/vibes.mjs';
 import { QUESTIONS } from '../server/quiz.mjs';
+import { buildLandingIngredients } from './landing_ingredients.mjs';
 
 const ROOT = join(fileURLToPath(new URL('..', import.meta.url)));
 const OUT = join(ROOT, 'src', 'generated');
@@ -59,6 +62,11 @@ function build() {
     'client_catalog.json': catalogueBytes,
     'client_quiz.json': quizBytes,
     'client_data_manifest.json': bytes(manifest),
+    'landing_ingredients.json': bytes(buildLandingIngredients(recipes, dataVersion)),
+    'bar_atlas.json': bytes({ catalogue: buildAtlasCatalogue(recipes, dataVersion), ...buildAtlasResearch(
+      JSON.parse(readFileSync(join(ROOT, 'research/alcohol-facts-x-2026-11-12/alcohol-facts-170.json'), 'utf8')),
+      JSON.parse(readFileSync(join(ROOT, 'research/alcohol-facts-x-2026-11-12/combined-source-register.json'), 'utf8'))
+    ) }),
     dataVersion,
     recipes,
     ingredients: ingredientList,
@@ -69,7 +77,7 @@ function build() {
 const check = process.argv.includes('--check');
 const result = build();
 await mkdir(OUT, { recursive: true });
-for (const name of ['client_catalog.json', 'client_quiz.json', 'client_data_manifest.json']) {
+for (const name of ['client_catalog.json', 'client_quiz.json', 'client_data_manifest.json', 'landing_ingredients.json', 'bar_atlas.json']) {
   const path = join(OUT, name);
   const expected = result[name];
   if (check) {

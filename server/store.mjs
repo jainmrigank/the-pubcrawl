@@ -7,11 +7,12 @@
  * (fine for local dev; on an ephemeral host those reset, which is exactly why
  * production should set the KV vars).
  */
-import { readFileSync, writeFileSync, existsSync } from 'node:fs';
+import { readFileSync, writeFileSync, existsSync, renameSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { emptyShortMetrics } from './shorts-schema.mjs';
 import { emptyWatchMetrics } from './watch-schema.mjs';
+import { createQuizRecordStore } from '../shared/quiz-record-store.mjs';
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
 const dataFile = (name) => join(ROOT, 'data', name);
@@ -33,7 +34,9 @@ async function kvCmd(args) {
     signal: AbortSignal.timeout(8000),
   });
   if (!res.ok) throw new Error(`kv ${res.status}`);
-  return (await res.json()).result;
+  const payload = await res.json();
+  if (payload.error) throw new Error('KV command failed');
+  return payload.result;
 }
 
 async function readBlob(key, file, fallback) {
@@ -77,6 +80,21 @@ let videoStats = {}; // youtube id -> { views, likes, dead, checkedAt, history: 
 let shortMetrics = emptyShortMetrics();
 let watchMetrics = emptyWatchMetrics();
 let initPromise = null;
+
+// Shared Redis in production; a single-process, durable record for local dev.
+// Test/preview memory mode never reads or writes the real record.
+export const quizRecordStore = createQuizRecordStore({
+  command: useKV ? kvCmd : undefined,
+  readLocal: () => highScore,
+  writeLocal: (value) => {
+    if (!memoryMode) {
+      const file = dataFile('high_score.json');
+      writeFileSync(`${file}.tmp`, JSON.stringify(value, null, 1));
+      renameSync(`${file}.tmp`, file);
+    }
+    highScore = value;
+  },
+});
 
 export async function initStore() {
   if (initPromise) return initPromise;

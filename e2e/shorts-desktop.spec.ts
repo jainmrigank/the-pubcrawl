@@ -69,12 +69,12 @@ test.describe('Shorts phone layout checkpoint', () => {
       await page.setViewportSize(viewport);
       await expect.poll(async () => {
         const media = await page.locator('.shorts-player-host iframe').boundingBox();
-        const nav = await page.locator('.mobile-bottom-nav').boundingBox();
+        const nav = await page.locator('.house-mobile-links').boundingBox();
         return Boolean(media && nav && media.y + media.height <= nav.y + 1);
       }).toBe(true);
       const media = (await page.locator('.shorts-player-host iframe').boundingBox())!;
       const back = (await page.getByRole('button', { name: 'Back', exact: true }).boundingBox())!;
-      const nav = (await page.locator('.mobile-bottom-nav').boundingBox())!;
+      const nav = (await page.locator('.house-mobile-links').boundingBox())!;
       expect(media.width).toBeGreaterThanOrEqual(200);
       expect(media.height).toBeGreaterThanOrEqual(200);
       expect(media.x).toBeGreaterThanOrEqual(0);

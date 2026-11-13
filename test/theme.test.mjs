@@ -26,10 +26,10 @@ test('applyTheme updates the document state and runtime metadata', () => {
   applyTheme('dark', doc);
   assert.equal(doc.documentElement.dataset.theme, 'dark');
   assert.equal(doc.documentElement.style.colorScheme, 'dark');
-  assert.equal(doc.querySelector('meta[name="theme-color"]').content, '#141310');
+  assert.equal(doc.querySelector('meta[name="theme-color"]').content, '#1d2521');
   assert.equal(doc.querySelector('meta[name="apple-mobile-web-app-status-bar-style"]').content, 'black-translucent');
   applyTheme('light', doc);
-  assert.equal(doc.querySelector('meta[name="theme-color"]').content, '#ECE9E0');
+  assert.equal(doc.querySelector('meta[name="theme-color"]').content, '#f0e9dc');
 });
 
 test('system theme is safe in browser-like and non-browser environments', () => {
@@ -38,9 +38,9 @@ test('system theme is safe in browser-like and non-browser environments', () => 
   assert.equal(systemTheme({ matchMedia: () => { throw new Error('storage unavailable'); } }), 'light');
 });
 
-test('unset preferences keep the dark editorial theme as the default', () => {
+test('unset preferences safely follow the device default', () => {
   const doc = fakeDocument();
-  assert.equal(bootstrapTheme(doc, null), 'dark');
-  assert.equal(doc.documentElement.dataset.theme, 'dark');
-  assert.equal(doc.querySelector('meta[name="theme-color"]').content, '#141310');
+  assert.equal(bootstrapTheme(doc, null), 'light');
+  assert.equal(doc.documentElement.dataset.theme, 'light');
+  assert.equal(doc.querySelector('meta[name="theme-color"]').content, '#f0e9dc');
 });

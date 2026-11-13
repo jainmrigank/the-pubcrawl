@@ -70,7 +70,7 @@ async function grab(file: File): Promise<Uint8Array<ArrayBuffer>> {
  */
 async function decode(bytes: Uint8Array<ArrayBuffer>): Promise<Shot> {
   const mime = sniff(bytes);
-  if (!mime) throw new Error('That is not a photo. Pick a picture of your bottles.');
+  if (!mime) throw new Error('Choose a photo of your ingredients.');
 
   // rebuild the blob with the type the bytes really are: a decoder handed a
   // HEIC labelled image/jpeg can refuse it on the label alone
@@ -135,7 +135,7 @@ export function UploadZone({ onAddAll }: Props) {
     try {
       bytes = await grab(file);
     } catch {
-      setError('The app lost hold of that photo. Pick it again, or save it to Files first and choose it from there.');
+      setError('Photo unavailable. Pick it again, or choose it from Files.');
       return;
     }
 
@@ -143,11 +143,11 @@ export function UploadZone({ onAddAll }: Props) {
     setAdded([]);
 
     if (!bytes.length) {
-      setError('That photo came through empty. Try picking it again.');
+      setError('Empty photo. Pick it again.');
       return;
     }
     if (bytes.length > MAX_BYTES) {
-      setError('That photo is enormous. Anything under 25MB is fine.');
+      setError('Choose a photo under 25 MB.');
       return;
     }
 
@@ -158,7 +158,7 @@ export function UploadZone({ onAddAll }: Props) {
       const res = await identifyImage(shot.b64, shot.mime);
 
       if (!res.detected.length) {
-        setError('Could not make anything out. Try a closer, brighter shot.');
+        setError('No ingredients found. Try a brighter, closer photo.');
       } else {
         onAddAll(res.detected);
         setAdded(res.detected);
@@ -213,7 +213,7 @@ export function UploadZone({ onAddAll }: Props) {
           <span>
             {busy
               ? 'Checking your bottles and bits.'
-              : 'Bottles, fruit, whatever\'s lying around. It goes straight onto your shelf.'}
+              : 'Photograph your ingredients to add them.'}
           </span>
         </div>
         {busy && <span className="scanline" aria-hidden />}

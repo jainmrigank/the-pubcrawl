@@ -6,63 +6,54 @@ test.describe('responsive controls', () => {
     await seedStableDevice(page);
   });
 
-  test('phone uses the compact category select and icon-only header actions', async ({ page }) => {
+  test('phone keeps search primary and category controls behind More filters', async ({ page }) => {
     await page.setViewportSize({ width: 430, height: 932 });
     await openRoute(page, '/#/menu');
+    await expect(page.locator('.category-filter-select')).toHaveCount(0);
+    await page.getByRole('button', { name: 'More filters' }).click();
     await expect(page.locator('.category-filter-select')).toBeVisible();
-    expect(await page.locator('.category-filter-select').evaluate((element) => parseFloat(getComputedStyle(element).fontSize))).toBeGreaterThanOrEqual(16);
+    expect(await page.locator('.category-filter-select').evaluate(element => parseFloat(getComputedStyle(element).fontSize))).toBeGreaterThanOrEqual(16);
     await expect(page.locator('.vibe-pills')).toBeHidden();
-    await expect(page.locator('.mobile-bottom-nav')).toBeVisible();
-    expect((await page.locator('.mobile-theme-toggle').textContent())?.trim()).toBe('');
-    await expect(page.locator('.mobile-secondary-action')).toHaveCount(2);
-    await expect(page.locator('.mobile-secondary-action').first()).toHaveAttribute('aria-label', 'Bar Basics');
-    await expect(page.locator('.mobile-secondary-action').nth(1)).toHaveAttribute('aria-label', 'Tab, 0 saved drinks');
-    await expect(page.locator('.mobile-top-actions > *')).toHaveCount(4);
-    await expect(page.locator('button.contextual-help:visible')).toHaveCount(1);
-    await expect(page.locator('button.contextual-help:visible')).toHaveAttribute('aria-label', 'Show Menu tutorial');
-    await expect(page.locator('.nav .wordmark')).toBeHidden();
+    await expect(page.locator('.house-mobile-links')).toBeVisible();
+    await expect(page.locator('.house-brand')).toBeVisible();
+    await expect(page.locator('button.contextual-help:visible')).toHaveAttribute('aria-label', 'Show Drinks tutorial');
     for (const width of [430, 390, 320]) {
       await page.setViewportSize({ width, height: width === 320 ? 700 : 844 });
-      await expect(page.locator('.mobile-top-actions > *')).toHaveCount(4);
-      const headerOverflow = await page.locator('.nav').evaluate((element) => element.scrollWidth - element.clientWidth);
-      expect(headerOverflow).toBeLessThanOrEqual(1);
-      const targets = await page.locator('.mobile-top-actions > *').evaluateAll((elements) => elements.map((element) => {
+      const overflow = await page.locator('.house-nav').evaluate(element => element.scrollWidth - element.clientWidth);
+      expect(overflow).toBeLessThanOrEqual(1);
+      const targets = await page.locator('.house-nav-utilities > *, .house-mobile-links > *').evaluateAll(elements => elements.map(element => {
         const box = element.getBoundingClientRect();
         return { width: box.width, height: box.height };
       }));
-      expect(targets.every((box) => box.width >= 44 && box.height >= 44)).toBe(true);
+      expect(targets.every(box => box.width >= 44 && box.height >= 44)).toBe(true);
     }
     await openRoute(page, '/#/watch');
     await expect(page.locator('.wv-kind-select')).toBeVisible();
-    expect(await page.locator('.wv-kind-select').evaluate((element) => parseFloat(getComputedStyle(element).fontSize))).toBeGreaterThanOrEqual(16);
+    expect(await page.locator('.wv-kind-select').evaluate(element => parseFloat(getComputedStyle(element).fontSize))).toBeGreaterThanOrEqual(16);
   });
 
-  test('tablet keeps category pills while retaining bottom navigation', async ({ page }) => {
+  test('tablet keeps category pills behind More filters and retains bottom navigation', async ({ page }) => {
     await page.setViewportSize({ width: 768, height: 1024 });
     await openRoute(page, '/#/menu');
+    await page.getByRole('button', { name: 'More filters' }).click();
     await expect(page.locator('.category-filter-select')).toBeHidden();
     await expect(page.locator('.vibe-pills')).toBeVisible();
-    await expect(page.locator('.mobile-bottom-nav')).toBeVisible();
+    await expect(page.locator('.house-mobile-links')).toBeVisible();
   });
 
-  test('compact desktop keeps the desktop menu affordance and hides mobile navigation', async ({ page }) => {
-    await page.setViewportSize({ width: 1024, height: 768 });
+  for (const width of [1024, 1440]) test(`desktop ${width} keeps complete primary navigation and an Explore menu`, async ({ page }) => {
+    await page.setViewportSize({ width, height: 900 });
     await openRoute(page, '/#/menu');
-    await expect(page.locator('.mobile-bottom-nav')).toBeHidden();
-    await expect(page.locator('.nav-menu-btn')).toBeVisible();
-    await expect(page.locator('.nav-links')).toBeHidden();
-  });
-
-  test('wide desktop keeps full route links and no hamburger', async ({ page }) => {
-    await page.setViewportSize({ width: 1440, height: 900 });
-    await openRoute(page, '/#/menu');
-    await expect(page.locator('.mobile-bottom-nav')).toBeHidden();
-    await expect(page.locator('.nav-menu-btn')).toBeHidden();
-    await expect(page.locator('.nav-links')).toBeVisible();
-    await expect(page.locator('.desktop-theme-toggle')).toBeVisible();
-    await expect(page.locator('.nav .wordmark')).toHaveText('The PubCrawl');
-    await expect(page.locator('button.contextual-help:visible')).toHaveCount(1);
-    await expect(page.locator('button.contextual-help:visible')).toHaveAttribute('aria-label', 'Show Menu tutorial');
+    await expect(page.locator('.house-mobile-links')).toBeHidden();
+    const nav = page.locator('.house-desktop-links');
+    await expect(nav).toBeVisible();
+    await expect(nav.locator('.house-nav-link')).toHaveText(['Drinks', 'Taste Map', 'Shelf', 'Tab', 'Explore+']);
+    await expect(page.locator('.house-theme')).toBeVisible();
+    await expect(page.locator('.house-brand')).toContainText('PubCrawl');
+    await nav.getByRole('button', { name: 'Explore' }).click();
+    await expect(page.getByRole('dialog').getByRole('link')).toHaveCount(4);
+    await page.keyboard.press('Escape');
+    await expect(nav.getByRole('button', { name: 'Explore' })).toBeFocused();
   });
 
   test('centers Watch Show More independently of its changing result count', async ({ page }) => {
@@ -88,18 +79,13 @@ test.describe('responsive controls', () => {
     expect(mobileLayout).toBe(1);
   });
 
-  test('uses concise page names while preserving the PubCrawl brand', async ({ page }) => {
+  test('uses plain destination names while preserving existing routes', async ({ page }) => {
     await page.setViewportSize({ width: 1440, height: 900 });
     await openRoute(page, '/#/menu');
-    await expect(page.locator('.nav-links')).toContainText('Menu');
-    await expect(page.locator('.nav-links a[href="#/bar"]')).toHaveText('Shelf');
-    await expect(page.locator('.nav-links')).toContainText('Tab');
-    await expect(page.locator('.nav .wordmark')).toHaveText('The PubCrawl');
-    await expect(page.locator('#menu-list .sec-title')).toHaveText('Menu');
-    await expect(page.locator('#menu-list .sec-title')).not.toHaveText('The Menu');
-
+    await expect(page.locator('.house-desktop-links a[href="#/bar"]')).toHaveText('Shelf');
+    await expect(page.locator('#menu-list .sec-title')).toHaveText('Find a drink you’ll like.');
     await openRoute(page, '/#/tab');
-    await expect(page.locator('#tab-page .sec-title')).toHaveText('Tab');
+    await expect(page.locator('#tab-page .sec-title')).toHaveText('Your Tab');
     await openRoute(page, '/#/quiz');
     await expect(page.locator('.quiz-eyebrow')).toHaveText('Pub Quiz');
   });

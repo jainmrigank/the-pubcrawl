@@ -32,7 +32,7 @@ export function Knowledge() {
         <input
           value={q}
           onChange={(e) => setQ(e.target.value)}
-          placeholder="Search the manual… oz, shake, vermouth"
+          placeholder="Search the manual"
           aria-label="Search the manual"
         />
       </div>
@@ -43,7 +43,7 @@ export function Knowledge() {
       )}
       {groups.length === 0 && (
         <div className="empty">
-          <p className="empty-big">Nothing by that name in the manual</p>
+          <p className="empty-big">No matching entries</p>
           <p className="k-label dim">Try “oz”, “shake” or “vermouth”</p>
         </div>
       )}

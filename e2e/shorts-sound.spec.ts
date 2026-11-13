@@ -129,7 +129,7 @@ test.describe('Shorts native sound retention', () => {
     await expect.poll(() => page.evaluate(() => sessionStorage.getItem('pubcrawl.shorts.sound.v1'))).toBe(
       JSON.stringify({ version: 1, desiredAudible: true, volume: 81 }),
     );
-    await page.locator('.mobile-nav-item[href="#/menu"]').click();
+    await page.locator('.house-mobile-links .house-nav-link[href="#/menu"]').click();
     await expect(page.locator('.site')).toBeVisible();
     await openRoute(page, '/#/shorts');
     await waitForFirstPlay(page);

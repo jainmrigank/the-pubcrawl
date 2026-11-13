@@ -1,10 +1,11 @@
-import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
+import { lazy, Suspense, useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import { AnimatePresence, motion, MotionConfig } from 'framer-motion';
 import { fetchHealth, fetchKeptRecipes, fetchLikes, fetchRecipes, fetchVibes, generateRecipe, keepRecipe, matchRecipes, postLike } from './api';
 import type { BrowseFilter, Health, Ingredient, MatchResult, Recipe, ShortVideo, Theme, TourId, Vibe, VibeId } from './types';
 import { Typeahead } from './components/Typeahead';
 import { UploadZone } from './components/UploadZone';
 import { RecipeCard } from './components/RecipeCard';
+import { RecipeFocus } from './components/RecipeFocus';
 import { IngredientIcon } from './components/IngredientIcon';
 import { Knowledge } from './components/Knowledge';
 import { BarTalk } from './components/BarTalk';
@@ -15,37 +16,34 @@ import { Quiz } from './components/Quiz';
 import { Watch } from './components/Watch';
 import { Shorts } from './components/Shorts';
 import { CategoryFilter } from './components/CategoryFilter';
-import { MobileNavigation, MobileTopActions } from './components/MobileNavigation';
+import { SiteNavigation } from './components/SiteNavigation';
+import { ScrollToTop } from './components/ScrollToTop';
+import { TasteFinder } from './components/TasteFinder';
 import { DailyQuestion } from './components/DailyQuestion';
 import { GuidedTour } from './components/GuidedTour';
 import { LandingPage } from './components/LandingPage';
 import { ShelfResults } from './components/ShelfResults';
-import { ContextualHelp } from './components/ContextualHelp';
 import { EASE, Lines, LOADED_HIDDEN, Reveal } from './motion';
-import { ArrowDown, ArrowRight, Burger, Check, Heart, PubGlyph, Share, Shuffle, SketchDefs, ThemeGlyph, X } from './icons';
+import { ArrowDown, ArrowRight, Check, Heart, Share, Shuffle, SketchDefs, X } from './icons';
 import { shareContent, tabShareText } from './share';
-import { applyTheme, currentTheme, persistTheme } from './theme';
+import { applyTheme, currentTheme, persistTheme, readStoredTheme, systemTheme, clearStoredTheme } from './theme';
 import { loadLocalCatalogue, matchLocalRecipes, queryLocalRecipes } from './localData';
 import type { Route } from './navigation';
 import { OVERLAY_PRIORITY, overlayGate, setBackgroundInert } from './overlayGate';
 import { selectLandingShorts } from './landingPreviewPolicy';
 import { SHORTS_SEED } from './shortsData';
+import { parseBrowseFilter, serializeBrowseFilter } from './filter';
+import { useRecipeFocus } from './useRecipeFocus';
 import './App.css';
+import './components/landing/landing.css';
+import './house-standard.css';
+
+const BarAtlas = lazy(() => import('./components/atlas/BarAtlas'));
 
 const FALLBACK_VIBE: Vibe = { id: 'boozy', label: 'Spirit-Forward', color: '#8A5A24' };
 const VIDEO_MODAL_GATE_ID = 'recipe-video';
 
-const ROUTES: Route[] = ['menu', 'bar', 'basics', 'tab', 'quiz', 'watch', 'shorts'];
-const NAV: { route: Route; label: string }[] = [
-  { route: 'menu', label: 'Menu' },
-  { route: 'bar', label: 'Shelf' },
-  { route: 'tab', label: 'Tab' },
-  { route: 'quiz', label: 'Quiz' },
-  { route: 'shorts', label: 'Shorts' },
-  { route: 'watch', label: 'Watch' },
-  { route: 'basics', label: 'Bar Basics' },
-];
-
+const ROUTES: Route[] = ['menu', 'taste-map', 'bar', 'basics', 'tab', 'quiz', 'watch', 'shorts', 'atlas'];
 /** the path part of the hash, without the query: '' | 'menu' | 'bar' | … */
 function hashPath(): string {
   return window.location.hash.replace(/^#\/?/, '').split('?')[0];
@@ -53,6 +51,8 @@ function hashPath(): string {
 
 function parseRoute(): Route {
   const h = hashPath() as Route;
+  // Keep earlier shared map links working after separating the two pages.
+  if (h === 'menu' && hashParams().get('view') === 'map') return 'taste-map';
   return ROUTES.includes(h) ? h : 'menu';
 }
 
@@ -71,7 +71,19 @@ function hashParams(): URLSearchParams {
 
 /** a nudge can deep-link straight to a drink: #/menu?q=<name> */
 function hashQuery(): string {
-  return hashParams().get('q') || '';
+  return hashPath() === 'menu' && parseRoute() === 'menu' ? hashParams().get('q') || '' : '';
+}
+
+function hashBrowseFilter(): BrowseFilter {
+  return parseBrowseFilter(parseRoute() === 'menu' ? hashParams().get('filter') || '' : '');
+}
+
+function menuHash(query: string, filter: BrowseFilter): string {
+  const params = new URLSearchParams();
+  if (query.trim()) params.set('q', query);
+  if (filter.kind !== 'all') params.set('filter', serializeBrowseFilter(filter));
+  const value = params.toString();
+  return `#/menu${value ? `?${value}` : ''}`;
 }
 
 /** the 5pm nudge lands on #/quiz?daily=1, which always opens today's question */
@@ -195,7 +207,7 @@ function useRoute(): RoutedView & {
   useLayoutEffect(() => {
     // a deep link to a drink (#/menu?q=…) is an explicit request, so it wins
     // over wherever this view was last left
-    const deepLink = hashQuery() !== '';
+    const deepLink = hashQuery() !== '' || hashParams().has('filter');
     const remembered = deepLink ? null : positions.current[keyFor(view)];
     if (remembered != null) {
       window.scrollTo({ top: remembered, behavior: 'instant' as ScrollBehavior });
@@ -243,17 +255,19 @@ export default function App() {
   const [browseError, setBrowseError] = useState(false);
   const [browseAppending, setBrowseAppending] = useState(false);
   const [browseAppendError, setBrowseAppendError] = useState(false);
+  const [atlasActivated, setAtlasActivated] = useState(() => route === 'atlas');
+  useEffect(() => { if (route === 'atlas') setAtlasActivated(true); }, [route]);
   const [menuActivated, setMenuActivated] = useState(() => route === 'menu' && !landing);
   const browseControllerRef = useRef<AbortController | null>(null);
   const browseRequestIdRef = useRef(0);
   const [aiDrinks, setAiDrinks] = useState<Recipe[]>([]);
   const [keptRecipes, setKeptRecipes] = useState<Recipe[]>([]);
-  const [browseFilter, setBrowseFilter] = useState<BrowseFilter>({ kind: 'all' });
+  const [browseFilter, setBrowseFilter] = useState<BrowseFilter>(hashBrowseFilter);
   const [generating, setGenerating] = useState(false);
   const [genError, setGenError] = useState('');
   const [video, setVideo] = useState<Recipe | null>(null);
   const videoOpenerRef = useRef<HTMLElement | null>(null);
-  const [menuOpen, setMenuOpen] = useState(false);
+  const [refineOpen, setRefineOpen] = useState(false);
   const [tab, setTab] = useState<Recipe[]>(() => {
     try {
       return JSON.parse(localStorage.getItem('pubcrawl.tab') || '[]');
@@ -279,6 +293,8 @@ export default function App() {
   const barMatchRequestIdRef = useRef(0);
   const [dailyForced, setDailyForced] = useState(wantsDaily);
   const [theme, setTheme] = useState<Theme>(() => currentTheme());
+  const [themePreference, setThemePreference] = useState<Theme | 'system'>(() => readStoredTheme() || 'system');
+  const recipeFocus = useRecipeFocus();
   // Most Loved is the only browse view whose ordering depends on likes. Keep
   // a stable null dependency for every other view so a background likes
   // refresh never clears/reorders the normal menu mid-scroll.
@@ -314,7 +330,7 @@ export default function App() {
 
   const catalogueRequestedRef = useRef(false);
   useEffect(() => {
-    if (catalogueRequestedRef.current || landing || !['menu', 'bar', 'tab'].includes(route)) return;
+    if (catalogueRequestedRef.current || landing || !['menu', 'taste-map', 'bar', 'tab'].includes(route)) return;
     catalogueRequestedRef.current = true;
     // Vibes and the immutable catalogue remain local-first, but Home no
     // longer pulls the full recipe chunk merely to render discovery cards.
@@ -331,38 +347,51 @@ export default function App() {
     applyTheme(theme);
   }, [theme]);
 
-  const toggleTheme = useCallback(() => {
-    setTheme((current) => {
-      const next = current === 'dark' ? 'light' : 'dark';
-      persistTheme(next);
-      applyTheme(next);
-      return next;
-    });
+  const changeTheme = useCallback((preference: Theme | 'system') => {
+    setThemePreference(preference);
+    if (preference === 'system') clearStoredTheme();
+    else persistTheme(preference);
+    const next = preference === 'system' ? systemTheme() : preference;
+    applyTheme(next);
+    setTheme(next);
   }, []);
+  const toggleTheme = useCallback(() => changeTheme(theme === 'dark' ? 'light' : 'dark'), [theme, changeTheme]);
+  useEffect(() => {
+    if (themePreference !== 'system') return;
+    const media = window.matchMedia('(prefers-color-scheme: dark)');
+    const sync = () => { const next = media.matches ? 'dark' : 'light'; applyTheme(next); setTheme(next); };
+    media.addEventListener('change', sync);
+    return () => media.removeEventListener('change', sync);
+  }, [themePreference]);
 
   // a tapped nudge lands on #/menu?q=<drink>; if the app was already open,
   // pick the drink up from the new hash too
   useEffect(() => {
     const onHash = () => {
-      const q = hashQuery();
-      if (q) setBrowseQ(q);
+      if (hashPath() === 'menu' && hashParams().get('view') === 'map') {
+        window.history.replaceState(window.history.state, '', '#/taste-map');
+      }
+      if (parseRoute() === 'menu' && !isLandingView()) {
+        const params = hashParams();
+        // Explicit search links set the search. A bare Drinks link preserves it.
+        if (params.has('q') || params.has('filter')) {
+          const q = params.get('q') || '';
+          const rawFilter = params.get('filter') || '';
+          const filter = parseBrowseFilter(rawFilter);
+          setBrowseQ(q);
+          setBrowseFilter(current => serializeBrowseFilter(current) === serializeBrowseFilter(filter) ? current : filter);
+          setLoved(false);
+          if (rawFilter && filter.kind === 'all' && rawFilter !== 'all') {
+            window.history.replaceState(window.history.state, '', menuHash(q, filter));
+          }
+        }
+      }
       if (wantsDaily()) setDailyForced(true);
     };
+    onHash();
     window.addEventListener('hashchange', onHash);
     return () => window.removeEventListener('hashchange', onHash);
   }, []);
-
-  // The legacy drawer (desktop/compact breakpoint) owns body locking. Shorts
-  // uses its own fixed viewport surface and must not mutate document overflow:
-  // iOS PWAs otherwise detach the fixed navigation from the visual viewport.
-  useEffect(() => {
-    document.body.style.overflow = menuOpen ? 'hidden' : '';
-    document.body.style.overscrollBehavior = menuOpen ? 'none' : '';
-    return () => {
-      document.body.style.overflow = '';
-      document.body.style.overscrollBehavior = '';
-    };
-  }, [menuOpen]);
 
   // Route-aware styling is kept on the root so the portalled mobile
   // navigation can react without relying on a transformed `.site` ancestor.
@@ -584,8 +613,13 @@ export default function App() {
   /* fresh random dozen */
   const surpriseMe = () => {
     setBrowseQ('');
+    setBrowseFilter({ kind: 'all' });
     setLoved(false);
     setBrowseSeed(String(Math.random()));
+    if (route === 'menu' && !landing && window.location.hash !== '#/menu') {
+      const state = window.history.state && typeof window.history.state === 'object' ? window.history.state : {};
+      window.history.pushState(state, '', '#/menu');
+    }
   };
 
   const barFilter: BrowseFilter =
@@ -695,12 +729,25 @@ export default function App() {
   const hasPantry = pantry.length > 0;
   // the landing view is 'home', so no nav item is lit until you're in a section
   const active = landing ? null : route;
-  const helpTour: TourId = landing ? 'landing' : route;
+  const helpTour: TourId | null = landing ? 'landing' : route === 'atlas' ? null : route;
   const moreLeft = browseHasMore;
 
   const onBarFilter = useCallback((value: BrowseFilter) => {
     setInventMood(value.kind === 'all' ? '' : value.id);
   }, []);
+  const onBrowseQuery = useCallback((value: string) => {
+    setBrowseQ(value);
+    if (route !== 'menu' || landing) return;
+    const state = window.history.state && typeof window.history.state === 'object' ? window.history.state : {};
+    window.history.replaceState(state, '', menuHash(value, browseFilter));
+  }, [browseFilter, landing, route]);
+  const onBrowseFilter = useCallback((value: BrowseFilter) => {
+    setBrowseFilter(value);
+    setLoved(false);
+    if (route !== 'menu' || landing) return;
+    const state = window.history.state && typeof window.history.state === 'object' ? window.history.state : {};
+    window.history.pushState(state, '', menuHash(browseQ, value));
+  }, [browseQ, landing, route]);
   const browseContext = browseFilter.kind === 'category'
     ? vibes.find((v) => v.id === browseFilter.id)?.label
     : browseFilter.kind === 'collection'
@@ -722,6 +769,7 @@ export default function App() {
       liked={likedIds.has(r.id)}
       onToggleLike={toggleLike}
       onKeep={keepDrink}
+      onExpand={recipeFocus.openRecipe}
       tourActions={tourActions}
     />
   );
@@ -734,112 +782,22 @@ export default function App() {
         {!shortsActive && <InstallBanner />}
         {!shortsActive && <NudgePrompt />}
         <GuidedTour id="landing" active={landing} autoStart={false} />
-        <GuidedTour id="menu" active={route === 'menu' && !landing} />
-        <GuidedTour id="bar" active={route === 'bar'} />
-        <GuidedTour id="basics" active={route === 'basics'} />
-        <GuidedTour id="tab" active={route === 'tab'} />
-        <GuidedTour id="quiz" active={route === 'quiz'} />
-        <GuidedTour id="watch" active={route === 'watch'} />
-        <GuidedTour id="shorts" active={route === 'shorts'} />
+        <GuidedTour id="taste-map" active={route === 'taste-map'} autoStart={false} />
+        <GuidedTour id="menu" active={route === 'menu' && !landing} autoStart={false} />
+        <GuidedTour id="bar" active={route === 'bar'} autoStart={false} />
+        <GuidedTour id="basics" active={route === 'basics'} autoStart={false} />
+        <GuidedTour id="tab" active={route === 'tab'} autoStart={false} />
+        <GuidedTour id="quiz" active={route === 'quiz'} autoStart={false} />
+        <GuidedTour id="watch" active={route === 'watch'} autoStart={false} />
+        <GuidedTour id="shorts" active={route === 'shorts'} autoStart={false} />
 
-        {/* ================= nav ================= */}
-        <header className="nav">
-          <a
-            className="brand"
-            href="#/"
-            onClick={(event) => {
-              if (beginFreshHome()) event.preventDefault();
-            }}
-          >
-            <PubGlyph size={30} />
-            <span className="wordmark">The PubCrawl</span>
-          </a>
-          <nav className="nav-links" aria-label="Pages">
-            {NAV.map((n) => (
-              <a
-                key={n.route}
-                href={n.route === 'shorts' ? '#/shorts?src=nav' : n.route === 'watch' ? '#/watch?src=nav' : `#/${n.route}`}
-                className={`nav-link ${active === n.route ? 'active' : ''}`}
-                aria-current={active === n.route ? 'page' : undefined}
-              >
-                {n.label}
-                {n.route === 'tab' && tab.length > 0 ? ` (${tab.length})` : ''}
-              </a>
-            ))}
-          </nav>
-          <button
-            className="desktop-theme-toggle text-btn header-icon-action"
-            type="button"
-            onClick={toggleTheme}
-            aria-pressed={theme === 'dark'}
-            aria-label={theme === 'dark' ? 'Switch to light theme' : 'Switch to dark theme'}
-            title={theme === 'dark' ? 'Switch to light theme' : 'Switch to dark theme'}
-            data-tip={theme === 'dark' ? 'Switch to light theme' : 'Switch to dark theme'}
-          >
-            <ThemeGlyph theme={theme} size={20} />
-          </button>
-          <ContextualHelp tour={helpTour} className="desktop-help-action" />
-          <span className="nav-status k-label dim">
-            {health ? `${health.cocktails} drinks on tap` : '…'}
-          </span>
-          <a className="nav-make k-label" href="#/bar">
-            What can I make?
-          </a>
-          <button className="nav-menu-btn" onClick={() => setMenuOpen(true)} aria-label="Open menu">
-            <Burger size={22} />
-          </button>
-          <MobileTopActions
-            active={active}
-            theme={theme}
-            onToggleTheme={toggleTheme}
-            tabCount={tab.length}
-            helpTour={helpTour}
-          />
-        </header>
+        <SiteNavigation
+          active={active} theme={theme} preference={themePreference} onPreference={changeTheme}
+          onToggleTheme={toggleTheme} tabCount={tab.length} helpTour={helpTour}
+          onHome={event => { if (beginFreshHome()) event.preventDefault(); }}
+        />
 
-        {/* ================= mobile drawer ================= */}
-        <AnimatePresence>
-          {menuOpen && (
-            <motion.div
-              className="drawer"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              transition={{ duration: 0.3, ease: EASE }}
-            >
-              <div className="drawer-head">
-                <span className="brand">
-                  <PubGlyph size={30} />
-                  <span className="wordmark">The PubCrawl</span>
-                </span>
-                <button className="text-btn" onClick={() => setMenuOpen(false)} aria-label="Close menu">
-                  Close <X size={12} />
-                </button>
-              </div>
-              <nav className="drawer-links" aria-label="Pages">
-                {NAV.map((n, i) => (
-                  <motion.a
-                    key={n.route}
-                    href={n.route === 'shorts' ? '#/shorts?src=nav' : n.route === 'watch' ? '#/watch?src=nav' : `#/${n.route}`}
-                    onClick={() => setMenuOpen(false)}
-                    initial={{ y: 44, opacity: 0 }}
-                    animate={{ y: 0, opacity: 1 }}
-                    transition={{ duration: 0.45, delay: 0.06 * i, ease: EASE }}
-                  >
-                    <span className="k-label dim">0{i + 1}</span>
-                    {n.label}
-                    {n.route === 'tab' && tab.length > 0 ? ` (${tab.length})` : ''}
-                  </motion.a>
-                ))}
-              </nav>
-              <p className="k-label dim drawer-foot">Every bar, one kitchen</p>
-            </motion.div>
-          )}
-        </AnimatePresence>
-
-        <MobileNavigation active={active} tabCount={tab.length} theme={theme} onToggleTheme={toggleTheme} />
-
-        <main>
+        <main id="main-content" tabIndex={-1}>
           {/* every page stays mounted (hidden when inactive) so lists, search,
               flipped cards and accordion state survive switching between them */}
             <div hidden={!landing}>
@@ -854,25 +812,29 @@ export default function App() {
                 <section className="sec menu-page" id="menu-list">
                   <SectionHead
                     index="01"
-                    title="Menu"
-                    note={browseNote}
+                    title="Find a drink you’ll like."
+                    note={browseLoading ? `${health?.cocktails ?? 691} recipes` : browseNote}
                     loading={browseLoading}
                   />
+                  <p className="house-page-intro">Search by name or ingredient.</p>
                   <div className="field menu-search" data-tour="menu-controls">
                     <input
                       value={browseQ}
-                      onChange={(e) => setBrowseQ(e.target.value)}
-                      placeholder="Search… Picante, regional, Tier 1, coupe"
+                      onChange={(e) => onBrowseQuery(e.target.value)}
+                      placeholder="Search drinks or ingredients"
                       aria-label="Search menu by name, ingredient, lane, access tier, glass, place, mood or method"
                     />
                   </div>
-                  <div className="bar-controls">
+                  <div className="menu-refine-controls">
+                    <button className="text-btn" aria-expanded={refineOpen} aria-controls="menu-filters" onClick={() => setRefineOpen(value => !value)}>{refineOpen ? 'Hide filters' : 'More filters'} <ArrowDown size={14} /></button>
+                  </div>
+                  {refineOpen && <div className="bar-controls" id="menu-filters">
                     <CategoryFilter
                       value={browseFilter}
                       vibes={vibes}
                       includeIndia
                       includeHouse
-                      onChange={setBrowseFilter}
+                      onChange={onBrowseFilter}
                       label="Filter menu by category or collection"
                     />
                     <div className="menu-actions">
@@ -890,24 +852,25 @@ export default function App() {
                         Surprise me <Shuffle size={13} />
                       </button>
                     </div>
-                  </div>
+                  </div>}
+                  <div className="drink-results" aria-label="Recipe results">
                   {featured.length === 0 && browseLoading ? (
                     <div className="empty">
                       <p className="empty-big">Opening the bar…</p>
-                      <p className="k-label dim">Loading the local menu…</p>
+                      <p className="k-label dim">Loading recipes…</p>
                     </div>
                   ) : featured.length === 0 && browseError ? (
                     <div className="empty">
-                      <p className="empty-big">The bar’s still waking up</p>
-                      <p className="k-label dim">Give it a moment, then knock again</p>
+                      <p className="empty-big">The recipe list couldn’t load.</p>
+                      <p className="k-label dim">Search saved. Try again.</p>
                       <button className="btn empty-retry" onClick={() => setBrowseSeed(String(Math.random()))}>
-                        Knock again <ArrowRight size={14} />
+                        Try again <ArrowRight size={14} />
                       </button>
                     </div>
                   ) : featured.length === 0 && !browseLoading ? (
                     <div className="empty">
                       <p className="empty-big">Nothing by that name</p>
-                      <p className="k-label dim">Try “regional”, “Tier 1”, “highball” or “rum”, or clear the mood filter</p>
+                      <p className="k-label dim">Try another search or clear filters.</p>
                     </div>
                   ) : (
                     <>
@@ -930,7 +893,15 @@ export default function App() {
                       )}
                     </>
                   )}
+                  </div>
                 </section>
+            </div>
+
+            <div hidden={route !== 'taste-map'}>
+              <section className="sec page-top taste-page" id="taste-page" aria-label="Taste Map">
+                <SectionHead index="01" title="Taste Map" note="Choose a glass for its recipe." />
+                <TasteFinder active={route === 'taste-map'} saved={tabIds} onSave={toggleTab} onExpand={recipeFocus.openRecipe} onList={() => { window.location.hash = '#/menu'; }} />
+              </section>
             </div>
 
             <div hidden={route !== 'bar'}>
@@ -939,8 +910,8 @@ export default function App() {
                 <section className="sec page-top" id="shelf">
                   <SectionHead
                     index="01"
-                    title="Shelf"
-                    note=""
+                    title="My Shelf"
+                    note="Add ingredients. Find a drink."
                   />
                   <div className="shelf-grid" data-tour="shelf-entry">
                     <div className="shelf-col">
@@ -948,7 +919,7 @@ export default function App() {
                       <Typeahead onAdd={addIngredient} />
                     </div>
                     <div className="shelf-col">
-                      <span className="k-label field-label">Or show us</span>
+                      <span className="k-label field-label">Or upload a photo</span>
                       <UploadZone onAdd={addIngredient} onAddAll={addAll} pantry={pantry} />
                     </div>
                   </div>
@@ -979,7 +950,7 @@ export default function App() {
                 {hasPantry && <section className="sec" id="pour" aria-busy={matching}>
                   <SectionHead
                     index="02"
-                    title="Drinks for your Shelf"
+                    title="What you can make"
                     note={`${barResults.length} matches`}
                     loading={matching}
                   />
@@ -1021,7 +992,7 @@ export default function App() {
                             <input
                               value={barQ}
                               onChange={(e) => setBarQ(e.target.value)}
-                              placeholder="Search your Shelf… highball, Tier 1, regional"
+                              placeholder="Search matched drinks"
                               aria-label="Search matched drinks by name, ingredient, lane, access, glass or style"
                             />
                           </div>
@@ -1039,7 +1010,7 @@ export default function App() {
                         !matching && (
                           <div className="shelf-no-matches" role="status">
                             <p className="k-label">No matches</p>
-                            <p>Add another ingredient or change your filters</p>
+                            <p>Add ingredients or change filters</p>
                           </div>
                         )
                       )}
@@ -1050,11 +1021,11 @@ export default function App() {
 
             <div hidden={route !== 'basics'}>
               <section className="sec page-top" id="basics">
-                <SectionHead index="01" title="Bar Basics" note="Everything worth knowing, no snobbery" />
-                <BarTalk />
+                <SectionHead index="01" title="Bar Basics" note="Techniques, tools and bar terms." />
                 <Reveal>
                   <Knowledge />
                 </Reveal>
+                <BarTalk />
               </section>
             </div>
 
@@ -1067,6 +1038,10 @@ export default function App() {
                 />
                 {route === 'quiz' && <Quiz />}
               </section>
+            </div>
+
+            <div hidden={route !== 'atlas'}>
+              {(atlasActivated || route === 'atlas') && <Suspense fallback={<p className="sec page-top" role="status">Opening the Bar Atlas…</p>}><BarAtlas /></Suspense>}
             </div>
 
             <div hidden={route !== 'watch'}>
@@ -1086,23 +1061,22 @@ export default function App() {
               <section className="sec page-top" id="tab-page">
                 <SectionHead
                   index="01"
-                  title="Tab"
-                  note={tab.length ? `${tab.length} on your Tab tonight` : 'Your menu for the night'}
+                  title="Your Tab"
+                  note={tab.length ? `${tab.length} saved ${tab.length === 1 ? 'drink' : 'drinks'}` : 'Your next round, saved.'}
                 />
-                <BarTalk />
                 <div data-tour="tab-lineup">
                 {tab.length === 0 ? (
                   <div className="empty">
                     <p className="empty-big">Nothing on the Tab yet</p>
                     <p className="k-label dim">
-                      Tap the + on any drink card to start tonight’s lineup.{' '}
-                      <a className="empty-link" href="#/menu">Browse the Menu</a>
+                      Use + on a drink to save it.{' '}
+                      <a className="empty-link" href="#/menu">Browse drinks</a>
                     </p>
                   </div>
                 ) : (
                   <>
                     <div className="tab-head">
-                      <span className="k-label dim">Saved on this device. It keeps between visits.</span>
+                      <span className="k-label dim">Saved on this device.</span>
                       <div className="tab-head-actions" data-tour="tab-actions">
                         <button
                           className="text-btn"
@@ -1129,9 +1103,11 @@ export default function App() {
                   </>
                 )}
                 </div>
+                <BarTalk />
               </section>
             </div>
         </main>
+        <ScrollToTop routeKey={landing ? 'home' : route} />
 
         {/* ================= footer ================= */}
         {!shortsActive && (
@@ -1142,7 +1118,7 @@ export default function App() {
             </div>
             <div className="foot-meta">
               <span className="k-label">Recipes from TheCocktailDB</span>
-              <span className="k-label">House Specials may be original or robot-made. Taste before serving.</span>
+              <span className="k-label">Some House Specials use AI.</span>
               <span className="k-label">The PubCrawl © 2026</span>
             </div>
           </footer>
@@ -1152,6 +1128,15 @@ export default function App() {
         <AnimatePresence>
           {video && <VideoModal recipe={video} onClose={closeVideo} />}
         </AnimatePresence>
+        {recipeFocus.session && (
+          <RecipeFocus
+            session={recipeFocus.session}
+            phase={recipeFocus.phase}
+            onRequestClose={recipeFocus.requestClose}
+            onEntered={recipeFocus.markOpen}
+            onExited={recipeFocus.completeClose}
+          />
+        )}
       </div>
     </MotionConfig>
   );

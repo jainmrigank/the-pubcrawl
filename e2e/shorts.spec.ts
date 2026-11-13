@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test';
-import { openRoute, seedStableDevice } from './helpers';
+import { navigateTo, openRoute, seedStableDevice } from './helpers';
 import {
   activeIndex,
   fakeLog,
@@ -224,10 +224,10 @@ test.describe('Shorts single-player route', () => {
     await seedStableDevice(page);
     await openRoute(page, '/#/shorts');
     await waitForFirstPlay(page);
-    await page.getByRole('link', { name: 'Watch' }).click();
+    await navigateTo(page, 'Watch');
     await expect(page.locator('html')).toHaveAttribute('data-route', 'watch');
     await expect(page.locator('.shorts-player-host iframe')).toHaveCount(0);
-    await expect(page.locator('body > .mobile-bottom-nav')).toBeVisible();
+    await expect(page.locator('body > .house-mobile-links')).toBeVisible();
   });
 
   test('same-route deep links reuse the player and obsolete make parameters have no workflow', async ({ page }) => {
@@ -257,7 +257,7 @@ test.describe('Shorts single-player route', () => {
     await swipeTo(page, 1);
     await page.evaluate(() => (window as any).__PUBCRAWL_FAKE_YT__?.end());
     await expect.poll(async () => (await fakeLog(page)).filter(e => e.method === 'seekTo').length).toBe(1);
-    await page.getByRole('link', { name: 'Watch', exact: true }).click();
+    await navigateTo(page, 'Watch');
     await expect.poll(() => sessions.length).toBe(1);
     expect(sessions[0]).toMatchObject({ videosStarted: 2, advances: 1, recipeClicks: 0 });
   });

@@ -11,7 +11,7 @@ test.describe('Shelf flow', () => {
   test('shows one shelf-to-cards flow and keeps filters secondary', async ({ page }) => {
     await openRoute(page, '/#/bar');
     const shelf = page.locator('#shelf');
-    await expect(shelf.getByRole('heading', { name: 'Shelf', exact: true })).toBeVisible();
+    await expect(shelf.getByRole('heading', { name: 'My Shelf', exact: true })).toBeVisible();
     await expect(page.getByRole('button', { name: /Invent a drink/i })).toHaveCount(0);
     await expect(page.getByRole('button', { name: 'Filter results' })).toHaveCount(0);
     await expect(page.locator('#pour')).toHaveCount(0);
@@ -46,7 +46,7 @@ test.describe('Shelf flow', () => {
     await page.getByRole('button', { name: 'Filter results', exact: true }).click();
     const query = page.getByRole('textbox', { name: /Search matched drinks/ });
     await query.fill('nonexistent-drink-fixture');
-    await expect(page.locator('.shelf-no-matches')).toHaveText('No matchesAdd another ingredient or change your filters');
+    await expect(page.locator('.shelf-no-matches')).toHaveText('No matchesAdd ingredients or change filters');
     await expect(page.getByRole('button', { name: /Invent a drink/i })).toBeEnabled();
     // WebKit deliberately does not focus buttons on touch. Verify keyboard
     // focus retention with keyboard activation, not an assumed tap behavior.

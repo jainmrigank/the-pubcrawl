@@ -115,6 +115,7 @@ export interface ShelfFilter {
 export type TourId =
   | 'landing'
   | 'menu'
+  | 'taste-map'
   | 'bar'
   | 'basics'
   | 'tab'
@@ -170,6 +171,24 @@ export interface Question {
   in?: boolean;
   fun?: boolean;
   day?: number;
+}
+
+export type QuizQuestion = Pick<Question, 'id' | 'q' | 'o' | 'd'>;
+export interface HouseRecord { score: number; at: number; name: string | null }
+export interface QuizRun { token: string; question: QuizQuestion; bank: number; record: HouseRecord }
+export interface QuizAnswer {
+  questionId: string;
+  pick: number;
+  answer: number;
+  explanation: string;
+  correct: boolean;
+  question: QuizQuestion | null;
+  score: number;
+  done: boolean;
+  swept: boolean;
+  beaten: boolean;
+  canName: boolean;
+  record: HouseRecord;
 }
 
 export interface Health {

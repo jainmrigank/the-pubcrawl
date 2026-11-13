@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { motion, useReducedMotion } from 'framer-motion';
-import { ArrowRight, Pause, Play } from '../icons';
+import { ArrowRight } from '../icons';
 import { LandingPreviewController, type LandingPreviewPhase } from '../landingPreviewController';
 import { nextEligiblePreview, previewVisibilityRatio, type Rectangle } from '../landingPreviewPolicy';
 import { EASE, LOADED_HIDDEN } from '../motion';
@@ -124,7 +124,6 @@ export function LandingShortsPreview({ active, animateEntrance, shorts, visitId 
   const [overlayClear, setOverlayClear] = useState(() => !overlayGate.active);
   const [railMoving, setRailMoving] = useState(false);
   const [manualPaused, setManualPaused] = useState(false);
-  const [explicitMotion, setExplicitMotion] = useState(false);
   const systemRestricted = Boolean(reducedMotion) || dataSavingEnabled();
 
   activeIdRef.current = activeId;
@@ -197,6 +196,7 @@ export function LandingShortsPreview({ active, animateEntrance, shorts, visitId 
     setEligibleIds([]);
     setToken(0);
     setPhase('idle');
+    setManualPaused(false);
     requestAnimationFrame(() => {
       if (railRef.current) railRef.current.scrollLeft = restored.railLeft;
     });
@@ -209,8 +209,8 @@ export function LandingShortsPreview({ active, animateEntrance, shorts, visitId 
       return;
     }
     const railBox = rect(rail.getBoundingClientRect());
-    const headerBottom = document.querySelector('.nav')?.getBoundingClientRect().bottom ?? 0;
-    const bottomNav = document.querySelector<HTMLElement>('.mobile-bottom-nav');
+    const headerBottom = document.querySelector('.house-nav')?.getBoundingClientRect().bottom ?? 0;
+    const bottomNav = document.querySelector<HTMLElement>('.house-mobile-links');
     const bottomNavVisible = bottomNav && getComputedStyle(bottomNav).display !== 'none';
     const viewportBottom = bottomNavVisible ? bottomNav.getBoundingClientRect().top : window.innerHeight;
     const viewport: Rectangle = {
@@ -334,7 +334,7 @@ export function LandingShortsPreview({ active, animateEntrance, shorts, visitId 
     && overlayClear
     && !railMoving
     && !manualPaused
-    && (!systemRestricted || explicitMotion);
+    && !systemRestricted;
 
   useEffect(() => {
     if (!mayCycle) {
@@ -378,15 +378,6 @@ export function LandingShortsPreview({ active, animateEntrance, shorts, visitId 
 
   useEffect(() => () => controller.destroy(), [controller]);
 
-  const toggleMotion = () => {
-    if (previewsPaused) {
-      setExplicitMotion(true);
-      setManualPaused(false);
-      return;
-    }
-    setManualPaused(true);
-  };
-  const previewsPaused = manualPaused || (systemRestricted && !explicitMotion);
   const initial = reducedMotion || LOADED_HIDDEN || !animateEntrance ? false : { opacity: 0, y: 8 };
 
   return (
@@ -403,17 +394,9 @@ export function LandingShortsPreview({ active, animateEntrance, shorts, visitId 
       <div className="landing-section-toolbar">
         <h2>Shorts</h2>
         <div className="landing-section-actions">
-          <button
-            className="landing-preview-toggle"
-            type="button"
-            onClick={toggleMotion}
-            aria-label={previewsPaused ? 'Play Shorts previews' : 'Pause Shorts previews'}
-            title={previewsPaused ? 'Play Shorts previews' : 'Pause Shorts previews'}
-          >
-            {previewsPaused ? <Play size={17} /> : <Pause size={17} />}
-          </button>
-          <a className="btn landing-open" href="#/shorts?src=landing">
-            Open Shorts <ArrowRight size={14} />
+          <a className="landing-open" aria-label="Open Shorts" title="Open Shorts"
+            href={activeId && token > 0 ? '#/shorts?v=' + encodeURIComponent(activeId) + '&src=landing' : '#/shorts?src=landing'}>
+            <ArrowRight size={24} />
           </a>
         </div>
       </div>
@@ -443,12 +426,6 @@ export function LandingShortsPreview({ active, animateEntrance, shorts, visitId 
                   </span>
                 </a>
               )}
-              <a
-                className="landing-card-title"
-                href={`#/shorts?v=${encodeURIComponent(short.id)}&src=landing`}
-              >
-                {short.title}
-              </a>
             </article>
           );
         })}

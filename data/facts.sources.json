@@ -1,0 +1,537 @@
+{
+  "Champagne has a quieter entrance when poured down the side of a tilted glass. Experiments found that it keeps more dissolved fizz than a central pour into an upright glass.": {
+    "researchId": "F019",
+    "sources": [
+      {
+        "title": "Making the Most of Champagne's CO₂",
+        "publisher": "Chemical & Engineering News / ACS",
+        "url": "https://cen.acs.org/articles/88/i30/Making-Champagnes-CO2.html"
+      },
+      {
+        "title": "How Many CO₂ Bubbles in a Glass of Beer?",
+        "publisher": "Liger-Belair and Cilindre, ACS Omega (2021)",
+        "url": "https://pubs.acs.org/doi/10.1021/acsomega.1c00256"
+      }
+    ]
+  },
+  "The tears running down a wine glass are a little physics show: evaporation creates surface-tension differences that pull wine upward before it falls. They are not a wine-quality score.": {
+    "researchId": "F020",
+    "sources": [
+      {
+        "title": "The dynamics of wine tears",
+        "publisher": "John W. M. Bush, MIT",
+        "url": "https://thales.mit.edu/bush/index.php/2001/03/29/the-dynamics-of-wine-tears/"
+      }
+    ]
+  },
+  "Tonic water glows blue under ultraviolet light because its quinine fluoresces. In a glowing G&T, the tonic is doing the light show.": {
+    "researchId": "F021",
+    "sources": [
+      {
+        "title": "Detecting Ultraviolet Light Using Tonic Water",
+        "publisher": "UCAR Center for Science Education",
+        "url": "https://scied.ucar.edu/activity/learn/ultraviolet-light-tonic-water"
+      }
+    ]
+  },
+  "Add water to ouzo and it turns cloudy. The anise oil no longer stays dissolved and forms tiny droplets: a miniature emulsion, not a mysterious new ingredient.": {
+    "researchId": "F022",
+    "sources": [
+      {
+        "title": "Anethole — Molecule of the Week",
+        "publisher": "American Chemical Society",
+        "url": "https://www.acs.org/molecule-of-the-week/archive/a/anethole.html"
+      }
+    ]
+  },
+  "Guinness bubbles really can travel downward beside the glass. Rising bubbles set the liquid circulating, carrying smaller bubbles down near the sides. Gravity has kept its job.": {
+    "researchId": "F024",
+    "sources": [
+      {
+        "title": "Do bubbles in Guinness go down?",
+        "publisher": "Stanford Zare Lab",
+        "url": "https://web.stanford.edu/group/Zarelab/guinness/faq.html"
+      }
+    ]
+  },
+  "Beer can become light-struck: light triggers reactions in hop compounds that create a skunky smell. Brown bottles offer more protection than green or clear glass; cans block the light.": {
+    "researchId": "F025",
+    "sources": [
+      {
+        "title": "125th Anniversary Review: The Non-Biological Instability of Beer",
+        "publisher": "Journal of the Institute of Brewing (2011)",
+        "url": "https://www.ibd.org.uk/media/nmhpszh5/j-2050-0416-2011-tb00496-x.pdf"
+      }
+    ]
+  },
+  "In one experiment, people rated the same wine as more pleasant when it carried a higher price. The label changed; the liquid did not. Expectations were part of the tasting.": {
+    "researchId": "F029",
+    "sources": [
+      {
+        "title": "Marketing actions can modulate neural representations of experienced pleasantness",
+        "publisher": "Plassmann et al., PNAS (2008), author-hosted paper",
+        "url": "https://www.rnl.caltech.edu/publications/pdf/plassmann2008.pdf"
+      }
+    ]
+  },
+  "Researchers once coloured white wine red and found that tasters used red-wine smell descriptions. It was an experiment in perception, not proof that wine expertise is worthless.": {
+    "researchId": "F030",
+    "sources": [
+      {
+        "title": "The Color of Odors",
+        "publisher": "Morrot, Brochet and Dubourdieu, Brain and Language (2001)",
+        "url": "https://web.stanford.edu/class/linguist62n/morrot01colorofodors.pdf"
+      }
+    ]
+  },
+  "London gin does not need a London postcode. The name describes a production style, so it can be made outside the city.": {
+    "researchId": "F041",
+    "sources": [
+      {
+        "title": "Buying Guide for Gin",
+        "publisher": "Virginia Alcoholic Beverage Control Authority",
+        "url": "https://www.abc.virginia.gov/products/product-knowledge/buying-guide-gin"
+      }
+    ]
+  },
+  "Blanc de Noirs Champagne looks white but comes from dark-skinned grapes such as Pinot Noir or Meunier. The name means white from blacks.": {
+    "researchId": "F044",
+    "sources": [
+      {
+        "title": "Champagne frequently asked questions",
+        "publisher": "Comité Champagne",
+        "url": "https://www.champagne.fr/en/champagne-frequently-asked-questions"
+      }
+    ]
+  },
+  "One of the oldest surviving written records is a beer account: a Mesopotamian tablet records beer rations for workers. Ancient administration had its priorities.": {
+    "researchId": "F050",
+    "sources": [
+      {
+        "title": "The first writing: counting beer for the workers",
+        "publisher": "British Museum, via Google Arts & Culture",
+        "url": "https://artsandculture.google.com/asset/the-first-writing-counting-beer-for-the-workers/fgF9ioy89DC2Uw"
+      }
+    ]
+  },
+  "Benjamin Franklin sent a milk-punch recipe to James Bowdoin in 1763. The Massachusetts Historical Society still keeps it. Founding-father correspondence included drinks.": {
+    "researchId": "F053",
+    "sources": [
+      {
+        "title": "Benjamin Franklin's milk punch recipe",
+        "publisher": "Massachusetts Historical Society",
+        "url": "https://www.masshist.org/database/263"
+      }
+    ]
+  },
+  "The Royal Navy ended its daily rum ration on 31 July 1970. Sailors remembered the final issue as Black Tot Day.": {
+    "researchId": "F054",
+    "sources": [
+      {
+        "title": "A rum deal: The origins of Nelson's blood",
+        "publisher": "Royal Museums Greenwich",
+        "url": "https://www.rmg.co.uk/stories/maritime-history/curatorial/rum-deal-origins-nelsons-blood"
+      }
+    ]
+  },
+  "Arthur Guinness signed a 9,000-year lease at St James’s Gate in 1759. That is a fairly confident opening move for a brewery.": {
+    "researchId": "F058",
+    "sources": [
+      {
+        "title": "The Guinness Story",
+        "publisher": "Guinness",
+        "url": "https://www.guinness.com/en-gb/our-craft/guinness-story"
+      }
+    ]
+  },
+  "Guinness World Records grew out of a bird-speed argument involving brewery executive Hugh Beaver. The book was designed to settle the sort of questions people argue about in pubs.": {
+    "researchId": "F059",
+    "sources": [
+      {
+        "title": "Why was the Guinness World Records book first published?",
+        "publisher": "Guinness World Records",
+        "url": "https://www.guinnessworldrecords.com/news/2022/9/why-was-the-guinness-world-records-book-first-published-714607"
+      }
+    ]
+  },
+  "Trader Vic’s account of his original Mai Tai contains rum, lime, orange curaçao, syrup and orgeat. Pineapple and orange juice are absent. The tropical fruit salad came later.": {
+    "researchId": "F077",
+    "sources": [
+      {
+        "title": "Mai Tai History & Facts",
+        "publisher": "Trader Vic's",
+        "url": "https://tradervics.com/pages/history-of-the-mai-tai"
+      }
+    ]
+  },
+  "The Caesar has a pasta connection. Walter Chell drew on spaghetti alle vongole when he developed his tomato-and-clam cocktail in Calgary. Dinner became a drink.": {
+    "researchId": "F079",
+    "sources": [
+      {
+        "title": "Cocktails 101: the Caesar",
+        "publisher": "Liquor Control Board of Ontario",
+        "url": "https://www.lcbo.com/content/lcbo/en/food-and-drink/cocktails-101-caesar.html"
+      }
+    ]
+  },
+  "Casablanca gives the French 75 a screen appearance. The gin-and-Champagne classic had a film credit long before cocktail Instagram.": {
+    "researchId": "F083",
+    "sources": [
+      {
+        "title": "10 great films about drinking",
+        "publisher": "British Film Institute",
+        "url": "https://www.bfi.org.uk/lists/10-great-films-about-drinking"
+      }
+    ]
+  },
+  "The Dude’s recurring order in The Big Lebowski is a White Russian: vodka, coffee liqueur and cream. The drink supplies almost as much character detail as the dressing gown.": {
+    "researchId": "F084",
+    "sources": [
+      {
+        "title": "10 great films about drinking",
+        "publisher": "British Film Institute",
+        "url": "https://www.bfi.org.uk/lists/10-great-films-about-drinking"
+      }
+    ]
+  },
+  "Some Like It Hot turns a hot-water bottle into a Manhattan shaker during its train party. A memorable film prop, if an unconventional piece of bar equipment.": {
+    "researchId": "F085",
+    "sources": [
+      {
+        "title": "A Toast to 11 Classic On-Screen Cocktail Moments",
+        "publisher": "British Vogue",
+        "url": "https://www.vogue.co.uk/arts-and-lifestyle/gallery/on-screen-cocktails"
+      }
+    ]
+  },
+  "The cocktail in North by Northwest is a Gibson. Its pickled onion is the giveaway: a small garnish makes a very different introduction from a Martini’s olive or twist.": {
+    "researchId": "F086",
+    "sources": [
+      {
+        "title": "A Toast to 11 Classic On-Screen Cocktail Moments",
+        "publisher": "British Vogue",
+        "url": "https://www.vogue.co.uk/arts-and-lifestyle/gallery/on-screen-cocktails"
+      }
+    ]
+  },
+  "Bond’s Vesper was already on the page in the 1953 Casino Royale, long before the film. It takes its name from Vesper Lynd.": {
+    "researchId": "F089",
+    "sources": [
+      {
+        "title": "Casino Royale",
+        "publisher": "Ian Fleming Publications",
+        "url": "https://ianfleming.com/book/casino-royale/"
+      },
+      {
+        "title": "Drinking with James Bond",
+        "publisher": "Ian Fleming Publications",
+        "url": "https://ianfleming.com/tag/drinking-with-james-bond/"
+      }
+    ]
+  },
+  "Ian Fleming’s estate recounts that he disliked the Vesper when he finally tasted the cocktail he had invented for Bond. A great fictional order need not be its author’s favourite drink.": {
+    "researchId": "F090",
+    "sources": [
+      {
+        "title": "Shaken — preview",
+        "publisher": "Ian Fleming Publications",
+        "url": "https://ianfleming.com/wp-content/uploads/2025/09/Shaken_preview.pdf"
+      }
+    ]
+  },
+  "Rupert Holmes said he had never tasted a Piña Colada when he wrote the song that made the drink his calling card. The reference arrived before the first sip.": {
+    "researchId": "F092",
+    "sources": [
+      {
+        "title": "Gary James' interview with Rupert Holmes",
+        "publisher": "Classic Bands; interview with the songwriter",
+        "url": "https://classicbands.com/RupertHolmesInterview.html"
+      }
+    ]
+  },
+  "Georgia’s qvevri tradition makes wine in egg-shaped earthenware vessels buried in the ground. The cellar, in this case, is wrapped around the vessel.": {
+    "researchId": "F095",
+    "sources": [
+      {
+        "title": "Ancient Georgian traditional Qvevri wine-making method",
+        "publisher": "UNESCO",
+        "url": "https://ich.unesco.org/en/RL/ancient-georgian-traditional-qvevri-wine-making-method-00870"
+      }
+    ]
+  },
+  "Trappist is not a beer flavour. The certification concerns where and under whose supervision it is made, with proceeds supporting the monastery, solidarity or charitable work.": {
+    "researchId": "F097",
+    "sources": [
+      {
+        "title": "Authentic Trappist Product: FAQs",
+        "publisher": "International Trappist Association",
+        "url": "https://www.trappist.be/en/faqs/"
+      }
+    ]
+  },
+  "A sherry solera is a moving family of wines: younger wine replaces what is drawn from the oldest stage. The founding date is not the birthday of every drop.": {
+    "researchId": "F098",
+    "sources": [
+      {
+        "title": "Ageing — Production",
+        "publisher": "Consejo Regulador, Sherry Wines",
+        "url": "https://www.sherry.wine/sherry-wine/production/ageing"
+      }
+    ]
+  },
+  "Vermouth is wine, not a shelf-stable stand-in for gin. MARTINI recommends refrigerating an opened bottle; oxidation gradually dulls the flavours you wanted in the cocktail.": {
+    "researchId": "F105",
+    "sources": [
+      {
+        "title": "A Guide to Vermouth",
+        "publisher": "MARTINI",
+        "url": "https://www.martini.com/a-guide-to-vermouth/"
+      }
+    ]
+  },
+  "A spoon in an open Champagne bottle does not keep the bubbles in. Comité Champagne recommends an airtight closure instead. The cutlery can go back in the drawer.": {
+    "researchId": "F107",
+    "sources": [
+      {
+        "title": "Serving Champagne",
+        "publisher": "Comité Champagne",
+        "url": "https://www.champagne.fr/system/files/2022-10/Serving%20Champagne.pdf"
+      }
+    ]
+  },
+  "Whisky’s age does not keep ticking up in the bottle. The maturation behind its age statement happened in the cask; a decade in your cupboard does not add a decade to the label.": {
+    "researchId": "F108",
+    "sources": [
+      {
+        "title": "Scotch Whisky FAQs",
+        "publisher": "Scotch Whisky Association",
+        "url": "https://www.scotch-whisky.org.uk/discover-scotch/faqs/"
+      }
+    ]
+  },
+  "Guinness Draught is dark ruby red, rather than truly black. Hold it to enough light and the familiar pint reveals its other colour.": {
+    "researchId": "F115",
+    "sources": [
+      {
+        "title": "Guinness frequently asked questions",
+        "publisher": "Guinness",
+        "url": "https://www.guinness.com/en-us/frequently-asked-questions"
+      }
+    ]
+  },
+  "The little widget in a Guinness can releases trapped gas when the can opens, helping create the draught-style surge and creamy head. There is engineering in that rattle.": {
+    "researchId": "F116",
+    "sources": [
+      {
+        "title": "Guinness at Home",
+        "publisher": "Guinness",
+        "url": "https://www.guinness.com/en-gb/experiences/guinness-at-home"
+      },
+      {
+        "title": "Guinness frequently asked questions",
+        "publisher": "Guinness",
+        "url": "https://www.guinness.com/en-us/frequently-asked-questions"
+      }
+    ]
+  },
+  "The pH scale came out of Carlsberg Laboratory. S. P. L. Sørensen developed it in 1909; a brewery’s science project became part of chemistry far beyond beer.": {
+    "researchId": "F117",
+    "sources": [
+      {
+        "title": "The invention of the pH scale",
+        "publisher": "Carlsberg Laboratory / Carlsberg Group",
+        "url": "https://carlsberggroup.com/pursuit-of-better/scientific-discoveries/ph-scale/"
+      }
+    ]
+  },
+  "Carlsberg recovered living yeast from a 133-year-old bottle and used it to recreate a historic beer. The remarkable survivor was the yeast, not a recommendation to drink the old bottle.": {
+    "researchId": "F118",
+    "sources": [
+      {
+        "title": "Rebrewing with Carlsberg's original purified yeast",
+        "publisher": "Carlsberg Laboratory / Carlsberg Group",
+        "url": "https://www.carlsberggroup.com/pursuit-of-better/scientific-discoveries/1883-rebrew/"
+      }
+    ]
+  },
+  "Collect the little metal discs from Champagne wire cages and you are a placomusophile. Even the part between the cork and the wire has a collecting community.": {
+    "researchId": "F120",
+    "sources": [
+      {
+        "title": "Serving Champagne",
+        "publisher": "Comité Champagne",
+        "url": "https://www.champagne.fr/system/files/2022-10/Serving%20Champagne.pdf"
+      }
+    ]
+  },
+  "Student’s t-test has a Guinness connection. Brewery statistician William Sealy Gosset published under the name “Student”, giving science a famous test and a surprisingly pub-adjacent origin story.": {
+    "researchId": "F122",
+    "sources": [
+      {
+        "title": "The strange origins of the Student’s t-test",
+        "publisher": "The Physiological Society",
+        "url": "https://www.physoc.org/magazine-articles/the-strange-origins-of-the-students-t-test/"
+      }
+    ]
+  },
+  "The Obama White House brewed honey beer using honey from its South Lawn hive. It even published the recipes. The kitchen’s house pour had a very short supply chain.": {
+    "researchId": "F123",
+    "sources": [
+      {
+        "title": "Ale to the Chief: White House Beer Recipe",
+        "publisher": "Obama White House archive / Sam Kass",
+        "url": "https://obamawhitehouse.archives.gov/blog/2012/09/01/ale-chief-white-house-beer-recipe"
+      }
+    ]
+  },
+  "Buttered beer predates the theme parks. An English cookbook published in 1594 includes a version made with actual beer, egg yolks, sugar, spices and butter.": {
+    "researchId": "F127",
+    "sources": [
+      {
+        "title": "The good Huswifes Handmaide for the Kitchin, 1594, 1597 — p. 53a (1594)",
+        "publisher": "University of Giessen / Thomas Gloning transcription",
+        "url": "https://www.uni-giessen.de/de/fbz/fb05/germanistik/absprache/sprachverwendung/gloning/ghhk/handmaide.htm"
+      }
+    ]
+  },
+  "Wine diamonds are crystals of potassium bitartrate that can form in wine. Their sparkling nickname sounds more extravagant than the chemistry behind them.": {
+    "researchId": "F128",
+    "sources": [
+      {
+        "title": "Cold stabilisation",
+        "publisher": "Wine Australia",
+        "url": "https://www.wineaustralia.com/growing-making/winery-management/cold-stabilisation"
+      }
+    ]
+  },
+  "Clarified milk punch gets clear by curdling milk, then filtering through the curds. Milk proteins help remove some phenolic compounds. A transparent drink is not automatically dairy-free.": {
+    "researchId": "F129",
+    "sources": [
+      {
+        "title": "Clarified Milk Punch: Guide and Recipes",
+        "publisher": "Campari Academy",
+        "url": "https://www.campariacademy.com/en-us/wp-content/uploads/sites/3/2022/08/CG-026-MilkPunchGuide-04.pdf"
+      }
+    ]
+  },
+  "Banana and clove notes in a wheat beer can come from yeast fermentation, without banana or cloves being added. The aroma can be brewed rather than dropped into the tank.": {
+    "researchId": "F132",
+    "sources": [
+      {
+        "title": "Precision Flavor Through Fermentation Control",
+        "publisher": "Lallemand Brewing",
+        "url": "https://www.lallemandbrewing.com/en/global/resources/whats-new/precision-flavor-through-fermentation-control/"
+      }
+    ]
+  },
+  "Some agave producers leave plants to flower so nectar-feeding bats can visit and pollinate them. The Bat Friendly project makes room for a night shift in tequila and mezcal country.": {
+    "researchId": "F141",
+    "sources": [
+      {
+        "title": "Tequila and Mezcal / Bat Friendly project",
+        "publisher": "Bat Friendly project",
+        "url": "https://www.batfriendly.org/tequila-and-mezcal/"
+      }
+    ]
+  },
+  "Blue Curaçao still tastes of orange. Senior’s uses Laraha orange peel and says the blue colouring does not change that flavour. Your eyes are ordering something your tongue will not receive.": {
+    "researchId": "F142",
+    "sources": [
+      {
+        "title": "How to Make Blue Curaçao",
+        "publisher": "Senior’s Curaçao Liqueur",
+        "url": "https://www.curacaoliqueur.com/articles/how-to-make-blue-curacao"
+      }
+    ]
+  },
+  "The pub behind Cheers existed before the TV theme tune. Boston’s Bull & Finch inspired the setting and is now Cheers Beacon Hill; the real pub and the fictional bar have separate histories.": {
+    "researchId": "F146",
+    "sources": [
+      {
+        "title": "About Cheers Boston",
+        "publisher": "Cheers Boston",
+        "url": "https://www.cheersboston.com/about/"
+      }
+    ]
+  },
+  "Dan Gurney deliberately sprayed his victory Champagne after winning Le Mans in 1967 with A. J. Foyt. The moment helped turn a podium bottle into a celebration shower.": {
+    "researchId": "F149",
+    "sources": [
+      {
+        "title": "24 Hours Stories: Dan Gurney starts podium Champagne spray tradition",
+        "publisher": "ACO / 24 Hours of Le Mans",
+        "url": "https://www.24h-lemans.com/en/news/24-hours-stories-dan-gurney-starts-podium-champagne-spray-tradition-55835"
+      }
+    ]
+  },
+  "Cabernet Sauvignon has a family tree: DNA research identified Cabernet Franc and Sauvignon Blanc as its parents. That is grape parentage, not a recipe for blending the two wines.": {
+    "researchId": "F151",
+    "sources": [
+      {
+        "title": "DNA fingerprinting reveals parentage of classic wine grape",
+        "publisher": "UC Davis",
+        "url": "https://www.ucdavis.edu/news/dna-fingerprinting-reveals-parentage-classic-wine-grape"
+      },
+      {
+        "title": "The parentage of a classic wine grape, Cabernet Sauvignon",
+        "publisher": "Bowers & Meredith / Nature Genetics, 1997",
+        "url": "https://www.nature.com/articles/ng0597-84"
+      }
+    ]
+  },
+  "Orange wine is made from white grapes with skin contact. Its colour comes from that winemaking approach, not from oranges hiding in the barrel.": {
+    "researchId": "F152",
+    "sources": [
+      {
+        "title": "White wine with maceration",
+        "publisher": "International Organisation of Vine and Wine",
+        "url": "https://www.oiv.int/standards/international-code-of-oenological-practices/part-i-definitions/special-wines/white-wine-with-maceration"
+      },
+      {
+        "title": "OIV-OENO 671A-2025: Wine competition categories",
+        "publisher": "International Organisation of Vine and Wine",
+        "url": "https://www.oiv.int/node/4087/download/pdf"
+      }
+    ]
+  },
+  "Scientists identified ancient wine still in liquid form inside a Roman funerary urn in Spain. It had survived alongside cremated remains. Some archaeological finds are better studied than sampled.": {
+    "researchId": "F159",
+    "sources": [
+      {
+        "title": "New archaeochemical insights into Roman wine from Baetica",
+        "publisher": "Cosano et al. / Journal of Archaeological Science: Reports, 2024",
+        "url": "https://www.sciencedirect.com/science/article/pii/S2352409X24002645"
+      },
+      {
+        "title": "The oldest wine in the world has been found in Carmona",
+        "publisher": "University of Córdoba / EurekAlert",
+        "url": "https://www.eurekalert.org/news-releases/1048600"
+      }
+    ]
+  },
+  "New Orleans’ Carousel Bar really revolves. Hotel Monteleone’s rotating bar takes about fifteen minutes to complete a turn, whether or not you order another round.": {
+    "researchId": "F162",
+    "sources": [
+      {
+        "title": "The Carousel Bar & Lounge",
+        "publisher": "Hotel Monteleone",
+        "url": "https://www.hotelmonteleone.com/dine-drink/carousel-bar/"
+      },
+      {
+        "title": "Carousel Bar press sheet",
+        "publisher": "Hotel Monteleone",
+        "url": "https://hotelmonteleone.com/wp-content/uploads/2009/12/Monteleone_CarouselBar_PR.pdf"
+      }
+    ]
+  },
+  "Clear ice is largely about controlling the direction of freezing. Insulating the sides lets the cloudy portion collect toward the last area to freeze; boiling water alone is not a universal fix.": {
+    "researchId": "F164",
+    "sources": [
+      {
+        "title": "What is Directional Freezing?",
+        "publisher": "Camper English / Alcademics",
+        "url": "https://alcademics.com/what-is-directional-freezing/"
+      }
+    ]
+  }
+}

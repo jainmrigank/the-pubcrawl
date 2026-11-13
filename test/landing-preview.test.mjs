@@ -100,6 +100,23 @@ test('a player becoming ready during suspension is retained and starts only afte
   assert.equal(fixture.calls.filter(([method]) => method === 'play').length, 1);
 });
 
+test('visibility suspension still pauses native playback after automatic cycling was stopped', (t) => {
+  t.mock.timers.enable({ apis: ['setTimeout', 'setInterval'] });
+  const controller = new LandingPreviewController();
+  const fixture = playerFixture();
+  const token = controller.activate('native');
+  controller.attach(token, fixture.player);
+  controller.suspend();
+  controller.handleState(token, fixture.player, 2);
+  controller.handleState(token, fixture.player, 1);
+  const before = fixture.calls.filter(([method]) => method === 'pause').length;
+  controller.suspend();
+  assert.equal(fixture.calls.filter(([method]) => method === 'pause').length, before + 1);
+  assert.equal(controller.snapshot().phase, 'paused');
+  t.mock.timers.tick(10_000);
+  assert.equal(fixture.calls.filter(([method]) => method === 'play').length, 1);
+});
+
 test('startup failure is bounded and a user pause is not automatically overridden', (t) => {
   t.mock.timers.enable({ apis: ['setTimeout', 'setInterval'] });
   const failed = [];

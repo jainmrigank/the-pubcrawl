@@ -6,6 +6,9 @@ import type {
   Ingredient,
   MatchResult,
   Question,
+  HouseRecord,
+  QuizRun,
+  QuizAnswer,
   Recipe,
   RecipePage,
   ShortLibrary,
@@ -188,14 +191,13 @@ export const fetchQuizBatch = (seed: string, from: number, count = 20) =>
   );
 
 export const fetchHighScore = () =>
-  get<{ score: number; at: number; hall: HallMember[]; bank: number }>('/api/quiz/high');
+  get<HouseRecord & { hall: HallMember[]; bank: number }>('/api/quiz/high');
 
-/** only a run that cleared the whole bank is accepted */
-export const joinHall = (name: string, score: number) =>
-  post<{ hall: HallMember[]; entry: HallMember }>('/api/quiz/hall', { name, score }, true);
-
-export const submitHighScore = (score: number) =>
-  post<{ score: number; at: number; beaten: boolean }>('/api/quiz/high', { score }, true);
+export const startQuizRun = () => post<QuizRun>('/api/quiz/run', {}, false, 10000);
+export const answerQuizRun = (token: string, questionId: string, pick: number) =>
+  post<QuizAnswer>('/api/quiz/answer', { token, questionId, pick }, true, 10000);
+export const claimHouseRecord = (token: string, name: string) =>
+  post<HouseRecord>('/api/quiz/claim', { token, name }, true, 10000);
 
 export const fetchDailyQuestion = () => get<Question>('/api/quiz/today');
 

@@ -141,7 +141,7 @@ export class LandingPreviewController {
   }
 
   suspend() {
-    if (!this.videoId || !this.allowed) return;
+    if (!this.videoId) return;
     this.allowed = false;
     if (this.player && (this.phase === 'playing' || this.phase === 'loading')) {
       this.appPausePending = true;

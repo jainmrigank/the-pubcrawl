@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test';
-import { openRoute, seedStableDevice } from './helpers';
+import { openRoute, seedStableDevice, useDrinksList } from './helpers';
 
 test.describe('offline core routes', () => {
   test.use({ viewport: { width: 390, height: 844 }, isMobile: true, hasTouch: true });
@@ -8,6 +8,7 @@ test.describe('offline core routes', () => {
     await seedStableDevice(page);
     await page.route('**/api/**', (route) => route.abort());
     await openRoute(page, '/#/menu');
+    await useDrinksList(page);
     await expect(page.locator('#menu-list .grid .fc').first()).toBeVisible({ timeout: 20_000 });
     await page.goto('/#/bar', { waitUntil: 'domcontentloaded' });
     await expect(page.locator('#shelf')).toBeVisible();

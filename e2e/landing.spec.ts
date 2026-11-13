@@ -2,6 +2,8 @@ import { expect, test } from '@playwright/test';
 import { installFakeYouTube, fakeLog } from './fixtures/shortsFakeYouTube';
 import { openRoute, seedStableDevice } from './helpers';
 
+// Landing media is temporarily commented out at the user's request. Keep the
+// preview-specific scenarios intact for restoration; active Home/Atlas checks run.
 test.describe('landing discovery', () => {
   test.beforeEach(async ({ page }) => {
     await seedStableDevice(page);
@@ -9,47 +11,28 @@ test.describe('landing discovery', () => {
 
   test('separates Home from Menu and keeps every destination explicit', async ({ page }) => {
     await openRoute(page, '/#/');
-    await expect(page.locator('.landing-hero')).toBeVisible();
+    await expect(page.locator('.home-opening')).toBeVisible();
     await expect(page.locator('#menu-list:visible')).toHaveCount(0);
     await expect(page.getByText(/EST\. 2026/i)).toHaveCount(0);
-    await expect(page.getByText(/ADD YOUR INGREDIENTS/i)).toHaveCount(0);
-    await expect(page.getByRole('main').getByRole('link', { name: /What can I make/i })).toHaveAttribute('href', '#/bar');
-    await expect(page.getByRole('link', { name: /Browse all drinks/i })).toHaveAttribute('href', '#/menu');
-    await expect(page.getByRole('link', { name: /Open Shorts/i })).toHaveAttribute('href', '#/shorts?src=landing');
-    await expect(page.getByRole('link', { name: /Open Watch/i })).toHaveAttribute('href', '#/watch?src=landing');
-    const more = page.getByRole('navigation', { name: 'More to explore' });
-    await expect(more.getByRole('link', { name: 'Pub Quiz', exact: true })).toHaveAttribute('href', '#/quiz');
-    await expect(more.getByRole('link', { name: 'Bar Basics', exact: true })).toHaveAttribute('href', '#/basics');
-    await expect(more.getByRole('link', { name: 'Your Tab', exact: true })).toHaveAttribute('href', '#/tab');
+    await expect(page.getByText(/ADD YOUR INGREDIENTS/i).filter({ visible: true })).toHaveCount(0);
+    await expect(page.locator('[data-tour="landing-make"]')).toHaveAttribute('href', '#/bar');
+    await expect(page.locator('[data-tour="landing-browse"]')).toHaveAttribute('href', '#/menu');
+    await expect(page.locator('.landing-shorts-rail')).toHaveCount(0);
+    await expect(page.locator('.landing-watch-rail')).toHaveCount(0);
+    await expect(page.locator('.landing-atlas-entry')).toHaveCount(0);
+    await expect(page.locator('.spritz-hero, .flavour-compass, .bar-stories')).toHaveCount(0);
+    await expect(page.locator('[data-home-story]')).toHaveCount(4);
 
-    const shortIds = await page.locator('.landing-short-card').evaluateAll((cards) => cards.map((card) => card.getAttribute('data-preview-id')));
-    expect(shortIds).toHaveLength(6);
-    expect(new Set(shortIds).size).toBe(6);
-    expect(shortIds.every((id) => /^[\w-]{11}$/.test(id || ''))).toBe(true);
-    const watchLinks = await page.locator('.landing-watch-card > a').evaluateAll((links) => links.map((link) => new URL((link as HTMLAnchorElement).href).hash.match(/[?&]v=([^&]+)/)?.[1]));
-    expect(watchLinks).toHaveLength(3);
-    expect(new Set(watchLinks).size).toBe(3);
-    expect(watchLinks.every((id) => /^[\w-]{11}$/.test(id || ''))).toBe(true);
-
-    const openShorts = page.getByRole('link', { name: /Open Shorts/i });
-    await openShorts.scrollIntoViewIfNeeded();
-    await page.locator('.landing-media-rail').first().evaluate((rail) => { rail.scrollLeft = rail.scrollWidth; });
-    await expect(openShorts).toBeInViewport();
-    const openWatch = page.getByRole('link', { name: /Open Watch/i });
-    await openWatch.scrollIntoViewIfNeeded();
-    await page.locator('.landing-watch-rail').evaluate((rail) => { rail.scrollLeft = rail.scrollWidth; });
-    await expect(openWatch).toBeInViewport();
-
-    await page.getByRole('link', { name: /Browse all drinks/i }).click();
+    await page.locator('[data-tour="landing-browse"]').click();
     await expect(page.locator('#menu-list')).toBeVisible();
-    await expect(page.locator('.landing-hero:visible')).toHaveCount(0);
+    await expect(page.locator('.home-opening:visible')).toHaveCount(0);
   });
 
-  test('preserves Menu state and landing scroll positions across route returns', async ({ page }) => {
+  test.skip('preserves Menu state and landing scroll positions across route returns', async ({ page }) => {
     await openRoute(page, '/#/menu');
     const search = page.getByRole('textbox', { name: /Search menu/ });
     await search.fill('martini');
-    await page.locator('.brand').first().click();
+    await page.locator('.house-brand').first().click();
     await expect(page.locator('.landing-page')).toBeVisible();
     await page.locator('.landing-watch-card').first().scrollIntoViewIfNeeded();
     await page.locator('.landing-shorts-rail').evaluate((rail) => {
@@ -84,11 +67,11 @@ test.describe('landing discovery', () => {
     await expect.poll(() => page.evaluate((expected) => Math.abs(scrollY - expected), before.y)).toBeLessThanOrEqual(12);
     expect(Math.abs(await page.locator('.landing-shorts-rail').evaluate((rail) => rail.scrollLeft) - before.shortsX)).toBeLessThanOrEqual(3);
     expect(Math.abs(await page.locator('.landing-watch-rail').evaluate((rail) => rail.scrollLeft) - before.watchX)).toBeLessThanOrEqual(3);
-    await page.getByRole('link', { name: /Browse all drinks/i }).click();
+    await page.locator('.compass-centre').click();
     await expect(search).toHaveValue('martini');
   });
 
-  test('cycles one muted preview at a time without changing full Shorts preferences', async ({ page }) => {
+  test.skip('cycles one muted preview at a time without changing full Shorts preferences', async ({ page }) => {
     await installFakeYouTube(page);
     await page.addInitScript(() => {
       sessionStorage.setItem('pubcrawl.shorts.sound.v1', JSON.stringify({ version: 1, desiredAudible: true, volume: 73 }));
@@ -127,18 +110,22 @@ test.describe('landing discovery', () => {
     expect(finalLog.at(-1)?.method).toBe('destroy');
   });
 
-  test('does not autoplay under reduced motion unless the user explicitly starts previews', async ({ page }) => {
+  test.skip('keeps directly accessible static Shorts under reduced motion', async ({ page }) => {
     await page.emulateMedia({ reducedMotion: 'reduce' });
     await installFakeYouTube(page);
     await openRoute(page, '/#/');
     await page.locator('.landing-short-card').first().scrollIntoViewIfNeeded();
     await page.waitForTimeout(700);
     await expect(page.locator('.landing-preview-player iframe')).toHaveCount(0);
-    await page.getByRole('button', { name: 'Play Shorts previews' }).click();
-    await expect(page.locator('.landing-preview-player iframe')).toHaveCount(1);
+    await expect(page.getByRole('button', { name: /Shorts previews/ })).toHaveCount(0);
+    await expect(page.locator('.landing-preview-thumb-link')).toHaveCount(6);
+    const selected = page.locator('.landing-preview-thumb-link').first();
+    const href = await selected.getAttribute('href');
+    await selected.click();
+    await expect(page).toHaveURL(new RegExp(href!.replace(/[?]/g, '\\?') + '$'));
   });
 
-  test('fresh Home visits do not inherit partial preview progress', async ({ page }) => {
+  test.skip('fresh Home visits do not inherit partial preview progress', async ({ page }) => {
     await installFakeYouTube(page);
     await page.addInitScript(() => { Math.random = () => 0; });
     await openRoute(page, '/#/');
@@ -151,7 +138,7 @@ test.describe('landing discovery', () => {
     }
 
     const priorVisit = await page.locator('.landing-page').getAttribute('data-home-visit');
-    await page.locator('.brand').first().click();
+    await page.locator('.house-brand').first().click();
     await expect.poll(() => page.locator('.landing-page').getAttribute('data-home-visit')).not.toBe(priorVisit);
     // A fresh Home action intentionally resets the page to the top. Recreate
     // the same visibility conditions before comparing per-visit progress.
@@ -182,12 +169,12 @@ test.describe('landing discovery', () => {
   test('creates an explicit fresh visit for same-hash Home actions', async ({ page }) => {
     await openRoute(page, '/#/');
     const before = await page.locator('.landing-page').getAttribute('data-home-visit');
-    await page.locator('.brand').first().click();
+    await page.locator('.house-brand').first().click();
     await expect.poll(() => page.locator('.landing-page').getAttribute('data-home-visit')).not.toBe(before);
     await expect.poll(() => page.evaluate(() => scrollY)).toBe(0);
   });
 
-  test('restores an older Home history entry after a later fresh visit', async ({ page }) => {
+  test.skip('restores an older Home history entry after a later fresh visit', async ({ page }) => {
     await openRoute(page, '/#/');
     const originalVisit = await page.locator('.landing-page').getAttribute('data-home-visit');
     const originalShorts = await page.locator('.landing-short-card').evaluateAll((cards) =>
@@ -200,8 +187,8 @@ test.describe('landing discovery', () => {
     await page.waitForTimeout(160);
     const originalRailLeft = await page.locator('.landing-shorts-rail').evaluate((rail) => rail.scrollLeft);
 
-    await page.getByRole('link', { name: /Browse all drinks/i }).click();
-    await page.locator('.brand').first().click();
+    await page.locator('.compass-centre').click();
+    await page.locator('.house-brand').first().click();
     await expect(page.locator('.landing-page')).toBeVisible();
     await expect.poll(() => page.locator('.landing-page').getAttribute('data-home-visit')).not.toBe(originalVisit);
 
@@ -227,7 +214,6 @@ test.describe('mobile page-start rhythm', () => {
 
   test('keeps the first meaningful element 20px below the header on requested pages', async ({ page }) => {
     const cases: Array<[string, string]> = [
-      ['/#/', '.landing-kicker'],
       ['/#/bar', '#shelf > .sec-head .sec-head-row'],
       ['/#/watch', '.watch > .watch-page-head .sec-head-row'],
       ['/#/quiz', '#quiz-page > .sec-head .sec-head-row'],
@@ -241,14 +227,14 @@ test.describe('mobile page-start rhythm', () => {
       // completed; transforms do not represent the settled page-start gap.
       await page.waitForTimeout(700);
       const gap = await page.evaluate((selector) => {
-        const header = document.querySelector('.nav')!.getBoundingClientRect();
+        const header = document.querySelector('.house-nav')!.getBoundingClientRect();
         const content = document.querySelector(selector)!.getBoundingClientRect();
         return Math.round(content.top - header.bottom);
       }, target);
       expect(gap, `${route} page-start gap`).toBeGreaterThanOrEqual(16);
       expect(gap, `${route} page-start gap`).toBeLessThanOrEqual(24);
     }
-    const landingTitle = page.locator('.landing-title > span').first();
+    const landingTitle = page.locator('.home-opening h1 > span').first();
     await openRoute(page, '/#/');
     for (const width of [320, 390, 430]) {
       await page.setViewportSize({ width, height: width === 320 ? 700 : 844 });
@@ -267,7 +253,7 @@ test.describe('mobile page-start rhythm', () => {
       await expect(page.locator(target)).toBeVisible({ timeout: 20_000 });
       await page.waitForTimeout(700);
       const gap = await page.evaluate((selector) => {
-        const header = document.querySelector('.nav')!.getBoundingClientRect();
+        const header = document.querySelector('.house-nav')!.getBoundingClientRect();
         const content = document.querySelector(selector)!.getBoundingClientRect();
         return Math.round(content.top - header.bottom);
       }, target);
@@ -298,6 +284,8 @@ test.describe('desktop destination rhythm', () => {
 
     await openRoute(page, '/#/');
     const landingPadding = await page.locator('.landing-page').evaluate((element) => parseFloat(getComputedStyle(element).paddingTop));
-    expect(landingPadding).toBe(40);
+    expect(landingPadding).toBe(0);
+    const opening = await page.locator('.home-opening').boundingBox();
+    expect(opening!.height).toBeGreaterThan(650);
   });
 });

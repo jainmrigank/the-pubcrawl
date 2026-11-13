@@ -1,1 +1,1 @@
-export type Route = 'menu' | 'bar' | 'basics' | 'tab' | 'quiz' | 'watch' | 'shorts';
+export type Route = 'menu' | 'taste-map' | 'bar' | 'basics' | 'tab' | 'quiz' | 'watch' | 'shorts' | 'atlas';

@@ -20,14 +20,14 @@ function howToInstall(): string {
   const mac = /Macintosh/.test(ua);
   const chromium = /Chrome|Chromium|Edg|OPR/.test(ua) && !/FxiOS/.test(ua);
 
-  if (iOS) return 'Tap the Share button, scroll down, then choose Add to Home Screen.';
-  if (android && firefox) return 'Open the ⋮ menu and choose Install.';
-  if (android) return 'Open the ⋮ menu and choose Install app (or Add to Home screen).';
-  if (mac && !chromium) return 'In Safari: File menu → Add to Dock.';
+  if (iOS) return 'Share → Add to Home Screen.';
+  if (android && firefox) return '⋮ menu → Install.';
+  if (android) return '⋮ menu → Install app / Add to Home screen.';
+  if (mac && !chromium) return 'Safari: File → Add to Dock.';
   // Firefox on desktop has no way to install web apps at all — say so plainly.
-  if (firefox) return "Firefox on desktop can't install web apps. Open this page in Chrome, Edge or Safari — or add it to your phone.";
-  if (chromium) return 'Click the install icon at the right of the address bar.';
-  return 'Open this page on your phone, or in Chrome, Edge or Safari, to install it.';
+  if (firefox) return "Firefox can’t install this app. Use Chrome, Edge or Safari.";
+  if (chromium) return 'Select the address-bar install icon.';
+  return 'Install on your phone, Chrome, Edge or Safari.';
 }
 
 /**
@@ -74,7 +74,7 @@ export function InstallBanner() {
   return (
     <div className="install-banner">
       <div className="ib-row">
-        <span className="k-label ib-lead">Get the app — keep the bar in your pocket</span>
+        <span className="k-label ib-lead">Keep PubCrawl handy</span>
         {prompt ? (
           <button className="ib-btn" onClick={install}>
             Install <ArrowDown size={13} />

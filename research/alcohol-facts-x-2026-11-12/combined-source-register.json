@@ -1,0 +1,1398 @@
+{
+  "kirin2024": {
+    "title": "Global Beer Consumption by Country in 2024",
+    "publisher": "Kirin Holdings",
+    "url": "https://www.kirinholdings.com/en/newsroom/release/2025/1222_01.html",
+    "kind": "primary industry statistics",
+    "period": "2024; released 22 December 2025",
+    "evidence_file": "../alcohol-facts-2026-11-12/sources/read-market-details.txt"
+  },
+  "oiv2025": {
+    "title": "State of the World Wine Sector in 2025",
+    "publisher": "OIV",
+    "url": "https://www.oiv.int/sites/default/files/2026-05/OIV_EN_Press_release_State-of_the_World-Wine_Sector_0.pdf",
+    "kind": "primary intergovernmental statistics",
+    "period": "2025 estimates; released 12 May 2026",
+    "evidence_file": "../alcohol-facts-2026-11-12/sources/read-statistics.txt"
+  },
+  "swa2025": {
+    "title": "Scotch Whisky exports: 2025 figures",
+    "publisher": "Scotch Whisky Association / HMRC",
+    "url": "https://www.scotch-whisky.org.uk/newsroom/2025-export-figures/",
+    "kind": "primary industry statistics",
+    "period": "2025; release 12 February 2026",
+    "evidence_file": "../alcohol-facts-2026-11-12/sources/read-market-details.txt"
+  },
+  "swamarch": {
+    "title": "2025 Scotch exports — HMRC March update",
+    "publisher": "Scotch Whisky Association / HMRC",
+    "url": "https://www.scotch-whisky.org.uk/media/4a0jkdvn/2025-exports-long-infographic-hmrc-march-update.pdf",
+    "kind": "primary industry statistics",
+    "period": "2025; March update",
+    "evidence_file": "../alcohol-facts-2026-11-12/sources/read-india-and-bond.txt"
+  },
+  "gallup2025": {
+    "title": "U.S. Drinking Rate at New Low as Alcohol Concerns Surge",
+    "publisher": "Gallup",
+    "url": "https://news.gallup.com/poll/693362/alcohol-consumption-falls-new-low.aspx",
+    "kind": "primary survey",
+    "period": "2025; released 13 August 2025",
+    "evidence_file": "../alcohol-facts-2026-11-12/sources/read-scotch-definitions.txt"
+  },
+  "iwsr2026": {
+    "title": "No-alcohol and functional drinks both booming but for different reasons",
+    "publisher": "IWSR",
+    "url": "https://www.theiwsr.com/insight/press-release/no-alcohol-and-functional-drinks-both-booming-but-for-different-reasons/",
+    "kind": "primary commercial estimate and forecast",
+    "period": "2025 estimate; 2024–2029 forecast",
+    "evidence_file": "../alcohol-facts-2026-11-12/sources/read-scotch-definitions.txt"
+  },
+  "di2026": {
+    "title": "The bestselling classic cocktails at the world's best bars 2026",
+    "publisher": "Drinks International",
+    "url": "https://drinksint.com/the-bestselling-classic-cocktails-at-the-worlds-best-bars-2026/",
+    "kind": "primary trade survey",
+    "period": "2026 report",
+    "evidence_file": "../alcohol-facts-2026-11-12/sources/search-markets.txt"
+  },
+  "dimethod": {
+    "title": "The Cocktail Report",
+    "publisher": "Drinks International",
+    "url": "https://drinksint.com/category/our-brands/the-cocktail-report/",
+    "kind": "primary methodology",
+    "period": "Changing panel of 100 award-winning bars",
+    "evidence_file": "../alcohol-facts-2026-11-12/sources/search-markets.txt"
+  },
+  "beerbubbles": {
+    "title": "How Many CO₂ Bubbles in a Glass of Beer?",
+    "publisher": "Liger-Belair and Cilindre, ACS Omega (2021)",
+    "url": "https://pubs.acs.org/doi/10.1021/acsomega.1c00256",
+    "kind": "primary research",
+    "period": "2021",
+    "evidence_file": "../alcohol-facts-2026-11-12/sources/search-beer-bubbles.txt"
+  },
+  "beernumber": {
+    "title": "Cracking open the mystery of how many bubbles are in a glass of beer",
+    "publisher": "American Chemical Society, republished by Phys.org",
+    "url": "https://phys.org/news/2021-04-mystery-glass-beer.html",
+    "kind": "research-institution explanation",
+    "period": "21 April 2021",
+    "evidence_file": "../alcohol-facts-2026-11-12/sources/search-final-proof.txt"
+  },
+  "champagnefaq": {
+    "title": "Champagne frequently asked questions",
+    "publisher": "Comité Champagne",
+    "url": "https://www.champagne.fr/en/champagne-frequently-asked-questions",
+    "kind": "primary appellation education",
+    "period": "Current page checked 12 November 2026",
+    "evidence_file": "../alcohol-facts-2026-11-12/sources/read-science.txt"
+  },
+  "tiltedpour": {
+    "title": "Making the Most of Champagne's CO₂",
+    "publisher": "Chemical & Engineering News / ACS",
+    "url": "https://cen.acs.org/articles/88/i30/Making-Champagnes-CO2.html",
+    "kind": "research-society explanation",
+    "period": "26 July 2010",
+    "evidence_file": "../alcohol-facts-2026-11-12/sources/search-science-extra.txt"
+  },
+  "winetears": {
+    "title": "The dynamics of wine tears",
+    "publisher": "John W. M. Bush, MIT",
+    "url": "https://thales.mit.edu/bush/index.php/2001/03/29/the-dynamics-of-wine-tears/",
+    "kind": "primary researcher explanation",
+    "period": "2001",
+    "evidence_file": "../alcohol-facts-2026-11-12/sources/read-beer-extras.txt"
+  },
+  "tonicuv": {
+    "title": "Detecting Ultraviolet Light Using Tonic Water",
+    "publisher": "UCAR Center for Science Education",
+    "url": "https://scied.ucar.edu/activity/learn/ultraviolet-light-tonic-water",
+    "kind": "scientific institution education",
+    "evidence_file": "../alcohol-facts-2026-11-12/sources/read-beer-extras.txt"
+  },
+  "anethole": {
+    "title": "Anethole — Molecule of the Week",
+    "publisher": "American Chemical Society",
+    "url": "https://www.acs.org/molecule-of-the-week/archive/a/anethole.html",
+    "kind": "scientific society education",
+    "evidence_file": "../alcohol-facts-2026-11-12/sources/read-science.txt"
+  },
+  "whiskywater": {
+    "title": "Dilution of whisky — the molecular perspective",
+    "publisher": "Karlsson and Friedman, Scientific Reports (2017)",
+    "url": "https://www.nature.com/articles/s41598-017-06423-5",
+    "kind": "primary computational research",
+    "period": "2017",
+    "evidence_file": "../alcohol-facts-2026-11-12/sources/search-beer-number.txt",
+    "access": "Paper text available through indexed PMC and publisher extracts; publisher direct open failed."
+  },
+  "guinnessflow": {
+    "title": "Do bubbles in Guinness go down?",
+    "publisher": "Stanford Zare Lab",
+    "url": "https://web.stanford.edu/group/Zarelab/guinness/faq.html",
+    "kind": "primary researcher explanation",
+    "evidence_file": "../alcohol-facts-2026-11-12/sources/read-beer-extras.txt"
+  },
+  "beerskunk": {
+    "title": "125th Anniversary Review: The Non-Biological Instability of Beer",
+    "publisher": "Journal of the Institute of Brewing (2011)",
+    "url": "https://www.ibd.org.uk/media/nmhpszh5/j-2050-0416-2011-tb00496-x.pdf",
+    "kind": "scientific review",
+    "period": "2011",
+    "evidence_file": "../alcohol-facts-2026-11-12/sources/search-beer-primary.txt"
+  },
+  "rotundone": {
+    "title": "From Wine to Pepper: Rotundone, an Obscure Sesquiterpene, Is a Potent Spicy Aroma Compound",
+    "publisher": "Wood et al., Journal of Agricultural and Food Chemistry (2008)",
+    "url": "https://pubs.acs.org/jafcau/article/56/10/3738/812401/From-Wine-to-Pepper-Rotundone-an-Obscure",
+    "kind": "primary sensory research",
+    "period": "2008",
+    "evidence_file": "../alcohol-facts-2026-11-12/sources/search-beer-number.txt",
+    "access": "Publisher-indexed abstract; direct page returned 403."
+  },
+  "tcawine": {
+    "title": "Wine flavours, faults and taints",
+    "publisher": "Australian Wine Research Institute",
+    "url": "https://www.awri.com.au/industry_support/winemaking_resources/sensory_assessment/recognition-of-wine-faults-and-taints/wine_faults/",
+    "kind": "research institute education",
+    "evidence_file": "../alcohol-facts-2026-11-12/sources/search-wine-colour.txt"
+  },
+  "trpm5": {
+    "title": "Heat activation of TRPM5 underlies thermal sensitivity of sweet taste",
+    "publisher": "Talavera et al., Nature (2005)",
+    "url": "https://www.nature.com/articles/nature04248",
+    "kind": "primary experimental research",
+    "period": "2005",
+    "evidence_file": "../alcohol-facts-2026-11-12/sources/search-science-primary-more.txt"
+  },
+  "pricebrain": {
+    "title": "Marketing actions can modulate neural representations of experienced pleasantness",
+    "publisher": "Plassmann et al., PNAS (2008), author-hosted paper",
+    "url": "https://www.rnl.caltech.edu/publications/pdf/plassmann2008.pdf",
+    "kind": "primary experimental research",
+    "period": "2008",
+    "evidence_file": "../alcohol-facts-2026-11-12/sources/read-perception-full.txt"
+  },
+  "colorodors": {
+    "title": "The Color of Odors",
+    "publisher": "Morrot, Brochet and Dubourdieu, Brain and Language (2001)",
+    "url": "https://web.stanford.edu/class/linguist62n/morrot01colorofodors.pdf",
+    "kind": "primary sensory research",
+    "period": "2001",
+    "evidence_file": "../alcohol-facts-2026-11-12/sources/read-perception-full.txt"
+  },
+  "blindprice": {
+    "title": "Do More Expensive Wines Taste Better? Evidence from a Large Sample of Blind Tastings",
+    "publisher": "Goldstein et al., Journal of Wine Economics (2008)",
+    "url": "https://ideas.repec.org/a/cup/jwecon/v3y2008i01p1-9_00.html",
+    "kind": "primary research abstract in scholarly index",
+    "period": "2008",
+    "evidence_file": "../alcohol-facts-2026-11-12/sources/search-perception-studies.txt",
+    "access": "Indexed journal abstract; working-paper host presented a bot challenge."
+  },
+  "beerchem": {
+    "title": "What Gives Beer its Bitterness & Flavour?",
+    "publisher": "Andy Brunning, Compound Interest",
+    "url": "https://www.compoundchem.com/2014/07/10/beerchemicals/",
+    "kind": "chemist-authored explainer; Pinterest discovery",
+    "period": "10 July 2014",
+    "evidence_file": "../alcohol-facts-2026-11-12/sources/read-chemistry-social-leads.txt"
+  },
+  "swacategories": {
+    "title": "Scotch Whisky Categories",
+    "publisher": "Scotch Whisky Association",
+    "url": "https://www.scotch-whisky.org.uk/discover-scotch/enjoying-scotch/scotch-whisky-categories/",
+    "kind": "primary trade-body production guidance",
+    "evidence_file": "../alcohol-facts-2026-11-12/sources/search-scotch-age.txt"
+  },
+  "swaage": {
+    "title": "Guidance for Bottlers and Producers 2025",
+    "publisher": "Scotch Whisky Association",
+    "url": "https://www.scotch-whisky.org.uk/media/2387/guidance-for-bottlers-and-producers_2025.pdf",
+    "kind": "primary trade-body regulatory guidance",
+    "period": "2025 edition; pages 4 and 11",
+    "evidence_file": "../alcohol-facts-2026-11-12/sources/read-scotch-youngest.txt"
+  },
+  "bourbonlaw": {
+    "title": "27 CFR §5.143 — Whisky",
+    "publisher": "U.S. Electronic Code of Federal Regulations",
+    "url": "https://www.ecfr.gov/current/title-27/chapter-I/subchapter-A/part-5/subpart-I/section-5.143",
+    "kind": "primary regulation",
+    "period": "Current page checked 12 November 2026",
+    "evidence_file": "../alcohol-facts-2026-11-12/sources/read-remaining-primary.txt"
+  },
+  "tequila": {
+    "title": "Our Tequila",
+    "publisher": "Consejo Regulador del Tequila",
+    "url": "https://www.crt.org.mx/en/our-tequila/",
+    "kind": "primary regulatory council education",
+    "evidence_file": "../alcohol-facts-2026-11-12/sources/read-labels-1.txt"
+  },
+  "cognac": {
+    "title": "Cognac Language: A Journey Through Time and Flavour",
+    "publisher": "BNIC / Cognac France",
+    "url": "https://china.cognac.fr/en/discoveries.php?no=194",
+    "kind": "primary appellation education",
+    "period": "4 May 2026",
+    "evidence_file": "../alcohol-facts-2026-11-12/sources/read-labels-2.txt"
+  },
+  "ginguidance": {
+    "title": "Buying Guide for Gin",
+    "publisher": "Virginia Alcoholic Beverage Control Authority",
+    "url": "https://www.abc.virginia.gov/products/product-knowledge/buying-guide-gin",
+    "kind": "government product education",
+    "evidence_file": "../alcohol-facts-2026-11-12/sources/read-labels-2.txt",
+    "access": "Only juniper and London-gin production-location passages used; unrelated claims were not adopted."
+  },
+  "sakegrades": {
+    "title": "Varieties — Japanese Sake Essentials",
+    "publisher": "National Research Institute of Brewing, Japan",
+    "url": "https://www.nrib.go.jp/English/sake_info/sake-essentials/varieties/",
+    "kind": "primary research-institute production education",
+    "evidence_file": "../alcohol-facts-2026-11-12/sources/read-labels-2.txt"
+  },
+  "vermouth": {
+    "title": "A Guide to Vermouth",
+    "publisher": "MARTINI",
+    "url": "https://www.martini.com/a-guide-to-vermouth/",
+    "kind": "producer guidance",
+    "evidence_file": "../alcohol-facts-2026-11-12/sources/search-practical-2.txt"
+  },
+  "raqefet": {
+    "title": "Did crafting beer lead to cereal cultivation?",
+    "publisher": "Stanford University",
+    "url": "https://news.stanford.edu/stories/2018/09/crafting-beer-lead-cereal-cultivation",
+    "kind": "research-institution report",
+    "period": "2018 research; approximately 13,000-year-old residues",
+    "evidence_file": "../alcohol-facts-2026-11-12/sources/read-india-and-bond.txt"
+  },
+  "jiahu": {
+    "title": "Fermented beverages of pre- and proto-historic China",
+    "publisher": "McGovern et al., PNAS (2004)",
+    "url": "https://doi.org/10.1073/pnas.0407921102",
+    "kind": "primary archaeological research",
+    "period": "2004; Jiahu seventh millennium BCE",
+    "evidence_file": "../alcohol-facts-2026-11-12/sources/search-ancient-china.txt",
+    "access": "Indexed primary-paper text; direct PMC open presented a browser challenge."
+  },
+  "georgiawine": {
+    "title": "Early Neolithic wine of Georgia in the South Caucasus",
+    "publisher": "McGovern et al., PNAS (2017)",
+    "url": "https://www.pnas.org/content/pnas/114/48/E10309.full.pdf",
+    "kind": "primary archaeological research",
+    "period": "2017; evidence dated circa 6000–5800 BCE",
+    "evidence_file": "../alcohol-facts-2026-11-12/sources/search-last-fact-gaps.txt"
+  },
+  "beertablet": {
+    "title": "The first writing: counting beer for the workers",
+    "publisher": "British Museum, via Google Arts & Culture",
+    "url": "https://artsandculture.google.com/asset/the-first-writing-counting-beer-for-the-workers/fgF9ioy89DC2Uw",
+    "kind": "primary museum object interpretation",
+    "period": "Tablet circa 3100–3000 BCE",
+    "evidence_file": "../alcohol-facts-2026-11-12/sources/search-bond-study.txt"
+  },
+  "definition1806": {
+    "title": "And Then There Were Spirits",
+    "publisher": "Museum of the American Cocktail / Southern Food & Beverage Museum",
+    "url": "https://www.southernfood.org/motac/and-then-there-were-spirits",
+    "kind": "museum history",
+    "period": "Definition published 13 May 1806",
+    "evidence_file": "../alcohol-facts-2026-11-12/sources/search-history-details.txt"
+  },
+  "jerrythomas": {
+    "title": "In With the Old: Early American Mixology Books",
+    "publisher": "Library of Congress",
+    "url": "https://blogs.loc.gov/inside_adams/2014/12/in-with-the-old-early-american-mixology-books/",
+    "kind": "primary library collection history",
+    "period": "Jerry Thomas book: 1862",
+    "evidence_file": "../alcohol-facts-2026-11-12/sources/search-history-details.txt"
+  },
+  "franklin": {
+    "title": "Benjamin Franklin's milk punch recipe",
+    "publisher": "Massachusetts Historical Society",
+    "url": "https://www.masshist.org/database/263",
+    "kind": "primary archival document",
+    "period": "11 October 1763",
+    "evidence_file": "../alcohol-facts-2026-11-12/sources/franklin-archive.txt",
+    "access": "Successfully extracted directly with urllib after web-tool 502."
+  },
+  "navyrum": {
+    "title": "A rum deal: The origins of Nelson's blood",
+    "publisher": "Royal Museums Greenwich",
+    "url": "https://www.rmg.co.uk/stories/maritime-history/curatorial/rum-deal-origins-nelsons-blood",
+    "kind": "museum history",
+    "evidence_file": "../alcohol-facts-2026-11-12/sources/read-source-gaps.txt"
+  },
+  "grog": {
+    "title": "Issuing Rum, RCIN 2581865",
+    "publisher": "Royal Collection Trust",
+    "url": "https://www.rct.uk/collection/exhibitions/crown-and-camera-the-british-royal-family-and-photography-1842-1910/the/issuing-rum",
+    "kind": "primary museum object interpretation",
+    "period": "Photograph 1898; account of 1740 order",
+    "evidence_file": "../alcohol-facts-2026-11-12/sources/search-bond-study.txt"
+  },
+  "prohibition": {
+    "title": "Amendment XXI: Repeal of Prohibition",
+    "publisher": "U.S. National Archives / Reagan Library",
+    "url": "https://reagan.blogs.archives.gov/2022/10/06/constitutional-amendments-series-amendment-xxi-repeal-of-prohibition/",
+    "kind": "primary archive constitutional history",
+    "period": "1920–1933",
+    "evidence_file": "../alcohol-facts-2026-11-12/sources/search-history-details.txt"
+  },
+  "hogarth": {
+    "title": "William Hogarth painted London behaving badly",
+    "publisher": "London Museum",
+    "url": "https://www.londonmuseum.org.uk/collections/london-stories/william-hogarth-painted-london-behaving-badly/",
+    "kind": "museum interpretation",
+    "period": "Gin Lane and Beer Street, 1751",
+    "evidence_file": "../alcohol-facts-2026-11-12/sources/search-heritage-methods.txt"
+  },
+  "guinnesshistory": {
+    "title": "The Guinness Story",
+    "publisher": "Guinness",
+    "url": "https://www.guinness.com/en-gb/our-craft/guinness-story",
+    "kind": "producer historical account",
+    "period": "Lease signed 1759",
+    "evidence_file": "../alcohol-facts-2026-11-12/sources/search-heritage.txt"
+  },
+  "recordbook": {
+    "title": "Why was the Guinness World Records book first published?",
+    "publisher": "Guinness World Records",
+    "url": "https://www.guinnessworldrecords.com/news/2022/9/why-was-the-guinness-world-records-book-first-published-714607",
+    "kind": "publisher's historical account",
+    "period": "1951 argument; first book 1955",
+    "evidence_file": "../alcohol-facts-2026-11-12/sources/search-brands-records.txt"
+  },
+  "chartreusehistory": {
+    "title": "Histoire — Chartreuse",
+    "publisher": "Chartreuse Diffusion",
+    "url": "https://www.chartreuse.fr/histoire/",
+    "kind": "producer historical account",
+    "period": "Manuscript account: 1605",
+    "evidence_file": "../alcohol-facts-2026-11-12/sources/search-brands-records.txt"
+  },
+  "chartreusegreen": {
+    "title": "Chartreuse verte",
+    "publisher": "Chartreuse Diffusion",
+    "url": "https://www.chartreuse.fr/produit/chartreuse-verte/",
+    "kind": "producer composition specification",
+    "evidence_file": "../alcohol-facts-2026-11-12/sources/search-small-weird-details.txt"
+  },
+  "amrut": {
+    "title": "Our Distillery / Story",
+    "publisher": "Amrut Distilleries",
+    "url": "https://amrutdistilleries.com/distillery/",
+    "kind": "producer historical account",
+    "period": "2004 Glasgow launch",
+    "evidence_file": "../alcohol-facts-2026-11-12/sources/search-amrut.txt"
+  },
+  "amrutlaunch": {
+    "title": "Amrut Single Malt Whisky launch release",
+    "publisher": "Amrut / Clydesdale",
+    "url": "https://www.clydesdale.se/press/AmrutSingleMaltWhisky.pdf",
+    "kind": "contemporaneous launch release",
+    "period": "2004",
+    "evidence_file": "../alcohol-facts-2026-11-12/sources/search-amrut.txt"
+  },
+  "indri": {
+    "title": "Indri Diwali Collector's Edition",
+    "publisher": "Indri / Piccadily",
+    "url": "https://www.indri.in/diwali-collection",
+    "kind": "producer award account",
+    "period": "2023 award",
+    "evidence_file": "../alcohol-facts-2026-11-12/sources/search-india.txt"
+  },
+  "fenicertificate": {
+    "title": "State-wise registered geographical indications of India — Feni",
+    "publisher": "Geographical Indications Registry, IP India",
+    "url": "https://ipindia.gov.in/frontend/pdf/gi/registered/State_wise_Registered_GI_of_India.pdf",
+    "kind": "primary official register",
+    "period": "Live register accessed 12 November 2026; listed dates are filing dates",
+    "evidence_file": "../alcohol-facts-2026-11-12/sources/read-india-gi-final.txt"
+  },
+  "goandrinks": {
+    "title": "Goan Drinks",
+    "publisher": "Goa Tourism Development Corporation",
+    "url": "https://goa-tourism.com/food/goan-drinks/",
+    "kind": "government tourism description",
+    "evidence_file": "../alcohol-facts-2026-11-12/sources/read-india-and-bond.txt"
+  },
+  "mahua": {
+    "title": "Mahua — Latehar, Jharkhand",
+    "publisher": "National Portal of India, ODOP",
+    "url": "https://www.india.gov.in/explore-india/odop/details/mahua",
+    "kind": "government regional product description",
+    "evidence_file": "../alcohol-facts-2026-11-12/sources/search-mahua.txt"
+  },
+  "tongba": {
+    "title": "Millets in the Indian Himalaya",
+    "publisher": "ICAR–Indian Institute of Millets Research",
+    "url": "https://www.millets.res.in/pub/2019/Millets_Indian_Himalaya.pdf",
+    "kind": "primary agricultural institute reference",
+    "period": "2019 publication; page 45",
+    "evidence_file": "../alcohol-facts-2026-11-12/sources/search-india-complete.txt"
+  },
+  "nashikgi": {
+    "title": "State-wise registered geographical indications of India — Nashik Valley Wine",
+    "publisher": "Geographical Indications Registry, IP India",
+    "url": "https://ipindia.gov.in/frontend/pdf/gi/registered/State_wise_Registered_GI_of_India.pdf",
+    "kind": "primary official register",
+    "period": "Live register accessed 12 November 2026; listed dates are filing dates",
+    "evidence_file": "../alcohol-facts-2026-11-12/sources/read-final-precise.txt"
+  },
+  "iba_negroni": {
+    "title": "Negroni — official recipe",
+    "publisher": "International Bartenders Association",
+    "url": "https://iba-world.com/iba-cocktail/negroni/",
+    "kind": "primary recipe specification",
+    "evidence_file": "../alcohol-facts-2026-11-12/sources/read-pinterest-and-iba.txt"
+  },
+  "iba_americano": {
+    "title": "Americano — official recipe",
+    "publisher": "International Bartenders Association",
+    "url": "https://iba-world.com/iba-cocktail/americano/",
+    "kind": "primary recipe specification",
+    "evidence_file": "../alcohol-facts-2026-11-12/sources/read-source-gaps.txt"
+  },
+  "iba_spritz": {
+    "title": "Spritz — official recipe",
+    "publisher": "International Bartenders Association",
+    "url": "https://iba-world.com/iba-cocktail/spritz/",
+    "kind": "primary recipe specification",
+    "evidence_file": "../alcohol-facts-2026-11-12/sources/read-pinterest-and-iba.txt"
+  },
+  "iba_margarita": {
+    "title": "Margarita — official recipe",
+    "publisher": "International Bartenders Association",
+    "url": "https://iba-world.com/iba-cocktail/margarita/",
+    "kind": "primary recipe specification",
+    "evidence_file": "../alcohol-facts-2026-11-12/sources/read-pinterest-and-iba.txt"
+  },
+  "iba_cosmo": {
+    "title": "Cosmopolitan — official recipe",
+    "publisher": "International Bartenders Association",
+    "url": "https://iba-world.com/iba-cocktail/cosmopolitan/",
+    "kind": "primary recipe specification",
+    "evidence_file": "../alcohol-facts-2026-11-12/sources/search-recipes.txt"
+  },
+  "iba_daiquiri": {
+    "title": "Daiquiri — official recipe",
+    "publisher": "International Bartenders Association",
+    "url": "https://iba-world.com/iba-cocktail/daiquiri/",
+    "kind": "primary recipe specification",
+    "evidence_file": "../alcohol-facts-2026-11-12/sources/search-recipes.txt"
+  },
+  "iba_plane": {
+    "title": "Paper Plane — official recipe",
+    "publisher": "International Bartenders Association",
+    "url": "https://iba-world.com/iba-cocktail/paper-plane/",
+    "kind": "primary recipe specification",
+    "evidence_file": "../alcohol-facts-2026-11-12/sources/read-iba-more.txt"
+  },
+  "iba_naked": {
+    "title": "Naked and Famous — official recipe",
+    "publisher": "International Bartenders Association",
+    "url": "https://iba-world.com/iba-cocktail/naked-and-famous/",
+    "kind": "primary recipe specification",
+    "evidence_file": "../alcohol-facts-2026-11-12/sources/read-iba-more.txt"
+  },
+  "iba_hemingway": {
+    "title": "Hemingway Special — official recipe",
+    "publisher": "International Bartenders Association",
+    "url": "https://iba-world.com/iba-cocktail/hemingway-special/",
+    "kind": "primary recipe specification",
+    "evidence_file": "../alcohol-facts-2026-11-12/sources/read-iba-more.txt"
+  },
+  "maitai": {
+    "title": "Mai Tai History & Facts",
+    "publisher": "Trader Vic's",
+    "url": "https://tradervics.com/pages/history-of-the-mai-tai",
+    "kind": "creator's company historical account",
+    "period": "Account of 1944 creation",
+    "evidence_file": "../alcohol-facts-2026-11-12/sources/search-drink-histories.txt"
+  },
+  "sling": {
+    "title": "Long Bar and the Singapore Sling",
+    "publisher": "Raffles Singapore",
+    "url": "https://www.raffles.com/singapore/dining/long-bar/",
+    "kind": "venue's historical account",
+    "period": "House account dates creation to 1915",
+    "evidence_file": "../alcohol-facts-2026-11-12/sources/search-drink-histories.txt"
+  },
+  "caesar": {
+    "title": "Cocktails 101: the Caesar",
+    "publisher": "Liquor Control Board of Ontario",
+    "url": "https://www.lcbo.com/content/lcbo/en/food-and-drink/cocktails-101-caesar.html",
+    "kind": "government retailer cocktail history",
+    "period": "Walter Chell popularisation: 1969",
+    "evidence_file": "../alcohol-facts-2026-11-12/sources/search-drink-histories.txt"
+  },
+  "oaxaca": {
+    "title": "Oaxaca Old-Fashioned",
+    "publisher": "Death & Co",
+    "url": "https://www.deathandcompanymarket.com/blogs/recipes/oaxaca-old-fashioned",
+    "kind": "creator venue's account and recipe",
+    "period": "Phil Ward, 2007",
+    "evidence_file": "../alcohol-facts-2026-11-12/sources/search-oldfashioned.txt"
+  },
+  "penicillin": {
+    "title": "Penicillin",
+    "publisher": "Difford's Guide",
+    "url": "https://www.diffordsguide.com/cocktails/recipe/2539/penicillin",
+    "kind": "specialist cocktail history",
+    "period": "Sam Ross, 2005",
+    "evidence_file": "../alcohol-facts-2026-11-12/sources/search-recipes.txt"
+  },
+  "modernclassics": {
+    "title": "Modern Classic Cocktails",
+    "publisher": "Difford's Guide",
+    "url": "https://www.diffordsguide.com/g/1249/modern-classic-cocktails/about",
+    "kind": "specialist cocktail history",
+    "evidence_file": "../alcohol-facts-2026-11-12/sources/search-history.txt"
+  },
+  "bfi": {
+    "title": "10 great films about drinking",
+    "publisher": "British Film Institute",
+    "url": "https://www.bfi.org.uk/lists/10-great-films-about-drinking",
+    "kind": "film institution criticism and scene identification",
+    "evidence_file": "../alcohol-facts-2026-11-12/sources/search-culture.txt"
+  },
+  "vogue": {
+    "title": "A Toast to 11 Classic On-Screen Cocktail Moments",
+    "publisher": "British Vogue",
+    "url": "https://www.vogue.co.uk/arts-and-lifestyle/gallery/on-screen-cocktails",
+    "kind": "secondary film and television culture",
+    "evidence_file": "../alcohol-facts-2026-11-12/sources/read-bubble-and-history.txt"
+  },
+  "flemingdrinks": {
+    "title": "Drinking with James Bond",
+    "publisher": "Ian Fleming Publications",
+    "url": "https://ianfleming.com/tag/drinking-with-james-bond/",
+    "kind": "author estate / publisher account",
+    "evidence_file": "../alcohol-facts-2026-11-12/sources/search-pop-details.txt"
+  },
+  "casinobook": {
+    "title": "Casino Royale",
+    "publisher": "Ian Fleming Publications",
+    "url": "https://ianfleming.com/book/casino-royale/",
+    "kind": "primary publisher bibliographic record",
+    "period": "1953",
+    "evidence_file": "../alcohol-facts-2026-11-12/sources/search-pop-details.txt"
+  },
+  "flemingvesper": {
+    "title": "Shaken — preview",
+    "publisher": "Ian Fleming Publications",
+    "url": "https://ianfleming.com/wp-content/uploads/2025/09/Shaken_preview.pdf",
+    "kind": "estate-published literary history",
+    "evidence_file": "../alcohol-facts-2026-11-12/sources/search-pop-details.txt"
+  },
+  "bondstudy": {
+    "title": "Were James Bond's drinks shaken because of alcohol induced tremor?",
+    "publisher": "Johnson, Guha and Davies, BMJ (2013)",
+    "url": "https://pubmed.ncbi.nlm.nih.gov/24336307/",
+    "kind": "primary content-analysis research",
+    "period": "2013; Fleming novels",
+    "evidence_file": "../alcohol-facts-2026-11-12/sources/search-bond-study.txt"
+  },
+  "holmes": {
+    "title": "Gary James' interview with Rupert Holmes",
+    "publisher": "Classic Bands; interview with the songwriter",
+    "url": "https://classicbands.com/RupertHolmesInterview.html",
+    "kind": "primary creator interview",
+    "evidence_file": "../alcohol-facts-2026-11-12/sources/search-culture-music-2.txt"
+  },
+  "belgium": {
+    "title": "Beer culture in Belgium",
+    "publisher": "UNESCO",
+    "url": "https://ich.unesco.org/en/RL/beer-culture-in-belgium-01062",
+    "kind": "primary heritage inscription",
+    "period": "2016 inscription",
+    "evidence_file": "../alcohol-facts-2026-11-12/sources/search-heritage-extra.txt",
+    "access": "Indexed UNESCO text; direct open presented a human-verification form."
+  },
+  "sakeheritage": {
+    "title": "Traditional knowledge and skills of making sake with koji mold in Japan",
+    "publisher": "UNESCO",
+    "url": "https://ich.unesco.org/en/RL/traditional-knowledge-and-skills-of-making-sake-with-koji-mold-in-japan-01977",
+    "kind": "primary heritage inscription",
+    "period": "2024 inscription",
+    "evidence_file": "../alcohol-facts-2026-11-12/sources/search-sake.txt",
+    "access": "Indexed UNESCO text; direct open presented a human-verification form."
+  },
+  "sakeprocess": {
+    "title": "Sake Brewing Processes and Flavor",
+    "publisher": "Japan Sake and Shochu Makers Association",
+    "url": "https://japansake.or.jp/sake/en/professional/sake-brewing-processes-flavor/",
+    "kind": "primary industry process education",
+    "evidence_file": "../alcohol-facts-2026-11-12/sources/search-sake-port.txt"
+  },
+  "qvevri": {
+    "title": "Ancient Georgian traditional Qvevri wine-making method",
+    "publisher": "UNESCO",
+    "url": "https://ich.unesco.org/en/RL/ancient-georgian-traditional-qvevri-wine-making-method-00870",
+    "kind": "primary heritage inscription",
+    "period": "2013 inscription",
+    "evidence_file": "../alcohol-facts-2026-11-12/sources/search-heritage-methods.txt"
+  },
+  "agaveland": {
+    "title": "Agave Landscape and Ancient Industrial Facilities of Tequila",
+    "publisher": "UNESCO World Heritage Centre",
+    "url": "https://whc.unesco.org/en/list/1209/",
+    "kind": "primary World Heritage listing",
+    "period": "2006 inscription",
+    "evidence_file": "../alcohol-facts-2026-11-12/sources/read-traditions.txt"
+  },
+  "trappist": {
+    "title": "Authentic Trappist Product: FAQs",
+    "publisher": "International Trappist Association",
+    "url": "https://www.trappist.be/en/faqs/",
+    "kind": "primary certification criteria",
+    "evidence_file": "../alcohol-facts-2026-11-12/sources/search-sake-port.txt"
+  },
+  "sherry": {
+    "title": "Ageing — Production",
+    "publisher": "Consejo Regulador, Sherry Wines",
+    "url": "https://www.sherry.wine/sherry-wine/production/ageing",
+    "kind": "primary appellation process education",
+    "evidence_file": "../alcohol-facts-2026-11-12/sources/read-traditions.txt"
+  },
+  "port": {
+    "title": "Vinhos do Porto — Vinificação",
+    "publisher": "Instituto dos Vinhos do Douro e do Porto",
+    "url": "https://www.ivdp.pt/pt/vinhos/vinhos-do-porto/vinificacao/",
+    "kind": "primary appellation production education",
+    "evidence_file": "../alcohol-facts-2026-11-12/sources/search-heritage-methods.txt"
+  },
+  "niaaa": {
+    "title": "What Is a Standard Drink?",
+    "publisher": "U.S. National Institute on Alcohol Abuse and Alcoholism",
+    "url": "https://www.niaaa.nih.gov/alcohols-effects-health/what-standard-drink",
+    "kind": "primary public-health definition",
+    "evidence_file": "../alcohol-facts-2026-11-12/sources/read-source-gaps.txt"
+  },
+  "nhs": {
+    "title": "Alcohol units",
+    "publisher": "NHS",
+    "url": "https://www.nhs.uk/live-well/alcohol-advice/calculating-alcohol-units/",
+    "kind": "primary public-health definition",
+    "evidence_file": "../alcohol-facts-2026-11-12/sources/read-source-gaps.txt"
+  },
+  "champagne_service": {
+    "title": "Serving Champagne",
+    "publisher": "Comité Champagne",
+    "url": "https://www.champagne.fr/system/files/2022-10/Serving%20Champagne.pdf",
+    "kind": "primary appellation service guidance",
+    "evidence_file": "../alcohol-facts-2026-11-12/sources/read-cocktail-science-methods.txt"
+  },
+  "swafaq": {
+    "title": "Scotch Whisky FAQs",
+    "publisher": "Scotch Whisky Association",
+    "url": "https://www.scotch-whisky.org.uk/discover-scotch/faqs/",
+    "kind": "primary industry education",
+    "evidence_file": "../alcohol-facts-2026-11-12/sources/read-labels-1.txt"
+  },
+  "coffee": {
+    "title": "The Truth About Holiday Spirits",
+    "publisher": "NIAAA",
+    "url": "https://www.niaaa.nih.gov/publications/brochures-and-fact-sheets/truth-about-holiday-spirits",
+    "kind": "primary public-health education",
+    "evidence_file": "../alcohol-facts-2026-11-12/sources/search-practical-2.txt"
+  },
+  "beerwine": {
+    "title": "Grape or grain but never the twain? A randomized controlled multiarm matched-triplet crossover trial",
+    "publisher": "Köchling et al., American Journal of Clinical Nutrition (2019)",
+    "url": "https://pubmed.ncbi.nlm.nih.gov/30753321/",
+    "kind": "primary experimental research",
+    "period": "2019; 90 participants",
+    "evidence_file": "../alcohol-facts-2026-11-12/sources/search-practical.txt",
+    "access": "Publisher/PubMed-indexed text; direct PubMed open did not expose abstract."
+  },
+  "absinthe": {
+    "title": "Chemical composition of vintage preban absinthe",
+    "publisher": "Lachenmeier et al., Journal of Agricultural and Food Chemistry (2008)",
+    "url": "https://doi.org/10.1021/jf703568f",
+    "kind": "primary analytical research",
+    "period": "2008; 13 pre-1915 samples",
+    "evidence_file": "../alcohol-facts-2026-11-12/sources/search-myth-absinthe.txt"
+  },
+  "champagnehistory": {
+    "title": "Champagne: from still wine to sparkling wine (French history sheet)",
+    "publisher": "Comité Champagne",
+    "url": "https://www.champagne.fr/system/files/2023-06/Fiches_Histoire_FR.pdf",
+    "kind": "primary appellation historical education",
+    "evidence_file": "../alcohol-facts-2026-11-12/sources/read-award-certificate.txt"
+  },
+  "icecrushed": {
+    "title": "Cocktail Science: Does Crushed Ice Dilute More?",
+    "publisher": "Dave Arnold, Cooking Issues",
+    "url": "https://cookingissues.com/2009/12/03/cocktail-science-does-crushed-ice-dilute-more/",
+    "kind": "primary bar experiment",
+    "period": "2009",
+    "evidence_file": "../alcohol-facts-2026-11-12/sources/read-cocktail-science-methods.txt"
+  },
+  "iceshaking": {
+    "title": "Tales of the Cocktail: Science of Shaking II",
+    "publisher": "Dave Arnold, Cooking Issues",
+    "url": "https://cookingissues.com/2009/07/24/tales-of-the-cocktail-science-of-shaking-ii/",
+    "kind": "primary bar experiment",
+    "period": "2009",
+    "evidence_file": "../alcohol-facts-2026-11-12/sources/read-cocktail-science-methods.txt"
+  },
+  "guinnessfaq": {
+    "title": "Guinness frequently asked questions",
+    "publisher": "Guinness",
+    "url": "https://www.guinness.com/en-us/frequently-asked-questions",
+    "kind": "producer product education",
+    "evidence_file": "../alcohol-facts-2026-11-12/sources/search-beer-primary.txt"
+  },
+  "widget": {
+    "title": "Guinness at Home",
+    "publisher": "Guinness",
+    "url": "https://www.guinness.com/en-gb/experiences/guinness-at-home",
+    "kind": "producer historical account",
+    "period": "Widget introduced 1988",
+    "evidence_file": "../alcohol-facts-2026-11-12/sources/read-register-and-mahua.txt"
+  },
+  "ph": {
+    "title": "The invention of the pH scale",
+    "publisher": "Carlsberg Laboratory / Carlsberg Group",
+    "url": "https://carlsberggroup.com/pursuit-of-better/scientific-discoveries/ph-scale/",
+    "kind": "research institution historical account",
+    "period": "1909",
+    "evidence_file": "../alcohol-facts-2026-11-12/sources/search-record-scotch.txt"
+  },
+  "yeast1883": {
+    "title": "Rebrewing with Carlsberg's original purified yeast",
+    "publisher": "Carlsberg Laboratory / Carlsberg Group",
+    "url": "https://www.carlsberggroup.com/pursuit-of-better/scientific-discoveries/1883-rebrew/",
+    "kind": "research institution project account",
+    "period": "1883 yeast; 133-year-old bottle project",
+    "evidence_file": "../alcohol-facts-2026-11-12/sources/search-record-scotch.txt"
+  },
+  "macallan": {
+    "title": "Record-setting week for wine and spirits",
+    "publisher": "Sotheby's",
+    "url": "https://www.sothebys.com/en/articles/pierre-chens-burgundy-and-champagne-lead-record-setting-week-for-wine-and-spirits",
+    "kind": "primary auction result",
+    "period": "18 November 2023 sale",
+    "evidence_file": "../alcohol-facts-2026-11-12/sources/read-chemistry-social-leads.txt"
+  },
+  "mahuapaper": {
+    "title": "Mahua — A paradise tree for the tribals of Madhya Pradesh",
+    "publisher": "R. L. S. Sikarwar; Indian Journal of Traditional Knowledge / CSIR",
+    "url": "https://nopr.niscpr.res.in/handle/123456789/19380",
+    "kind": "primary ethnobotanical research",
+    "period": "2002, volume 1(1), pp. 87–92",
+    "evidence_file": "../alcohol-facts-2026-11-12/sources/read-final-precise.txt"
+  },
+  "cognacfaq": {
+    "title": "Cognac FAQ — age statements",
+    "publisher": "Bureau National Interprofessionnel du Cognac",
+    "url": "https://www.cognac.fr/faq/",
+    "kind": "primary appellation education",
+    "evidence_file": "../alcohol-facts-2026-11-12/sources/read-final-precise.txt"
+  },
+  "x_flood": {
+    "title": "The Great Beer Flood of London",
+    "publisher": "British Newspaper Archive",
+    "url": "https://www.britishnewspaperarchive.com/blog/great-flood-of-london-eight-people-killed-as-wave-of-beer-swept-through-londons-streets",
+    "kind": "archival newspaper history",
+    "evidence_file": "evidence/primary-beer-labels.txt",
+    "checked_on": "2026-11-12",
+    "verification_note": "Indexed article supports eight deaths; direct fetch returned 403. No disputed volume estimate is used."
+  },
+  "x_student": {
+    "title": "The strange origins of the Student’s t-test",
+    "publisher": "The Physiological Society",
+    "url": "https://www.physoc.org/magazine-articles/the-strange-origins-of-the-students-t-test/",
+    "kind": "learned-society history of research",
+    "evidence_file": "evidence/initial-primary.txt",
+    "checked_on": "2026-11-12",
+    "verification_note": ""
+  },
+  "x_obama": {
+    "title": "Ale to the Chief: White House Beer Recipe",
+    "publisher": "Obama White House archive / Sam Kass",
+    "url": "https://obamawhitehouse.archives.gov/blog/2012/09/01/ale-chief-white-house-beer-recipe",
+    "kind": "primary official account",
+    "evidence_file": "evidence/initial-primary.txt",
+    "checked_on": "2026-11-12",
+    "verification_note": ""
+  },
+  "x_washington": {
+    "title": "Ten Facts About the Distillery",
+    "publisher": "George Washington’s Mount Vernon",
+    "url": "https://www.mountvernon.org/the-estate-gardens/distillery/ten-facts-about-the-distillery",
+    "kind": "primary historic-site research",
+    "evidence_file": "evidence/primary-proof-gaps.txt",
+    "checked_on": "2026-11-12",
+    "verification_note": ""
+  },
+  "x_washingtonworkers": {
+    "title": "Making George Washington Bourbon",
+    "publisher": "George Washington’s Mount Vernon",
+    "url": "https://www.mountvernon.org/blog/2018/12/making-george-washington-bourbon",
+    "kind": "primary historic-site research",
+    "evidence_file": "evidence/primary-proof-gaps.txt",
+    "checked_on": "2026-11-12",
+    "verification_note": "Documents James Anderson, Peter Bingle and six enslaved workers. Conflicting published profit totals are omitted."
+  },
+  "x_bordeaux": {
+    "title": "History of the Médoc",
+    "publisher": "Les Vins du Médoc",
+    "url": "https://www.medoc-bordeaux.com/en/the-medoc/history/?age_legal=true",
+    "kind": "regional wine organisation history",
+    "evidence_file": "evidence/primary-cultural-history.txt",
+    "checked_on": "2026-11-12",
+    "verification_note": ""
+  },
+  "x_cans": {
+    "title": "Consider the Can: Beer Can Appreciation Day",
+    "publisher": "Heinz History Center",
+    "url": "https://www.heinzhistorycenter.org/blog/western-pennsylvania-history-consider-can-beer-can-appreciation-day/",
+    "kind": "museum collection history",
+    "evidence_file": "evidence/primary-history-gaps.txt",
+    "checked_on": "2026-11-12",
+    "verification_note": ""
+  },
+  "x_cansdate": {
+    "title": "Beer Can History",
+    "publisher": "Brewery Collectibles Club of America",
+    "url": "https://bcca.com/page/beer-can-history",
+    "kind": "specialist collection history",
+    "evidence_file": "evidence/primary-records.txt",
+    "checked_on": "2026-11-12",
+    "verification_note": ""
+  },
+  "x_butter": {
+    "title": "The good Huswifes Handmaide for the Kitchin, 1594, 1597 — p. 53a (1594)",
+    "publisher": "University of Giessen / Thomas Gloning transcription",
+    "url": "https://www.uni-giessen.de/de/fbz/fb05/germanistik/absprache/sprachverwendung/gloning/ghhk/handmaide.htm",
+    "kind": "primary historical text in scholarly transcription",
+    "evidence_file": "evidence/primary-final-find.txt",
+    "checked_on": "2026-11-12",
+    "verification_note": "The recipe is explicitly located at 53a 1594. This is not a claim that 1594 was the earliest edition."
+  },
+  "x_tartrate": {
+    "title": "Cold stabilisation",
+    "publisher": "Wine Australia",
+    "url": "https://www.wineaustralia.com/growing-making/winery-management/cold-stabilisation",
+    "kind": "primary industry technical guidance",
+    "evidence_file": "evidence/primary-glass-science.txt",
+    "checked_on": "2026-11-12",
+    "verification_note": ""
+  },
+  "x_milk": {
+    "title": "Clarified Milk Punch: Guide and Recipes",
+    "publisher": "Campari Academy",
+    "url": "https://www.campariacademy.com/en-us/wp-content/uploads/sites/3/2022/08/CG-026-MilkPunchGuide-04.pdf",
+    "kind": "primary bartender education",
+    "evidence_file": "evidence/primary-last-open.txt",
+    "checked_on": "2026-11-12",
+    "verification_note": ""
+  },
+  "x_noise": {
+    "title": "On planes, savory tomato becomes favored flavor",
+    "publisher": "Cornell University",
+    "url": "https://news.cornell.edu/stories/2015/05/planes-savory-tomato-becomes-favored-flavor",
+    "kind": "primary university research report",
+    "evidence_file": "evidence/primary-open-key.txt",
+    "checked_on": "2026-11-12",
+    "verification_note": "This is the 2015 Yan/Dando noise study, not the separate 2010 experiment with 48 participants."
+  },
+  "x_lager": {
+    "title": "Identification of a European isolate of Saccharomyces eubayanus",
+    "publisher": "Bergin et al. / FEMS Yeast Research, 2022",
+    "url": "https://byrne.ie/pubs/Bergin_FEMSYR_2022.pdf",
+    "kind": "research paper",
+    "evidence_file": "evidence/primary-glass-science.txt",
+    "checked_on": "2026-11-12",
+    "verification_note": ""
+  },
+  "x_wheat": {
+    "title": "Precision Flavor Through Fermentation Control",
+    "publisher": "Lallemand Brewing",
+    "url": "https://www.lallemandbrewing.com/en/global/resources/whats-new/precision-flavor-through-fermentation-control/",
+    "kind": "primary yeast-producer technical guidance",
+    "evidence_file": "evidence/primary-beer-chemistry.txt",
+    "checked_on": "2026-11-12",
+    "verification_note": ""
+  },
+  "x_brett": {
+    "title": "Molecular and biochemical aspects of Brettanomyces in brewing",
+    "publisher": "Journal of the Institute of Brewing",
+    "url": "https://onlinelibrary.wiley.com/doi/10.1002/jib.580",
+    "kind": "research review",
+    "evidence_file": "evidence/primary-milk-and-aviation.txt",
+    "checked_on": "2026-11-12",
+    "verification_note": ""
+  },
+  "x_brettguide": {
+    "title": "Brettanomyces",
+    "publisher": "The Oxford Companion to Beer",
+    "url": "https://www.beerandbrewing.com/dictionary/sZ3rBkmAXZ",
+    "kind": "specialist reference",
+    "evidence_file": "evidence/primary-proof-gaps.txt",
+    "checked_on": "2026-11-12",
+    "verification_note": ""
+  },
+  "x_volume": {
+    "title": "Vanishing Volume",
+    "publisher": "James Madison University chemistry demonstrations",
+    "url": "https://sites.lib.jmu.edu/chemdemos/2013/05/31/vanishing-volume/",
+    "kind": "primary university demonstration",
+    "evidence_file": "evidence/primary-processes.txt",
+    "checked_on": "2026-11-12",
+    "verification_note": ""
+  },
+  "x_japan": {
+    "title": "Standards for Labeling Japanese Whisky",
+    "publisher": "Japan Spirits & Liqueurs Makers Association; copy hosted by Nikka",
+    "url": "https://nikka.com/en/brands/labelingstandards/pdf/Standards_for_Labeling_Japanese_whisky.pdf",
+    "kind": "primary industry standard",
+    "evidence_file": "evidence/primary-last-open.txt",
+    "checked_on": "2026-11-12",
+    "verification_note": "Association standard established February 2021; not described here as a Japanese national statute. The association-hosted copy failed to render; the Nikka-hosted copy opened successfully."
+  },
+  "x_japancontext": {
+    "title": "The Story of Whisky",
+    "publisher": "National Research Institute of Brewing, Japan",
+    "url": "https://www.nrib.go.jp/sake/story/pdf/WhiskyNo02_en.pdf",
+    "kind": "primary government research-institute explanation",
+    "evidence_file": "evidence/primary-standards-final.txt",
+    "checked_on": "2026-11-12",
+    "verification_note": ""
+  },
+  "x_scotch": {
+    "title": "Verification checks for Scotch Whisky — Annex B",
+    "publisher": "UK Government / HMRC",
+    "url": "https://assets.publishing.service.gov.uk/media/6a0c20cdc510c3913d8267f1/Verification_checks_for_Scotch_Whisky.pdf",
+    "kind": "primary regulatory guidance",
+    "evidence_file": "evidence/primary-beer-labels.txt",
+    "checked_on": "2026-11-12",
+    "verification_note": ""
+  },
+  "x_purity": {
+    "title": "Reinheitsgebot, 1516",
+    "publisher": "Historisches Lexikon Bayerns",
+    "url": "https://www.historisches-lexikon-bayerns.de/Lexikon/Reinheitsgebot%2C_1516",
+    "kind": "scholarly regional history",
+    "evidence_file": "evidence/primary-beer-chemistry.txt",
+    "checked_on": "2026-11-12",
+    "verification_note": ""
+  },
+  "x_puritytext": {
+    "title": "Wissenswertes rund ums Bier: Hopfen und Malz",
+    "publisher": "Lower Saxony State Office for Consumer Protection and Food Safety",
+    "url": "https://www.laves.niedersachsen.de/startseite/lebensmittel/lebensmittelgruppen/getranke/wissenswertes-rund-ums-bier-hopfen-und-malz-73554.html",
+    "kind": "primary government explanation",
+    "evidence_file": "evidence/primary-beer-chemistry.txt",
+    "checked_on": "2026-11-12",
+    "verification_note": ""
+  },
+  "x_sotol": {
+    "title": "Sotol",
+    "publisher": "UNAM, Facultad de Estudios Superiores Zaragoza",
+    "url": "https://www.zaragoza.unam.mx/plantas-medicinales-fesz/sotol/",
+    "kind": "primary university botanical reference",
+    "evidence_file": "evidence/primary-spirit-ingredients.txt",
+    "checked_on": "2026-11-12",
+    "verification_note": ""
+  },
+  "x_sotolcontext": {
+    "title": "El sotol y la pata de elefante, especies protegidas por la ley",
+    "publisher": "Mexico PROFEPA",
+    "url": "https://www.gob.mx/profepa/articulos/el-sotol-y-la-pata-de-elefante-especies-protegidas-por-la-ley?idiom=es.Fecha",
+    "kind": "primary government botanical explanation",
+    "evidence_file": "evidence/primary-spirit-ingredients.txt",
+    "checked_on": "2026-11-12",
+    "verification_note": ""
+  },
+  "x_cachaca": {
+    "title": "Anuário da Cachaça — definition",
+    "publisher": "Brazil Ministry of Agriculture",
+    "url": "https://www.gov.br/agricultura/pt-br/assuntos/inspecao/produtos-vegetal/arquivos/anuario-cachaca-web.pdf",
+    "kind": "primary official product definition",
+    "evidence_file": "evidence/primary-spirit-ingredients.txt",
+    "checked_on": "2026-11-12",
+    "verification_note": ""
+  },
+  "x_bitters": {
+    "title": "Angostura Aromatic Bitters product data sheet",
+    "publisher": "Enotria, distributor",
+    "url": "https://www.enotria.com/products/pdf/angostura-angostura-aromatic-bitters",
+    "kind": "primary distributor product specification",
+    "evidence_file": "evidence/primary-standards-final.txt",
+    "checked_on": "2026-11-12",
+    "verification_note": "The product specification lists 44.7% ABV. Brand webpage was also checked but did not expose the ABV in its text."
+  },
+  "x_bats": {
+    "title": "Tequila and Mezcal / Bat Friendly project",
+    "publisher": "Bat Friendly project",
+    "url": "https://www.batfriendly.org/tequila-and-mezcal/",
+    "kind": "primary conservation-program specification",
+    "evidence_file": "evidence/primary-beer-chemistry.txt",
+    "checked_on": "2026-11-12",
+    "verification_note": ""
+  },
+  "x_blue": {
+    "title": "How to Make Blue Curaçao",
+    "publisher": "Senior’s Curaçao Liqueur",
+    "url": "https://www.curacaoliqueur.com/articles/how-to-make-blue-curacao",
+    "kind": "primary producer explanation",
+    "evidence_file": "evidence/primary-spirit-ingredients.txt",
+    "checked_on": "2026-11-12",
+    "verification_note": ""
+  },
+  "x_kahlua": {
+    "title": "What is Kahlúa? / The Kahlúa Story",
+    "publisher": "Kahlúa",
+    "url": "https://www.kahlua.com/en-us/about/",
+    "kind": "primary producer history",
+    "evidence_file": "evidence/primary-pop-culture.txt",
+    "checked_on": "2026-11-12",
+    "verification_note": ""
+  },
+  "x_pulque": {
+    "title": "Pulque, a Traditional Mexican Alcoholic Fermented Beverage: Historical, Microbiological, and Technical Aspects",
+    "publisher": "Escalante et al., Frontiers in Microbiology, 2016",
+    "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC4928461",
+    "kind": "research review",
+    "evidence_file": "evidence/primary-processes.txt",
+    "checked_on": "2026-11-12",
+    "verification_note": ""
+  },
+  "x_pulquegov": {
+    "title": "Pulque, una bebida artesanal",
+    "publisher": "Mexico Ministry of Agriculture",
+    "url": "https://www.gob.mx/agricultura/articulos/pulque-una-bebida-artesanal?idiom=es",
+    "kind": "primary government production account",
+    "evidence_file": "evidence/primary-processes.txt",
+    "checked_on": "2026-11-12",
+    "verification_note": ""
+  },
+  "x_thinman": {
+    "title": "Nick Charles demonstrates his Martini rhythm — The Thin Man",
+    "publisher": "Turner Classic Movies",
+    "url": "https://x.com/tcm/status/1656373640450002949",
+    "kind": "primary broadcaster film clip",
+    "evidence_file": "evidence/x-searches.json",
+    "checked_on": "2026-11-12",
+    "verification_note": "Public X clip captured in the signed-in search. Film year independently checked against TCM title listing."
+  },
+  "x_thinmanyear": {
+    "title": "The Thin Man (1934)",
+    "publisher": "Turner Classic Movies",
+    "url": "https://www.tcm.com/watchtcm/titles/2737",
+    "kind": "primary broadcaster title metadata",
+    "evidence_file": "evidence/primary-pop-culture.txt",
+    "checked_on": "2026-11-12",
+    "verification_note": ""
+  },
+  "x_cheers": {
+    "title": "About Cheers Boston",
+    "publisher": "Cheers Boston",
+    "url": "https://www.cheersboston.com/about/",
+    "kind": "primary venue history",
+    "evidence_file": "evidence/primary-pop-culture.txt",
+    "checked_on": "2026-11-12",
+    "verification_note": ""
+  },
+  "x_sideways": {
+    "title": "The Sideways Effect — author’s account of the study",
+    "publisher": "Steven S. Cuellar / Wines & Vines, January 2009",
+    "url": "https://winebusinessanalytics.com/sections/printout_article.cfm?article=feature&content=61265",
+    "kind": "primary researcher explanation",
+    "evidence_file": "evidence/primary-pop-culture.txt",
+    "checked_on": "2026-11-12",
+    "verification_note": "Article text available in search extraction; direct URL now redirects to a publisher landing page. Do not treat the link as an intact full article. No unverified 16% / 2% figures used."
+  },
+  "x_sidewayspaper": {
+    "title": "The Sideways Effect: A Test for Changes in the Demand for Merlot and Pinot Noir Wines",
+    "publisher": "Cuellar, Karnowsky & Acosta / Journal of Wine Economics, 2009",
+    "url": "https://ideas.repec.org/a/cup/jwecon/v4y2009i02p219-232_00.html",
+    "kind": "research paper metadata and abstract",
+    "evidence_file": "evidence/primary-pop-culture.txt",
+    "checked_on": "2026-11-12",
+    "verification_note": ""
+  },
+  "x_f1": {
+    "title": "Moët & Chandon returns as the Official Champagne of Formula 1",
+    "publisher": "Formula 1",
+    "url": "https://www.formula1.com/en/latest/article/moet-and-chandon-returns-as-the-official-champagne-of-formula-1.5ys8u5lq4Z6eXQRPtCaa5g.5ys8u5lq4Z6eXQRPtCaa5g",
+    "kind": "primary sporting-organisation announcement",
+    "evidence_file": "evidence/primary-racing-and-bottles.txt",
+    "checked_on": "2026-11-12",
+    "verification_note": ""
+  },
+  "x_ferraritrento": {
+    "title": "Gruppo Lunelli Sustainability Report 2024",
+    "publisher": "Gruppo Lunelli / Ferrari Trento",
+    "url": "https://www.ferraritrento.com/wp-content/uploads/2025/12/Gruppo-Lunelli-Sustainability-Report-2024_compressed.pdf",
+    "kind": "primary producer report",
+    "evidence_file": "evidence/primary-history-gaps.txt",
+    "checked_on": "2026-11-12",
+    "verification_note": ""
+  },
+  "x_gurney": {
+    "title": "24 Hours Stories: Dan Gurney starts podium Champagne spray tradition",
+    "publisher": "ACO / 24 Hours of Le Mans",
+    "url": "https://www.24h-lemans.com/en/news/24-hours-stories-dan-gurney-starts-podium-champagne-spray-tradition-55835",
+    "kind": "primary sporting-organisation history",
+    "evidence_file": "evidence/primary-records.txt",
+    "checked_on": "2026-11-12",
+    "verification_note": ""
+  },
+  "x_phylloxera": {
+    "title": "Grape Phylloxera",
+    "publisher": "Virginia Tech fruit entomology",
+    "url": "https://www.virginiafruit.ento.vt.edu/phylloxera.html",
+    "kind": "primary university technical guidance",
+    "evidence_file": "evidence/primary-wine-history.txt",
+    "checked_on": "2026-11-12",
+    "verification_note": ""
+  },
+  "x_cabernet": {
+    "title": "DNA fingerprinting reveals parentage of classic wine grape",
+    "publisher": "UC Davis",
+    "url": "https://www.ucdavis.edu/news/dna-fingerprinting-reveals-parentage-classic-wine-grape",
+    "kind": "primary university research report",
+    "evidence_file": "evidence/primary-wine-history.txt",
+    "checked_on": "2026-11-12",
+    "verification_note": ""
+  },
+  "x_cabernetpaper": {
+    "title": "The parentage of a classic wine grape, Cabernet Sauvignon",
+    "publisher": "Bowers & Meredith / Nature Genetics, 1997",
+    "url": "https://www.nature.com/articles/ng0597-84",
+    "kind": "research paper",
+    "evidence_file": "evidence/primary-wine-history.txt",
+    "checked_on": "2026-11-12",
+    "verification_note": ""
+  },
+  "x_orange": {
+    "title": "White wine with maceration",
+    "publisher": "International Organisation of Vine and Wine",
+    "url": "https://www.oiv.int/standards/international-code-of-oenological-practices/part-i-definitions/special-wines/white-wine-with-maceration",
+    "kind": "primary intergovernmental definition",
+    "evidence_file": "evidence/primary-final-verification.txt",
+    "checked_on": "2026-11-12",
+    "verification_note": "Definition page opened successfully. The OIV competition standard also explicitly labels these orange wines. The OIV minimum maceration rule is not generalised to all market usage."
+  },
+  "x_orangecompetition": {
+    "title": "OIV-OENO 671A-2025: Wine competition categories",
+    "publisher": "International Organisation of Vine and Wine",
+    "url": "https://www.oiv.int/node/4087/download/pdf",
+    "kind": "primary intergovernmental standard",
+    "evidence_file": "evidence/primary-wine-methods.txt",
+    "checked_on": "2026-11-12",
+    "verification_note": ""
+  },
+  "x_rose": {
+    "title": "Champagne Rosé",
+    "publisher": "Comité Champagne",
+    "url": "https://www.champagne.fr/en/champagne-tasting/choosing-your-champagne/champagne-rose",
+    "kind": "primary appellation-body explanation",
+    "evidence_file": "evidence/primary-wine-methods.txt",
+    "checked_on": "2026-11-12",
+    "verification_note": ""
+  },
+  "x_botrytis": {
+    "title": "Managing Botrytis-infected fruit",
+    "publisher": "Australian Wine Research Institute",
+    "url": "https://www.awri.com.au/wp-content/uploads/managing_botrytis_infected_fruit_fact_sheet.pdf",
+    "kind": "primary research-institute technical guidance",
+    "evidence_file": "evidence/primary-wine-methods.txt",
+    "checked_on": "2026-11-12",
+    "verification_note": ""
+  },
+  "x_madeira": {
+    "title": "Processo de vinificação — Vinho Madeira",
+    "publisher": "Madeira Wine / IVBAM",
+    "url": "https://vinhomadeira.com/o-vinho-madeira/vinificacao-e-envelhecimento",
+    "kind": "primary regional wine-body explanation",
+    "evidence_file": "evidence/primary-finish-sources.txt",
+    "checked_on": "2026-11-12",
+    "verification_note": ""
+  },
+  "x_bottles": {
+    "title": "Bottling — Champagne bottle formats",
+    "publisher": "Comité Champagne",
+    "url": "https://www.champagne.fr/system/files/2025-09/FICHE%20FLACONNAGE%20EN%202025.pdf",
+    "kind": "primary appellation-body technical sheet",
+    "evidence_file": "evidence/primary-racing-and-bottles.txt",
+    "checked_on": "2026-11-12",
+    "verification_note": ""
+  },
+  "x_oktoberfest": {
+    "title": "Die Wiesn 2025 — preliminary closing report",
+    "publisher": "Official Oktoberfest website / City of Munich",
+    "url": "https://www.oktoberfest.de/magazin/oktoberfest-news/die-wiesn-2025",
+    "kind": "primary festival statistics",
+    "evidence_file": "evidence/primary-records.txt",
+    "checked_on": "2026-11-12",
+    "verification_note": "Uses the explicitly dated 2025 preliminary report, not a claim to be the latest 2026 festival count."
+  },
+  "x_milestii": {
+    "title": "Largest wine cellar by number of bottles",
+    "publisher": "Guinness World Records",
+    "url": "https://www.guinnessworldrecords.com/world-records/largest-wine-cellar-by-number-of-bottles",
+    "kind": "primary record register",
+    "evidence_file": "evidence/primary-records.txt",
+    "checked_on": "2026-11-12",
+    "verification_note": "Record entry gives 1,500,000 and year 2005; descriptive text says over 1.5 million. Not a newly audited 2026 inventory."
+  },
+  "x_carmona": {
+    "title": "New archaeochemical insights into Roman wine from Baetica",
+    "publisher": "Cosano et al. / Journal of Archaeological Science: Reports, 2024",
+    "url": "https://www.sciencedirect.com/science/article/pii/S2352409X24002645",
+    "kind": "research paper",
+    "evidence_file": "evidence/primary-wine-history.txt",
+    "checked_on": "2026-11-12",
+    "verification_note": ""
+  },
+  "x_carmonarelease": {
+    "title": "The oldest wine in the world has been found in Carmona",
+    "publisher": "University of Córdoba / EurekAlert",
+    "url": "https://www.eurekalert.org/news-releases/1048600",
+    "kind": "primary university research release",
+    "evidence_file": "evidence/primary-wine-history.txt",
+    "checked_on": "2026-11-12",
+    "verification_note": ""
+  },
+  "x_lastword": {
+    "title": "The Last Word",
+    "publisher": "The Oxford Companion to Spirits & Cocktails",
+    "url": "https://www.spiritsanddistilling.com/dictionary/acref-9780199311132-e-353",
+    "kind": "specialist historical reference citing an archival menu",
+    "evidence_file": "evidence/primary-specific-reads.txt",
+    "checked_on": "2026-11-12",
+    "verification_note": ""
+  },
+  "x_aviation": {
+    "title": "Aviation",
+    "publisher": "Robert Hess / DrinkBoy",
+    "url": "https://www.drinkboy.com/Cocktails/Recipe.aspx?itemid=10",
+    "kind": "specialist bartender historical comparison",
+    "evidence_file": "evidence/primary-milk-and-aviation.txt",
+    "checked_on": "2026-11-12",
+    "verification_note": ""
+  },
+  "x_carousel": {
+    "title": "The Carousel Bar & Lounge",
+    "publisher": "Hotel Monteleone",
+    "url": "https://www.hotelmonteleone.com/dine-drink/carousel-bar/",
+    "kind": "primary venue specification",
+    "evidence_file": "evidence/primary-open-key.txt",
+    "checked_on": "2026-11-12",
+    "verification_note": ""
+  },
+  "x_carouselseats": {
+    "title": "Carousel Bar press sheet",
+    "publisher": "Hotel Monteleone",
+    "url": "https://hotelmonteleone.com/wp-content/uploads/2009/12/Monteleone_CarouselBar_PR.pdf",
+    "kind": "primary venue press sheet",
+    "evidence_file": "evidence/primary-bar-history.txt",
+    "checked_on": "2026-11-12",
+    "verification_note": ""
+  },
+  "x_zombie": {
+    "title": "Zombie",
+    "publisher": "International Bartenders Association",
+    "url": "https://iba-world.com/iba-cocktail/zombie/",
+    "kind": "primary official recipe",
+    "evidence_file": "evidence/primary-finish-sources.txt",
+    "checked_on": "2026-11-12",
+    "verification_note": ""
+  },
+  "x_ice": {
+    "title": "What is Directional Freezing?",
+    "publisher": "Camper English / Alcademics",
+    "url": "https://alcademics.com/what-is-directional-freezing/",
+    "kind": "primary experimenter explanation",
+    "evidence_file": "evidence/primary-specific-reads.txt",
+    "checked_on": "2026-11-12",
+    "verification_note": ""
+  },
+  "x_fat": {
+    "title": "Fat-Washing",
+    "publisher": "Difford’s Guide",
+    "url": "https://www.diffordsguide.com/encyclopedia/328/cocktails/fat-washing",
+    "kind": "specialist technical guide",
+    "evidence_file": "evidence/primary-bar-technique.txt",
+    "checked_on": "2026-11-12",
+    "verification_note": ""
+  },
+  "x_syrup": {
+    "title": "Simple Syrup",
+    "publisher": "Jeffrey Morgenthaler",
+    "url": "https://jeffreymorgenthaler.com/simple-syrup/",
+    "kind": "primary bartender method",
+    "evidence_file": "evidence/primary-last-open.txt",
+    "checked_on": "2026-11-12",
+    "verification_note": ""
+  },
+  "x_basi": {
+    "title": "The Basi Revolt",
+    "publisher": "National Museum of the Philippines",
+    "url": "https://www.nationalmuseum.gov.ph/exhibitions/nm-ilocos-regional-museum-complex/the-basi-revolt/",
+    "kind": "primary museum collection account",
+    "evidence_file": "evidence/primary-cultural-history.txt",
+    "checked_on": "2026-11-12",
+    "verification_note": "The museum identifies fourteen paintings, dated 1821."
+  },
+  "x_basimonopoly": {
+    "title": "Basi Revolt — Encyclopedia of Philippine Art",
+    "publisher": "Cultural Center of the Philippines",
+    "url": "https://epa.culturalcenter.gov.ph/3/82/2142/",
+    "kind": "primary cultural-institution collection account",
+    "evidence_file": "evidence/primary-basi-background.txt",
+    "checked_on": "2026-11-12",
+    "verification_note": ""
+  },
+  "x_toddy": {
+    "title": "Vistas in Coconut Research: 100 Years of Scientific Excellence",
+    "publisher": "ICAR-Central Plantation Crops Research Institute",
+    "url": "https://cpcri.gov.in/filemgr/webfs/publication/100_Years_of_Scientific_Excellence.pdf",
+    "kind": "primary agricultural research-institute publication",
+    "evidence_file": "evidence/primary-cultural-history.txt",
+    "checked_on": "2026-11-12",
+    "verification_note": ""
+  },
+  "x_vegan": {
+    "title": "Fining Agents",
+    "publisher": "Australian Wine Research Institute",
+    "url": "https://www.awri.com.au/industry_support/winemaking_resources/frequently_asked_questions/fining_agents/",
+    "kind": "primary research-institute technical guidance",
+    "evidence_file": "evidence/primary-processes.txt",
+    "checked_on": "2026-11-12",
+    "verification_note": ""
+  },
+  "x_vegandef": {
+    "title": "Annual Report 2015 — vegan-friendly fining alternatives",
+    "publisher": "Australian Wine Research Institute",
+    "url": "https://www.awri.com.au/wp-content/uploads/2013/01/2015-awri-annual-report.pdf",
+    "kind": "primary research-institute report",
+    "evidence_file": "evidence/primary-processes.txt",
+    "checked_on": "2026-11-12",
+    "verification_note": ""
+  },
+  "x_sulfites": {
+    "title": "Wine Labeling: Declaration of Sulfites",
+    "publisher": "US Alcohol and Tobacco Tax and Trade Bureau",
+    "url": "https://www.ttb.gov/regulated-commodities/beverage-alcohol/wine/wine-labeling-declaration-of-sulfites/",
+    "kind": "primary regulatory guidance",
+    "evidence_file": "evidence/primary-beer-chemistry.txt",
+    "checked_on": "2026-11-12",
+    "verification_note": ""
+  },
+  "x_sulfitesnatural": {
+    "title": "Wine Boot Camp Basics: Labeling",
+    "publisher": "US Alcohol and Tobacco Tax and Trade Bureau",
+    "url": "https://www.ttb.gov/system/files/2025-12/Part_1.5_Labeling_--_FINAL.pdf",
+    "kind": "primary regulatory education",
+    "evidence_file": "evidence/primary-beer-chemistry.txt",
+    "checked_on": "2026-11-12",
+    "verification_note": ""
+  }
+}

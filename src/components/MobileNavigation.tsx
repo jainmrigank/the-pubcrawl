@@ -9,7 +9,7 @@ interface MobileNavigationProps {
   tabCount: number;
   theme: Theme;
   onToggleTheme: () => void;
-  helpTour?: TourId;
+  helpTour?: TourId | null;
 }
 
 const items: { route: Route; label: string; href: string; icon: 'menu' | 'bar' | 'shorts' | 'watch' | 'quiz' }[] = [
@@ -63,7 +63,7 @@ export function MobileTopActions({ theme, onToggleTheme, tabCount, active, helpT
         <Clipboard size={20} />
         {tabCount > 0 && <b className="tab-badge" aria-hidden="true">{tabCount}</b>}
       </a>
-      <ContextualHelp tour={helpTour} className="mobile-help-action" />
+      {helpTour && <ContextualHelp tour={helpTour} className="mobile-help-action" />}
     </div>
   );
 }

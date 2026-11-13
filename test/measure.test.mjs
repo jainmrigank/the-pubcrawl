@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { formatMeasure } from '../src/measure.ts';
+import { formatMeasure, sameRecipeMeasure } from '../src/measure.ts';
 
 test('adds exact millilitre equivalents for ounce and centilitre measures', () => {
   assert.equal(formatMeasure('1 oz'), '1 oz (30 ml)');
@@ -41,4 +41,16 @@ test('keeps existing metric values and non-volume measures unchanged', () => {
 test('understands unicode fractions without changing the source wording', () => {
   assert.equal(formatMeasure('½ oz'), '½ oz (15 ml)');
   assert.equal(formatMeasure('¾ cl'), '¾ cl (7.5 ml)');
+});
+
+test('compares equivalent definite volumes without treating approximate measures as exact', () => {
+  assert.equal(sameRecipeMeasure('30 ml', '1 oz'), true);
+  assert.equal(sameRecipeMeasure('30 ml', '1 oz (30 ml)'), true);
+  assert.equal(sameRecipeMeasure('3 cl', '1 oz'), true);
+  assert.equal(sameRecipeMeasure('70ml/2fl oz', '70 ml'), true);
+  assert.equal(sameRecipeMeasure('1 oz', '2 oz'), false);
+  assert.equal(sameRecipeMeasure('1 part', '30 ml'), false);
+  assert.equal(sameRecipeMeasure('1 shot', '1 oz'), false);
+  assert.equal(sameRecipeMeasure('2-3 cl', '30 ml'), false);
+  assert.equal(sameRecipeMeasure('To taste', 'to taste'), true);
 });

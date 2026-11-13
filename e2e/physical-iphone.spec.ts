@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test';
-import { openRoute, seedStableDevice } from './helpers';
+import { navigateTo, openRoute, seedStableDevice } from './helpers';
 
 test.describe('iPhone WebKit shell regression', () => {
   test.beforeEach(async ({ page }) => {
@@ -9,10 +9,10 @@ test.describe('iPhone WebKit shell regression', () => {
   test('keeps the mobile shell in portrait and landscape', async ({ page }) => {
     await page.setViewportSize({ width: 428, height: 926 });
     await openRoute(page, '/#/menu');
-    const nav = page.locator('body > .mobile-bottom-nav');
+    const nav = page.locator('body > .house-mobile-links');
     await expect(nav).toBeVisible();
     await expect(page.locator('.nav-menu-btn')).toBeHidden();
-    await expect(nav.locator('.mobile-nav-item')).toHaveText(['Menu', 'Shelf', 'Shorts', 'Watch', 'Quiz']);
+    await expect(nav.locator('.house-nav-link > span:not([aria-hidden])')).toHaveText(['Drinks', 'Taste Map', 'Shelf', 'Tab', 'Explore+']);
 
     await page.setViewportSize({ width: 926, height: 428 });
     await expect(nav).toBeVisible();
@@ -22,10 +22,10 @@ test.describe('iPhone WebKit shell regression', () => {
     expect(Math.abs((landscapeBox?.y || 0) + (landscapeBox?.height || 0) - 428)).toBeLessThanOrEqual(2);
     expect(await page.evaluate(() => document.documentElement.scrollWidth <= document.documentElement.clientWidth)).toBe(true);
 
-    await page.getByRole('link', { name: 'Shorts' }).click();
+    await navigateTo(page, 'Shorts');
     await expect(page.locator('.shorts-feed')).toBeVisible({ timeout: 20_000 });
     await expect(nav).toBeVisible();
-    await page.getByRole('link', { name: 'Watch' }).click();
+    await navigateTo(page, 'Watch');
     await expect(page.locator('.watch')).toBeVisible({ timeout: 20_000 });
     await expect(nav).toBeVisible();
   });

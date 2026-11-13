@@ -194,7 +194,7 @@ export function Watch({ active = true, initialId = '', source = 'direct' }: Watc
     return (
       <section className="sec watch page-top">
         <p className="err" role="alert">
-          The projector is not warming up. Try again in a moment.
+          Videos unavailable. Try again.
         </p>
       </section>
     );
@@ -332,7 +332,7 @@ function WatchShelf({ data, active, initialId, source }: WatchShelfProps) {
         <input
           value={q}
           onChange={(e) => setQ(e.target.value)}
-          placeholder="Search a video, a channel, a spirit…"
+          placeholder="Search videos or channels"
           aria-label="Search the video library"
         />
         {q && (
@@ -404,7 +404,7 @@ function WatchShelf({ data, active, initialId, source }: WatchShelfProps) {
       </p>
 
       {list.length === 0 ? (
-        <p className="wv-empty">Nothing here for that. Try a spirit, a channel, or clear the filters.</p>
+        <p className="wv-empty">No videos found. Try another search.</p>
       ) : (
         <div className="wv-grid" data-tour="watch-grid">
           {list.map((v) => (
@@ -426,8 +426,8 @@ function WatchShelf({ data, active, initialId, source }: WatchShelfProps) {
       )}
 
       <p className="wv-foot k-label dim">
-        Everything here lives on YouTube. Tap a still and it plays in place.
-        {!data.hasNumbers && ' View counts arrive once the shelf has been counted.'}
+        Tap a thumbnail to play here.
+        {!data.hasNumbers && ' View counts pending.'}
       </p>
     </div>
   );
