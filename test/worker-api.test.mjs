@@ -35,6 +35,15 @@ test('Worker API preserves catalogue, dynamic state, CORS, AI fallback, and vali
   assert.equal(preflight.response.status, 204);
   assert.equal(preflight.response.headers.get('access-control-allow-origin'), origin);
 
+  for (const site of ['https://thepubcrawl.in', 'https://www.thepubcrawl.in']) {
+    const siteHealth = await call('/api/health', { headers: { origin: site } });
+    assert.equal(siteHealth.response.status, 200);
+    assert.equal(siteHealth.response.headers.get('access-control-allow-origin'), site);
+    const sitePreflight = await call('/api/health', { method: 'OPTIONS', headers: { origin: site } });
+    assert.equal(sitePreflight.response.status, 204);
+    assert.equal(sitePreflight.response.headers.get('access-control-allow-origin'), site);
+  }
+
   const denied = await call('/api/health', { headers: { origin: 'https://malicious.example' } });
   assert.equal(denied.response.status, 403);
   assert.equal(denied.response.headers.get('access-control-allow-origin'), null);

@@ -1,7 +1,7 @@
 import type { Recipe } from './types';
 import { formatMeasure } from './measure';
 
-const SITE = 'https://the-pubcrawl.vercel.app';
+const SITE = 'https://thepubcrawl.in';
 
 /** Plain-text card for one drink, ready for a chat message. */
 export function recipeShareText(r: Recipe, vibeLabel: string): string {
@@ -56,7 +56,7 @@ export function shortShareText(title: string, channel: string, id: string): stri
     title.trim(),
     ...(channel ? [channel.trim()] : []),
     '',
-    `https://the-pubcrawl.vercel.app/#/shorts?v=${encodeURIComponent(id)}&src=deep-link`,
+    `${SITE}/#/shorts?v=${encodeURIComponent(id)}&src=deep-link`,
     '',
     'Watch it on The PubCrawl · the original creator player is embedded from YouTube',
   ].join('\n');

@@ -2,7 +2,9 @@
 
 AI-assisted cocktail discovery app for searching a cocktail catalogue, matching recipes to a home shelf, identifying ingredients from photos, and generating original house-special recipes.
 
-Live app: https://the-pubcrawl.vercel.app
+Primary domain: https://thepubcrawl.in
+
+Vercel address: https://the-pubcrawl.vercel.app
 
 ## Recruiter Quick Read
 
@@ -179,7 +181,8 @@ Without `LLM_API_KEY`, the app still runs. AI photo detection is disabled and re
 ## Deployment
 
 - Frontend: static Vite deployment on Vercel.
-- API: Express service deployable on Render through `render.yaml`.
+- Custom domain: `thepubcrawl.in`, registered and DNS-managed at GoDaddy. `www.thepubcrawl.in` redirects to the apex domain. GoDaddy's required `.in` KYC must be approved and any Registrar Hold removed before DNS and HTTPS can become active.
+- API: Cloudflare Worker `pubcrawl-api`; Express on Render through `render.yaml` is the fallback.
 - Runtime API base: `VITE_API_BASE`, plus browser override with `localStorage.setItem('pubcrawl.api', 'https://...')`.
 - Durable store: set `KV_REST_API_URL` and `KV_REST_API_TOKEN` or the `UPSTASH_REDIS_REST_*` equivalents.
 

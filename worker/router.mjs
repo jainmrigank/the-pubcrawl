@@ -24,6 +24,8 @@ import {
 } from './store.mjs';
 
 const ALLOWED_ORIGINS = new Set([
+  'https://thepubcrawl.in',
+  'https://www.thepubcrawl.in',
   'https://the-pubcrawl.vercel.app',
   'http://127.0.0.1:5175',
   'http://localhost:5175',

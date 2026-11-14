@@ -8,7 +8,7 @@
   // absent from this file. Required production bindings: KV_REST_API_TOKEN
   // and RATE_LIMIT_SALT (see worker/README.md).
   "vars": {
-    "FRONTEND_ORIGIN": "https://the-pubcrawl.vercel.app",
+    "FRONTEND_ORIGIN": "https://thepubcrawl.in",
     "PUSH_ENABLED": "false"
   },
   "triggers": {
