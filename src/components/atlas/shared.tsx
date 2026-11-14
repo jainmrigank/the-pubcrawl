@@ -1,6 +1,7 @@
 import { useEffect, useId, useState, type ReactNode } from 'react';
 import { motion, useReducedMotion } from 'framer-motion';
 import { facts, sources, type Story } from './data';
+import { ChartTooltip } from '../ChartTooltip';
 export const fmt = (n: number, digits = 0) =>
   n.toLocaleString('en-US', { maximumFractionDigits: digits });
 export function useNarrowPlot() {
@@ -116,6 +117,7 @@ export function Plot({
   height = 410,
   minWidth = 480,
   mobileFit = false,
+  showHint = true,
 }: {
   label: string;
   children: ReactNode;
@@ -123,12 +125,13 @@ export function Plot({
   height?: number;
   minWidth?: number;
   mobileFit?: boolean;
+  showHint?: boolean;
 }) {
   return (
     <div className={'atlas-plot-wrap' + (mobileFit ? ' atlas-mobile-fit' : '')}>
-      <span className="atlas-pan-hint">
+      {showHint && <span className="atlas-pan-hint">
         Scroll ↔ or read the table below.
-      </span>
+      </span>}
       <div
         className="atlas-plot"
         tabIndex={0}
@@ -283,15 +286,16 @@ export function Enter({ children, id }: { children: ReactNode; id: string }) {
 }
 export function Legend({
   items,
+  tooltips = false,
 }: {
   items: { label: string; color: string }[];
+  tooltips?: boolean;
 }) {
   return (
     <ul className="atlas-legend">
       {items.map((i) => (
         <li key={i.label}>
-          <i style={{ background: i.color }} />
-          {i.label}
+          {tooltips ? <ChartTooltip label={i.label} focusable><i style={{ background: i.color }} />{i.label}</ChartTooltip> : <><i style={{ background: i.color }} />{i.label}</>}
         </li>
       ))}
     </ul>

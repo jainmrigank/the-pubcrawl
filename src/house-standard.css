@@ -14,6 +14,7 @@
   --mono: GeistMono, ui-monospace, monospace;
   --display: InstrumentSerif, Georgia, serif;
   --mobile-bottom-nav-height: 68px;
+  --card-radius: 18px;
 }
 html[data-theme='dark'] {
   --paper: #1d2521; --paper-2: #242c28; --paper-rgb: 29 37 33;
@@ -90,7 +91,23 @@ button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible
 .text-btn { min-height: 44px; font-family: var(--sans); font-size: 15px; text-transform: none; letter-spacing: 0; }
 .btn:active, .house-theme:active, .taste-path-buttons button:active { transform: scale(.96); }
 .grid { gap: 28px; }
-.fc { border-color: var(--line); box-shadow: none; }
+.fc { border-color: var(--line); border-radius: var(--card-radius); box-shadow: none; }
+.fc-inner { border-radius: inherit; }
+/* Clip each face, not the 3D parent: preserve flipping in WebKit. */
+.ff { border-radius: inherit; }
+.fc-img { border-radius: var(--card-radius) var(--card-radius) 0 0; }
+.wv, .quiz-intro, .quiz-card, .daily, .hall, .bartalk, .taste-preview, .explore-panel { border-radius: var(--card-radius); }
+.wv { overflow: hidden; }
+.wv-frame, .landing-short-media, .landing-watch-media { border-radius: var(--card-radius) var(--card-radius) 0 0; }
+.landing-short-card, .landing-watch-card { border-radius: var(--card-radius); overflow: hidden; }
+.shorts-card { border-radius: var(--card-radius); }
+.shorts-player-frame { border-radius: var(--card-radius); overflow: hidden; }
+.recipe-focus-photo { border-radius: 12px; overflow: hidden; }
+.act-btn { border-radius: 10px; }
+.page-return { padding-top: 20px; }
+.page-return > button { display: inline-flex; align-items: center; gap: 10px; min-height: 44px; max-width: 100%; text-align: left; font: 14px/1.5 var(--sans); color: var(--ink); }
+.page-return > button:hover { color: var(--accent); }
+.page-return svg { flex: none; }
 .fc:hover { box-shadow: 0 5px 24px rgb(0 0 0 / .055); }
 .fc-img { border-bottom-color: var(--line); }
 .fc-name, .fb-name { font-family: var(--display); font-weight: 400; letter-spacing: -.015em; }

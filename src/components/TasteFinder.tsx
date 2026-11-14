@@ -14,7 +14,7 @@ interface Props {
   saved: Set<string>;
   onSave: (recipe: Recipe) => void;
   onExpand: (origin: RecipeFocusOrigin) => void;
-  onList: () => void;
+  onList: (trigger: HTMLButtonElement) => void;
 }
 
 function DrinkDrawing({ profile }: { profile: TasteProfile }) {
@@ -120,7 +120,7 @@ export function TasteFinder({ active, saved, onSave, onExpand, onList }: Props) 
     requestAnimationFrame(() => { comparisonRef.current?.scrollIntoView({ block: 'start', behavior: 'instant' as ScrollBehavior }); comparisonRef.current?.querySelector<HTMLElement>('h2')?.focus({ preventScroll: true }); });
   };
 
-  if (failed) return <div className="taste-empty" role="status"><h2>The map couldn’t load.</h2><button className="btn" onClick={() => setAttempt(value => value + 1)}>Try again</button><button className="text-btn" onClick={onList}>Browse drinks</button></div>;
+  if (failed) return <div className="taste-empty" role="status"><h2>The map couldn’t load.</h2><button className="btn" onClick={() => setAttempt(value => value + 1)}>Try again</button><button className="text-btn" onClick={event => onList(event.currentTarget)}>Browse drinks</button></div>;
   if (!recipes.length) return <p className="taste-loading" role="status">Loading map…</p>;
   const left = comparison ? recipeById.get(comparison.left) : undefined;
   const right = comparison ? recipeById.get(comparison.right) : undefined;
@@ -165,8 +165,8 @@ export function TasteFinder({ active, saved, onSave, onExpand, onList }: Props) 
             </motion.div>
           </div>
           <div className="taste-sweetness"><span><ArrowLeft size={14} />Less sweet</span><span>Sweeter<ArrowRight size={14} /></span></div><span className="taste-axis taste-axis-bottom"><ArrowRight size={15} />Gentler spirit taste</span>
-        </div> : <div className="taste-empty" role="status"><h3>No matching classics.</h3><p>Try another flavour.</p><button className="text-btn" onClick={onList}>Browse all drinks <ArrowRight size={16} /></button>{(path || word) && <button className="text-btn" onClick={() => { setPath(''); setWord(''); }}>Clear filters</button>}</div>}
-        <button className="text-btn taste-all-recipes" onClick={onList}>{`Browse all ${recipes.length} recipes`} <ArrowRight size={16} /></button>
+        </div> : <div className="taste-empty" role="status"><h3>No matching classics.</h3><p>Try another flavour.</p><button className="text-btn" onClick={event => onList(event.currentTarget)}>Browse all drinks <ArrowRight size={16} /></button>{(path || word) && <button className="text-btn" onClick={() => { setPath(''); setWord(''); }}>Clear filters</button>}</div>}
+        <button className="text-btn taste-all-recipes" onClick={event => onList(event.currentTarget)}>{`Browse all ${recipes.length} recipes`} <ArrowRight size={16} /></button>
       </section>
       {selected && selectedProfile && <motion.article className="taste-preview" ref={previewRef} key={selected.id} initial={reduced ? false : { opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: reduced ? 0 : .22 }} aria-labelledby="taste-preview-name" data-recipe-id={selected.id}>
         <div className="taste-preview-top"><span className="house-eyebrow">DRINK PREVIEW</span><button type="button" className="house-icon-button" onClick={closePreview} aria-label="Close drink preview"><X size={18} /></button></div>

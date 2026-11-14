@@ -1,6 +1,8 @@
 import { useMemo, useState } from 'react';
 import { pantryAnalysis } from '../../atlasMath';
 import { menuLink } from '../../landingStories';
+import { ArrowRight, Check } from '../../icons';
+import { ChartTooltip } from '../ChartTooltip';
 import {
   catalogue,
   dna,
@@ -12,7 +14,6 @@ import {
   Choices,
   DataTable,
   fmt,
-  Insight,
   Legend,
   Plot,
   Select,
@@ -35,8 +36,8 @@ function RecipeLinks({ recipes }: { recipes: typeof all }) {
   );
 }
 
-export function DnaChart() {
-  const [mode, setMode] = useState('share');
+export function DnaChart({ compact = false }: { compact?: boolean }) {
+  const [mode, setMode] = useState('ml');
   const [selected, setSelected] = useState(0);
   const row = dna[selected];
   const total = row.parts.reduce((s, p) => s + p[1], 0);
@@ -47,11 +48,12 @@ export function DnaChart() {
         value={mode}
         onChange={setMode}
         options={[
-          { value: 'share', label: 'Proportions · %' },
           { value: 'ml', label: 'Actual measures · ml' },
+          { value: 'share', label: 'Proportions · %' },
         ]}
       />
       <Legend
+        tooltips
         items={ingredientFamilies.map((label, i) => ({
           label,
           color: palette[i],
@@ -59,6 +61,7 @@ export function DnaChart() {
       />
       <div className="atlas-figure-grid">
         <div className="atlas-dna-list">
+          <h4 className="study-list-heading">Choose a drink</h4>
           {dna.map((r, i) => {
             const sum = r.parts.reduce((s, p) => s + p[1], 0);
             return (
@@ -66,11 +69,12 @@ export function DnaChart() {
                 key={r.name}
                 type="button"
                 aria-pressed={i === selected}
+                aria-label={`${r.name}, ${sum} ml. ${i === selected ? 'Selected' : 'View measures'}. ${r.parts.map(([name, ml]) => `${name} ${ml} ml`).join(', ')}.`}
                 onClick={() => setSelected(i)}
               >
-                <span>
-                  {r.name}
-                  <small>{sum} ml</small>
+                <span className="atlas-dna-row-label">
+                  <span>{r.name}<small>{sum} ml</small></span>
+                  <span className="dna-selection-cue">{i === selected ? <><Check size={15} />Selected</> : <ArrowRight size={17} />}</span>
                 </span>
                 <span
                   className="atlas-dna-bar"
@@ -79,8 +83,10 @@ export function DnaChart() {
                   }}
                 >
                   {r.parts.map(([n, v, c]) => (
-                    <i
+                    <ChartTooltip
                       key={n}
+                      className={`atlas-dna-segment${c === 3 ? ' is-gold' : ''}`}
+                      label={`${ingredientFamilies[c]} · ${n} · ${v} ml`}
                       style={{
                         width: `${(v / sum) * 100}%`,
                         background: palette[c],
@@ -89,7 +95,7 @@ export function DnaChart() {
                       <span>
                         {mode === 'share' ? `${fmt((v / sum) * 100, 0)}%` : v}
                       </span>
-                    </i>
+                    </ChartTooltip>
                   ))}
                 </span>
               </button>
@@ -101,13 +107,15 @@ export function DnaChart() {
               : 'Longest bar = 180 ml · every segment uses the same ml scale'}
           </div>
         </div>
-        <Insight number={total} unit="ml before dilution">
+        <aside className={`atlas-insight ${compact ? 'study-recipe-detail' : ''}`} aria-live="polite">
+          <p className="house-eyebrow">SELECTED DRINK</p>
           <h3>{row.name}</h3>
+          <div className="atlas-insight-number">{total}<span>ml · before ice & dilution</span></div>
           <dl className="atlas-measures">
             {row.parts.map(([n, v, c]) => (
               <div key={n}>
                 <dt>
-                  <i style={{ background: palette[c] }} />
+                  <ChartTooltip label={ingredientFamilies[c]} focusable><i style={{ background: palette[c] }} /></ChartTooltip>
                   {n}
                 </dt>
                 <dd>{v} ml</dd>
@@ -126,9 +134,9 @@ export function DnaChart() {
               Read the IBA method ↗
             </a>
           )}
-        </Insight>
+        </aside>
       </div>
-      <DataTable
+      {!compact && <DataTable
         headers={['Recipe', 'Ingredient', 'ml', 'Share %']}
         rows={dna.flatMap((r) =>
           r.parts.map(([n, v]) => [
@@ -138,7 +146,7 @@ export function DnaChart() {
             fmt((v / r.parts.reduce((s, p) => s + p[1], 0)) * 100, 1),
           ])
         )}
-      />
+      />}
     </>
   );
 }
@@ -333,7 +341,7 @@ export function ConstellationChart() {
     </>
   );
 }
-export function PairingsChart() {
+export function PairingsChart({ compact = false }: { compact?: boolean }) {
   const top = catalogue.ingredients.slice(0, 12);
   const [a, setA] = useState(top[0].id),
     [b, setB] = useState(top[1].id),
@@ -355,6 +363,28 @@ export function PairingsChart() {
       .sort(classicFirst);
   const max = Math.max(...catalogue.pairs.map((p) => p.count));
   const options = top.map((i) => ({ value: i.id, label: i.name }));
+  const summary = (
+    <div className="atlas-network-notes study-pairing-summary" aria-live="polite">
+          <div className="atlas-pair-number">
+            {metric === 'count' ? value.count : fmt(value.similarity * 100, 1)}
+            <small>
+              {metric === 'count' ? 'shared recipes' : '% similarity'}
+            </small>
+          </div>
+          <h3>
+            {ingredientName(a)}
+            <em> & </em>
+            {ingredientName(b)}
+          </h3>
+          <RecipeLinks recipes={rows.slice(0, 5)} />
+          <p className="atlas-footnote">
+            {a === b
+              ? 'Diagonal cells show an ingredient on its own.'
+              : `${value.count} recipes in common; ${top.find((i) => i.id === a)!.count + top.find((i) => i.id === b)!.count - value.count} in the union.`}{' '}
+            Teal diagonal uses ingredient totals; purple cells show pairs.
+          </p>
+        </div>
+  );
   return (
     <>
       <Choices
@@ -380,12 +410,14 @@ export function PairingsChart() {
           options={options}
         />
       </div>
-      <div className="atlas-figure-grid">
+      <div className={compact ? 'study-pairing-layout' : 'atlas-figure-grid'}>
+        {compact && summary}
         <Plot
           label="Tap a cell, or choose two ingredients."
           width={670}
           height={595}
           minWidth={570}
+          showHint={!compact}
         >
           {top.map((r, i) => (
             <g key={r.id}>
@@ -449,28 +481,9 @@ export function PairingsChart() {
             </g>
           ))}
         </Plot>
-        <div className="atlas-network-notes" aria-live="polite">
-          <div className="atlas-pair-number">
-            {metric === 'count' ? value.count : fmt(value.similarity * 100, 1)}
-            <small>
-              {metric === 'count' ? 'shared recipes' : '% similarity'}
-            </small>
-          </div>
-          <h3>
-            {ingredientName(a)}
-            <em> & </em>
-            {ingredientName(b)}
-          </h3>
-          <RecipeLinks recipes={rows.slice(0, 5)} />
-          <p className="atlas-footnote">
-            {a === b
-              ? 'Diagonal cells show an ingredient on its own.'
-              : `${value.count} recipes in common; ${top.find((i) => i.id === a)!.count + top.find((i) => i.id === b)!.count - value.count} in the union.`}{' '}
-            Teal diagonal uses ingredient totals; purple cells show pairs.
-          </p>
-        </div>
+        {!compact && summary}
       </div>
-      <DataTable
+      {!compact && <DataTable
         headers={[
           'Ingredient A',
           'Ingredient B',
@@ -483,7 +496,7 @@ export function PairingsChart() {
             return [r.name, c.name, v.count, fmt(v.similarity * 100, 1)];
           })
         )}
-      />
+      />}
     </>
   );
 }

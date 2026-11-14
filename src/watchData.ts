@@ -25,8 +25,11 @@ export const LANDING_WATCH_SEED: WatchVideo[] = [
 ];
 
 export const WATCH_CATALOGUE_COUNT = 694;
-export const thumbnailForWatch = (video: Pick<WatchVideo, 'id'>) =>
-  `https://i.ytimg.com/vi/${video.id}/hqdefault.jpg`;
+export const WATCH_THUMBNAIL_SIZES = ['maxresdefault', 'sddefault', 'hqdefault'] as const;
+export const thumbnailForWatch = (
+  video: Pick<WatchVideo, 'id'>,
+  size: (typeof WATCH_THUMBNAIL_SIZES)[number] = 'maxresdefault',
+) => `https://i.ytimg.com/vi/${video.id}/${size}.jpg`;
 
 /** Shared lane metadata for the immediate, statistics-free Watch bootstrap. */
 export const WATCH_LANES: WatchLane[] = [

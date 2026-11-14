@@ -3,7 +3,7 @@ import { fetchVideos, postWatchEvent } from '../api';
 import type { WatchLane, WatchLibrary, WatchVideo } from '../types';
 import { Check, Play, Search, Share, Shuffle, X } from '../icons';
 import { shareContent, videoShareText } from '../share';
-import { WATCH_BOOTSTRAP_LIBRARY } from '../watchData';
+import { thumbnailForWatch, WATCH_BOOTSTRAP_LIBRARY, WATCH_THUMBNAIL_SIZES } from '../watchData';
 
 type Tab = 'watched' | 'new' | 'surprise';
 
@@ -25,6 +25,30 @@ function short(n: number | null, unit: string): string | null {
 }
 
 const norm = (s: string) => s.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '');
+
+/** Prefer the full-resolution still; older videos may only have smaller ones. */
+function VideoThumbnail({ id }: { id: string }) {
+  const [level, setLevel] = useState(0);
+  const size = WATCH_THUMBNAIL_SIZES[level];
+  // The card title and Play button remain usable even if every image fails.
+  if (!size) return null;
+  return (
+    <img
+      key={size}
+      src={thumbnailForWatch({ id }, size)}
+      alt=""
+      width={1280}
+      height={720}
+      loading="lazy"
+      decoding="async"
+      onError={() => setLevel((current) => current + 1)}
+      onLoad={(event) => {
+        // Some unavailable sizes return a 120 px placeholder with HTTP 200.
+        if (event.currentTarget.naturalWidth <= 120) setLevel((current) => current + 1);
+      }}
+    />
+  );
+}
 
 /**
  * One video. The still is a facade: YouTube's player, and everything it drags
@@ -65,10 +89,10 @@ function VideoCard({ v, lanes, active, autoPlay }: { v: WatchVideo; lanes: Watch
             referrerPolicy="strict-origin-when-cross-origin"
           />
         ) : (
-          <button className="wv-thumb" onClick={() => setPlaying(true)} aria-label={`Play ${v.title}`}>
-            <img src={`https://i.ytimg.com/vi/${v.id}/hqdefault.jpg`} alt="" loading="lazy" decoding="async" />
-            <span className="wv-play">
-              <Play size={20} />
+          <button type="button" className="wv-thumb" onClick={() => setPlaying(true)} aria-label={`Play ${v.title}`}>
+            <VideoThumbnail key={v.id} id={v.id} />
+            <span className="wv-play" aria-hidden="true">
+              <Play size={22} fill="currentColor" strokeWidth={1.2} />
             </span>
           </button>
         )}

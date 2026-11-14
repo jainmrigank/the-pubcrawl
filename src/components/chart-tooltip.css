@@ -1,0 +1,4 @@
+.chart-tooltip-anchor { display: inline-flex; align-items: center; }
+.chart-tooltip-anchor:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+.chart-tooltip { position: fixed; z-index: 200; width: max-content; max-width: 232px; padding: 10px 12px; border: 1px solid var(--control); border-radius: 8px; background: var(--ink); color: var(--paper); font: 13px/1.5 var(--sans); text-align: center; transform: translate(-50%, -100%); pointer-events: none; box-shadow: 0 4px 16px rgb(0 0 0 / .12); }
+.chart-tooltip.is-below { transform: translate(-50%, 0); }

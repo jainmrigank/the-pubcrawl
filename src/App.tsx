@@ -24,7 +24,7 @@ import { GuidedTour } from './components/GuidedTour';
 import { LandingPage } from './components/LandingPage';
 import { ShelfResults } from './components/ShelfResults';
 import { EASE, Lines, LOADED_HIDDEN, Reveal } from './motion';
-import { ArrowDown, ArrowRight, Check, Heart, Share, Shuffle, SketchDefs, X } from './icons';
+import { ArrowDown, ArrowLeft, ArrowRight, Check, Heart, Share, Shuffle, SketchDefs, X } from './icons';
 import { shareContent, tabShareText } from './share';
 import { applyTheme, currentTheme, persistTheme, readStoredTheme, systemTheme, clearStoredTheme } from './theme';
 import { loadLocalCatalogue, matchLocalRecipes, queryLocalRecipes } from './localData';
@@ -34,6 +34,8 @@ import { selectLandingShorts } from './landingPreviewPolicy';
 import { SHORTS_SEED } from './shortsData';
 import { parseBrowseFilter, serializeBrowseFilter } from './filter';
 import { useRecipeFocus } from './useRecipeFocus';
+import { useContentNavigation } from './useContentNavigation';
+import { advanceContentReturn } from './contentHistory';
 import './App.css';
 import './components/landing/landing.css';
 import './house-standard.css';
@@ -138,7 +140,7 @@ function writeHomeHistory(sessionId: string, id: string) {
 /** Home has explicit visit identity so Back can restore discovery without making it permanent history. */
 function useRoute(): RoutedView & {
   beginFreshHome: () => boolean;
-  restoreLastHomeOnNextEntry: () => void;
+  restoreLastHomeOnNextEntry: (id?: string) => void;
 } {
   const sessionId = useRef(randomToken());
   const visitSerial = useRef(0);
@@ -227,8 +229,9 @@ function useRoute(): RoutedView & {
     return true;
   }, [commitView, createVisit, keyFor]);
 
-  const restoreLastHomeOnNextEntry = useCallback(() => {
-    intent.current = lastHomeId.current ? { kind: 'restore', id: lastHomeId.current } : { kind: 'fresh' };
+  const restoreLastHomeOnNextEntry = useCallback((id?: string) => {
+    const target = id || lastHomeId.current;
+    intent.current = target ? { kind: 'restore', id: target } : { kind: 'fresh' };
   }, []);
 
   return { ...view, beginFreshHome, restoreLastHomeOnNextEntry };
@@ -236,6 +239,7 @@ function useRoute(): RoutedView & {
 
 export default function App() {
   const { route, landing, homeVisit, beginFreshHome, restoreLastHomeOnNextEntry } = useRoute();
+  const contentNavigation = useContentNavigation(homeVisit?.id, restoreLastHomeOnNextEntry);
   const retainedHomeVisit = useRef<HomeVisit | null>(homeVisit);
   if (homeVisit) retainedHomeVisit.current = homeVisit;
   const shortsActive = route === 'shorts';
@@ -618,7 +622,7 @@ export default function App() {
     setBrowseSeed(String(Math.random()));
     if (route === 'menu' && !landing && window.location.hash !== '#/menu') {
       const state = window.history.state && typeof window.history.state === 'object' ? window.history.state : {};
-      window.history.pushState(state, '', '#/menu');
+      window.history.pushState(advanceContentReturn(state), '', '#/menu');
     }
   };
 
@@ -746,7 +750,7 @@ export default function App() {
     setLoved(false);
     if (route !== 'menu' || landing) return;
     const state = window.history.state && typeof window.history.state === 'object' ? window.history.state : {};
-    window.history.pushState(state, '', menuHash(browseQ, value));
+    window.history.pushState(advanceContentReturn(state), '', menuHash(browseQ, value));
   }, [browseQ, landing, route]);
   const browseContext = browseFilter.kind === 'category'
     ? vibes.find((v) => v.id === browseFilter.id)?.label
@@ -798,6 +802,7 @@ export default function App() {
         />
 
         <main id="main-content" tabIndex={-1}>
+          {!shortsActive && contentNavigation.backLabel && <div className="page-return"><button type="button" className="text-btn" onClick={contentNavigation.goBack}><ArrowLeft size={18} />Back to {contentNavigation.backLabel}</button></div>}
           {/* every page stays mounted (hidden when inactive) so lists, search,
               flipped cards and accordion state survive switching between them */}
             <div hidden={!landing}>
@@ -899,8 +904,8 @@ export default function App() {
 
             <div hidden={route !== 'taste-map'}>
               <section className="sec page-top taste-page" id="taste-page" aria-label="Taste Map">
-                <SectionHead index="01" title="Taste Map" note="Choose a glass for its recipe." />
-                <TasteFinder active={route === 'taste-map'} saved={tabIds} onSave={toggleTab} onExpand={recipeFocus.openRecipe} onList={() => { window.location.hash = '#/menu'; }} />
+                <SectionHead index="01" title="Taste Map" note="Explore by flavour. Tap a drink for its recipe." />
+                <TasteFinder active={route === 'taste-map'} saved={tabIds} onSave={toggleTab} onExpand={recipeFocus.openRecipe} onList={trigger => contentNavigation.navigate('#/menu', trigger)} />
               </section>
             </div>
 

@@ -22,10 +22,11 @@ export default defineConfig({
   projects: [
     { name: 'webkit-visual-audit', testMatch: '**/visual-audit.spec.ts' },
     { name: 'webkit-house-standard', testMatch: '**/house-standard.spec.ts' },
+    { name: 'webkit-watch-thumbnails', testMatch: '**/watch-thumbnails.spec.ts' },
     { name: 'webkit-taste-discovery', testMatch: '**/taste-discovery.spec.ts' },
     { name: 'webkit-quiz-record', testMatch: '**/daily-quiz.spec.ts', grep: /non-perfect run|dropped answer/ },
     { name: 'webkit-atlas', testMatch: '**/atlas.spec.ts' },
-    { name: 'webkit-scroll-bar', testMatch: ['**/landing-data.spec.ts', '**/recipe-focus.spec.ts'] },
+    { name: 'webkit-scroll-bar', testMatch: ['**/landing-data.spec.ts', '**/recipe-focus.spec.ts', '**/content-navigation.spec.ts'] },
     {
       name: 'physical-iphone-shell',
       testMatch: '**/physical-iphone.spec.ts',

@@ -1,3 +1,5 @@
+import { advanceContentReturn } from './contentHistory.ts';
+
 export const RECIPE_FOCUS_HISTORY_KEY = '__pubcrawlRecipeFocus';
 
 export interface RecipeFocusHistoryMarker {
@@ -23,7 +25,7 @@ export function readRecipeFocusMarker(state: unknown = window.history.state): Re
 
 export function pushRecipeFocusMarker(marker: RecipeFocusHistoryMarker) {
   const state = historyObject(window.history.state);
-  window.history.pushState({ ...state, [RECIPE_FOCUS_HISTORY_KEY]: marker }, '', window.location.href);
+  window.history.pushState({ ...advanceContentReturn(state), [RECIPE_FOCUS_HISTORY_KEY]: marker }, '', window.location.href);
 }
 
 export function clearRecipeFocusMarker() {
