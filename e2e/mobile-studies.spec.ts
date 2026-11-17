@@ -29,6 +29,18 @@ test('swipes visibly follow the drag, enter from the right or left, and settle w
   await study.locator('.home-study-toggle').click();
   const content = study.locator('[data-swipe-content]');
   const position = study.getByRole('navigation', { name: 'Calorie servings' });
+  await content.evaluate(el => {
+    el.addEventListener('transitionend', event => {
+      if ((event as TransitionEvent).propertyName === 'transform') el.setAttribute('data-test-ended', 'true');
+    });
+    el.addEventListener('transitionrun', event => {
+      if ((event as TransitionEvent).propertyName !== 'transform') return;
+      el.setAttribute('data-test-entry', JSON.stringify({
+        x: new DOMMatrixReadOnly(getComputedStyle(el).transform).m41,
+        count: el.closest('#home-calories')!.querySelector('.study-pagination')!.textContent,
+      }));
+    });
+  });
   await expect(content).toHaveCSS('transform', 'none');
   const row = study.locator('.calorie-row').first();
   await row.scrollIntoViewIfNeeded();
@@ -46,36 +58,59 @@ test('swipes visibly follow the drag, enter from the right or left, and settle w
   await page.screenshot({ path: info.outputPath('calories-drag-feedback.png') });
   await page.mouse.up();
   await expect(position).toContainText('5–8 of 20');
-  const entrance = async () => content.evaluate(el => {
-    const animation = el.getAnimations()[0];
-    if (!animation) return null;
-    animation.pause();
-    return (animation.effect as KeyframeEffect).getKeyframes().map(frame => new DOMMatrixReadOnly(String(frame.transform)).m41);
-  });
-  const next = await entrance();
-  expect(next?.[0]).toBeGreaterThan(0);
-  expect(next?.at(-1)).toBe(0);
+  const entrance = async () => JSON.parse(await content.getAttribute('data-test-entry') || '{}');
+  await expect.poll(async () => (await entrance()).x).toBeGreaterThan(0);
+  expect((await entrance()).count).toContain('5–8 of 20');
   // A second swipe interrupts the entrance instead of waiting or getting stuck.
   await swipe(row, 110);
   await expect(position).toContainText('1–4 of 20');
-  const previous = await entrance();
-  expect(previous?.[0]).toBeLessThan(0);
-  expect(previous?.at(-1)).toBe(0);
-  await content.evaluate(el => el.getAnimations().forEach(animation => animation.finish()));
+  await expect.poll(async () => (await entrance()).count).toContain('1–4 of 20');
+  expect((await entrance()).x).toBeLessThan(0);
+  // Let the browser complete the transition; never pause or finish it in the test.
+  await expect(content).toHaveAttribute('data-test-ended', 'true');
   await expect(content).toHaveCSS('transform', 'none');
+  await expect(content).toHaveCSS('opacity', '1');
+  expect(await content.evaluate(el => el.getAnimations().length)).toBe(0);
   await swipe(row, -110, 0, true);
   await expect(position).toContainText('1–4 of 20');
-  const cancelled = await entrance();
-  expect(cancelled?.[0]).toBeLessThan(0);
-  expect(cancelled?.at(-1)).toBe(0);
+  await expect(content).toHaveCSS('transform', 'none');
+  await swipe(row, -110);
+  await expect(position).toContainText('5–8 of 20');
   // Reduced motion also cancels an animation already in progress.
   await page.emulateMedia({ reducedMotion: 'reduce' });
   await expect(content).toHaveCSS('transform', 'none');
   await expect(content).toHaveCSS('opacity', '1');
   await swipe(row, -110);
-  await expect(position).toContainText('5–8 of 20');
+  await expect(position).toContainText('9–12 of 20');
   expect(await content.evaluate(el => el.getAnimations().length)).toBe(0);
   await expect(study.locator('.calorie-recipe')).toHaveCount(0);
+});
+
+test('release outside the chart commits the page and interrupted gestures recover', async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.emulateMedia({ reducedMotion: 'no-preference' });
+  await openRoute(page, '/#/');
+  const study = page.locator('#home-calories');
+  await study.locator('.home-study-toggle').click();
+  const row = study.locator('.calorie-row').first();
+  const content = study.locator('[data-swipe-content]');
+  const position = study.getByRole('navigation', { name: 'Calorie servings' });
+  const gesture = async (end: 'pointerup' | 'blur') => row.evaluate((el, end) => {
+    const start = { bubbles: true, pointerId: 8, pointerType: 'touch', isPrimary: true, clientX: 250, clientY: 400 };
+    el.dispatchEvent(new PointerEvent('pointerdown', start));
+    el.dispatchEvent(new PointerEvent('pointermove', { ...start, clientX: 150 }));
+    window.dispatchEvent(end === 'blur' ? new Event('blur') : new PointerEvent('pointerup', { ...start, clientX: 150 }));
+  }, end);
+  await gesture('pointerup');
+  await expect(position).toContainText('5–8 of 20');
+  await expect(content).toHaveCSS('transform', 'none');
+  await gesture('blur');
+  await expect(position).toContainText('5–8 of 20');
+  await expect(content).toHaveCSS('transform', 'none');
+  await gesture('pointerup');
+  await expect(position).toContainText('9–12 of 20');
+  await expect(content).toHaveCSS('transform', 'none');
+  await expect(content).toHaveCSS('opacity', '1');
 });
 
 test('phone preview drags page left and right without arrow targets or accidental details', async ({ page }) => {
@@ -162,25 +197,37 @@ test('calorie pages support swiping, bounded navigation and ordinary drink taps'
   await expect(position).toContainText('1–4 of 29');
 });
 
-test('real touch paging leaves vertical calorie scrolling native', async ({ page, browserName }) => {
+for (const reducedMotion of ['reduce', 'no-preference'] as const) test(`real touch flicks complete calorie paging with ${reducedMotion} motion and leave vertical scrolling native`, async ({ page, browserName }) => {
   test.skip(browserName !== 'chromium', 'Native touch uses Chromium CDP; pointer journeys also run in WebKit.');
   await page.setViewportSize({ width: 390, height: 844 });
+  await page.emulateMedia({ reducedMotion });
   await openRoute(page, '/#/');
   const study = page.locator('#home-calories');
   await study.locator('.home-study-toggle').click();
   const cdp = await page.context().newCDPSession(page);
   await cdp.send('Emulation.setTouchEmulationEnabled', { enabled: true });
-  const stroke = async (x: number, y: number, dx: number, dy = 0) => {
+  const stroke = async (x: number, y: number, dx: number, dy = 0, delay = 12) => {
     await cdp.send('Input.dispatchTouchEvent', { type: 'touchStart', touchPoints: [{ x, y, id: 1 }] });
-    for (let i = 1; i <= 8; i++) await cdp.send('Input.dispatchTouchEvent', { type: 'touchMove', touchPoints: [{ x: x + dx * i / 8, y: y + dy * i / 8, id: 1 }] });
+    for (let i = 1; i <= 4; i++) {
+      await cdp.send('Input.dispatchTouchEvent', { type: 'touchMove', touchPoints: [{ x: x + dx * i / 4, y: y + dy * i / 4, id: 1 }] });
+      await page.waitForTimeout(delay);
+    }
     await cdp.send('Input.dispatchTouchEvent', { type: 'touchEnd', touchPoints: [] });
   };
   const row = study.locator('.calorie-row').first();
   await row.scrollIntoViewIfNeeded();
   const box = (await row.boundingBox())!;
-  await stroke(box.x + box.width * .7, box.y + box.height / 2, -110);
+  await stroke(box.x + box.width * .7, box.y + box.height / 2, -38, 3);
   const position = study.getByRole('navigation', { name: 'Calorie servings' });
   await expect(position).toContainText('5–8 of 20');
+  await expect(study.locator('[data-swipe-content]')).toHaveCSS('transform', 'none');
+  expect(await study.locator('[data-swipe-content]').evaluate(el => el.getAnimations().length)).toBe(0);
+  await stroke(box.x + box.width * .3, box.y + box.height / 2, 38, 3, 100);
+  await expect(position).toContainText('1–4 of 20');
+  await expect(study.locator('[data-swipe-content]')).toHaveCSS('transform', 'none');
+  await stroke(box.x + box.width * .7, box.y + box.height / 2, -90, 30);
+  await expect(position).toContainText('5–8 of 20');
+  await expect(study.locator('[data-swipe-content]')).toHaveCSS('transform', 'none');
   await expect(study.locator('.calorie-recipe')).toHaveCount(0);
   const second = (await study.locator('.calorie-row').nth(2).boundingBox())!;
   const previousY = await page.evaluate(() => scrollY);

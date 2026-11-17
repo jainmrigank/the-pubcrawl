@@ -193,25 +193,42 @@ test('mobile map gestures keep boundaries, filters, keyboard paging and drink ta
   await page.screenshot({ path: info.outputPath('taste-map-mobile-controls.png') });
 });
 
-test('native touch swipes change pages while vertical swipes scroll without selecting a glass', async ({ page, browserName }) => {
+for (const reducedMotion of ['reduce', 'no-preference'] as const) test(`native touch flicks complete Map paging with ${reducedMotion} motion without selecting a glass`, async ({ page, browserName }) => {
   test.skip(browserName !== 'chromium', 'Real touch dispatch uses Chromium CDP; cross-browser gesture handling is covered separately.');
-  await page.emulateMedia({ reducedMotion: 'reduce' });
+  await page.emulateMedia({ reducedMotion });
   await openRoute(page, '/#/taste-map');
   const cdp = await page.context().newCDPSession(page);
-  const stroke = async (x: number, y: number, dx: number, dy = 0) => {
+  const stroke = async (x: number, y: number, dx: number, dy = 0, delay = 12) => {
     await cdp.send('Input.dispatchTouchEvent', { type: 'touchStart', touchPoints: [{ x, y, id: 1 }] });
-    for (let i = 1; i <= 8; i++) await cdp.send('Input.dispatchTouchEvent', { type: 'touchMove', touchPoints: [{ x: x + dx * i / 8, y: y + dy * i / 8, id: 1 }] });
+    for (let i = 1; i <= 4; i++) {
+      await cdp.send('Input.dispatchTouchEvent', { type: 'touchMove', touchPoints: [{ x: x + dx * i / 4, y: y + dy * i / 4, id: 1 }] });
+      await page.waitForTimeout(delay);
+    }
     await cdp.send('Input.dispatchTouchEvent', { type: 'touchEnd', touchPoints: [] });
   };
   const plot = page.locator('.taste-plot');
   await plot.scrollIntoViewIfNeeded();
   const node = (await page.getByRole('button', { name: 'Preview Negroni', exact: true }).boundingBox())!;
-  await stroke(node.x + node.width / 2, node.y + node.height / 2, -100);
+  await stroke(node.x + node.width / 2, node.y + node.height / 2, -38, 3);
   await expect(page.locator('.taste-page-position')).toHaveText('Page 2 / 4');
+  await expect(plot.locator('[data-swipe-content]')).toHaveCSS('transform', 'none');
+  expect(await plot.locator('[data-swipe-content]').evaluate(el => el.getAnimations().length)).toBe(0);
   await expect(page.locator('.taste-preview')).toHaveCount(0);
   const box = (await plot.boundingBox())!;
-  await stroke(box.x + box.width * .3, box.y + box.height / 2, 110);
+  await stroke(box.x + box.width * .3, box.y + box.height / 2, 38, 3, 100);
   await expect(page.locator('.taste-page-position')).toHaveText('Page 1 / 4');
+  await expect(plot.locator('[data-swipe-content]')).toHaveCSS('transform', 'none');
+  // Remounted glass groups must keep paging, including the final boundary.
+  for (const expected of [2, 3, 4, 4]) {
+    await stroke(box.x + box.width * .7, box.y + box.height / 2, -100);
+    await expect(page.locator('.taste-page-position')).toHaveText(`Page ${expected} / 4`);
+    await expect(plot.locator('[data-swipe-content]')).toHaveCSS('transform', 'none');
+  }
+  for (const expected of [3, 2, 1]) {
+    await stroke(box.x + box.width * .3, box.y + box.height / 2, 100);
+    await expect(page.locator('.taste-page-position')).toHaveText(`Page ${expected} / 4`);
+    await expect(plot.locator('[data-swipe-content]')).toHaveCSS('transform', 'none');
+  }
   const y = await page.evaluate(() => scrollY);
   await stroke(box.x + box.width / 2, box.y + box.height * .7, 3, -150);
   await expect.poll(() => page.evaluate(() => scrollY)).toBeGreaterThan(y + 40);

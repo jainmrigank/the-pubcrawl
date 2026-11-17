@@ -84,7 +84,7 @@ export function TasteFinder({ active, saved, onSave, onExpand, onList }: Props) 
   useEffect(() => { setPage(0); }, [path, word]);
 
   const turnPage = (delta: number) => {
-    setPage(Math.max(0, Math.min(pageCount - 1, currentPage + delta)));
+    setPage(value => Math.max(0, Math.min(pageCount - 1, value + delta)));
   };
   const swipe = useSwipePagination({ pageKey: currentPage, canNext: currentPage + 1 < pageCount, canPrevious: currentPage > 0, onNext: () => turnPage(1), onPrevious: () => turnPage(-1) });
 

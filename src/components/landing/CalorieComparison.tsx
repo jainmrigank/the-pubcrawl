@@ -33,7 +33,7 @@ export function CalorieComparison() {
   const current = Math.min(page, pages - 1);
   const visible = ordered.slice(current * PAGE_SIZE, (current + 1) * PAGE_SIZE);
   const turnPage = (delta: number) => {
-    setPage(Math.max(0, Math.min(pages - 1, current + delta)));
+    setPage(value => Math.max(0, Math.min(pages - 1, value + delta)));
     setSelected(null);
   };
   const swipe = useSwipePagination({ pageKey: current, canNext: current + 1 < pages, canPrevious: current > 0, onNext: () => turnPage(1), onPrevious: () => turnPage(-1) });
