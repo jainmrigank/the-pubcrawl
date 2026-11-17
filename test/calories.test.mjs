@@ -52,3 +52,24 @@ test('all calorie rows reconcile nonnegative alcohol and other energy without ma
   }
   assert.throws(() => drinkEnergy({ parts: [['unknown ingredient', 20]] }), /Unknown calorie ingredient/);
 });
+
+
+test('style estimates use consistent servings, cover major beer and wine families and preserve primary sources', () => {
+  const beers = calorieDrinks.filter(row => row.group === 'beer');
+  const wines = calorieDrinks.filter(row => row.group === 'wine');
+  assert.equal(beers.length, 14);
+  assert.equal(wines.length, 29);
+  assert.ok(beers.every(row => row.parts[0][1] === 568));
+  assert.ok(wines.every(row => row.parts[0][1] === 150));
+  for (const id of ['beer-wheat', 'beer-ipa', 'beer-hazy', 'beer-stout', 'beer-porter', 'beer-sour', 'beer-zero', 'wine-rose', 'wine-brut', 'wine-dessert-sweet', 'wine-dessert-dry', 'wine-cabernet', 'wine-chardonnay']) assert.ok(drink(id), id);
+  assert.equal(drinkEnergy(drink('beer-zero')).alcohol, 0);
+  assert.ok(Math.abs(drinkEnergy(drink('beer-stout')).total - 198.8) < .01);
+  assert.equal(drinkEnergy(drink('wine-brut')).total, 105);
+  assert.ok(Math.abs(drinkEnergy(drink('red-wine')).total - 85 * (29.4 / 29.5735) * 1.5) < .01);
+  for (const row of [...beers, ...wines]) {
+    const ingredient = energyIngredients[row.parts[0][0]];
+    assert.ok(row.note);
+    assert.ok(ingredient.source.url.startsWith('https://'));
+    assert.ok(ingredient.basis);
+  }
+});

@@ -1,3 +1,5 @@
+import { ingredientMatches, isStaple } from '../shared/catalog-engine.mjs';
+import { resolveIngredient, ingredientGuide, alternativeAllowed } from '../shared/ingredient-guide.mjs';
 export type AtlasRecipe = {
   id: string;
   name: string;
@@ -6,21 +8,40 @@ export type AtlasRecipe = {
   glass: string;
   classic: boolean;
 };
-export function pantryAnalysis(recipes: AtlasRecipe[], pantry: string[]) {
-  const shelf = new Set(pantry);
+export function pantryAnalysis(recipes: AtlasRecipe[], pantry: string[], options: { suggestions?: boolean } = {}) {
+  const cache = new Map<string, ReturnType<typeof resolveIngredient>>();
+  const resolve = (id: string, recipe: AtlasRecipe, stock = pantry, memo = cache) => {
+    const guide = ingredientGuide(id);
+    const variant = guide?.id === 'IC02' && recipe.id === '15813' ? '|proof100' : guide?.id === 'IC26' && recipe.id === '178335' ? '|tequila' : '';
+    const cacheKey = id + variant + (guide && !alternativeAllowed(recipe, guide) ? '|original' : '|normal');
+    if (!memo.has(cacheKey)) memo.set(cacheKey, resolveIngredient(id, stock, recipe, ingredientMatches, isStaple));
+    return memo.get(cacheKey)!;
+  };
+  const availability = new Map<string, string>();
   const groups: AtlasRecipe[][] = [[], [], [], []];
   const unlocks = new Map<string, number>();
   const missing = new Map<string, string[]>();
   for (const recipe of recipes) {
-    const absent = recipe.ingredients.filter((id) => !shelf.has(id));
+    const resolved = recipe.ingredients.map(id => ({ id, ...resolve(id, recipe) }));
+    const absent = resolved.filter(item => !item.have).map(item => item.id);
+    availability.set(recipe.id, resolved.some(item => item.alternative?.kind === 'prepare') ? 'Prep first' : resolved.some(item => item.alternative) ? 'With alternatives' : 'Ready now');
     missing.set(recipe.id, absent);
     groups[Math.min(3, absent.length)].push(recipe);
     if (absent.length === 1)
       unlocks.set(absent[0], (unlocks.get(absent[0]) || 0) + 1);
   }
+  // A name alias can unlock several exact-name rows at once. Report the
+  // actual marginal change, while the catalogue's pair/count data stays exact.
+  for (const candidate of options.suggestions === false ? [] : unlocks.keys()) {
+    const expanded = [...pantry, candidate];
+    const memo = new Map<string, ReturnType<typeof resolveIngredient>>();
+    const count = recipes.filter(recipe => missing.get(recipe.id)!.length > 0 && recipe.ingredients.every(id => resolve(id, recipe, expanded, memo).have)).length;
+    unlocks.set(candidate, count);
+  }
   return {
     groups,
     missing,
+    availability,
     next: [...unlocks].sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0])),
   };
 }

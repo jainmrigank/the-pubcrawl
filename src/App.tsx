@@ -1,3 +1,5 @@
+import { recipeContent } from './recipeContent';
+import { IngredientShelfContext } from './components/IngredientShelfContext';
 import { lazy, Suspense, useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import { AnimatePresence, motion, MotionConfig } from 'framer-motion';
 import { fetchHealth, fetchKeptRecipes, fetchLikes, fetchRecipes, fetchVibes, generateRecipe, keepRecipe, matchRecipes, postLike } from './api';
@@ -681,7 +683,7 @@ export default function App() {
         return;
       }
       const r = await keepDrink(recipe);
-      setTab((prev) => (prev.some((x) => x.id === r.id) ? prev : [...prev, r]));
+      setTab((prev) => (prev.some((x) => x.id === r.id) ? prev : [...prev, recipeContent(r)]));
     },
     [tab, keepDrink]
   );
@@ -779,6 +781,7 @@ export default function App() {
   );
 
   return (
+    <IngredientShelfContext.Provider value={{ shelf: pantry, onAdd: addIngredient }}>
     <MotionConfig reducedMotion="user">
       <div className={`site ${shortsActive ? 'shorts-active' : ''} ${landing ? 'landing-active' : ''}`}>
         <SketchDefs />
@@ -810,6 +813,7 @@ export default function App() {
                 active={landing}
                 visitId={retainedHomeVisit.current?.id ?? ''}
                 shorts={retainedHomeVisit.current?.shorts ?? []}
+                studyActions={{ shelf: pantry, onAddToShelf: addAll, saved: tabIds, liked: likedIds, likes, onSave: toggleTab, onLike: toggleLike, onVideo: openVideo, onExpand: recipeFocus.openRecipe, vibeOf }}
               />
             </div>
 
@@ -1144,6 +1148,7 @@ export default function App() {
         )}
       </div>
     </MotionConfig>
+    </IngredientShelfContext.Provider>
   );
 }
 

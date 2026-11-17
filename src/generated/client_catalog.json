@@ -1,9 +1,9 @@
 {
-  "dataVersion": "03fd44c13defe68d",
+  "dataVersion": "eacd719b789a61bf",
   "health": {
     "catalogueCocktails": 691,
     "cocktails": 691,
-    "ingredients": 506
+    "ingredients": 570
   },
   "ingredients": [
     {
@@ -48,6 +48,11 @@
     },
     {
       "category": "Liqueur",
+      "guidance": {
+        "alternatives": [],
+        "description": "egg custard liqueur",
+        "guideId": "IC28"
+      },
       "image": "https://www.thecocktaildb.com/images/ingredients/Advocaat-small.png",
       "name": "Advocaat"
     },
@@ -78,8 +83,37 @@
     },
     {
       "category": "Other",
+      "image": "https://www.thecocktaildb.com/images/ingredients/Almond%20extract-small.png",
+      "name": "Almond extract"
+    },
+    {
+      "category": "Other",
       "image": "https://www.thecocktaildb.com/images/ingredients/Almond%20flavoring-small.png",
       "name": "Almond flavoring"
+    },
+    {
+      "category": "Liqueur",
+      "guidance": {
+        "alternatives": [
+          "Homemade almond liqueur"
+        ],
+        "description": "almond liqueur",
+        "guideId": "IC05"
+      },
+      "image": "https://www.thecocktaildb.com/images/ingredients/Almond%20liqueur-small.png",
+      "name": "Almond liqueur"
+    },
+    {
+      "category": "Syrup & Sweetener",
+      "guidance": {
+        "alternatives": [
+          "Homemade almond syrup"
+        ],
+        "description": "almond syrup",
+        "guideId": "IC29"
+      },
+      "image": "https://www.thecocktaildb.com/images/ingredients/Almond%20syrup-small.png",
+      "name": "Almond syrup"
     },
     {
       "category": "Juice",
@@ -88,6 +122,13 @@
     },
     {
       "category": "Liqueur",
+      "guidance": {
+        "alternatives": [
+          "Homemade almond liqueur"
+        ],
+        "description": "almond liqueur",
+        "guideId": "IC05"
+      },
       "image": "https://www.thecocktaildb.com/images/ingredients/Amaretto-small.png",
       "name": "Amaretto"
     },
@@ -142,7 +183,14 @@
       "name": "Aperol"
     },
     {
-      "category": "Other",
+      "category": "Liqueur",
+      "guidance": {
+        "alternatives": [
+          "Vodka + concentrated apple juice + sugar"
+        ],
+        "description": "sweet apple liqueur",
+        "guideId": "IC03"
+      },
       "image": "https://www.thecocktaildb.com/images/ingredients/Apfelkorn-small.png",
       "name": "Apfelkorn"
     },
@@ -168,6 +216,13 @@
     },
     {
       "category": "Liqueur",
+      "guidance": {
+        "alternatives": [
+          "Vodka + concentrated apple juice + sugar"
+        ],
+        "description": "apple liqueur",
+        "guideId": "IC13"
+      },
       "image": "https://www.thecocktaildb.com/images/ingredients/Apple%20Schnapps-small.png",
       "name": "Apple Schnapps"
     },
@@ -207,6 +262,18 @@
       "name": "Armagnac"
     },
     {
+      "category": "Soda & Mixer",
+      "guidance": {
+        "alternatives": [
+          "Lemon-lime soda + orange peel"
+        ],
+        "description": "aromatic citrus soda",
+        "guideId": "IC04"
+      },
+      "image": "https://www.thecocktaildb.com/images/ingredients/Aromatic%20citrus%20soda-small.png",
+      "name": "Aromatic citrus soda"
+    },
+    {
       "category": "Spirit",
       "image": "https://www.thecocktaildb.com/images/ingredients/Arrack-small.png",
       "name": "Arrack"
@@ -243,6 +310,13 @@
     },
     {
       "category": "Liqueur",
+      "guidance": {
+        "alternatives": [
+          "Homemade banana liqueur"
+        ],
+        "description": "banana liqueur",
+        "guideId": "IC18"
+      },
       "image": "https://www.thecocktaildb.com/images/ingredients/Banana%20liqueur-small.png",
       "name": "Banana liqueur"
     },
@@ -297,6 +371,18 @@
       "name": "Black pepper"
     },
     {
+      "category": "Liqueur",
+      "guidance": {
+        "alternatives": [
+          "Vodka + seedless raspberry jam, strained"
+        ],
+        "description": "raspberry liqueur",
+        "guideId": "IC08"
+      },
+      "image": "https://www.thecocktaildb.com/images/ingredients/Black%20raspberry%20liqueur-small.png",
+      "name": "Black raspberry liqueur"
+    },
+    {
       "category": "Herb & Spice",
       "image": "https://www.thecocktaildb.com/images/ingredients/Black%20Salt-small.png",
       "name": "Black Salt"
@@ -312,14 +398,55 @@
       "name": "Blackberries"
     },
     {
-      "category": "Spirit",
+      "category": "Fruit",
+      "image": "https://www.thecocktaildb.com/images/ingredients/Blackberry-small.png",
+      "name": "Blackberry"
+    },
+    {
+      "category": "Liqueur",
+      "guidance": {
+        "alternatives": [
+          "Homemade blackberry liqueur"
+        ],
+        "description": "blackberry liqueur",
+        "guideId": "IC20"
+      },
       "image": "https://www.thecocktaildb.com/images/ingredients/Blackberry%20brandy-small.png",
       "name": "Blackberry brandy"
+    },
+    {
+      "category": "Liqueur",
+      "guidance": {
+        "alternatives": [
+          "Homemade blackberry liqueur"
+        ],
+        "description": "blackberry liqueur",
+        "guideId": "IC20"
+      },
+      "image": "https://www.thecocktaildb.com/images/ingredients/Blackberry%20liqueur-small.png",
+      "name": "Blackberry liqueur"
+    },
+    {
+      "category": "Other",
+      "image": "https://www.thecocktaildb.com/images/ingredients/Blackcurrant%20concentrate-small.png",
+      "name": "Blackcurrant concentrate"
     },
     {
       "category": "Syrup & Sweetener",
       "image": "https://www.thecocktaildb.com/images/ingredients/Blackcurrant%20cordial-small.png",
       "name": "Blackcurrant cordial"
+    },
+    {
+      "category": "Liqueur",
+      "guidance": {
+        "alternatives": [
+          "Vodka + blackcurrant concentrate"
+        ],
+        "description": "blackcurrant liqueur",
+        "guideId": "IC19"
+      },
+      "image": "https://www.thecocktaildb.com/images/ingredients/Blackcurrant%20liqueur-small.png",
+      "name": "Blackcurrant liqueur"
     },
     {
       "category": "Other",
@@ -348,8 +475,31 @@
     },
     {
       "category": "Liqueur",
+      "guidance": {
+        "alternatives": [
+          "Triple sec",
+          "Cointreau",
+          "Orange liqueur"
+        ],
+        "description": "blue orange liqueur",
+        "guideId": "IC06"
+      },
       "image": "https://www.thecocktaildb.com/images/ingredients/Blue%20Curacao-small.png",
       "name": "Blue Curacao"
+    },
+    {
+      "category": "Liqueur",
+      "guidance": {
+        "alternatives": [
+          "Triple sec",
+          "Cointreau",
+          "Orange liqueur"
+        ],
+        "description": "blue orange liqueur",
+        "guideId": "IC06"
+      },
+      "image": "https://www.thecocktaildb.com/images/ingredients/Blue%20orange%20liqueur-small.png",
+      "name": "Blue orange liqueur"
     },
     {
       "category": "Fruit",
@@ -358,6 +508,25 @@
     },
     {
       "category": "Liqueur",
+      "guidance": {
+        "alternatives": [
+          "Homemade blueberry liqueur"
+        ],
+        "description": "blueberry liqueur",
+        "guideId": "IC24"
+      },
+      "image": "https://www.thecocktaildb.com/images/ingredients/Blueberry%20liqueur-small.png",
+      "name": "Blueberry liqueur"
+    },
+    {
+      "category": "Liqueur",
+      "guidance": {
+        "alternatives": [
+          "Homemade blueberry liqueur"
+        ],
+        "description": "blueberry liqueur",
+        "guideId": "IC24"
+      },
       "image": "https://www.thecocktaildb.com/images/ingredients/Blueberry%20schnapps-small.png",
       "name": "Blueberry schnapps"
     },
@@ -397,9 +566,26 @@
       "name": "Butterfly Pea Flower"
     },
     {
-      "category": "Spirit",
+      "category": "Liqueur",
+      "guidance": {
+        "alternatives": [
+          "Vodka + butterscotch syrup"
+        ],
+        "description": "butterscotch liqueur",
+        "guideId": "IC22"
+      },
       "image": "https://www.thecocktaildb.com/images/ingredients/Butterscotch%20schnapps-small.png",
       "name": "Butterscotch schnapps"
+    },
+    {
+      "category": "Spirit",
+      "image": "https://www.thecocktaildb.com/images/ingredients/Butterscotch%20syrup-small.png",
+      "name": "Butterscotch syrup"
+    },
+    {
+      "category": "Other",
+      "image": "https://www.thecocktaildb.com/images/ingredients/Cacao%20nibs-small.png",
+      "name": "Cacao nibs"
     },
     {
       "category": "Spirit",
@@ -498,6 +684,25 @@
     },
     {
       "category": "Liqueur",
+      "guidance": {
+        "alternatives": [
+          "Vodka + seedless raspberry jam, strained"
+        ],
+        "description": "raspberry liqueur",
+        "guideId": "IC08"
+      },
+      "image": "https://www.thecocktaildb.com/images/ingredients/Chambord-small.png",
+      "name": "Chambord"
+    },
+    {
+      "category": "Liqueur",
+      "guidance": {
+        "alternatives": [
+          "Vodka + seedless raspberry jam, strained"
+        ],
+        "description": "raspberry liqueur",
+        "guideId": "IC08"
+      },
       "image": "https://www.thecocktaildb.com/images/ingredients/Chambord%20raspberry%20liqueur-small.png",
       "name": "Chambord raspberry liqueur"
     },
@@ -552,12 +757,31 @@
       "name": "Chocolate Bitters"
     },
     {
+      "category": "Liqueur",
+      "guidance": {
+        "alternatives": [
+          "Irish cream + chocolate syrup"
+        ],
+        "description": "chocolate cream liqueur",
+        "guideId": "IC17"
+      },
+      "image": "https://www.thecocktaildb.com/images/ingredients/Chocolate%20cream%20liqueur-small.png",
+      "name": "Chocolate cream liqueur"
+    },
+    {
       "category": "Dairy & Egg",
       "image": "https://www.thecocktaildb.com/images/ingredients/Chocolate%20ice-cream-small.png",
       "name": "Chocolate ice-cream"
     },
     {
       "category": "Liqueur",
+      "guidance": {
+        "alternatives": [
+          "Homemade cacao liqueur"
+        ],
+        "description": "chocolate liqueur",
+        "guideId": "IC17-cacao"
+      },
       "image": "https://www.thecocktaildb.com/images/ingredients/Chocolate%20liqueur-small.png",
       "name": "Chocolate liqueur"
     },
@@ -587,6 +811,18 @@
       "name": "Cinnamon"
     },
     {
+      "category": "Liqueur",
+      "guidance": {
+        "alternatives": [
+          "Vodka + cinnamon syrup"
+        ],
+        "description": "cinnamon liqueur",
+        "guideId": "IC02"
+      },
+      "image": "https://www.thecocktaildb.com/images/ingredients/Cinnamon%20liqueur-small.png",
+      "name": "Cinnamon liqueur"
+    },
+    {
       "category": "Herb & Spice",
       "image": "https://www.thecocktaildb.com/images/ingredients/Cinnamon%20Powder-small.png",
       "name": "Cinnamon Powder"
@@ -600,6 +836,11 @@
       "category": "Spirit",
       "image": "https://www.thecocktaildb.com/images/ingredients/Citron%20Vodka-small.png",
       "name": "Citron Vodka"
+    },
+    {
+      "category": "Prepared ingredient",
+      "image": "https://www.thecocktaildb.com/images/ingredients/Citrus%20soda%20with%20orange%20peel-small.png",
+      "name": "Citrus soda with orange peel"
     },
     {
       "category": "Herb & Spice",
@@ -638,6 +879,14 @@
     },
     {
       "category": "Liqueur",
+      "guidance": {
+        "alternatives": [
+          "Sweetened coconut rum",
+          "Malibu"
+        ],
+        "description": "sweet coconut liqueur",
+        "guideId": "IC26"
+      },
       "image": "https://www.thecocktaildb.com/images/ingredients/Coconut%20Liqueur-small.png",
       "name": "Coconut Liqueur"
     },
@@ -690,6 +939,11 @@
       "category": "Soda & Mixer",
       "image": "https://www.thecocktaildb.com/images/ingredients/Cold%20Brew%20Coffee-small.png",
       "name": "Cold Brew Coffee"
+    },
+    {
+      "category": "Juice",
+      "image": "https://www.thecocktaildb.com/images/ingredients/Concentrated%20apple%20juice-small.png",
+      "name": "Concentrated apple juice"
     },
     {
       "category": "Dairy & Egg",
@@ -748,21 +1002,49 @@
     },
     {
       "category": "Liqueur",
+      "guidance": {
+        "alternatives": [
+          "Homemade banana liqueur"
+        ],
+        "description": "banana liqueur",
+        "guideId": "IC18"
+      },
       "image": "https://www.thecocktaildb.com/images/ingredients/Creme%20de%20Banane-small.png",
       "name": "Creme de Banane"
     },
     {
       "category": "Liqueur",
+      "guidance": {
+        "alternatives": [
+          "Homemade cacao liqueur"
+        ],
+        "description": "chocolate liqueur",
+        "guideId": "IC17-cacao"
+      },
       "image": "https://www.thecocktaildb.com/images/ingredients/Creme%20de%20Cacao-small.png",
       "name": "Creme de Cacao"
     },
     {
       "category": "Liqueur",
+      "guidance": {
+        "alternatives": [
+          "Vodka + blackcurrant concentrate"
+        ],
+        "description": "blackcurrant liqueur",
+        "guideId": "IC19"
+      },
       "image": "https://www.thecocktaildb.com/images/ingredients/Creme%20de%20Cassis-small.png",
       "name": "Creme de Cassis"
     },
     {
       "category": "Liqueur",
+      "guidance": {
+        "alternatives": [
+          "Homemade blackberry liqueur"
+        ],
+        "description": "blackberry liqueur",
+        "guideId": "IC20"
+      },
       "image": "https://www.thecocktaildb.com/images/ingredients/Creme%20de%20Mure-small.png",
       "name": "Creme de Mure"
     },
@@ -807,12 +1089,24 @@
       "name": "Cynar"
     },
     {
-      "category": "Other",
+      "category": "Liqueur",
+      "guidance": {
+        "alternatives": [],
+        "description": "prepared daiquiri base",
+        "guideId": "IC33"
+      },
       "image": "https://www.thecocktaildb.com/images/ingredients/Daiquiri%20mix-small.png",
       "name": "Daiquiri mix"
     },
     {
       "category": "Liqueur",
+      "guidance": {
+        "alternatives": [
+          "Homemade cacao liqueur"
+        ],
+        "description": "chocolate liqueur",
+        "guideId": "IC17-cacao"
+      },
       "image": "https://www.thecocktaildb.com/images/ingredients/Dark%20Creme%20de%20Cacao-small.png",
       "name": "Dark Creme de Cacao"
     },
@@ -908,6 +1202,13 @@
     },
     {
       "category": "Liqueur",
+      "guidance": {
+        "alternatives": [
+          "Homemade falernum"
+        ],
+        "description": "lime-spice almond liqueur",
+        "guideId": "IC30"
+      },
       "image": "https://www.thecocktaildb.com/images/ingredients/Falernum-small.png",
       "name": "Falernum"
     },
@@ -947,7 +1248,12 @@
       "name": "Fino Sherry"
     },
     {
-      "category": "Spirit",
+      "category": "Liqueur",
+      "guidance": {
+        "alternatives": [],
+        "description": "high-proof cinnamon liqueur",
+        "guideId": "IC16"
+      },
       "image": "https://www.thecocktaildb.com/images/ingredients/Firewater-small.png",
       "name": "Firewater"
     },
@@ -957,7 +1263,19 @@
       "name": "Food coloring"
     },
     {
+      "category": "Other",
+      "image": "https://www.thecocktaildb.com/images/ingredients/Food-grade%20citric%20acid-small.png",
+      "name": "Food-grade citric acid"
+    },
+    {
       "category": "Liqueur",
+      "guidance": {
+        "alternatives": [
+          "Homemade hazelnut liqueur"
+        ],
+        "description": "hazelnut liqueur",
+        "guideId": "IC09"
+      },
       "image": "https://www.thecocktaildb.com/images/ingredients/Frangelico-small.png",
       "name": "Frangelico"
     },
@@ -1088,6 +1406,13 @@
     },
     {
       "category": "Liqueur",
+      "guidance": {
+        "alternatives": [
+          "Irish cream + chocolate syrup"
+        ],
+        "description": "chocolate cream liqueur",
+        "guideId": "IC17"
+      },
       "image": "https://www.thecocktaildb.com/images/ingredients/Godiva%20liqueur-small.png",
       "name": "Godiva liqueur"
     },
@@ -1102,7 +1427,14 @@
       "name": "Gold tequila"
     },
     {
-      "category": "Beer & Cider",
+      "category": "Liqueur",
+      "guidance": {
+        "alternatives": [
+          "Vodka + cinnamon syrup"
+        ],
+        "description": "gold-flecked cinnamon liqueur",
+        "guideId": "IC14"
+      },
       "image": "https://www.thecocktaildb.com/images/ingredients/Goldschlager-small.png",
       "name": "Goldschlager"
     },
@@ -1178,11 +1510,25 @@
     },
     {
       "category": "Liqueur",
+      "guidance": {
+        "alternatives": [
+          "Homemade mint liqueur"
+        ],
+        "description": "mint liqueur",
+        "guideId": "IC21"
+      },
       "image": "https://www.thecocktaildb.com/images/ingredients/Green%20Creme%20de%20Menthe-small.png",
       "name": "Green Creme de Menthe"
     },
     {
       "category": "Syrup & Sweetener",
+      "guidance": {
+        "alternatives": [
+          "Homemade pomegranate syrup"
+        ],
+        "description": "pomegranate syrup",
+        "guideId": "IC35"
+      },
       "image": "https://www.thecocktaildb.com/images/ingredients/Grenadine-small.png",
       "name": "Grenadine"
     },
@@ -1217,6 +1563,18 @@
       "name": "Half-and-half"
     },
     {
+      "category": "Liqueur",
+      "guidance": {
+        "alternatives": [
+          "Homemade hazelnut liqueur"
+        ],
+        "description": "hazelnut liqueur",
+        "guideId": "IC09"
+      },
+      "image": "https://www.thecocktaildb.com/images/ingredients/Hazelnut%20liqueur-small.png",
+      "name": "Hazelnut liqueur"
+    },
+    {
       "category": "Dairy & Egg",
       "image": "https://www.thecocktaildb.com/images/ingredients/Heavy%20cream-small.png",
       "name": "Heavy cream"
@@ -1225,6 +1583,116 @@
       "category": "Syrup & Sweetener",
       "image": "https://www.thecocktaildb.com/images/ingredients/Hibiscus%20Syrup-small.png",
       "name": "Hibiscus Syrup"
+    },
+    {
+      "category": "Prepared ingredient",
+      "image": "https://www.thecocktaildb.com/images/ingredients/Homemade%20almond%20liqueur-small.png",
+      "name": "Homemade almond liqueur"
+    },
+    {
+      "category": "Prepared ingredient",
+      "image": "https://www.thecocktaildb.com/images/ingredients/Homemade%20banana%20liqueur-small.png",
+      "name": "Homemade banana liqueur"
+    },
+    {
+      "category": "Prepared ingredient",
+      "image": "https://www.thecocktaildb.com/images/ingredients/Homemade%20blackberry%20liqueur-small.png",
+      "name": "Homemade blackberry liqueur"
+    },
+    {
+      "category": "Prepared ingredient",
+      "image": "https://www.thecocktaildb.com/images/ingredients/Homemade%20blackcurrant%20liqueur-small.png",
+      "name": "Homemade blackcurrant liqueur"
+    },
+    {
+      "category": "Prepared ingredient",
+      "image": "https://www.thecocktaildb.com/images/ingredients/Homemade%20butterscotch%20liqueur-small.png",
+      "name": "Homemade butterscotch liqueur"
+    },
+    {
+      "category": "Prepared ingredient",
+      "image": "https://www.thecocktaildb.com/images/ingredients/Homemade%20cacao%20liqueur-small.png",
+      "name": "Homemade cacao liqueur"
+    },
+    {
+      "category": "Prepared ingredient",
+      "image": "https://www.thecocktaildb.com/images/ingredients/Homemade%20chocolate%20cream%20liqueur-small.png",
+      "name": "Homemade chocolate cream liqueur"
+    },
+    {
+      "category": "Prepared ingredient",
+      "image": "https://www.thecocktaildb.com/images/ingredients/Homemade%20cinnamon%20liqueur-small.png",
+      "name": "Homemade cinnamon liqueur"
+    },
+    {
+      "category": "Prepared ingredient",
+      "image": "https://www.thecocktaildb.com/images/ingredients/Homemade%20falernum-small.png",
+      "name": "Homemade falernum"
+    },
+    {
+      "category": "Prepared ingredient",
+      "image": "https://www.thecocktaildb.com/images/ingredients/Homemade%20grenadine-small.png",
+      "name": "Homemade grenadine"
+    },
+    {
+      "category": "Prepared ingredient",
+      "image": "https://www.thecocktaildb.com/images/ingredients/Homemade%20lime%20cordial-small.png",
+      "name": "Homemade lime cordial"
+    },
+    {
+      "category": "Prepared ingredient",
+      "image": "https://www.thecocktaildb.com/images/ingredients/Homemade%20melon%20liqueur-small.png",
+      "name": "Homemade melon liqueur"
+    },
+    {
+      "category": "Prepared ingredient",
+      "image": "https://www.thecocktaildb.com/images/ingredients/Homemade%20mint%20liqueur-small.png",
+      "name": "Homemade mint liqueur"
+    },
+    {
+      "category": "Prepared ingredient",
+      "image": "https://www.thecocktaildb.com/images/ingredients/Homemade%20orgeat-small.png",
+      "name": "Homemade orgeat"
+    },
+    {
+      "category": "Prepared ingredient",
+      "image": "https://www.thecocktaildb.com/images/ingredients/Homemade%20passion%20fruit%20liqueur-small.png",
+      "name": "Homemade passion fruit liqueur"
+    },
+    {
+      "category": "Prepared ingredient",
+      "image": "https://www.thecocktaildb.com/images/ingredients/Homemade%20peach%20liqueur-small.png",
+      "name": "Homemade peach liqueur"
+    },
+    {
+      "category": "Prepared ingredient",
+      "image": "https://www.thecocktaildb.com/images/ingredients/Homemade%20peppermint%20liqueur-small.png",
+      "name": "Homemade peppermint liqueur"
+    },
+    {
+      "category": "Prepared ingredient",
+      "image": "https://www.thecocktaildb.com/images/ingredients/Homemade%20raspberry%20liqueur-small.png",
+      "name": "Homemade raspberry liqueur"
+    },
+    {
+      "category": "Prepared ingredient",
+      "image": "https://www.thecocktaildb.com/images/ingredients/Homemade%20sour%20mix-small.png",
+      "name": "Homemade sour mix"
+    },
+    {
+      "category": "Prepared ingredient",
+      "image": "https://www.thecocktaildb.com/images/ingredients/Homemade%20strawberry%20liqueur-small.png",
+      "name": "Homemade strawberry liqueur"
+    },
+    {
+      "category": "Prepared ingredient",
+      "image": "https://www.thecocktaildb.com/images/ingredients/Homemade%20sweet%20apple%20liqueur-small.png",
+      "name": "Homemade sweet apple liqueur"
+    },
+    {
+      "category": "Prepared ingredient",
+      "image": "https://www.thecocktaildb.com/images/ingredients/Homemade%20sweet%20spiced%20whisky-small.png",
+      "name": "Homemade sweet spiced whisky"
     },
     {
       "category": "Syrup & Sweetener",
@@ -1242,9 +1710,21 @@
       "name": "Hot Chocolate"
     },
     {
-      "category": "Other",
+      "category": "Liqueur",
+      "guidance": {
+        "alternatives": [
+          "Vodka + cinnamon syrup"
+        ],
+        "description": "cinnamon liqueur",
+        "guideId": "IC02"
+      },
       "image": "https://www.thecocktaildb.com/images/ingredients/Hot%20Damn-small.png",
       "name": "Hot Damn"
+    },
+    {
+      "category": "Liqueur",
+      "image": "https://www.thecocktaildb.com/images/ingredients/Hot%20Damn%20100-small.png",
+      "name": "Hot Damn 100"
     },
     {
       "category": "Other",
@@ -1252,7 +1732,12 @@
       "name": "Hot Sauce"
     },
     {
-      "category": "Other",
+      "category": "Liqueur",
+      "guidance": {
+        "alternatives": [],
+        "description": "tropical fruit liqueur",
+        "guideId": "IC27"
+      },
       "image": "https://www.thecocktaildb.com/images/ingredients/Hpnotiq-small.png",
       "name": "Hpnotiq"
     },
@@ -1373,6 +1858,13 @@
     },
     {
       "category": "Liqueur",
+      "guidance": {
+        "alternatives": [
+          "Homemade kiwi liqueur"
+        ],
+        "description": "kiwi liqueur",
+        "guideId": "IC25"
+      },
       "image": "https://www.thecocktaildb.com/images/ingredients/Kiwi%20liqueur-small.png",
       "name": "Kiwi liqueur"
     },
@@ -1413,8 +1905,8 @@
     },
     {
       "category": "Juice",
-      "image": "https://www.thecocktaildb.com/images/ingredients/Lemon%20Juice-small.png",
-      "name": "Lemon Juice"
+      "image": "https://www.thecocktaildb.com/images/ingredients/Lemon%20juice-small.png",
+      "name": "Lemon juice"
     },
     {
       "category": "Fruit",
@@ -1482,12 +1974,31 @@
       "name": "Lime"
     },
     {
+      "category": "Syrup & Sweetener",
+      "guidance": {
+        "alternatives": [
+          "Homemade sweetened lime cordial"
+        ],
+        "description": "sweetened lime cordial",
+        "guideId": "IC32"
+      },
+      "image": "https://www.thecocktaildb.com/images/ingredients/Lime%20cordial-small.png",
+      "name": "Lime cordial"
+    },
+    {
       "category": "Juice",
       "image": "https://www.thecocktaildb.com/images/ingredients/Lime%20juice-small.png",
       "name": "Lime juice"
     },
     {
-      "category": "Juice",
+      "category": "Syrup & Sweetener",
+      "guidance": {
+        "alternatives": [
+          "Homemade sweetened lime cordial"
+        ],
+        "description": "sweetened lime cordial",
+        "guideId": "IC32"
+      },
       "image": "https://www.thecocktaildb.com/images/ingredients/Lime%20juice%20cordial-small.png",
       "name": "Lime juice cordial"
     },
@@ -1547,6 +2058,11 @@
       "name": "Makgeolli"
     },
     {
+      "category": "Liqueur",
+      "image": "https://www.thecocktaildb.com/images/ingredients/Malibu-small.png",
+      "name": "Malibu"
+    },
+    {
       "category": "Spirit",
       "image": "https://www.thecocktaildb.com/images/ingredients/Malibu%20rum-small.png",
       "name": "Malibu rum"
@@ -1603,8 +2119,15 @@
     },
     {
       "category": "Liqueur",
-      "image": "https://www.thecocktaildb.com/images/ingredients/Melon%20Liqueur-small.png",
-      "name": "Melon Liqueur"
+      "guidance": {
+        "alternatives": [
+          "Homemade melon liqueur"
+        ],
+        "description": "melon liqueur",
+        "guideId": "IC07"
+      },
+      "image": "https://www.thecocktaildb.com/images/ingredients/Melon%20liqueur-small.png",
+      "name": "Melon liqueur"
     },
     {
       "category": "Spirit",
@@ -1613,6 +2136,25 @@
     },
     {
       "category": "Liqueur",
+      "guidance": {
+        "alternatives": [
+          "Homemade melon liqueur"
+        ],
+        "description": "melon liqueur",
+        "guideId": "IC07"
+      },
+      "image": "https://www.thecocktaildb.com/images/ingredients/Midori-small.png",
+      "name": "Midori"
+    },
+    {
+      "category": "Liqueur",
+      "guidance": {
+        "alternatives": [
+          "Homemade melon liqueur"
+        ],
+        "description": "melon liqueur",
+        "guideId": "IC07"
+      },
       "image": "https://www.thecocktaildb.com/images/ingredients/Midori%20melon%20liqueur-small.png",
       "name": "Midori melon liqueur"
     },
@@ -1650,6 +2192,11 @@
       "category": "Other",
       "image": "https://www.thecocktaildb.com/images/ingredients/Mountain%20Dew-small.png",
       "name": "Mountain Dew"
+    },
+    {
+      "category": "Fruit",
+      "image": "https://www.thecocktaildb.com/images/ingredients/Muskmelon-small.png",
+      "name": "Muskmelon"
     },
     {
       "category": "Herb & Spice",
@@ -1697,6 +2244,11 @@
       "name": "Orange juice"
     },
     {
+      "category": "Liqueur",
+      "image": "https://www.thecocktaildb.com/images/ingredients/Orange%20liqueur-small.png",
+      "name": "Orange liqueur"
+    },
+    {
       "category": "Fruit",
       "image": "https://www.thecocktaildb.com/images/ingredients/Orange%20peel-small.png",
       "name": "Orange peel"
@@ -1718,11 +2270,25 @@
     },
     {
       "category": "Syrup & Sweetener",
+      "guidance": {
+        "alternatives": [
+          "Homemade almond syrup"
+        ],
+        "description": "almond syrup",
+        "guideId": "IC29"
+      },
       "image": "https://www.thecocktaildb.com/images/ingredients/Orgeat-small.png",
       "name": "Orgeat"
     },
     {
       "category": "Syrup & Sweetener",
+      "guidance": {
+        "alternatives": [
+          "Homemade almond syrup"
+        ],
+        "description": "almond syrup",
+        "guideId": "IC29"
+      },
       "image": "https://www.thecocktaildb.com/images/ingredients/Orgeat%20syrup-small.png",
       "name": "Orgeat syrup"
     },
@@ -1752,12 +2318,31 @@
       "name": "Passion fruit juice"
     },
     {
+      "category": "Liqueur",
+      "guidance": {
+        "alternatives": [
+          "Vodka + passion-fruit syrup"
+        ],
+        "description": "passion-fruit liqueur",
+        "guideId": "IC10"
+      },
+      "image": "https://www.thecocktaildb.com/images/ingredients/Passion%20fruit%20liqueur-small.png",
+      "name": "Passion fruit liqueur"
+    },
+    {
       "category": "Syrup & Sweetener",
       "image": "https://www.thecocktaildb.com/images/ingredients/Passion%20Fruit%20Syrup-small.png",
       "name": "Passion Fruit Syrup"
     },
     {
       "category": "Liqueur",
+      "guidance": {
+        "alternatives": [
+          "Vodka + passion-fruit syrup"
+        ],
+        "description": "passion-fruit liqueur",
+        "guideId": "IC10"
+      },
       "image": "https://www.thecocktaildb.com/images/ingredients/Passoa-small.png",
       "name": "Passoa"
     },
@@ -1772,6 +2357,11 @@
       "name": "Pasteurised Whole Egg"
     },
     {
+      "category": "Fruit",
+      "image": "https://www.thecocktaildb.com/images/ingredients/Peach-small.png",
+      "name": "Peach"
+    },
+    {
       "category": "Bitters",
       "image": "https://www.thecocktaildb.com/images/ingredients/Peach%20Bitters-small.png",
       "name": "Peach Bitters"
@@ -1782,12 +2372,31 @@
       "name": "Peach brandy"
     },
     {
+      "category": "Liqueur",
+      "guidance": {
+        "alternatives": [
+          "Homemade peach liqueur"
+        ],
+        "description": "peach liqueur",
+        "guideId": "IC12"
+      },
+      "image": "https://www.thecocktaildb.com/images/ingredients/Peach%20liqueur-small.png",
+      "name": "Peach liqueur"
+    },
+    {
       "category": "Juice",
       "image": "https://www.thecocktaildb.com/images/ingredients/Peach%20nectar-small.png",
       "name": "Peach nectar"
     },
     {
       "category": "Liqueur",
+      "guidance": {
+        "alternatives": [
+          "Homemade peach liqueur"
+        ],
+        "description": "peach liqueur",
+        "guideId": "IC12"
+      },
       "image": "https://www.thecocktaildb.com/images/ingredients/Peach%20schnapps-small.png",
       "name": "Peach schnapps"
     },
@@ -1798,6 +2407,25 @@
     },
     {
       "category": "Liqueur",
+      "guidance": {
+        "alternatives": [
+          "Homemade peach liqueur"
+        ],
+        "description": "peach liqueur",
+        "guideId": "IC12"
+      },
+      "image": "https://www.thecocktaildb.com/images/ingredients/Peachtree-small.png",
+      "name": "Peachtree"
+    },
+    {
+      "category": "Liqueur",
+      "guidance": {
+        "alternatives": [
+          "Homemade peach liqueur"
+        ],
+        "description": "peach liqueur",
+        "guideId": "IC12"
+      },
       "image": "https://www.thecocktaildb.com/images/ingredients/Peachtree%20schnapps-small.png",
       "name": "Peachtree schnapps"
     },
@@ -1818,6 +2446,13 @@
     },
     {
       "category": "Liqueur",
+      "guidance": {
+        "alternatives": [
+          "Homemade peppermint liqueur"
+        ],
+        "description": "peppermint schnapps",
+        "guideId": "IC15"
+      },
       "image": "https://www.thecocktaildb.com/images/ingredients/Peppermint%20schnapps-small.png",
       "name": "Peppermint schnapps"
     },
@@ -1852,7 +2487,12 @@
       "name": "Pimms No. 1"
     },
     {
-      "category": "Other",
+      "category": "Liqueur",
+      "guidance": {
+        "alternatives": [],
+        "description": "pineapple-coconut mix",
+        "guideId": "IC34"
+      },
       "image": "https://www.thecocktaildb.com/images/ingredients/Pina%20colada%20mix-small.png",
       "name": "Pina colada mix"
     },
@@ -1882,7 +2522,14 @@
       "name": "Pink Peppercorn"
     },
     {
-      "category": "Other",
+      "category": "Liqueur",
+      "guidance": {
+        "alternatives": [
+          "Homemade banana liqueur"
+        ],
+        "description": "green banana liqueur",
+        "guideId": "IC11"
+      },
       "image": "https://www.thecocktaildb.com/images/ingredients/Pisang%20Ambon-small.png",
       "name": "Pisang Ambon"
     },
@@ -1963,6 +2610,13 @@
     },
     {
       "category": "Liqueur",
+      "guidance": {
+        "alternatives": [
+          "Vodka + seedless raspberry jam, strained"
+        ],
+        "description": "raspberry liqueur",
+        "guideId": "IC08"
+      },
       "image": "https://www.thecocktaildb.com/images/ingredients/Raspberry%20Liqueur-small.png",
       "name": "Raspberry Liqueur"
     },
@@ -2042,6 +2696,18 @@
       "name": "Rose Water"
     },
     {
+      "category": "Syrup & Sweetener",
+      "guidance": {
+        "alternatives": [
+          "Homemade sweetened lime cordial"
+        ],
+        "description": "sweetened lime cordial",
+        "guideId": "IC32"
+      },
+      "image": "https://www.thecocktaildb.com/images/ingredients/Rose's%20lime%20cordial-small.png",
+      "name": "Rose's lime cordial"
+    },
+    {
       "category": "Herb & Spice",
       "image": "https://www.thecocktaildb.com/images/ingredients/Rosemary-small.png",
       "name": "Rosemary"
@@ -2052,7 +2718,14 @@
       "name": "Rosemary Syrup"
     },
     {
-      "category": "Juice",
+      "category": "Syrup & Sweetener",
+      "guidance": {
+        "alternatives": [
+          "Homemade sweetened lime cordial"
+        ],
+        "description": "sweetened lime cordial",
+        "guideId": "IC32"
+      },
       "image": "https://www.thecocktaildb.com/images/ingredients/Roses%20sweetened%20lime%20juice-small.png",
       "name": "Roses sweetened lime juice"
     },
@@ -2072,7 +2745,14 @@
       "name": "Rum"
     },
     {
-      "category": "Other",
+      "category": "Liqueur",
+      "guidance": {
+        "alternatives": [
+          "Homemade peppermint liqueur"
+        ],
+        "description": "peppermint schnapps",
+        "guideId": "IC15"
+      },
       "image": "https://www.thecocktaildb.com/images/ingredients/Rumple%20Minze-small.png",
       "name": "Rumple Minze"
     },
@@ -2122,7 +2802,14 @@
       "name": "Sarsaparilla"
     },
     {
-      "category": "Other",
+      "category": "Soda & Mixer",
+      "guidance": {
+        "alternatives": [
+          "Lemon-lime soda + orange peel"
+        ],
+        "description": "aromatic citrus soda",
+        "guideId": "IC04"
+      },
       "image": "https://www.thecocktaildb.com/images/ingredients/Schweppes%20Russchian-small.png",
       "name": "Schweppes Russchian"
     },
@@ -2130,6 +2817,11 @@
       "category": "Spirit",
       "image": "https://www.thecocktaildb.com/images/ingredients/Scotch-small.png",
       "name": "Scotch"
+    },
+    {
+      "category": "Fruit",
+      "image": "https://www.thecocktaildb.com/images/ingredients/Seedless%20raspberry%20jam-small.png",
+      "name": "Seedless raspberry jam"
     },
     {
       "category": "Other",
@@ -2150,6 +2842,11 @@
       "category": "Spirit",
       "image": "https://www.thecocktaildb.com/images/ingredients/Shochu-small.png",
       "name": "Shochu"
+    },
+    {
+      "category": "Syrup & Sweetener",
+      "image": "https://www.thecocktaildb.com/images/ingredients/Simple%20syrup-small.png",
+      "name": "Simple syrup"
     },
     {
       "category": "Spirit",
@@ -2187,12 +2884,26 @@
       "name": "Soju"
     },
     {
-      "category": "Other",
+      "category": "Syrup & Sweetener",
+      "guidance": {
+        "alternatives": [
+          "Homemade lemon-lime sour mix"
+        ],
+        "description": "sweet citrus mix",
+        "guideId": "IC31"
+      },
       "image": "https://www.thecocktaildb.com/images/ingredients/Sour%20mix-small.png",
       "name": "Sour mix"
     },
     {
       "category": "Liqueur",
+      "guidance": {
+        "alternatives": [
+          "Whisky + honey + orange peel"
+        ],
+        "description": "sweet spiced whisky",
+        "guideId": "IC01"
+      },
       "image": "https://www.thecocktaildb.com/images/ingredients/Southern%20Comfort-small.png",
       "name": "Southern Comfort"
     },
@@ -2242,12 +2953,31 @@
       "name": "Strawberries"
     },
     {
+      "category": "Fruit",
+      "image": "https://www.thecocktaildb.com/images/ingredients/Strawberry-small.png",
+      "name": "Strawberry"
+    },
+    {
       "category": "Liqueur",
+      "guidance": {
+        "alternatives": [
+          "Homemade strawberry liqueur"
+        ],
+        "description": "strawberry liqueur",
+        "guideId": "IC23"
+      },
       "image": "https://www.thecocktaildb.com/images/ingredients/Strawberry%20liqueur-small.png",
       "name": "Strawberry liqueur"
     },
     {
       "category": "Liqueur",
+      "guidance": {
+        "alternatives": [
+          "Homemade strawberry liqueur"
+        ],
+        "description": "strawberry liqueur",
+        "guideId": "IC23"
+      },
       "image": "https://www.thecocktaildb.com/images/ingredients/Strawberry%20schnapps-small.png",
       "name": "Strawberry schnapps"
     },
@@ -2282,14 +3012,86 @@
       "name": "Suze"
     },
     {
-      "category": "Other",
+      "category": "Syrup & Sweetener",
+      "guidance": {
+        "alternatives": [
+          "Homemade lemon-lime sour mix"
+        ],
+        "description": "sweet citrus mix",
+        "guideId": "IC31"
+      },
       "image": "https://www.thecocktaildb.com/images/ingredients/Sweet%20and%20Sour-small.png",
       "name": "Sweet and Sour"
+    },
+    {
+      "category": "Syrup & Sweetener",
+      "guidance": {
+        "alternatives": [
+          "Homemade lemon-lime sour mix"
+        ],
+        "description": "sweet citrus mix",
+        "guideId": "IC31"
+      },
+      "image": "https://www.thecocktaildb.com/images/ingredients/Sweet%20and%20sour%20mix-small.png",
+      "name": "Sweet and sour mix"
+    },
+    {
+      "category": "Liqueur",
+      "guidance": {
+        "alternatives": [
+          "Vodka + concentrated apple juice + sugar"
+        ],
+        "description": "sweet apple liqueur",
+        "guideId": "IC03"
+      },
+      "image": "https://www.thecocktaildb.com/images/ingredients/Sweet%20apple%20liqueur-small.png",
+      "name": "Sweet apple liqueur"
+    },
+    {
+      "category": "Liqueur",
+      "guidance": {
+        "alternatives": [
+          "Vodka + concentrated apple juice + sugar"
+        ],
+        "description": "apple liqueur",
+        "guideId": "IC13"
+      },
+      "image": "https://www.thecocktaildb.com/images/ingredients/Sweet%20apple%20schnapps-small.png",
+      "name": "Sweet apple schnapps"
+    },
+    {
+      "category": "Liqueur",
+      "guidance": {
+        "alternatives": [
+          "Whisky + honey + orange peel"
+        ],
+        "description": "sweet spiced whisky",
+        "guideId": "IC01"
+      },
+      "image": "https://www.thecocktaildb.com/images/ingredients/Sweet%20spiced%20whiskey-small.png",
+      "name": "Sweet spiced whiskey"
+    },
+    {
+      "category": "Liqueur",
+      "guidance": {
+        "alternatives": [
+          "Whisky + honey + orange peel"
+        ],
+        "description": "sweet spiced whisky",
+        "guideId": "IC01"
+      },
+      "image": "https://www.thecocktaildb.com/images/ingredients/Sweet%20spiced%20whisky-small.png",
+      "name": "Sweet spiced whisky"
     },
     {
       "category": "Wine & Fortified",
       "image": "https://www.thecocktaildb.com/images/ingredients/Sweet%20Vermouth-small.png",
       "name": "Sweet Vermouth"
+    },
+    {
+      "category": "Spirit",
+      "image": "https://www.thecocktaildb.com/images/ingredients/Sweetened%20coconut%20rum-small.png",
+      "name": "Sweetened coconut rum"
     },
     {
       "category": "Other",
@@ -2325,6 +3127,11 @@
       "category": "Spirit",
       "image": "https://www.thecocktaildb.com/images/ingredients/Tequila-small.png",
       "name": "Tequila"
+    },
+    {
+      "category": "Liqueur",
+      "image": "https://www.thecocktaildb.com/images/ingredients/Tequila-based%20coconut%20liqueur-small.png",
+      "name": "Tequila-based coconut liqueur"
     },
     {
       "category": "Herb & Spice",
@@ -2385,6 +3192,11 @@
       "category": "Wine & Fortified",
       "image": "https://www.thecocktaildb.com/images/ingredients/Umeshu-small.png",
       "name": "Umeshu"
+    },
+    {
+      "category": "Dairy & Egg",
+      "image": "https://www.thecocktaildb.com/images/ingredients/Unsweetened%20almond%20milk-small.png",
+      "name": "Unsweetened almond milk"
     },
     {
       "category": "Spirit",
@@ -2458,6 +3270,13 @@
     },
     {
       "category": "Liqueur",
+      "guidance": {
+        "alternatives": [
+          "Homemade mint liqueur"
+        ],
+        "description": "mint liqueur",
+        "guideId": "IC21"
+      },
       "image": "https://www.thecocktaildb.com/images/ingredients/White%20Creme%20de%20Menthe-small.png",
       "name": "White Creme de Menthe"
     },
@@ -2559,6 +3378,13 @@
           "name": "Lemon Juice"
         },
         {
+          "guidance": {
+            "alternatives": [
+              "Homemade pomegranate syrup"
+            ],
+            "description": "pomegranate syrup",
+            "guideId": "IC35"
+          },
           "measure": "1/8 Shot",
           "name": "Grenadine"
         }
@@ -2579,6 +3405,11 @@
       "id": "13501",
       "ingredients": [
         {
+          "guidance": {
+            "alternatives": [],
+            "description": "almond liqueur",
+            "guideId": "IC05"
+          },
           "measure": "1/3",
           "name": "Amaretto"
         },
@@ -2611,6 +3442,13 @@
           "name": "Gin"
         },
         {
+          "guidance": {
+            "alternatives": [
+              "Homemade pomegranate syrup"
+            ],
+            "description": "pomegranate syrup",
+            "guideId": "IC35"
+          },
           "measure": "1/2 shot",
           "name": "Grenadine"
         },
@@ -2703,6 +3541,13 @@
           "name": "Lemon juice"
         },
         {
+          "guidance": {
+            "alternatives": [
+              "Homemade pomegranate syrup"
+            ],
+            "description": "pomegranate syrup",
+            "guideId": "IC35"
+          },
           "measure": "1 tsp",
           "name": "Grenadine"
         }
@@ -2750,6 +3595,13 @@
       "id": "17839",
       "ingredients": [
         {
+          "guidance": {
+            "alternatives": [
+              "Homemade strawberry liqueur"
+            ],
+            "description": "strawberry liqueur",
+            "guideId": "IC23"
+          },
           "measure": "2 oz",
           "name": "Strawberry schnapps"
         },
@@ -2786,6 +3638,11 @@
           "name": "Vodka"
         },
         {
+          "guidance": {
+            "alternatives": [],
+            "description": "green banana liqueur",
+            "guideId": "IC11"
+          },
           "measure": "1 part",
           "name": "Pisang Ambon"
         },
@@ -3065,6 +3922,13 @@
           "name": "Gin"
         },
         {
+          "guidance": {
+            "alternatives": [
+              "Homemade cacao liqueur"
+            ],
+            "description": "chocolate liqueur",
+            "guideId": "IC17-cacao"
+          },
           "measure": "1/2 oz white",
           "name": "Creme de Cacao"
         },
@@ -3133,6 +3997,13 @@
           "name": "Bourbon"
         },
         {
+          "guidance": {
+            "alternatives": [
+              "Homemade blackberry liqueur"
+            ],
+            "description": "blackberry liqueur",
+            "guideId": "IC20"
+          },
           "measure": "1 1/2 tsp",
           "name": "Blackberry brandy"
         },
@@ -3252,6 +4123,13 @@
       "id": "12560",
       "ingredients": [
         {
+          "guidance": {
+            "alternatives": [
+              "Homemade pomegranate syrup"
+            ],
+            "description": "pomegranate syrup",
+            "guideId": "IC35"
+          },
           "measure": "1 part",
           "name": "Grenadine"
         },
@@ -3411,6 +4289,13 @@
           "name": "Lemon juice"
         },
         {
+          "guidance": {
+            "alternatives": [
+              "Homemade pomegranate syrup"
+            ],
+            "description": "pomegranate syrup",
+            "guideId": "IC35"
+          },
           "measure": "1/2 tsp",
           "name": "Grenadine"
         },
@@ -3439,6 +4324,13 @@
           "name": "Irish cream"
         },
         {
+          "guidance": {
+            "alternatives": [
+              "Vodka + cinnamon syrup"
+            ],
+            "description": "gold-flecked cinnamon liqueur",
+            "guideId": "IC14"
+          },
           "measure": "1/2 oz",
           "name": "Goldschlager"
         }
@@ -3463,6 +4355,13 @@
           "name": "Champagne"
         },
         {
+          "guidance": {
+            "alternatives": [
+              "Homemade peach liqueur"
+            ],
+            "description": "peach liqueur",
+            "guideId": "IC12"
+          },
           "measure": "1 oz",
           "name": "Peach schnapps"
         }
@@ -3498,6 +4397,13 @@
           "name": "Sugar syrup"
         },
         {
+          "guidance": {
+            "alternatives": [
+              "Homemade blackberry liqueur"
+            ],
+            "description": "blackberry liqueur",
+            "guideId": "IC20"
+          },
           "measure": "1.5 cl",
           "name": "Creme de Mure"
         }
@@ -3561,6 +4467,15 @@
           "name": "Triple sec"
         },
         {
+          "guidance": {
+            "alternatives": [
+              "Triple sec",
+              "Cointreau",
+              "Orange liqueur"
+            ],
+            "description": "blue orange liqueur",
+            "guideId": "IC06"
+          },
           "measure": "1/2 oz",
           "name": "Blue Curacao"
         },
@@ -3646,6 +4561,13 @@
           "name": "Lemon juice"
         },
         {
+          "guidance": {
+            "alternatives": [
+              "Homemade pomegranate syrup"
+            ],
+            "description": "pomegranate syrup",
+            "guideId": "IC35"
+          },
           "measure": "1 cl",
           "name": "Grenadine"
         }
@@ -3897,6 +4819,11 @@
       "id": "13395",
       "ingredients": [
         {
+          "guidance": {
+            "alternatives": [],
+            "description": "melon liqueur",
+            "guideId": "IC07"
+          },
           "measure": "1/2 oz",
           "name": "Midori melon liqueur"
         },
@@ -3905,6 +4832,11 @@
           "name": "Jägermeister"
         },
         {
+          "guidance": {
+            "alternatives": [],
+            "description": "gold-flecked cinnamon liqueur",
+            "guideId": "IC14"
+          },
           "measure": "1/2 oz",
           "name": "Goldschlager"
         }
@@ -3925,6 +4857,13 @@
       "id": "16986",
       "ingredients": [
         {
+          "guidance": {
+            "alternatives": [
+              "Whisky + honey + orange peel"
+            ],
+            "description": "sweet spiced whisky",
+            "guideId": "IC01"
+          },
           "measure": "2 oz",
           "name": "Southern Comfort"
         },
@@ -3937,6 +4876,13 @@
           "name": "Lime"
         },
         {
+          "guidance": {
+            "alternatives": [
+              "Homemade lemon-lime sour mix"
+            ],
+            "description": "sweet citrus mix",
+            "guideId": "IC31"
+          },
           "measure": "2 oz",
           "name": "Sour mix"
         }
@@ -3961,6 +4907,11 @@
           "name": "Vodka"
         },
         {
+          "guidance": {
+            "alternatives": [],
+            "description": "banana liqueur",
+            "guideId": "IC18"
+          },
           "measure": "1/4",
           "name": "Banana liqueur"
         },
@@ -3969,6 +4920,11 @@
           "name": "Orange juice"
         },
         {
+          "guidance": {
+            "alternatives": [],
+            "description": "peach liqueur",
+            "guideId": "IC12"
+          },
           "measure": "1/4",
           "name": "Peach schnapps"
         }
@@ -4093,10 +5049,24 @@
           "name": "Dark Rum"
         },
         {
+          "guidance": {
+            "alternatives": [
+              "Homemade banana liqueur"
+            ],
+            "description": "banana liqueur",
+            "guideId": "IC18"
+          },
           "measure": "1 part",
           "name": "Banana liqueur"
         },
         {
+          "guidance": {
+            "alternatives": [
+              "Homemade pomegranate syrup"
+            ],
+            "description": "pomegranate syrup",
+            "guideId": "IC35"
+          },
           "measure": "1 part",
           "name": "Grenadine"
         },
@@ -4109,6 +5079,13 @@
           "name": "Orange Juice"
         },
         {
+          "guidance": {
+            "alternatives": [
+              "Homemade lemon-lime sour mix"
+            ],
+            "description": "sweet citrus mix",
+            "guideId": "IC31"
+          },
           "measure": "1 part",
           "name": "Sweet and Sour"
         }
@@ -4364,6 +5341,13 @@
           "name": "Lime"
         },
         {
+          "guidance": {
+            "alternatives": [
+              "Homemade falernum"
+            ],
+            "description": "lime-spice almond liqueur",
+            "guideId": "IC30"
+          },
           "measure": "1/3 oz",
           "name": "Falernum"
         },
@@ -4456,6 +5440,13 @@
           "name": "Gin"
         },
         {
+          "guidance": {
+            "alternatives": [
+              "Homemade pomegranate syrup"
+            ],
+            "description": "pomegranate syrup",
+            "guideId": "IC35"
+          },
           "measure": "2 tsp",
           "name": "Grenadine"
         },
@@ -4773,6 +5764,11 @@
       "id": "13328",
       "ingredients": [
         {
+          "guidance": {
+            "alternatives": [],
+            "description": "chocolate liqueur",
+            "guideId": "IC17-cacao"
+          },
           "measure": "1/2 shot",
           "name": "Chocolate liqueur"
         },
@@ -4781,6 +5777,11 @@
           "name": "Milk"
         },
         {
+          "guidance": {
+            "alternatives": [],
+            "description": "almond liqueur",
+            "guideId": "IC05"
+          },
           "measure": "1 dash",
           "name": "Amaretto"
         }
@@ -5406,6 +6407,13 @@
           "name": "Whiskey"
         },
         {
+          "guidance": {
+            "alternatives": [
+              "Vodka + cinnamon syrup"
+            ],
+            "description": "cinnamon liqueur",
+            "guideId": "IC02"
+          },
           "measure": "0.25 oz",
           "name": "Hot Damn"
         }
@@ -5792,6 +6800,13 @@
           "name": "Dry Vermouth"
         },
         {
+          "guidance": {
+            "alternatives": [
+              "Homemade pomegranate syrup"
+            ],
+            "description": "pomegranate syrup",
+            "guideId": "IC35"
+          },
           "measure": "1 tsp",
           "name": "Grenadine"
         },
@@ -5890,6 +6905,11 @@
           "name": "Mezcal"
         },
         {
+          "guidance": {
+            "alternatives": [],
+            "description": "chocolate liqueur",
+            "guideId": "IC17-cacao"
+          },
           "measure": "3/4 oz",
           "name": "Chocolate liqueur"
         },
@@ -5978,10 +6998,24 @@
       "id": "11375",
       "ingredients": [
         {
+          "guidance": {
+            "alternatives": [
+              "Homemade almond liqueur"
+            ],
+            "description": "almond liqueur",
+            "guideId": "IC05"
+          },
           "measure": "1/2 oz",
           "name": "Amaretto"
         },
         {
+          "guidance": {
+            "alternatives": [
+              "Homemade cacao liqueur"
+            ],
+            "description": "chocolate liqueur",
+            "guideId": "IC17-cacao"
+          },
           "measure": "1/2 oz",
           "name": "Creme de Cacao"
         },
@@ -6280,6 +7314,13 @@
           "name": "Coffee"
         },
         {
+          "guidance": {
+            "alternatives": [
+              "Homemade peach liqueur"
+            ],
+            "description": "peach liqueur",
+            "guideId": "IC12"
+          },
           "measure": "1/2",
           "name": "Peach schnapps"
         }
@@ -6304,6 +7345,13 @@
           "name": "Vodka"
         },
         {
+          "guidance": {
+            "alternatives": [
+              "Vodka + seedless raspberry jam, strained"
+            ],
+            "description": "raspberry liqueur",
+            "guideId": "IC08"
+          },
           "measure": "1.5 cl",
           "name": "Raspberry Liqueur"
         },
@@ -6363,6 +7411,11 @@
       "id": "13070",
       "ingredients": [
         {
+          "guidance": {
+            "alternatives": [],
+            "description": "high-proof cinnamon liqueur",
+            "guideId": "IC16"
+          },
           "measure": "1/2 oz",
           "name": "Firewater"
         },
@@ -6515,6 +7568,13 @@
           "name": "Cognac"
         },
         {
+          "guidance": {
+            "alternatives": [
+              "Homemade almond liqueur"
+            ],
+            "description": "almond liqueur",
+            "guideId": "IC05"
+          },
           "measure": "3/4 oz",
           "name": "Amaretto"
         }
@@ -6538,6 +7598,11 @@
       "id": "13202",
       "ingredients": [
         {
+          "guidance": {
+            "alternatives": [],
+            "description": "almond liqueur",
+            "guideId": "IC05"
+          },
           "measure": "1 oz",
           "name": "Amaretto"
         },
@@ -6582,6 +7647,11 @@
           "name": "Sambuca"
         },
         {
+          "guidance": {
+            "alternatives": [],
+            "description": "blue orange liqueur",
+            "guideId": "IC06"
+          },
           "measure": "1 oz",
           "name": "Blue Curacao"
         },
@@ -6758,6 +7828,13 @@
           "name": "Vodka"
         },
         {
+          "guidance": {
+            "alternatives": [
+              "Homemade almond liqueur"
+            ],
+            "description": "almond liqueur",
+            "guideId": "IC05"
+          },
           "measure": "1 oz",
           "name": "Amaretto"
         },
@@ -6901,6 +7978,13 @@
           "name": "Vodka"
         },
         {
+          "guidance": {
+            "alternatives": [
+              "Homemade almond liqueur"
+            ],
+            "description": "almond liqueur",
+            "guideId": "IC05"
+          },
           "measure": "3/4 oz",
           "name": "Amaretto"
         }
@@ -6928,6 +8012,13 @@
           "name": "Scotch"
         },
         {
+          "guidance": {
+            "alternatives": [
+              "Homemade almond liqueur"
+            ],
+            "description": "almond liqueur",
+            "guideId": "IC05"
+          },
           "measure": "3/4 oz",
           "name": "Amaretto"
         }
@@ -7123,6 +8214,13 @@
           "name": "Sugar"
         },
         {
+          "guidance": {
+            "alternatives": [
+              "Homemade pomegranate syrup"
+            ],
+            "description": "pomegranate syrup",
+            "guideId": "IC35"
+          },
           "measure": "1/2 tsp",
           "name": "Grenadine"
         },
@@ -7251,6 +8349,13 @@
           "name": "Gin"
         },
         {
+          "guidance": {
+            "alternatives": [
+              "Homemade pomegranate syrup"
+            ],
+            "description": "pomegranate syrup",
+            "guideId": "IC35"
+          },
           "measure": "1 tsp",
           "name": "Grenadine"
         },
@@ -7287,6 +8392,13 @@
           "name": "Gin"
         },
         {
+          "guidance": {
+            "alternatives": [
+              "Homemade pomegranate syrup"
+            ],
+            "description": "pomegranate syrup",
+            "guideId": "IC35"
+          },
           "measure": "1 tsp",
           "name": "Grenadine"
         },
@@ -7327,14 +8439,37 @@
           "name": "Malibu rum"
         },
         {
+          "guidance": {
+            "alternatives": [
+              "Homemade peach liqueur"
+            ],
+            "description": "peach liqueur",
+            "guideId": "IC12"
+          },
           "measure": "1 1/2 cl",
           "name": "Peach schnapps"
         },
         {
+          "guidance": {
+            "alternatives": [
+              "Triple sec",
+              "Cointreau",
+              "Orange liqueur"
+            ],
+            "description": "blue orange liqueur",
+            "guideId": "IC06"
+          },
           "measure": "1 1/2 cl",
           "name": "Blue Curacao"
         },
         {
+          "guidance": {
+            "alternatives": [
+              "Homemade lemon-lime sour mix"
+            ],
+            "description": "sweet citrus mix",
+            "guideId": "IC31"
+          },
           "measure": "3 cl",
           "name": "Sweet and sour"
         }
@@ -7439,6 +8574,13 @@
           "name": "Pineapple juice"
         },
         {
+          "guidance": {
+            "alternatives": [
+              "Homemade pomegranate syrup"
+            ],
+            "description": "pomegranate syrup",
+            "guideId": "IC35"
+          },
           "measure": "1/2 tsp",
           "name": "Grenadine"
         },
@@ -7463,10 +8605,24 @@
       "id": "17200",
       "ingredients": [
         {
+          "guidance": {
+            "alternatives": [
+              "Homemade mint liqueur"
+            ],
+            "description": "mint liqueur",
+            "guideId": "IC21"
+          },
           "measure": "3/4 oz",
           "name": "Green Creme de Menthe"
         },
         {
+          "guidance": {
+            "alternatives": [
+              "Homemade cacao liqueur"
+            ],
+            "description": "chocolate liqueur",
+            "guideId": "IC17-cacao"
+          },
           "measure": "3/4 oz white",
           "name": "Creme de Cacao"
         },
@@ -7503,6 +8659,13 @@
           "name": "151 proof rum"
         },
         {
+          "guidance": {
+            "alternatives": [
+              "Homemade pomegranate syrup"
+            ],
+            "description": "pomegranate syrup",
+            "guideId": "IC35"
+          },
           "measure": "1 dash",
           "name": "Grenadine"
         }
@@ -7650,6 +8813,11 @@
       "id": "15813",
       "ingredients": [
         {
+          "guidance": {
+            "alternatives": [],
+            "description": "cinnamon liqueur · 100 proof",
+            "guideId": "IC02"
+          },
           "measure": "5 shots",
           "name": "Hot Damn"
         },
@@ -8288,6 +9456,13 @@
           "name": "Orange juice"
         },
         {
+          "guidance": {
+            "alternatives": [
+              "Homemade lemon-lime sour mix"
+            ],
+            "description": "sweet citrus mix",
+            "guideId": "IC31"
+          },
           "measure": "1 oz",
           "name": "Sweet and sour"
         },
@@ -8476,6 +9651,11 @@
           "name": "Baileys irish cream"
         },
         {
+          "guidance": {
+            "alternatives": [],
+            "description": "raspberry liqueur",
+            "guideId": "IC08"
+          },
           "measure": "1/3 oz",
           "name": "Chambord raspberry liqueur"
         },
@@ -8512,6 +9692,13 @@
           "name": "Vodka"
         },
         {
+          "guidance": {
+            "alternatives": [
+              "Homemade pomegranate syrup"
+            ],
+            "description": "pomegranate syrup",
+            "guideId": "IC35"
+          },
           "measure": "3 dashes",
           "name": "Grenadine"
         },
@@ -8552,6 +9739,13 @@
           "name": "Jack Daniels"
         },
         {
+          "guidance": {
+            "alternatives": [
+              "Homemade almond liqueur"
+            ],
+            "description": "almond liqueur",
+            "guideId": "IC05"
+          },
           "measure": "1 oz",
           "name": "Amaretto"
         }
@@ -8572,6 +9766,13 @@
       "id": "13775",
       "ingredients": [
         {
+          "guidance": {
+            "alternatives": [
+              "Homemade blackberry liqueur"
+            ],
+            "description": "blackberry liqueur",
+            "guideId": "IC20"
+          },
           "measure": "1 oz",
           "name": "Blackberry brandy"
         },
@@ -8830,6 +10031,13 @@
           "name": "Apple brandy"
         },
         {
+          "guidance": {
+            "alternatives": [
+              "Homemade pomegranate syrup"
+            ],
+            "description": "pomegranate syrup",
+            "guideId": "IC35"
+          },
           "measure": "1 tsp",
           "name": "Grenadine"
         },
@@ -8888,6 +10096,13 @@
       "id": "17203",
       "ingredients": [
         {
+          "guidance": {
+            "alternatives": [
+              "Vodka + blackcurrant concentrate"
+            ],
+            "description": "blackcurrant liqueur",
+            "guideId": "IC19"
+          },
           "measure": "1 part",
           "name": "Creme de Cassis"
         },
@@ -8970,6 +10185,13 @@
       "id": "13837",
       "ingredients": [
         {
+          "guidance": {
+            "alternatives": [
+              "Vodka + blackcurrant concentrate"
+            ],
+            "description": "blackcurrant liqueur",
+            "guideId": "IC19"
+          },
           "measure": "1 part",
           "name": "Creme de Cassis"
         },
@@ -8994,6 +10216,13 @@
       "id": "14752",
       "ingredients": [
         {
+          "guidance": {
+            "alternatives": [
+              "Homemade kiwi liqueur"
+            ],
+            "description": "kiwi liqueur",
+            "guideId": "IC25"
+          },
           "measure": "1 part",
           "name": "Kiwi liqueur"
         },
@@ -9117,10 +10346,24 @@
           "name": "Cranberry vodka"
         },
         {
+          "guidance": {
+            "alternatives": [
+              "Vodka + concentrated apple juice + sugar"
+            ],
+            "description": "sweet apple liqueur",
+            "guideId": "IC03"
+          },
           "measure": "2 cl",
           "name": "Apfelkorn"
         },
         {
+          "guidance": {
+            "alternatives": [
+              "Lemon-lime soda + orange peel"
+            ],
+            "description": "aromatic citrus soda",
+            "guideId": "IC04"
+          },
           "measure": "7 cl",
           "name": "Schweppes Russchian"
         },
@@ -9153,6 +10396,13 @@
           "name": "Vodka"
         },
         {
+          "guidance": {
+            "alternatives": [
+              "Homemade almond liqueur"
+            ],
+            "description": "almond liqueur",
+            "guideId": "IC05"
+          },
           "measure": "1 shot",
           "name": "Amaretto"
         },
@@ -9373,6 +10623,13 @@
           "name": "Beer"
         },
         {
+          "guidance": {
+            "alternatives": [
+              "Homemade almond liqueur"
+            ],
+            "description": "almond liqueur",
+            "guideId": "IC05"
+          },
           "measure": "1 shot",
           "name": "Amaretto"
         },
@@ -9931,6 +11188,11 @@
       "id": "178335",
       "ingredients": [
         {
+          "guidance": {
+            "alternatives": [],
+            "description": "tequila-based coconut liqueur",
+            "guideId": "IC26"
+          },
           "measure": "30 ml",
           "name": "Coconut Liqueur"
         },
@@ -10222,6 +11484,13 @@
           "name": "Light rum"
         },
         {
+          "guidance": {
+            "alternatives": [
+              "Homemade almond syrup"
+            ],
+            "description": "almond syrup",
+            "guideId": "IC29"
+          },
           "measure": "1/2 oz",
           "name": "Orgeat syrup"
         },
@@ -10230,6 +11499,13 @@
           "name": "Triple sec"
         },
         {
+          "guidance": {
+            "alternatives": [
+              "Homemade lemon-lime sour mix"
+            ],
+            "description": "sweet citrus mix",
+            "guideId": "IC31"
+          },
           "measure": "1 1/2 oz",
           "name": "Sweet and sour"
         },
@@ -10445,6 +11721,13 @@
           "name": "Ricard"
         },
         {
+          "guidance": {
+            "alternatives": [
+              "Homemade almond syrup"
+            ],
+            "description": "almond syrup",
+            "guideId": "IC29"
+          },
           "measure": "1 cl",
           "name": "Orgeat Syrup"
         },
@@ -10504,6 +11787,13 @@
       "id": "16041",
       "ingredients": [
         {
+          "guidance": {
+            "alternatives": [
+              "Whisky + honey + orange peel"
+            ],
+            "description": "sweet spiced whisky",
+            "guideId": "IC01"
+          },
           "measure": "750 ml",
           "name": "Southern Comfort"
         },
@@ -10572,6 +11862,13 @@
           "name": "Tequila"
         },
         {
+          "guidance": {
+            "alternatives": [
+              "Homemade pomegranate syrup"
+            ],
+            "description": "pomegranate syrup",
+            "guideId": "IC35"
+          },
           "measure": "1/5",
           "name": "Grenadine"
         }
@@ -10596,10 +11893,20 @@
           "name": "151 proof rum"
         },
         {
+          "guidance": {
+            "alternatives": [],
+            "description": "pineapple-coconut mix",
+            "guideId": "IC34"
+          },
           "measure": "frozen",
           "name": "Pina colada mix"
         },
         {
+          "guidance": {
+            "alternatives": [],
+            "description": "prepared daiquiri base",
+            "guideId": "IC33"
+          },
           "measure": "frozen",
           "name": "Daiquiri mix"
         }
@@ -10808,6 +12115,13 @@
           "name": "Coffee"
         },
         {
+          "guidance": {
+            "alternatives": [
+              "Vodka + seedless raspberry jam, strained"
+            ],
+            "description": "raspberry liqueur",
+            "guideId": "IC08"
+          },
           "measure": "2 oz",
           "name": "Chambord raspberry liqueur"
         },
@@ -10930,6 +12244,13 @@
           "name": "Orange juice"
         },
         {
+          "guidance": {
+            "alternatives": [
+              "Homemade pomegranate syrup"
+            ],
+            "description": "pomegranate syrup",
+            "guideId": "IC35"
+          },
           "measure": "1 tsp",
           "name": "Grenadine"
         }
@@ -10957,6 +12278,13 @@
           "name": "Baileys irish cream"
         },
         {
+          "guidance": {
+            "alternatives": [
+              "Homemade mint liqueur"
+            ],
+            "description": "mint liqueur",
+            "guideId": "IC21"
+          },
           "measure": "3/4 oz",
           "name": "White Creme de Menthe"
         },
@@ -10993,6 +12321,13 @@
           "name": "Maraschino liqueur"
         },
         {
+          "guidance": {
+            "alternatives": [
+              "Homemade pomegranate syrup"
+            ],
+            "description": "pomegranate syrup",
+            "guideId": "IC35"
+          },
           "measure": "1/2 tsp",
           "name": "Grenadine"
         },
@@ -11144,6 +12479,13 @@
           "name": "Baileys irish cream"
         },
         {
+          "guidance": {
+            "alternatives": [
+              "Homemade hazelnut liqueur"
+            ],
+            "description": "hazelnut liqueur",
+            "guideId": "IC09"
+          },
           "measure": "1 part",
           "name": "Frangelico"
         },
@@ -11180,10 +12522,26 @@
           "name": "Gin"
         },
         {
+          "guidance": {
+            "alternatives": [
+              "Triple sec",
+              "Cointreau",
+              "Orange liqueur"
+            ],
+            "description": "blue orange liqueur",
+            "guideId": "IC06"
+          },
           "measure": "1/2 oz",
           "name": "Blue Curacao"
         },
         {
+          "guidance": {
+            "alternatives": [
+              "Homemade lemon-lime sour mix"
+            ],
+            "description": "sweet citrus mix",
+            "guideId": "IC31"
+          },
           "measure": "2 oz",
           "name": "Sour mix"
         },
@@ -11272,10 +12630,24 @@
       "id": "11872",
       "ingredients": [
         {
+          "guidance": {
+            "alternatives": [
+              "Homemade cacao liqueur"
+            ],
+            "description": "chocolate liqueur",
+            "guideId": "IC17-cacao"
+          },
           "measure": "1/2 oz white",
           "name": "Creme de Cacao"
         },
         {
+          "guidance": {
+            "alternatives": [
+              "Homemade almond liqueur"
+            ],
+            "description": "almond liqueur",
+            "guideId": "IC05"
+          },
           "measure": "1/2 oz",
           "name": "Amaretto"
         },
@@ -11598,6 +12970,13 @@
           "name": "Baileys irish cream"
         },
         {
+          "guidance": {
+            "alternatives": [
+              "Vodka + butterscotch syrup"
+            ],
+            "description": "butterscotch liqueur",
+            "guideId": "IC22"
+          },
           "measure": "4 parts",
           "name": "Butterscotch schnapps"
         },
@@ -11606,6 +12985,13 @@
           "name": "Jagermeister"
         },
         {
+          "guidance": {
+            "alternatives": [
+              "Vodka + cinnamon syrup"
+            ],
+            "description": "gold-flecked cinnamon liqueur",
+            "guideId": "IC14"
+          },
           "measure": "1/2 part",
           "name": "Goldschlager"
         }
@@ -11630,6 +13016,13 @@
           "name": "Spiced rum"
         },
         {
+          "guidance": {
+            "alternatives": [
+              "Homemade pomegranate syrup"
+            ],
+            "description": "pomegranate syrup",
+            "guideId": "IC35"
+          },
           "measure": "0.5 oz",
           "name": "Grenadine"
         },
@@ -11638,6 +13031,13 @@
           "name": "Orange juice"
         },
         {
+          "guidance": {
+            "alternatives": [
+              "Homemade lemon-lime sour mix"
+            ],
+            "description": "sweet citrus mix",
+            "guideId": "IC31"
+          },
           "measure": "1 splash",
           "name": "Sour mix"
         }
@@ -11890,6 +13290,13 @@
           "name": "Gin"
         },
         {
+          "guidance": {
+            "alternatives": [
+              "Homemade pomegranate syrup"
+            ],
+            "description": "pomegranate syrup",
+            "guideId": "IC35"
+          },
           "measure": "1 tsp",
           "name": "Grenadine"
         },
@@ -11922,6 +13329,14 @@
           "name": "Gin"
         },
         {
+          "guidance": {
+            "alternatives": [
+              "Sweetened coconut rum",
+              "Malibu"
+            ],
+            "description": "sweet coconut liqueur",
+            "guideId": "IC26"
+          },
           "measure": "1 shot",
           "name": "Coconut Liqueur"
         },
@@ -12119,6 +13534,13 @@
           "name": "Vodka"
         },
         {
+          "guidance": {
+            "alternatives": [
+              "Homemade peach liqueur"
+            ],
+            "description": "peach liqueur",
+            "guideId": "IC12"
+          },
           "measure": "1750 ml",
           "name": "Peach schnapps"
         },
@@ -12151,6 +13573,13 @@
           "name": "Rum"
         },
         {
+          "guidance": {
+            "alternatives": [
+              "Vodka + passion-fruit syrup"
+            ],
+            "description": "passion-fruit liqueur",
+            "guideId": "IC10"
+          },
           "measure": "20 ml",
           "name": "Passoa"
         },
@@ -12225,6 +13654,13 @@
           "name": "Gin"
         },
         {
+          "guidance": {
+            "alternatives": [
+              "Homemade cacao liqueur"
+            ],
+            "description": "chocolate liqueur",
+            "guideId": "IC17-cacao"
+          },
           "measure": "3/4 oz white",
           "name": "Creme de Cacao"
         }
@@ -12285,6 +13721,13 @@
           "name": "Dark rum"
         },
         {
+          "guidance": {
+            "alternatives": [
+              "Homemade almond syrup"
+            ],
+            "description": "almond syrup",
+            "guideId": "IC29"
+          },
           "measure": "1/2 part",
           "name": "Orgeat syrup"
         },
@@ -12360,6 +13803,13 @@
           "name": "Vodka"
         },
         {
+          "guidance": {
+            "alternatives": [
+              "Vodka + passion-fruit syrup"
+            ],
+            "description": "passion-fruit liqueur",
+            "guideId": "IC10"
+          },
           "measure": "3 cl",
           "name": "Passoa"
         },
@@ -12408,6 +13858,13 @@
           "name": "Pineapple Juice"
         },
         {
+          "guidance": {
+            "alternatives": [
+              "Homemade pomegranate syrup"
+            ],
+            "description": "pomegranate syrup",
+            "guideId": "IC35"
+          },
           "measure": "1 cl",
           "name": "Grenadine"
         },
@@ -12436,10 +13893,20 @@
       "id": "11961",
       "ingredients": [
         {
+          "guidance": {
+            "alternatives": [],
+            "description": "pomegranate syrup",
+            "guideId": "IC35"
+          },
           "measure": "1 tblsp",
           "name": "Grenadine"
         },
         {
+          "guidance": {
+            "alternatives": [],
+            "description": "mint liqueur",
+            "guideId": "IC21"
+          },
           "measure": "1/2 oz",
           "name": "Green Creme de Menthe"
         }
@@ -12660,6 +14127,13 @@
           "name": "Kahlua"
         },
         {
+          "guidance": {
+            "alternatives": [
+              "Homemade melon liqueur"
+            ],
+            "description": "melon liqueur",
+            "guideId": "IC07"
+          },
           "measure": "1 part",
           "name": "Midori melon liqueur"
         },
@@ -12712,6 +14186,13 @@
           "name": "Red wine"
         },
         {
+          "guidance": {
+            "alternatives": [
+              "Homemade pomegranate syrup"
+            ],
+            "description": "pomegranate syrup",
+            "guideId": "IC35"
+          },
           "measure": "1 oz",
           "name": "Grenadine"
         },
@@ -12840,6 +14321,13 @@
           "name": "Lemon juice"
         },
         {
+          "guidance": {
+            "alternatives": [
+              "Homemade pomegranate syrup"
+            ],
+            "description": "pomegranate syrup",
+            "guideId": "IC35"
+          },
           "measure": "1 tsp",
           "name": "Grenadine"
         },
@@ -13004,6 +14492,13 @@
           "name": "Gin"
         },
         {
+          "guidance": {
+            "alternatives": [
+              "Homemade lemon-lime sour mix"
+            ],
+            "description": "sweet citrus mix",
+            "guideId": "IC31"
+          },
           "measure": "2 oz",
           "name": "Sweet and sour"
         },
@@ -13064,6 +14559,13 @@
           "name": "Malibu rum"
         },
         {
+          "guidance": {
+            "alternatives": [
+              "Homemade blackberry liqueur"
+            ],
+            "description": "blackberry liqueur",
+            "guideId": "IC20"
+          },
           "measure": "1 oz",
           "name": "Blackberry brandy"
         },
@@ -13131,6 +14633,13 @@
           "name": "Crown Royal"
         },
         {
+          "guidance": {
+            "alternatives": [
+              "Homemade almond liqueur"
+            ],
+            "description": "almond liqueur",
+            "guideId": "IC05"
+          },
           "measure": "1 shot",
           "name": "Amaretto"
         },
@@ -13155,6 +14664,11 @@
       "id": "17122",
       "ingredients": [
         {
+          "guidance": {
+            "alternatives": [],
+            "description": "hazelnut liqueur",
+            "guideId": "IC09"
+          },
           "measure": "1 part",
           "name": "Frangelico"
         },
@@ -13183,10 +14697,24 @@
           "name": "Crown Royal"
         },
         {
+          "guidance": {
+            "alternatives": [
+              "Homemade peach liqueur"
+            ],
+            "description": "peach liqueur",
+            "guideId": "IC12"
+          },
           "measure": "1 oz",
           "name": "Peach schnapps"
         },
         {
+          "guidance": {
+            "alternatives": [
+              "Vodka + seedless raspberry jam, strained"
+            ],
+            "description": "raspberry liqueur",
+            "guideId": "IC08"
+          },
           "measure": "1/2 oz",
           "name": "Chambord raspberry liqueur"
         },
@@ -13259,6 +14787,13 @@
           "name": "Cranberry juice"
         },
         {
+          "guidance": {
+            "alternatives": [
+              "Homemade pomegranate syrup"
+            ],
+            "description": "pomegranate syrup",
+            "guideId": "IC35"
+          },
           "measure": "2 splashes",
           "name": "Grenadine"
         }
@@ -13311,6 +14846,15 @@
           "name": "Gin"
         },
         {
+          "guidance": {
+            "alternatives": [
+              "Triple sec",
+              "Cointreau",
+              "Orange liqueur"
+            ],
+            "description": "blue orange liqueur",
+            "guideId": "IC06"
+          },
           "measure": "15 ml",
           "name": "Blue Curacao"
         },
@@ -13575,6 +15119,13 @@
           "name": "Vodka"
         },
         {
+          "guidance": {
+            "alternatives": [
+              "Vodka + blackcurrant concentrate"
+            ],
+            "description": "blackcurrant liqueur",
+            "guideId": "IC19"
+          },
           "measure": "1.5 cl",
           "name": "Creme de Cassis"
         },
@@ -13626,10 +15177,24 @@
           "name": "Triple sec"
         },
         {
+          "guidance": {
+            "alternatives": [
+              "Vodka + seedless raspberry jam, strained"
+            ],
+            "description": "raspberry liqueur",
+            "guideId": "IC08"
+          },
           "measure": "1 oz",
           "name": "Chambord raspberry liqueur"
         },
         {
+          "guidance": {
+            "alternatives": [
+              "Homemade melon liqueur"
+            ],
+            "description": "melon liqueur",
+            "guideId": "IC07"
+          },
           "measure": "1 oz",
           "name": "Midori melon liqueur"
         },
@@ -13658,6 +15223,13 @@
           "name": "Red wine"
         },
         {
+          "guidance": {
+            "alternatives": [
+              "Homemade peach liqueur"
+            ],
+            "description": "peach liqueur",
+            "guideId": "IC12"
+          },
           "measure": "1 shot",
           "name": "Peach schnapps"
         },
@@ -13718,6 +15290,13 @@
           "name": "Brandy"
         },
         {
+          "guidance": {
+            "alternatives": [
+              "Homemade almond liqueur"
+            ],
+            "description": "almond liqueur",
+            "guideId": "IC05"
+          },
           "measure": "1 oz",
           "name": "Amaretto"
         },
@@ -13786,6 +15365,13 @@
           "name": "Brandy"
         },
         {
+          "guidance": {
+            "alternatives": [
+              "Homemade mint liqueur"
+            ],
+            "description": "mint liqueur",
+            "guideId": "IC21"
+          },
           "measure": "1/2 oz",
           "name": "White Creme de Menthe"
         }
@@ -13967,6 +15553,11 @@
       "id": "14195",
       "ingredients": [
         {
+          "guidance": {
+            "alternatives": [],
+            "description": "egg custard liqueur",
+            "guideId": "IC28"
+          },
           "measure": "1 1/2 oz",
           "name": "Advocaat"
         },
@@ -14065,6 +15656,13 @@
           "name": "Orange juice"
         },
         {
+          "guidance": {
+            "alternatives": [
+              "Homemade lemon-lime sour mix"
+            ],
+            "description": "sweet citrus mix",
+            "guideId": "IC31"
+          },
           "measure": "1 oz",
           "name": "Sweet and sour"
         }
@@ -14157,6 +15755,13 @@
       "id": "16990",
       "ingredients": [
         {
+          "guidance": {
+            "alternatives": [
+              "Irish cream + chocolate syrup"
+            ],
+            "description": "chocolate cream liqueur",
+            "guideId": "IC17"
+          },
           "measure": "2 shots",
           "name": "Godiva liqueur"
         },
@@ -14299,10 +15904,24 @@
           "name": "Vodka"
         },
         {
+          "guidance": {
+            "alternatives": [
+              "Homemade banana liqueur"
+            ],
+            "description": "banana liqueur",
+            "guideId": "IC18"
+          },
           "measure": "2 cl",
           "name": "Creme de Banane"
         },
         {
+          "guidance": {
+            "alternatives": [
+              "Homemade pomegranate syrup"
+            ],
+            "description": "pomegranate syrup",
+            "guideId": "IC35"
+          },
           "measure": "",
           "name": "Grenadine"
         },
@@ -14343,6 +15962,13 @@
           "name": "Orange juice"
         },
         {
+          "guidance": {
+            "alternatives": [
+              "Homemade pomegranate syrup"
+            ],
+            "description": "pomegranate syrup",
+            "guideId": "IC35"
+          },
           "measure": "",
           "name": "Grenadine"
         },
@@ -14515,6 +16141,13 @@
           "name": "Campari"
         },
         {
+          "guidance": {
+            "alternatives": [
+              "Homemade banana liqueur"
+            ],
+            "description": "banana liqueur",
+            "guideId": "IC18"
+          },
           "measure": "1/2 shot",
           "name": "Creme De Banane"
         },
@@ -14613,6 +16246,13 @@
           "name": "Wild Turkey"
         },
         {
+          "guidance": {
+            "alternatives": [
+              "Homemade almond liqueur"
+            ],
+            "description": "almond liqueur",
+            "guideId": "IC05"
+          },
           "measure": "3/4 oz",
           "name": "Amaretto"
         },
@@ -14645,6 +16285,13 @@
           "name": "Irish cream"
         },
         {
+          "guidance": {
+            "alternatives": [
+              "Homemade almond liqueur"
+            ],
+            "description": "almond liqueur",
+            "guideId": "IC05"
+          },
           "measure": "1/2 oz",
           "name": "Amaretto"
         },
@@ -14813,6 +16460,13 @@
           "name": "Jack Daniels"
         },
         {
+          "guidance": {
+            "alternatives": [
+              "Homemade almond liqueur"
+            ],
+            "description": "almond liqueur",
+            "guideId": "IC05"
+          },
           "measure": "4 oz",
           "name": "Amaretto"
         },
@@ -14845,6 +16499,13 @@
           "name": "Lemon juice"
         },
         {
+          "guidance": {
+            "alternatives": [
+              "Homemade pomegranate syrup"
+            ],
+            "description": "pomegranate syrup",
+            "guideId": "IC35"
+          },
           "measure": "3/4 oz",
           "name": "Grenadine"
         },
@@ -15096,6 +16757,13 @@
           "name": "Orange juice"
         },
         {
+          "guidance": {
+            "alternatives": [
+              "Homemade pomegranate syrup"
+            ],
+            "description": "pomegranate syrup",
+            "guideId": "IC35"
+          },
           "measure": "",
           "name": "Grenadine"
         }
@@ -15123,6 +16791,13 @@
           "name": "Gin"
         },
         {
+          "guidance": {
+            "alternatives": [
+              "Homemade melon liqueur"
+            ],
+            "description": "melon liqueur",
+            "guideId": "IC07"
+          },
           "measure": "1 shot",
           "name": "Melon Liqueur"
         },
@@ -15258,6 +16933,13 @@
           "name": "Irish Whiskey"
         },
         {
+          "guidance": {
+            "alternatives": [
+              "Homemade almond liqueur"
+            ],
+            "description": "almond liqueur",
+            "guideId": "IC05"
+          },
           "measure": "50 ml",
           "name": "Amaretto"
         },
@@ -15290,10 +16972,24 @@
           "name": "Cherry brandy"
         },
         {
+          "guidance": {
+            "alternatives": [
+              "Whisky + honey + orange peel"
+            ],
+            "description": "sweet spiced whisky",
+            "guideId": "IC01"
+          },
           "measure": "1 part",
           "name": "Southern Comfort"
         },
         {
+          "guidance": {
+            "alternatives": [
+              "Homemade lemon-lime sour mix"
+            ],
+            "description": "sweet citrus mix",
+            "guideId": "IC31"
+          },
           "measure": "1 splash",
           "name": "Sweet and sour"
         }
@@ -15660,6 +17356,13 @@
           "name": "Vodka"
         },
         {
+          "guidance": {
+            "alternatives": [
+              "Lemon-lime soda + orange peel"
+            ],
+            "description": "aromatic citrus soda",
+            "guideId": "IC04"
+          },
           "measure": "",
           "name": "Schweppes Russchian"
         }
@@ -15684,6 +17387,13 @@
           "name": "Dry Vermouth"
         },
         {
+          "guidance": {
+            "alternatives": [
+              "Vodka + blackcurrant concentrate"
+            ],
+            "description": "blackcurrant liqueur",
+            "guideId": "IC19"
+          },
           "measure": "3/4 oz",
           "name": "Creme de Cassis"
         },
@@ -16260,6 +17970,13 @@
           "name": "Baileys irish cream"
         },
         {
+          "guidance": {
+            "alternatives": [
+              "Homemade mint liqueur"
+            ],
+            "description": "mint liqueur",
+            "guideId": "IC21"
+          },
           "measure": "2 cl",
           "name": "White Creme de Menthe"
         }
@@ -16280,6 +17997,13 @@
       "id": "14888",
       "ingredients": [
         {
+          "guidance": {
+            "alternatives": [
+              "Homemade peach liqueur"
+            ],
+            "description": "peach liqueur",
+            "guideId": "IC12"
+          },
           "measure": "4 shots",
           "name": "Peachtree schnapps"
         },
@@ -16324,6 +18048,13 @@
           "name": "7-Up"
         },
         {
+          "guidance": {
+            "alternatives": [
+              "Vodka + blackcurrant concentrate"
+            ],
+            "description": "blackcurrant liqueur",
+            "guideId": "IC19"
+          },
           "measure": "",
           "name": "Creme de Cassis"
         },
@@ -16364,6 +18095,13 @@
           "name": "Pernod"
         },
         {
+          "guidance": {
+            "alternatives": [
+              "Homemade pomegranate syrup"
+            ],
+            "description": "pomegranate syrup",
+            "guideId": "IC35"
+          },
           "measure": "1 tsp",
           "name": "Grenadine"
         },
@@ -16468,6 +18206,11 @@
       "id": "16942",
       "ingredients": [
         {
+          "guidance": {
+            "alternatives": [],
+            "description": "raspberry liqueur",
+            "guideId": "IC08"
+          },
           "measure": "1 shot",
           "name": "Chambord raspberry liqueur"
         },
@@ -16500,6 +18243,13 @@
           "name": "Zima"
         },
         {
+          "guidance": {
+            "alternatives": [
+              "Vodka + seedless raspberry jam, strained"
+            ],
+            "description": "raspberry liqueur",
+            "guideId": "IC08"
+          },
           "measure": "3 oz",
           "name": "Chambord raspberry liqueur"
         }
@@ -16552,6 +18302,13 @@
       "id": "15801",
       "ingredients": [
         {
+          "guidance": {
+            "alternatives": [
+              "Homemade melon liqueur"
+            ],
+            "description": "melon liqueur",
+            "guideId": "IC07"
+          },
           "measure": "1.5 oz",
           "name": "Midori melon liqueur"
         },
@@ -16576,6 +18333,13 @@
       "id": "14065",
       "ingredients": [
         {
+          "guidance": {
+            "alternatives": [
+              "Homemade almond liqueur"
+            ],
+            "description": "almond liqueur",
+            "guideId": "IC05"
+          },
           "measure": "2 oz",
           "name": "Amaretto"
         },
@@ -16696,6 +18460,13 @@
           "name": "151 proof rum"
         },
         {
+          "guidance": {
+            "alternatives": [
+              "Homemade cacao liqueur"
+            ],
+            "description": "chocolate liqueur",
+            "guideId": "IC17-cacao"
+          },
           "measure": "1 oz",
           "name": "Dark Creme de Cacao"
         },
@@ -16708,6 +18479,14 @@
           "name": "Milk"
         },
         {
+          "guidance": {
+            "alternatives": [
+              "Sweetened coconut rum",
+              "Malibu"
+            ],
+            "description": "sweet coconut liqueur",
+            "guideId": "IC26"
+          },
           "measure": "1 oz",
           "name": "Coconut liqueur"
         },
@@ -16756,6 +18535,13 @@
       "id": "17060",
       "ingredients": [
         {
+          "guidance": {
+            "alternatives": [
+              "Vodka + cinnamon syrup"
+            ],
+            "description": "gold-flecked cinnamon liqueur",
+            "guideId": "IC14"
+          },
           "measure": "1/2 oz",
           "name": "Goldschlager"
         },
@@ -16764,6 +18550,13 @@
           "name": "Jägermeister"
         },
         {
+          "guidance": {
+            "alternatives": [
+              "Homemade peppermint liqueur"
+            ],
+            "description": "peppermint schnapps",
+            "guideId": "IC15"
+          },
           "measure": "1/2 oz",
           "name": "Rumple Minze"
         },
@@ -16840,6 +18633,13 @@
           "name": "Coca-Cola"
         },
         {
+          "guidance": {
+            "alternatives": [
+              "Homemade lemon-lime sour mix"
+            ],
+            "description": "sweet citrus mix",
+            "guideId": "IC31"
+          },
           "measure": "1-2 dash",
           "name": "Sweet and sour"
         },
@@ -16920,10 +18720,26 @@
       "id": "17105",
       "ingredients": [
         {
+          "guidance": {
+            "alternatives": [
+              "Triple sec",
+              "Cointreau",
+              "Orange liqueur"
+            ],
+            "description": "blue orange liqueur",
+            "guideId": "IC06"
+          },
           "measure": "",
           "name": "Blue Curacao"
         },
         {
+          "guidance": {
+            "alternatives": [
+              "Homemade blueberry liqueur"
+            ],
+            "description": "blueberry liqueur",
+            "guideId": "IC24"
+          },
           "measure": "",
           "name": "Blueberry schnapps"
         },
@@ -16932,6 +18748,13 @@
           "name": "Vodka"
         },
         {
+          "guidance": {
+            "alternatives": [
+              "Homemade lemon-lime sour mix"
+            ],
+            "description": "sweet citrus mix",
+            "guideId": "IC31"
+          },
           "measure": "",
           "name": "Sour mix"
         },
@@ -16956,6 +18779,13 @@
       "id": "14029",
       "ingredients": [
         {
+          "guidance": {
+            "alternatives": [
+              "Homemade cacao liqueur"
+            ],
+            "description": "chocolate liqueur",
+            "guideId": "IC17-cacao"
+          },
           "measure": "1 oz white",
           "name": "Creme de Cacao"
         },
@@ -17016,6 +18846,11 @@
           "name": "Baileys irish cream"
         },
         {
+          "guidance": {
+            "alternatives": [],
+            "description": "hazelnut liqueur",
+            "guideId": "IC09"
+          },
           "measure": "1/3 part",
           "name": "Frangelico"
         }
@@ -17040,6 +18875,13 @@
           "name": "Vodka"
         },
         {
+          "guidance": {
+            "alternatives": [
+              "Homemade sweetened lime cordial"
+            ],
+            "description": "sweetened lime cordial",
+            "guideId": "IC32"
+          },
           "measure": "1 oz",
           "name": "Roses sweetened lime juice"
         },
@@ -17076,6 +18918,13 @@
           "name": "Orange Curacao"
         },
         {
+          "guidance": {
+            "alternatives": [
+              "Homemade strawberry liqueur"
+            ],
+            "description": "strawberry liqueur",
+            "guideId": "IC23"
+          },
           "measure": "1 splash",
           "name": "Strawberry liqueur"
         },
@@ -17180,6 +19029,15 @@
           "name": "Lager"
         },
         {
+          "guidance": {
+            "alternatives": [
+              "Triple sec",
+              "Cointreau",
+              "Orange liqueur"
+            ],
+            "description": "blue orange liqueur",
+            "guideId": "IC06"
+          },
           "measure": "1 shot",
           "name": "Blue Curacao"
         }
@@ -17256,6 +19114,13 @@
           "name": "Vodka"
         },
         {
+          "guidance": {
+            "alternatives": [
+              "Homemade peach liqueur"
+            ],
+            "description": "peach liqueur",
+            "guideId": "IC12"
+          },
           "measure": "1 oz",
           "name": "Peach schnapps"
         },
@@ -17284,6 +19149,13 @@
       "id": "17005",
       "ingredients": [
         {
+          "guidance": {
+            "alternatives": [
+              "Homemade almond liqueur"
+            ],
+            "description": "almond liqueur",
+            "guideId": "IC05"
+          },
           "measure": "1 jigger",
           "name": "Amaretto"
         },
@@ -17321,10 +19193,24 @@
       "id": "14560",
       "ingredients": [
         {
+          "guidance": {
+            "alternatives": [
+              "Homemade mint liqueur"
+            ],
+            "description": "mint liqueur",
+            "guideId": "IC21"
+          },
           "measure": "1/2 oz",
           "name": "White Creme de Menthe"
         },
         {
+          "guidance": {
+            "alternatives": [
+              "Whisky + honey + orange peel"
+            ],
+            "description": "sweet spiced whisky",
+            "guideId": "IC01"
+          },
           "measure": "3/4 oz",
           "name": "Southern Comfort"
         },
@@ -17389,6 +19275,13 @@
           "name": "Absolut Citron"
         },
         {
+          "guidance": {
+            "alternatives": [
+              "Homemade lemon-lime sour mix"
+            ],
+            "description": "sweet citrus mix",
+            "guideId": "IC31"
+          },
           "measure": "3/4 oz",
           "name": "Sweet and sour"
         },
@@ -17489,6 +19382,13 @@
           "name": "Cognac"
         },
         {
+          "guidance": {
+            "alternatives": [
+              "Vodka + blackcurrant concentrate"
+            ],
+            "description": "blackcurrant liqueur",
+            "guideId": "IC19"
+          },
           "measure": "1 shot",
           "name": "Creme de Cassis"
         },
@@ -17517,6 +19417,13 @@
           "name": "Vodka"
         },
         {
+          "guidance": {
+            "alternatives": [
+              "Homemade pomegranate syrup"
+            ],
+            "description": "pomegranate syrup",
+            "guideId": "IC35"
+          },
           "measure": "1 tblsp",
           "name": "Grenadine"
         },
@@ -17585,6 +19492,13 @@
       "id": "12562",
       "ingredients": [
         {
+          "guidance": {
+            "alternatives": [
+              "Homemade pomegranate syrup"
+            ],
+            "description": "pomegranate syrup",
+            "guideId": "IC35"
+          },
           "measure": "1 cl",
           "name": "Grenadine"
         },
@@ -17617,6 +19531,13 @@
       "id": "178321",
       "ingredients": [
         {
+          "guidance": {
+            "alternatives": [
+              "Homemade almond liqueur"
+            ],
+            "description": "almond liqueur",
+            "guideId": "IC05"
+          },
           "measure": "4 cl",
           "name": "Amaretto"
         },
@@ -17683,6 +19604,13 @@
           "name": "Lime"
         },
         {
+          "guidance": {
+            "alternatives": [
+              "Vodka + concentrated apple juice + sugar"
+            ],
+            "description": "apple liqueur",
+            "guideId": "IC13"
+          },
           "measure": "1 shot",
           "name": "Apple Schnapps"
         },
@@ -17718,10 +19646,24 @@
           "name": "Jack Daniels"
         },
         {
+          "guidance": {
+            "alternatives": [
+              "Homemade melon liqueur"
+            ],
+            "description": "melon liqueur",
+            "guideId": "IC07"
+          },
           "measure": "1/2 oz",
           "name": "Midori melon liqueur"
         },
         {
+          "guidance": {
+            "alternatives": [
+              "Homemade lemon-lime sour mix"
+            ],
+            "description": "sweet citrus mix",
+            "guideId": "IC31"
+          },
           "measure": "2 oz",
           "name": "Sour mix"
         }
@@ -17742,6 +19684,11 @@
       "id": "178319",
       "ingredients": [
         {
+          "guidance": {
+            "alternatives": [],
+            "description": "tropical fruit liqueur",
+            "guideId": "IC27"
+          },
           "measure": "2 oz",
           "name": "Hpnotiq"
         },
@@ -17750,6 +19697,13 @@
           "name": "Pineapple Juice"
         },
         {
+          "guidance": {
+            "alternatives": [
+              "Homemade banana liqueur"
+            ],
+            "description": "banana liqueur",
+            "guideId": "IC18"
+          },
           "measure": "1 oz",
           "name": "Banana Liqueur"
         }
@@ -17818,6 +19772,13 @@
           "name": "Cream of coconut"
         },
         {
+          "guidance": {
+            "alternatives": [
+              "Homemade pomegranate syrup"
+            ],
+            "description": "pomegranate syrup",
+            "guideId": "IC35"
+          },
           "measure": "1 dash",
           "name": "Grenadine"
         },
@@ -17854,6 +19815,13 @@
           "name": "Gin"
         },
         {
+          "guidance": {
+            "alternatives": [
+              "Homemade sweetened lime cordial"
+            ],
+            "description": "sweetened lime cordial",
+            "guideId": "IC32"
+          },
           "measure": "45 ml",
           "name": "Lime juice cordial"
         },
@@ -17916,6 +19884,13 @@
           "name": "Malibu Rum"
         },
         {
+          "guidance": {
+            "alternatives": [
+              "Homemade banana liqueur"
+            ],
+            "description": "banana liqueur",
+            "guideId": "IC18"
+          },
           "measure": "1 oz",
           "name": "Banana Liqueur"
         },
@@ -17980,14 +19955,37 @@
           "name": "Dark Rum"
         },
         {
+          "guidance": {
+            "alternatives": [
+              "Vodka + passion-fruit syrup"
+            ],
+            "description": "passion-fruit liqueur",
+            "guideId": "IC10"
+          },
           "measure": "1 part",
           "name": "Passoa"
         },
         {
+          "guidance": {
+            "alternatives": [
+              "Triple sec",
+              "Cointreau",
+              "Orange liqueur"
+            ],
+            "description": "blue orange liqueur",
+            "guideId": "IC06"
+          },
           "measure": "1 part",
           "name": "Blue Curacao"
         },
         {
+          "guidance": {
+            "alternatives": [
+              "Homemade lemon-lime sour mix"
+            ],
+            "description": "sweet citrus mix",
+            "guideId": "IC31"
+          },
           "measure": "6 parts",
           "name": "Sweet and Sour"
         },
@@ -18057,6 +20055,13 @@
           "name": "Gin"
         },
         {
+          "guidance": {
+            "alternatives": [
+              "Vodka + blackcurrant concentrate"
+            ],
+            "description": "blackcurrant liqueur",
+            "guideId": "IC19"
+          },
           "measure": "20 ml",
           "name": "Creme de Cassis"
         },
@@ -18129,6 +20134,14 @@
           "name": "Rum"
         },
         {
+          "guidance": {
+            "alternatives": [
+              "Sweetened coconut rum",
+              "Malibu"
+            ],
+            "description": "sweet coconut liqueur",
+            "guideId": "IC26"
+          },
           "measure": "1 shot",
           "name": "Coconut Liqueur"
         },
@@ -18173,6 +20186,15 @@
           "name": "Lemonade"
         },
         {
+          "guidance": {
+            "alternatives": [
+              "Triple sec",
+              "Cointreau",
+              "Orange liqueur"
+            ],
+            "description": "blue orange liqueur",
+            "guideId": "IC06"
+          },
           "measure": "10 ml",
           "name": "Blue Curacao"
         },
@@ -18272,6 +20294,13 @@
           "name": "Cherry Grenadine"
         },
         {
+          "guidance": {
+            "alternatives": [
+              "Homemade lemon-lime sour mix"
+            ],
+            "description": "sweet citrus mix",
+            "guideId": "IC31"
+          },
           "measure": "1 oz",
           "name": "Sweet and sour"
         },
@@ -18698,6 +20727,13 @@
           "name": "Baileys irish cream"
         },
         {
+          "guidance": {
+            "alternatives": [
+              "Homemade hazelnut liqueur"
+            ],
+            "description": "hazelnut liqueur",
+            "guideId": "IC09"
+          },
           "measure": "1 1/2",
           "name": "Frangelico"
         },
@@ -19070,6 +21106,13 @@
           "name": "Coconut rum"
         },
         {
+          "guidance": {
+            "alternatives": [
+              "Homemade almond liqueur"
+            ],
+            "description": "almond liqueur",
+            "guideId": "IC05"
+          },
           "measure": "1/2 oz",
           "name": "Amaretto"
         },
@@ -19078,6 +21121,13 @@
           "name": "Orange juice"
         },
         {
+          "guidance": {
+            "alternatives": [
+              "Homemade pomegranate syrup"
+            ],
+            "description": "pomegranate syrup",
+            "guideId": "IC35"
+          },
           "measure": "1/2 oz",
           "name": "Grenadine"
         }
@@ -19136,6 +21186,13 @@
           "name": "Kirschwasser"
         },
         {
+          "guidance": {
+            "alternatives": [
+              "Homemade strawberry liqueur"
+            ],
+            "description": "strawberry liqueur",
+            "guideId": "IC23"
+          },
           "measure": "1 tsp",
           "name": "Strawberry liqueur"
         },
@@ -19144,6 +21201,13 @@
           "name": "Strawberries"
         },
         {
+          "guidance": {
+            "alternatives": [
+              "Lemon-lime soda + orange peel"
+            ],
+            "description": "aromatic citrus soda",
+            "guideId": "IC04"
+          },
           "measure": "",
           "name": "Schweppes Russchian"
         }
@@ -19240,10 +21304,25 @@
           "name": "Absolut Vodka"
         },
         {
+          "guidance": {
+            "alternatives": [
+              "Homemade peach liqueur"
+            ],
+            "description": "peach liqueur",
+            "guideId": "IC12"
+          },
           "measure": "1/2 oz",
           "name": "Peach schnapps"
         },
         {
+          "guidance": {
+            "alternatives": [
+              "Sweetened coconut rum",
+              "Malibu"
+            ],
+            "description": "sweet coconut liqueur",
+            "guideId": "IC26"
+          },
           "measure": "1/2 oz",
           "name": "Coconut liqueur"
         },
@@ -19402,6 +21481,13 @@
           "name": "Vodka"
         },
         {
+          "guidance": {
+            "alternatives": [
+              "Homemade banana liqueur"
+            ],
+            "description": "banana liqueur",
+            "guideId": "IC18"
+          },
           "measure": "1 cl",
           "name": "Creme de Banane"
         },
@@ -19454,10 +21540,24 @@
       "id": "11012",
       "ingredients": [
         {
+          "guidance": {
+            "alternatives": [
+              "Whisky + honey + orange peel"
+            ],
+            "description": "sweet spiced whisky",
+            "guideId": "IC01"
+          },
           "measure": "1 oz",
           "name": "Southern Comfort"
         },
         {
+          "guidance": {
+            "alternatives": [
+              "Homemade almond liqueur"
+            ],
+            "description": "almond liqueur",
+            "guideId": "IC05"
+          },
           "measure": "1 oz",
           "name": "Amaretto"
         },
@@ -19553,6 +21653,13 @@
       "id": "17094",
       "ingredients": [
         {
+          "guidance": {
+            "alternatives": [
+              "Homemade almond liqueur"
+            ],
+            "description": "almond liqueur",
+            "guideId": "IC05"
+          },
           "measure": "1 shot",
           "name": "Amaretto"
         },
@@ -19561,6 +21668,13 @@
           "name": "Grand Marnier"
         },
         {
+          "guidance": {
+            "alternatives": [
+              "Whisky + honey + orange peel"
+            ],
+            "description": "sweet spiced whisky",
+            "guideId": "IC01"
+          },
           "measure": "1 shot",
           "name": "Southern Comfort"
         }
@@ -19609,10 +21723,24 @@
       "id": "16082",
       "ingredients": [
         {
+          "guidance": {
+            "alternatives": [
+              "Homemade almond liqueur"
+            ],
+            "description": "almond liqueur",
+            "guideId": "IC05"
+          },
           "measure": "3/4 oz",
           "name": "Amaretto"
         },
         {
+          "guidance": {
+            "alternatives": [
+              "Homemade cacao liqueur"
+            ],
+            "description": "chocolate liqueur",
+            "guideId": "IC17-cacao"
+          },
           "measure": "1/2 oz",
           "name": "Dark Creme de Cacao"
         },
@@ -19637,10 +21765,24 @@
       "id": "11024",
       "ingredients": [
         {
+          "guidance": {
+            "alternatives": [
+              "Homemade almond liqueur"
+            ],
+            "description": "almond liqueur",
+            "guideId": "IC05"
+          },
           "measure": "1/2 oz",
           "name": "Amaretto"
         },
         {
+          "guidance": {
+            "alternatives": [
+              "Homemade cacao liqueur"
+            ],
+            "description": "chocolate liqueur",
+            "guideId": "IC17-cacao"
+          },
           "measure": "1/2 oz white",
           "name": "Creme de Cacao"
         },
@@ -19665,6 +21807,13 @@
       "id": "11025",
       "ingredients": [
         {
+          "guidance": {
+            "alternatives": [
+              "Homemade almond liqueur"
+            ],
+            "description": "almond liqueur",
+            "guideId": "IC05"
+          },
           "measure": "1 1/2 oz",
           "name": "Amaretto"
         },
@@ -19689,6 +21838,13 @@
       "id": "11026",
       "ingredients": [
         {
+          "guidance": {
+            "alternatives": [
+              "Homemade almond liqueur"
+            ],
+            "description": "almond liqueur",
+            "guideId": "IC05"
+          },
           "measure": "1 1/2 oz",
           "name": "Amaretto"
         },
@@ -19713,6 +21869,13 @@
       "id": "11027",
       "ingredients": [
         {
+          "guidance": {
+            "alternatives": [
+              "Homemade almond liqueur"
+            ],
+            "description": "almond liqueur",
+            "guideId": "IC05"
+          },
           "measure": "1 1/2 oz",
           "name": "Amaretto"
         },
@@ -19749,6 +21912,13 @@
           "name": "Brandy"
         },
         {
+          "guidance": {
+            "alternatives": [
+              "Homemade almond liqueur"
+            ],
+            "description": "almond liqueur",
+            "guideId": "IC05"
+          },
           "measure": "2 oz",
           "name": "Amaretto"
         }
@@ -19769,10 +21939,24 @@
       "id": "13731",
       "ingredients": [
         {
+          "guidance": {
+            "alternatives": [
+              "Homemade almond liqueur"
+            ],
+            "description": "almond liqueur",
+            "guideId": "IC05"
+          },
           "measure": "1 1/2 oz",
           "name": "Amaretto"
         },
         {
+          "guidance": {
+            "alternatives": [
+              "Homemade lemon-lime sour mix"
+            ],
+            "description": "sweet citrus mix",
+            "guideId": "IC31"
+          },
           "measure": "3 oz",
           "name": "Sour mix"
         },
@@ -19798,10 +21982,24 @@
       "id": "11028",
       "ingredients": [
         {
+          "guidance": {
+            "alternatives": [
+              "Homemade almond liqueur"
+            ],
+            "description": "almond liqueur",
+            "guideId": "IC05"
+          },
           "measure": "1 1/2 oz",
           "name": "Amaretto"
         },
         {
+          "guidance": {
+            "alternatives": [
+              "Homemade mint liqueur"
+            ],
+            "description": "mint liqueur",
+            "guideId": "IC21"
+          },
           "measure": "3/4 oz",
           "name": "White Creme de Menthe"
         }
@@ -19822,6 +22020,13 @@
       "id": "14578",
       "ingredients": [
         {
+          "guidance": {
+            "alternatives": [
+              "Homemade almond liqueur"
+            ],
+            "description": "almond liqueur",
+            "guideId": "IC05"
+          },
           "measure": "1 cl",
           "name": "Amaretto"
         },
@@ -19830,6 +22035,13 @@
           "name": "Orange juice"
         },
         {
+          "guidance": {
+            "alternatives": [
+              "Homemade pomegranate syrup"
+            ],
+            "description": "pomegranate syrup",
+            "guideId": "IC35"
+          },
           "measure": "1/4 cl",
           "name": "Grenadine"
         }
@@ -19854,6 +22066,13 @@
           "name": "Triple sec"
         },
         {
+          "guidance": {
+            "alternatives": [
+              "Homemade almond liqueur"
+            ],
+            "description": "almond liqueur",
+            "guideId": "IC05"
+          },
           "measure": "3 shots",
           "name": "Amaretto"
         },
@@ -19886,6 +22105,13 @@
           "name": "Tea"
         },
         {
+          "guidance": {
+            "alternatives": [
+              "Homemade almond liqueur"
+            ],
+            "description": "almond liqueur",
+            "guideId": "IC05"
+          },
           "measure": "2 oz",
           "name": "Amaretto"
         },
@@ -20019,6 +22245,13 @@
           "name": "Champagne"
         },
         {
+          "guidance": {
+            "alternatives": [
+              "Homemade mint liqueur"
+            ],
+            "description": "mint liqueur",
+            "guideId": "IC21"
+          },
           "measure": "1 tsp",
           "name": "Green Creme de Menthe"
         }
@@ -20075,6 +22308,13 @@
           "name": "Vodka"
         },
         {
+          "guidance": {
+            "alternatives": [
+              "Whisky + honey + orange peel"
+            ],
+            "description": "sweet spiced whisky",
+            "guideId": "IC01"
+          },
           "measure": "2 cl",
           "name": "Southern Comfort"
         },
@@ -20083,6 +22323,13 @@
           "name": "Passion fruit syrup"
         },
         {
+          "guidance": {
+            "alternatives": [
+              "Homemade lemon-lime sour mix"
+            ],
+            "description": "sweet citrus mix",
+            "guideId": "IC31"
+          },
           "measure": "6 cl",
           "name": "Sweet and sour"
         },
@@ -20115,6 +22362,15 @@
           "name": "Vodka"
         },
         {
+          "guidance": {
+            "alternatives": [
+              "Triple sec",
+              "Cointreau",
+              "Orange liqueur"
+            ],
+            "description": "blue orange liqueur",
+            "guideId": "IC06"
+          },
           "measure": "1/2 oz",
           "name": "Blue Curacao"
         },
@@ -20187,6 +22443,13 @@
           "name": "Sugar syrup"
         },
         {
+          "guidance": {
+            "alternatives": [
+              "Homemade pomegranate syrup"
+            ],
+            "description": "pomegranate syrup",
+            "guideId": "IC35"
+          },
           "measure": "1 dash",
           "name": "Grenadine"
         }
@@ -20264,6 +22527,13 @@
           "name": "Peach nectar"
         },
         {
+          "guidance": {
+            "alternatives": [
+              "Homemade peach liqueur"
+            ],
+            "description": "peach liqueur",
+            "guideId": "IC12"
+          },
           "measure": "1.5 oz",
           "name": "Peach schnapps"
         },
@@ -20497,6 +22767,15 @@
           "name": "Vodka"
         },
         {
+          "guidance": {
+            "alternatives": [
+              "Triple sec",
+              "Cointreau",
+              "Orange liqueur"
+            ],
+            "description": "blue orange liqueur",
+            "guideId": "IC06"
+          },
           "measure": "1 oz",
           "name": "Blue Curacao"
         },
@@ -20529,6 +22808,15 @@
           "name": "Tequila"
         },
         {
+          "guidance": {
+            "alternatives": [
+              "Triple sec",
+              "Cointreau",
+              "Orange liqueur"
+            ],
+            "description": "blue orange liqueur",
+            "guideId": "IC06"
+          },
           "measure": "1 oz",
           "name": "Blue Curacao"
         },
@@ -20738,6 +23026,13 @@
           "name": "Brandy"
         },
         {
+          "guidance": {
+            "alternatives": [
+              "Homemade cacao liqueur"
+            ],
+            "description": "chocolate liqueur",
+            "guideId": "IC17-cacao"
+          },
           "measure": "1 oz white",
           "name": "Creme de Cacao"
         },
@@ -20902,6 +23197,13 @@
           "name": "Powdered sugar"
         },
         {
+          "guidance": {
+            "alternatives": [
+              "Homemade pomegranate syrup"
+            ],
+            "description": "pomegranate syrup",
+            "guideId": "IC35"
+          },
           "measure": "1/4 tsp",
           "name": "Grenadine"
         },
@@ -21033,10 +23335,24 @@
       "id": "16405",
       "ingredients": [
         {
+          "guidance": {
+            "alternatives": [
+              "Homemade almond liqueur"
+            ],
+            "description": "almond liqueur",
+            "guideId": "IC05"
+          },
           "measure": "1 shot",
           "name": "Amaretto"
         },
         {
+          "guidance": {
+            "alternatives": [
+              "Whisky + honey + orange peel"
+            ],
+            "description": "sweet spiced whisky",
+            "guideId": "IC01"
+          },
           "measure": "1 shot",
           "name": "Southern Comfort"
         },
@@ -21045,6 +23361,13 @@
           "name": "Ice"
         },
         {
+          "guidance": {
+            "alternatives": [
+              "Homemade lemon-lime sour mix"
+            ],
+            "description": "sweet citrus mix",
+            "guideId": "IC31"
+          },
           "measure": "",
           "name": "Sour mix"
         }
@@ -21069,6 +23392,13 @@
           "name": "Absolut Citron"
         },
         {
+          "guidance": {
+            "alternatives": [
+              "Homemade banana liqueur"
+            ],
+            "description": "green banana liqueur",
+            "guideId": "IC11"
+          },
           "measure": "1/3 part",
           "name": "Pisang Ambon"
         },
@@ -21129,10 +23459,24 @@
       "id": "14306",
       "ingredients": [
         {
+          "guidance": {
+            "alternatives": [
+              "Homemade almond liqueur"
+            ],
+            "description": "almond liqueur",
+            "guideId": "IC05"
+          },
           "measure": "1 part",
           "name": "Amaretto"
         },
         {
+          "guidance": {
+            "alternatives": [
+              "Homemade lemon-lime sour mix"
+            ],
+            "description": "sweet citrus mix",
+            "guideId": "IC31"
+          },
           "measure": "1 part",
           "name": "Sour mix"
         },
@@ -21157,10 +23501,24 @@
       "id": "16100",
       "ingredients": [
         {
+          "guidance": {
+            "alternatives": [
+              "Homemade lemon-lime sour mix"
+            ],
+            "description": "sweet citrus mix",
+            "guideId": "IC31"
+          },
           "measure": "2 oz",
           "name": "Sour mix"
         },
         {
+          "guidance": {
+            "alternatives": [
+              "Homemade almond liqueur"
+            ],
+            "description": "almond liqueur",
+            "guideId": "IC05"
+          },
           "measure": "2 oz",
           "name": "Amaretto"
         },
@@ -21437,14 +23795,35 @@
       "id": "16202",
       "ingredients": [
         {
+          "guidance": {
+            "alternatives": [
+              "Homemade almond liqueur"
+            ],
+            "description": "almond liqueur",
+            "guideId": "IC05"
+          },
           "measure": "",
           "name": "Amaretto"
         },
         {
+          "guidance": {
+            "alternatives": [
+              "Homemade lemon-lime sour mix"
+            ],
+            "description": "sweet citrus mix",
+            "guideId": "IC31"
+          },
           "measure": "",
           "name": "Sweet and sour"
         },
         {
+          "guidance": {
+            "alternatives": [
+              "Homemade melon liqueur"
+            ],
+            "description": "melon liqueur",
+            "guideId": "IC07"
+          },
           "measure": "",
           "name": "Midori melon liqueur"
         },
@@ -22115,6 +24494,13 @@
           "name": "Baileys irish cream"
         },
         {
+          "guidance": {
+            "alternatives": [
+              "Irish cream + chocolate syrup"
+            ],
+            "description": "chocolate cream liqueur",
+            "guideId": "IC17"
+          },
           "measure": "3/4 oz",
           "name": "Godiva liqueur"
         },
@@ -22123,6 +24509,13 @@
           "name": "Kahlua"
         },
         {
+          "guidance": {
+            "alternatives": [
+              "Vodka + butterscotch syrup"
+            ],
+            "description": "butterscotch liqueur",
+            "guideId": "IC22"
+          },
           "measure": "1/2 oz",
           "name": "Butterscotch schnapps"
         },
@@ -22155,6 +24548,13 @@
           "name": "Milk"
         },
         {
+          "guidance": {
+            "alternatives": [
+              "Irish cream + chocolate syrup"
+            ],
+            "description": "chocolate cream liqueur",
+            "guideId": "IC17"
+          },
           "measure": "1/2 cup",
           "name": "Godiva liqueur"
         },
@@ -22195,6 +24595,13 @@
           "name": "Vanilla Ice-Cream"
         },
         {
+          "guidance": {
+            "alternatives": [
+              "Vodka + butterscotch syrup"
+            ],
+            "description": "butterscotch liqueur",
+            "guideId": "IC22"
+          },
           "measure": "1 part",
           "name": "Butterscotch schnapps"
         },
@@ -22223,10 +24630,24 @@
       "id": "15615",
       "ingredients": [
         {
+          "guidance": {
+            "alternatives": [
+              "Homemade banana liqueur"
+            ],
+            "description": "banana liqueur",
+            "guideId": "IC18"
+          },
           "measure": "1 shot",
           "name": "Banana liqueur"
         },
         {
+          "guidance": {
+            "alternatives": [
+              "Homemade cacao liqueur"
+            ],
+            "description": "chocolate liqueur",
+            "guideId": "IC17-cacao"
+          },
           "measure": "2 shots",
           "name": "Creme de Cacao"
         },
@@ -22279,10 +24700,24 @@
           "name": "Soda water"
         },
         {
+          "guidance": {
+            "alternatives": [
+              "Homemade melon liqueur"
+            ],
+            "description": "melon liqueur",
+            "guideId": "IC07"
+          },
           "measure": "0.5 oz",
           "name": "Midori melon liqueur"
         },
         {
+          "guidance": {
+            "alternatives": [
+              "Homemade banana liqueur"
+            ],
+            "description": "banana liqueur",
+            "guideId": "IC18"
+          },
           "measure": "0.5 oz",
           "name": "Creme de Banane"
         }
@@ -22307,6 +24742,13 @@
           "name": "Absolut Kurant"
         },
         {
+          "guidance": {
+            "alternatives": [
+              "Homemade melon liqueur"
+            ],
+            "description": "melon liqueur",
+            "guideId": "IC07"
+          },
           "measure": "3/4 oz",
           "name": "Midori melon liqueur"
         },
@@ -22335,6 +24777,11 @@
       "id": "13807",
       "ingredients": [
         {
+          "guidance": {
+            "alternatives": [],
+            "description": "peppermint schnapps",
+            "guideId": "IC15"
+          },
           "measure": "",
           "name": "Peppermint schnapps"
         },
@@ -22367,6 +24814,13 @@
           "name": "7-Up"
         },
         {
+          "guidance": {
+            "alternatives": [
+              "Vodka + concentrated apple juice + sugar"
+            ],
+            "description": "apple liqueur",
+            "guideId": "IC13"
+          },
           "measure": "1 part",
           "name": "Apple schnapps"
         }
@@ -22391,10 +24845,24 @@
           "name": "Vodka"
         },
         {
+          "guidance": {
+            "alternatives": [
+              "Homemade melon liqueur"
+            ],
+            "description": "melon liqueur",
+            "guideId": "IC07"
+          },
           "measure": "1/3 oz",
           "name": "Midori melon liqueur"
         },
         {
+          "guidance": {
+            "alternatives": [
+              "Homemade lemon-lime sour mix"
+            ],
+            "description": "sweet citrus mix",
+            "guideId": "IC31"
+          },
           "measure": "1/3 oz",
           "name": "Sweet and sour"
         }
@@ -22419,6 +24887,13 @@
           "name": "Jägermeister"
         },
         {
+          "guidance": {
+            "alternatives": [
+              "Vodka + cinnamon syrup"
+            ],
+            "description": "gold-flecked cinnamon liqueur",
+            "guideId": "IC14"
+          },
           "measure": "1 oz",
           "name": "Goldschlager"
         }
@@ -22471,6 +24946,11 @@
           "name": "Erin Cream"
         },
         {
+          "guidance": {
+            "alternatives": [],
+            "description": "egg custard liqueur",
+            "guideId": "IC28"
+          },
           "measure": "5 ml",
           "name": "Advocaat"
         }
@@ -22515,6 +24995,11 @@
       "id": "13066",
       "ingredients": [
         {
+          "guidance": {
+            "alternatives": [],
+            "description": "pomegranate syrup",
+            "guideId": "IC35"
+          },
           "measure": "",
           "name": "Grenadine"
         },
@@ -22547,10 +25032,24 @@
           "name": "Vodka"
         },
         {
+          "guidance": {
+            "alternatives": [
+              "Vodka + seedless raspberry jam, strained"
+            ],
+            "description": "raspberry liqueur",
+            "guideId": "IC08"
+          },
           "measure": "1/2 oz",
           "name": "Chambord raspberry liqueur"
         },
         {
+          "guidance": {
+            "alternatives": [
+              "Homemade peach liqueur"
+            ],
+            "description": "peach liqueur",
+            "guideId": "IC12"
+          },
           "measure": "1/2 oz",
           "name": "Peachtree schnapps"
         },
@@ -22575,10 +25074,24 @@
       "id": "14053",
       "ingredients": [
         {
+          "guidance": {
+            "alternatives": [
+              "Vodka + cinnamon syrup"
+            ],
+            "description": "gold-flecked cinnamon liqueur",
+            "guideId": "IC14"
+          },
           "measure": "1 oz",
           "name": "Goldschlager"
         },
         {
+          "guidance": {
+            "alternatives": [
+              "Vodka + butterscotch syrup"
+            ],
+            "description": "butterscotch liqueur",
+            "guideId": "IC22"
+          },
           "measure": "1 oz",
           "name": "Butterscotch schnapps"
         },
@@ -22661,10 +25174,27 @@
           "name": "Vodka"
         },
         {
+          "guidance": {
+            "alternatives": [
+              "Sweetened coconut rum",
+              "Malibu"
+            ],
+            "description": "sweet coconut liqueur",
+            "guideId": "IC26"
+          },
           "measure": "1 cl",
           "name": "Coconut liqueur"
         },
         {
+          "guidance": {
+            "alternatives": [
+              "Triple sec",
+              "Cointreau",
+              "Orange liqueur"
+            ],
+            "description": "blue orange liqueur",
+            "guideId": "IC06"
+          },
           "measure": "1 cl",
           "name": "Blue Curacao"
         },

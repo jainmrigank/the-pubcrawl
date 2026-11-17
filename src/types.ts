@@ -27,9 +27,13 @@ export interface Ingredient {
   category: string;
   image: string;
   detectedAs?: string;
+  guidance?: import('../shared/ingredient-guide').IngredientGuidance;
 }
 
 export interface RecipeIngredient {
+  /** Shared ingredient explanation/choices; never a reader's Shelf selection. */
+  guidance?: import('../shared/ingredient-guide').IngredientGuidance;
+  alternative?: import('../shared/ingredient-guide').IngredientAlternative;
   name: string;
   measure: string;
   have?: boolean;
@@ -52,6 +56,8 @@ export interface Recipe {
   iba: string;
   ingredients: RecipeIngredient[];
   vibe: VibeId;
+  alternativeCount?: number;
+  preparationCount?: number;
   matched?: number;
   missing?: string[];
   total?: number;

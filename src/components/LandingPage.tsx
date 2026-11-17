@@ -8,6 +8,7 @@ import { lazy, Suspense, useEffect, useState } from 'react';
 import { ArrowDown, ArrowRight } from '../icons';
 import { EditorialLinks } from './landing/EditorialLinks';
 import './landing/home.css';
+import type { StudyActions } from './landing/StudyRecipes';
 // import { LANDING_WATCH_SEED, thumbnailForWatch } from '../watchData';
 // import { LandingShortsPreview } from './LandingShortsPreview';
 // Shelved at the user's request: SpritzHero, FlavourCompass and BarStories.
@@ -18,6 +19,7 @@ interface LandingPageProps {
   active: boolean;
   visitId: string;
   shorts: ShortVideo[];
+  studyActions: StudyActions;
 }
 
 // const sectionMotion = {
@@ -41,7 +43,7 @@ interface LandingPageProps {
  * reviewed, build-time catalogues so the first useful paint never waits for
  * an API or mounts the full recipe grid.
  */
-export function LandingPage({ active, visitId }: LandingPageProps) {
+export function LandingPage({ active, visitId, studyActions }: LandingPageProps) {
   // The analytical index is separate from the full recipe catalogue. Only load
   // it after visiting Home; keep it mounted afterwards for Back restoration.
   const [activated, setActivated] = useState(active);
@@ -122,7 +124,7 @@ export function LandingPage({ active, visitId }: LandingPageProps) {
         </div>
         <span className="home-scroll-cue" aria-hidden="true">A better round starts below <ArrowDown size={17} /></span>
       </section>
-      {(activated || active) && <Suspense fallback={<p className="home-loading" role="status">Loading studies…</p>}><LandingHighlights /></Suspense>}
+      {(activated || active) && <Suspense fallback={<p className="home-loading" role="status">Loading studies…</p>}><LandingHighlights actions={studyActions} /></Suspense>}
 
       {/* Temporarily paused: landing Shorts previews. Uncomment to restore.
       <LandingShortsPreview

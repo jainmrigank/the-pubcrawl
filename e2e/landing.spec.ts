@@ -21,7 +21,7 @@ test.describe('landing discovery', () => {
     await expect(page.locator('.landing-watch-rail')).toHaveCount(0);
     await expect(page.locator('.landing-atlas-entry')).toHaveCount(0);
     await expect(page.locator('.spritz-hero, .flavour-compass, .bar-stories')).toHaveCount(0);
-    await expect(page.locator('[data-home-story]')).toHaveCount(4);
+    await expect(page.locator('[data-home-story]')).toHaveCount(3);
 
     await page.locator('[data-tour="landing-browse"]').click();
     await expect(page.locator('#menu-list')).toBeVisible();

@@ -1,5 +1,6 @@
 import { expect, test } from '@playwright/test';
 import { openRoute, seedStableDevice, useTasteMap } from './helpers';
+import { addFinderIngredients } from './fixtures/studyRecipes';
 import { installFakeYouTube } from './fixtures/shortsFakeYouTube';
 
 test.use({ serviceWorkers: 'block' });
@@ -8,24 +9,26 @@ test.beforeEach(async ({ page }) => {
   await page.emulateMedia({ reducedMotion: 'reduce' });
 });
 
-test('opens with a full-screen introduction and the requested four studies in order', async ({ page }) => {
+test('opens with the three requested studies in order and unnumbered editorial links', async ({ page }) => {
   const requested: string[] = [];
   page.on('request', request => requested.push(request.url()));
   await openRoute(page, '/#/');
-  await expect(page.locator('[data-home-story]')).toHaveCount(4);
-  expect(await page.locator('[data-home-story]').evaluateAll(elements => elements.map(el => el.getAttribute('data-home-story')))).toEqual(['pantry','calories','dna','pairings']);
+  await expect(page.locator('[data-home-story]')).toHaveCount(3);
+  expect(await page.locator('[data-home-story]').evaluateAll(elements => elements.map(el => el.getAttribute('data-home-story')))).toEqual(['pantry','pairings','calories']);
+  await expect(page.locator('#home-dna, .home-section-number, .editorial-link-index')).toHaveCount(0);
   await expect(page.getByRole('heading', { level: 1 })).toHaveText('What’s your poison?');
   await expect(page.locator('.spritz-hero, .flavour-compass, .landing-atlas-entry, .bar-stories, .landing-shorts-rail, .landing-watch-rail')).toHaveCount(0);
-  await expect(page.locator('.calorie-row')).toHaveCount(8);
+  await expect(page.locator('.calorie-row')).toHaveCount(4);
   await expect(page.getByRole('heading', { name: 'Drinks, decoded.', level: 2 })).toBeVisible();
   await expect(page.getByRole('heading', { name: 'More at the bar.', level: 2 })).toBeVisible();
-  await expect(page.locator('.home-studies [data-home-story]')).toHaveCount(4);
-  await expect(page.locator('.home-studies h3.home-study-heading')).toHaveCount(4);
+  await expect(page.locator('.home-studies [data-home-story]')).toHaveCount(3);
+  await expect(page.locator('.home-studies h3.home-study-heading')).toHaveCount(3);
   const editorial = page.getByRole('navigation', { name: 'More to explore' });
   await expect(editorial.getByRole('link')).toHaveCount(4);
   await expect(editorial.getByRole('link', { name: 'Pub Quiz', exact: true })).toHaveAttribute('href', '#/quiz');
   await expect(editorial.getByRole('link', { name: 'Bar Basics', exact: true })).toHaveAttribute('href', '#/basics');
   await expect(editorial.getByRole('link', { name: 'Your Tab', exact: true })).toHaveAttribute('href', '#/tab');
+  // Stay long enough to catch delayed background Shelf matching too.
   expect(requested.filter(url => /client_catalog[-.]|watchLibrary-|BarAtlas-/.test(url))).toEqual([]);
   const navigation = page.locator('.house-desktop-links:visible, .house-mobile-links:visible');
   await expect(navigation.locator('.house-nav-link > span:last-child')).toHaveText(['Drinks','Taste Map','Shelf','Tab','Explore+']);
@@ -40,18 +43,22 @@ test('calories stay compact, sort the whole category and retain the comparison a
   const calories = page.locator('#home-calories');
   await calories.locator('.home-study-toggle').click();
   await expect(calories.getByRole('button', { name: 'Cocktails', exact: true })).toHaveAttribute('aria-pressed', 'true');
-  await expect(calories.locator('.calorie-row')).toHaveCount(8);
-  await expect(calories.getByRole('navigation', { name: 'Calorie servings' })).toContainText('1–8 of 20');
-  await calories.getByLabel('Calorie order', { exact: true }).selectOption('kcal');
+  await expect(calories.locator('.calorie-row')).toHaveCount(4);
+  await expect(calories.getByRole('navigation', { name: 'Calorie servings' })).toContainText('1–4 of 20');
+  await calories.getByLabel('Calorie sort', { exact: true }).selectOption('kcal');
   await expect(calories.locator('.calorie-name').first()).toContainText('Bamboo');
   await calories.getByRole('button', { name: 'Next calorie servings' }).click();
   await calories.getByRole('button', { name: 'Next calorie servings' }).click();
   await expect(calories.locator('.calorie-row')).toHaveCount(4);
+  await calories.getByRole('button', { name: 'Next calorie servings' }).click();
+  await calories.getByRole('button', { name: 'Next calorie servings' }).click();
   await expect(calories.locator('.calorie-name').last()).toContainText('Zombie');
   await expect(calories.getByRole('button', { name: 'Next calorie servings' })).toBeDisabled();
-  await calories.getByLabel('Calorie order', { exact: true }).selectOption('list');
-  await calories.getByLabel('Reference serving', { exact: true }).selectOption('red-wine');
+  await expect(calories.getByLabel('Calorie sort', { exact: true }).locator('option')).toHaveText(['Lowest first', 'Highest first']);
+  await expect(calories.getByLabel('Reference serving', { exact: true })).toHaveCount(0);
+  await calories.getByLabel('Calorie sort', { exact: true }).selectOption('high');
   const row = calories.locator('[data-calorie-drink="negroni"]');
+  for (let i = 0; i < 5 && !(await row.count()); i++) await calories.getByRole('button', { name: 'Next calorie servings' }).click();
   await row.getByRole('button').focus();
   await page.keyboard.press('Enter');
   await expect(row.getByRole('button')).toHaveAttribute('aria-expanded', 'true');
@@ -62,16 +69,21 @@ test('calories stay compact, sort the whole category and retain the comparison a
   await page.getByRole('button', { name: 'Back to Calories, by the glass' }).click();
   await expect(row.getByRole('link', { name: 'Find the drink' })).toBeFocused();
   await expect(row.getByRole('button')).toHaveAttribute('aria-expanded', 'true');
-  await expect(calories.getByLabel('Reference serving', { exact: true })).toHaveValue('red-wine');
-  await calories.getByRole('button', { name: 'Beer & wine', exact: true }).click();
-  await expect(calories.locator('.calorie-row')).toHaveCount(3);
-  await expect(calories.locator('.calorie-group')).toContainText('568 ml');
-  await calories.getByRole('button', { name: '30 ml shots', exact: true }).click();
-  await expect(calories.locator('.calorie-row')).toHaveCount(8);
+  await expect(calories.getByLabel('Calorie sort', { exact: true })).toHaveValue('high');
+  await calories.getByRole('button', { name: 'Beer', exact: true }).click();
+  await expect(calories.locator('.calorie-row')).toHaveCount(4);
+  await expect(calories.locator('.calorie-serving')).toContainText('568 ml');
+  await expect(calories.locator('.calorie-name').first()).toContainText('Imperial stout');
+  await calories.getByRole('button', { name: 'Wine', exact: true }).click();
+  await expect(calories.locator('.calorie-serving')).toContainText('150 ml');
+  await calories.getByRole('button', { name: 'Shots', exact: true }).click();
+  await expect(calories.locator('.calorie-row')).toHaveCount(4);
   await calories.getByRole('button', { name: 'Next calorie servings' }).click();
-  await expect(calories.locator('.calorie-row')).toHaveCount(8);
-  await expect(calories.locator('.calorie-rows')).toContainText('30 ml · 60%');
-  await expect(calories.getByRole('navigation', { name: 'Calorie servings' })).toContainText('9–16 of 16');
+  await expect(calories.locator('.calorie-row')).toHaveCount(4);
+  await calories.getByRole('button', { name: 'Next calorie servings' }).click();
+  await expect(calories.locator('.calorie-serving')).toContainText('30 ml');
+  await calories.getByRole('button', { name: 'Next calorie servings' }).click();
+  await expect(calories.getByRole('navigation', { name: 'Calorie servings' })).toContainText('13–16 of 16');
 });
 
 test('editorial folds support independent keyboard disclosure, retained selections and returning to the heading', async ({ page, browserName }) => {
@@ -79,93 +91,74 @@ test('editorial folds support independent keyboard disclosure, retained selectio
   await openRoute(page, '/#/');
   const pantry = page.locator('#home-pantry');
   const calories = page.locator('#home-calories');
-  const dna = page.locator('#home-dna');
-  await expect(page.locator('.home-study-toggle[aria-expanded="true"]')).toHaveCount(1);
-  await expect(pantry.locator('.home-study-toggle')).toHaveAttribute('aria-expanded', 'true');
+  const pairings = page.locator('#home-pairings');
+  await expect(page.locator('.home-study-toggle[aria-expanded="true"]')).toHaveCount(0);
+  await expect(pantry.locator('.home-study-toggle')).toHaveAttribute('aria-expanded', 'false');
   await expect(calories.locator('.home-study-panel')).toBeHidden();
   expect(await calories.locator('.home-study-panel').evaluate(el => (el as HTMLElement).inert)).toBe(true);
   await pantry.locator('.home-study-toggle').focus();
   await page.keyboard.press('Space');
+  await expect(pantry.locator('.home-study-panel')).toBeVisible();
+  await page.keyboard.press('Space');
   await expect(pantry.locator('.home-study-panel')).toBeHidden();
   // Safari's default keyboard mode uses Option-Tab to include native buttons.
   await page.keyboard.press(browserName === 'webkit' ? 'Alt+Tab' : 'Tab');
-  await expect(calories.locator('.home-study-toggle')).toBeFocused();
+  await expect(pairings.locator('.home-study-toggle')).toBeFocused();
   await page.keyboard.press('Enter');
+  await expect(pairings.locator('.home-study-panel')).toBeVisible();
+  await calories.locator('.home-study-toggle').click();
   await expect(calories.locator('.home-study-panel')).toBeVisible();
-  await calories.getByRole('button', { name: '30 ml shots', exact: true }).click();
-  await calories.locator('[data-calorie-drink="shot-vodka"] .calorie-row').click();
-  await dna.locator('.home-study-toggle').click();
+  await calories.getByRole('button', { name: 'Shots', exact: true }).click();
+  const shot = calories.locator('[data-calorie-drink]').first();
+  const shotId = await shot.getAttribute('data-calorie-drink');
+  await shot.locator('.calorie-row').click();
   await expect(page.locator('.home-study-toggle[aria-expanded="true"]')).toHaveCount(2);
   await calories.locator('.home-study-toggle').click();
   await expect(calories.locator('.home-study-panel')).toBeHidden();
   await calories.locator('.home-study-toggle').click();
-  await expect(calories.locator('.calorie-row')).toHaveCount(8);
-  await expect(calories.locator('[data-calorie-drink="shot-vodka"] .calorie-row')).toHaveAttribute('aria-expanded','true');
+  await expect(calories.locator('.calorie-row')).toHaveCount(4);
+  await expect(calories.locator(`[data-calorie-drink="${shotId}"] .calorie-row`)).toHaveAttribute('aria-expanded','true');
   await calories.getByRole('button', { name: 'Fold this study', exact: true }).click();
   await expect(calories.locator('.home-study-toggle')).toBeFocused();
   await expect(calories.locator('.home-study-panel')).toBeHidden();
   // The fold and its scroll correction finish on separate animation frames.
   // Assert the settled reading position, including on a busy test runner.
   await expect.poll(async () => (await calories.locator('.home-study-toggle').boundingBox())?.y ?? -1).toBeGreaterThanOrEqual(78);
-  await expect(dna.locator('.home-study-toggle')).toHaveAttribute('aria-expanded','true');
+  await expect(pairings.locator('.home-study-toggle')).toHaveAttribute('aria-expanded','true');
 });
 
-test('the shelf flow, recipe selection, colour tooltips and pair summary are clear without disclosures', async ({ page, browserName }) => {
+test('the shelf flow and pair summary are clear without extra disclosures', async ({ page }) => {
   await openRoute(page, '/#/');
   const pantry = page.locator('#home-pantry');
-  await expect(pantry.locator('.pantry-step h4')).toHaveText(['1Your test shelf','2Your best next addition','3Choose a drink']);
-  await expect(pantry.locator('.pantry-shelf-item')).toHaveCount(4);
-  await expect(pantry.locator('.pantry-picker-panel')).toBeHidden();
-  const ready = pantry.getByRole('group', { name: 'Recipe readiness' }).getByRole('button').first();
-  const before = Number(await ready.locator('strong').textContent());
-  await pantry.getByRole('button', { name: 'Add to test shelf', exact: true }).click();
-  expect(Number(await ready.locator('strong').textContent())).toBeGreaterThan(before);
-  await expect(ready).toHaveAttribute('aria-pressed', 'true');
-  await expect(pantry.locator('.pantry-new')).toHaveCount(2);
-  await pantry.locator('.pantry-picker > summary').click();
-  await expect(pantry.getByRole('textbox', { name: 'Find an ingredient' })).toBeFocused();
-  await pantry.getByRole('textbox', { name: 'Find an ingredient' }).fill('bourbon');
-  await pantry.getByRole('button', { name: 'Add Bourbon', exact: true }).click();
-  await page.keyboard.press('Escape');
-  await expect(pantry.locator('.pantry-picker > summary')).toBeFocused();
-  await expect(pantry.locator('.pantry-picker-panel')).toBeHidden();
+  await pantry.locator('.home-study-toggle').click();
+  await expect(pantry.locator('.study-recipe-results')).toContainText('Add ingredients to find drinks.');
+  await expect(pantry.getByText('Ice & garnish count.', { exact: false })).toHaveCount(0);
+  await expect(pantry.locator('.pantry-shelf-item')).toHaveCount(0);
+  await addFinderIngredients(pantry);
+  await expect(pantry.locator('.pantry-shelf-item')).toHaveCount(6);
+  await expect(pantry.locator('.finder-result-tabs button')).toHaveText(['Can make2', 'Need 129', 'Need 2202']);
+  await expect(pantry.locator('.study-recipe-list button')).toHaveCount(2);
+  await pantry.getByRole('textbox', { name: 'Add an ingredient', exact: true }).fill('bourbon');
+  await pantry.locator('.finder-ingredient-options').getByRole('button', { name: 'Bourbon', exact: true }).click();
+  await pantry.getByRole('textbox', { name: 'Add an ingredient', exact: true }).press('Escape');
+  await expect(pantry.locator('.finder-ingredient-picker')).toHaveCount(0);
   await expect(pantry.getByRole('button', { name: 'Remove Bourbon', exact: true })).toBeVisible();
-  const dna = page.locator('#home-dna');
-  await dna.locator('.home-study-toggle').click();
-  await expect(dna.getByRole('button', { name: 'Actual measures · ml', exact: true })).toHaveAttribute('aria-pressed', 'true');
-  await expect(dna.locator('.atlas-dna-list button').first()).toHaveAttribute('aria-pressed', 'true');
-  await expect(dna.locator('.atlas-dna-list button').first()).toContainText('Selected');
-  const base = dna.locator('.atlas-legend').getByRole('img', { name: 'Base spirit', exact: true });
-  if (browserName !== 'webkit') {
-    await dna.locator('.atlas-dna-segment').first().hover();
-    await expect(page.getByRole('tooltip')).toContainText('Base spirit');
-    await page.keyboard.press('Escape');
-  }
-  await base.focus();
-  await page.evaluate(() => scrollBy(0, 20));
-  await expect(page.getByRole('tooltip')).toHaveText('Base spirit');
-  await page.keyboard.press('Escape');
-  await expect(page.getByRole('tooltip')).toHaveCount(0);
-  await dna.getByRole('button', { name: /^Spritz, 180 ml/ }).click();
-  await expect(dna.locator('.atlas-insight')).toContainText('Spritz');
-  await expect(dna.locator('.atlas-insight-number')).toContainText('180');
-  await dna.getByRole('button', { name: 'Proportions · %', exact: true }).click();
-  await expect(dna.locator('.atlas-axis-note')).toContainText('100%');
   const pairings = page.locator('#home-pairings');
   await pairings.locator('.home-study-toggle').click();
   await pairings.getByLabel('First ingredient', { exact: true }).selectOption('gin');
   await pairings.getByLabel('Second ingredient', { exact: true }).selectOption('gin');
-  await pairings.getByRole('button', { name: 'Shared / union · %', exact: true }).click();
-  await expect(pairings.locator('.atlas-pair-number')).toContainText('100');
-  const positions = await pairings.evaluate(el => ({ summary: el.querySelector('.study-pairing-summary')!.getBoundingClientRect().bottom, plot: el.querySelector('.atlas-plot')!.getBoundingClientRect().top }));
-  expect(positions.summary).toBeLessThan(positions.plot);
+  await pairings.getByRole('button', { name: 'Overlap · %', exact: true }).click();
+  await expect(pairings.locator('.pairing-selected-pair p')).toContainText('100%');
+  const positions = await pairings.evaluate(el => ({ summary: el.querySelector('.study-pairing-summary')!.getBoundingClientRect().bottom, plot: el.querySelector('.pairing-matrix-svg')!.getBoundingClientRect().top }));
+  expect(positions.summary).toBeLessThanOrEqual(positions.plot);
+  await expect(pairings.getByRole('group', { name: 'Ingredient pairing heatmap' })).toBeVisible();
   await expect(page.locator('.home-studies .atlas-data, .home-studies .atlas-source-notes, #home-pairings .atlas-pan-hint')).toHaveCount(0);
 });
 
 test('full-height opening, chart scales and expanded rows fit every width and theme', async ({ page }, info) => {
   test.setTimeout(90_000);
   await openRoute(page, '/#/');
-  await expect(page.locator('[data-home-story]')).toHaveCount(4);
+  await expect(page.locator('[data-home-story]')).toHaveCount(3);
   await page.locator('#home-calories .home-study-toggle').click();
   for (const width of [320,390,430,768,1024,1440]) {
     await page.setViewportSize({ width, height: width === 320 ? 700 : 900 });
@@ -183,14 +176,14 @@ test('full-height opening, chart scales and expanded rows fit every width and th
       expect(opening.height).toBeLessThanOrEqual(opening.available + 3);
       expect(opening.font).toBeGreaterThanOrEqual(width === 320 ? 70 : 80);
       expect(opening.overflow).toBeLessThanOrEqual(1);
-      await page.locator('[data-calorie-drink="negroni"] .calorie-row').click();
+      await page.locator('[data-calorie-drink="bamboo"] .calorie-row').click();
       const scale = await page.locator('#home-calories .calorie-group').evaluate(el => {
         const axis = el.querySelector('.calorie-axis > div')!.getBoundingClientRect(), track = el.querySelector('.calorie-track')!.getBoundingClientRect();
         return { left: Math.abs(axis.left - track.left), right: Math.abs(axis.right - track.right), overflow: document.documentElement.scrollWidth - innerWidth };
       });
       expect(scale.left).toBeLessThan(1); expect(scale.right).toBeLessThan(1); expect(scale.overflow).toBeLessThanOrEqual(1);
       if (width === 390 || width === 1440) await page.screenshot({ path: info.outputPath(`calories-${width}-${theme}.png`) });
-      await page.locator('[data-calorie-drink="negroni"] .calorie-row').click();
+      await page.locator('[data-calorie-drink="bamboo"] .calorie-row').click();
       await page.getByRole('button', { name: 'Scroll to top', exact: true }).click();
       await expect.poll(() => page.evaluate(() => scrollY)).toBeLessThan(2);
       if (width === 390 || width === 1440) await page.screenshot({ path: info.outputPath(`opening-${width}-${theme}.png`) });
@@ -206,7 +199,7 @@ test('study paging remains tappable beside the floating scroll-to-top button', a
   await page.locator('#home-calories .home-study-toggle').click();
   for (const width of [320, 390]) {
     await page.setViewportSize({ width, height: 844 });
-    for (const name of ['Next shelf recipes', 'Next calorie servings']) {
+    for (const name of ['Next calorie servings']) {
       const next = page.getByRole('button', { name, exact: true });
       await next.scrollIntoViewIfNeeded();
       const top = page.getByRole('button', { name: 'Scroll to top', exact: true });

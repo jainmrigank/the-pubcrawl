@@ -185,7 +185,7 @@ test('Atlas remains shelved and directly readable while landing media stays paus
   page,
 }) => {
   await page.goto('/#/');
-  await expect(page.locator('[data-home-story]')).toHaveCount(4);
+  await expect(page.locator('[data-home-story]')).toHaveCount(3);
   await expect(page.locator('.landing-atlas-entry')).toHaveCount(0);
   await expect(page.locator('.landing-watch-rail')).toHaveCount(0);
   await expect(page.locator('.landing-shorts-preview')).toHaveCount(0);

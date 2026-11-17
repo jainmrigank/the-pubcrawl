@@ -1,7 +1,7 @@
 import { useMemo, useState } from 'react';
 import { pantryAnalysis } from '../../atlasMath';
 import { menuLink } from '../../landingStories';
-import { ArrowRight, Check } from '../../icons';
+import { ArrowLeft, ArrowRight, Check } from '../../icons';
 import { ChartTooltip } from '../ChartTooltip';
 import {
   catalogue,
@@ -39,116 +39,44 @@ function RecipeLinks({ recipes }: { recipes: typeof all }) {
 export function DnaChart({ compact = false }: { compact?: boolean }) {
   const [mode, setMode] = useState('ml');
   const [selected, setSelected] = useState(0);
+  const narrow = useNarrowPlot(900);
+  const mobile = compact && narrow;
   const row = dna[selected];
   const total = row.parts.reduce((s, p) => s + p[1], 0);
-  return (
-    <>
-      <Choices
-        label="Recipe scale"
-        value={mode}
-        onChange={setMode}
-        options={[
-          { value: 'ml', label: 'Actual measures · ml' },
-          { value: 'share', label: 'Proportions · %' },
-        ]}
-      />
-      <Legend
-        tooltips
-        items={ingredientFamilies.map((label, i) => ({
-          label,
-          color: palette[i],
-        }))}
-      />
-      <div className="atlas-figure-grid">
-        <div className="atlas-dna-list">
-          <h4 className="study-list-heading">Choose a drink</h4>
-          {dna.map((r, i) => {
-            const sum = r.parts.reduce((s, p) => s + p[1], 0);
-            return (
-              <button
-                key={r.name}
-                type="button"
-                aria-pressed={i === selected}
-                aria-label={`${r.name}, ${sum} ml. ${i === selected ? 'Selected' : 'View measures'}. ${r.parts.map(([name, ml]) => `${name} ${ml} ml`).join(', ')}.`}
-                onClick={() => setSelected(i)}
-              >
-                <span className="atlas-dna-row-label">
-                  <span>{r.name}<small>{sum} ml</small></span>
-                  <span className="dna-selection-cue">{i === selected ? <><Check size={15} />Selected</> : <ArrowRight size={17} />}</span>
-                </span>
-                <span
-                  className="atlas-dna-bar"
-                  style={{
-                    width: `${mode === 'share' ? 100 : (sum / 180) * 100}%`,
-                  }}
-                >
-                  {r.parts.map(([n, v, c]) => (
-                    <ChartTooltip
-                      key={n}
-                      className={`atlas-dna-segment${c === 3 ? ' is-gold' : ''}`}
-                      label={`${ingredientFamilies[c]} · ${n} · ${v} ml`}
-                      style={{
-                        width: `${(v / sum) * 100}%`,
-                        background: palette[c],
-                      }}
-                    >
-                      <span>
-                        {mode === 'share' ? `${fmt((v / sum) * 100, 0)}%` : v}
-                      </span>
-                    </ChartTooltip>
-                  ))}
-                </span>
-              </button>
-            );
-          })}
-          <div className="atlas-axis-note">
-            {mode === 'share'
-              ? 'Each bar = 100% of that recipe'
-              : 'Longest bar = 180 ml · every segment uses the same ml scale'}
-          </div>
-        </div>
-        <aside className={`atlas-insight ${compact ? 'study-recipe-detail' : ''}`} aria-live="polite">
-          <p className="house-eyebrow">SELECTED DRINK</p>
-          <h3>{row.name}</h3>
-          <div className="atlas-insight-number">{total}<span>ml · before ice & dilution</span></div>
-          <dl className="atlas-measures">
-            {row.parts.map(([n, v, c]) => (
-              <div key={n}>
-                <dt>
-                  <ChartTooltip label={ingredientFamilies[c]} focusable><i style={{ background: palette[c] }} /></ChartTooltip>
-                  {n}
-                </dt>
-                <dd>{v} ml</dd>
-              </div>
-            ))}
-          </dl>
-          <p>{row.finish}</p>
-          {hasCatalogueDrink(row.name) ? (
-            <a href={menuLink(row.name)}>Find the recipe ↗</a>
-          ) : (
-            <a
-              href={'https://iba-world.com/iba-cocktail/' + row.source + '/'}
-              target="_blank"
-              rel="noreferrer"
-            >
-              Read the IBA method ↗
-            </a>
-          )}
-        </aside>
+  const bar = (r: (typeof dna)[number]) => {
+    const sum = r.parts.reduce((s, p) => s + p[1], 0);
+    return <span className="atlas-dna-bar" style={{ width: `${mode === 'share' ? 100 : sum / 180 * 100}%` }}>
+      {r.parts.map(([n, v, c]) => <ChartTooltip key={n} className={`atlas-dna-segment${c === 3 ? ' is-gold' : ''}`} label={`${ingredientFamilies[c]} · ${n} · ${v} ml`} style={{ width: `${v / sum * 100}%`, background: palette[c] }}><span>{mode === 'share' ? `${fmt(v / sum * 100, 0)}%` : v}</span></ChartTooltip>)}
+    </span>;
+  };
+  return <>
+    <div className={compact ? 'study-controls dna-controls' : undefined}>
+      {mobile && <Select label="Choose a drink" value={String(selected)} onChange={value => setSelected(Number(value))} options={dna.map((r, i) => ({ value: String(i), label: r.name }))} />}
+      <Choices label="Recipe scale" value={mode} onChange={setMode} options={[{ value: 'ml', label: 'Actual measures · ml' }, { value: 'share', label: 'Proportions · %' }]} />
+    </div>
+    <Legend tooltips items={ingredientFamilies.flatMap((label, i) => !mobile || row.parts.some(part => part[2] === i) ? [{ label, color: palette[i] }] : [])} />
+    <div className="atlas-figure-grid">
+      <div className="atlas-dna-list">
+        {!mobile && <h4 className="study-list-heading">Choose a drink</h4>}
+        {(mobile ? [row] : dna).map(r => {
+          const i = dna.indexOf(r), sum = r.parts.reduce((s, p) => s + p[1], 0);
+          return mobile ? <div className="dna-selected-bar" key={r.name} aria-label={`${r.name}, ${sum} ml`}><span className="atlas-dna-row-label">{r.name}<small>{sum} ml</small></span>{bar(r)}</div> : <button key={r.name} type="button" aria-pressed={i === selected} aria-label={`${r.name}, ${sum} ml. ${i === selected ? 'Selected' : 'View measures'}. ${r.parts.map(([name, ml]) => `${name} ${ml} ml`).join(', ')}.`} onClick={() => setSelected(i)}>
+            <span className="atlas-dna-row-label"><span>{r.name}<small>{sum} ml</small></span><span className="dna-selection-cue">{i === selected ? <><Check size={15} />Selected</> : <ArrowRight size={17} />}</span></span>{bar(r)}
+          </button>;
+        })}
+        <div className="atlas-axis-note">{mode === 'share' ? 'Each bar = 100% of that recipe' : 'Longest bar = 180 ml · same scale for every drink'}</div>
       </div>
-      {!compact && <DataTable
-        headers={['Recipe', 'Ingredient', 'ml', 'Share %']}
-        rows={dna.flatMap((r) =>
-          r.parts.map(([n, v]) => [
-            r.name,
-            n,
-            v,
-            fmt((v / r.parts.reduce((s, p) => s + p[1], 0)) * 100, 1),
-          ])
-        )}
-      />}
-    </>
-  );
+      <aside className={`atlas-insight ${compact ? 'study-recipe-detail' : ''}`} aria-live="polite">
+        <h3>{row.name}</h3>
+        <div className="atlas-insight-number">{total}<span>ml · before ice & dilution</span></div>
+        <dl className="atlas-measures">{row.parts.map(([n, v, c]) => <div key={n}><dt><ChartTooltip label={ingredientFamilies[c]} focusable><i style={{ background: palette[c] }} /></ChartTooltip>{n}</dt><dd>{v} ml</dd></div>)}</dl>
+        <p>{row.finish}</p>
+        {hasCatalogueDrink(row.name) ? <a href={menuLink(row.name)}>Find the recipe ↗</a> : <a href={'https://iba-world.com/iba-cocktail/' + row.source + '/'} target="_blank" rel="noreferrer">Read the IBA method ↗</a>}
+      </aside>
+    </div>
+    {mobile && <details className="study-compare-all"><summary>Compare all 7 recipes</summary><Legend tooltips items={ingredientFamilies.map((label, i) => ({ label, color: palette[i] }))} /><div className="dna-comparison-list">{dna.map(r => <div className="dna-comparison-row" key={r.name}><span className="atlas-dna-row-label">{r.name}<small>{r.parts.reduce((s, p) => s + p[1], 0)} ml</small></span>{bar(r)}</div>)}</div></details>}
+    {!compact && <DataTable headers={['Recipe', 'Ingredient', 'ml', 'Share %']} rows={dna.flatMap(r => r.parts.map(([n, v]) => [r.name, n, v, fmt(v / r.parts.reduce((s, p) => s + p[1], 0) * 100, 1)]))} />}
+  </>;
 }
 export function ConstellationChart() {
   const [selected, setSelected] = useState('gin');
@@ -342,6 +270,9 @@ export function ConstellationChart() {
   );
 }
 export function PairingsChart({ compact = false }: { compact?: boolean }) {
+  const narrow = useNarrowPlot(900);
+  const [page, setPage] = useState(0);
+  const [partnerOpen, setPartnerOpen] = useState(false);
   const top = catalogue.ingredients.slice(0, 12);
   const [a, setA] = useState(top[0].id),
     [b, setB] = useState(top[1].id),
@@ -349,6 +280,7 @@ export function PairingsChart({ compact = false }: { compact?: boolean }) {
   const get = (x: string, y: string) => {
     const first = top.find((i) => i.id === x)!;
     const second = top.find((i) => i.id === y)!;
+    if (!second) return { count: 0, similarity: 0 };
     const count =
       x === y
         ? first.count
@@ -363,6 +295,32 @@ export function PairingsChart({ compact = false }: { compact?: boolean }) {
       .sort(classicFirst);
   const max = Math.max(...catalogue.pairs.map((p) => p.count));
   const options = top.map((i) => ({ value: i.id, label: i.name }));
+  if (compact && narrow) {
+    const ranked = top.filter(item => item.id !== a).map(item => ({ ...item, ...get(a, item.id) }))
+      .sort((x, y) => (metric === 'count' ? y.count - x.count : y.similarity - x.similarity) || x.name.localeCompare(y.name));
+    const current = Math.min(page, Math.ceil(ranked.length / 4) - 1);
+    const maximum = metric === 'count' ? Math.max(1, ...ranked.map(item => item.count)) : 1;
+    const changeFirst = (id: string) => { setA(id); setB(top.find(item => item.id !== id)!.id); setPartnerOpen(false); setPage(0); };
+    return <div className="pairings-mobile">
+      <div className="study-controls pairing-controls">
+        <Select label="First ingredient" value={a} onChange={changeFirst} options={options} />
+        <Choices label="Pairing measure" value={metric} onChange={value => { setMetric(value); setPage(0); }} options={[{ value: 'count', label: 'Shared recipes' }, { value: 'similarity', label: 'Overlap · %' }]} />
+      </div>
+      <p className="pairing-instruction">Choose a partner to see recipes.</p>
+      <div className="pairing-bars" role="group" aria-label={'Ingredients paired with ' + ingredientName(a)}>
+        {ranked.slice(current * 4, current * 4 + 4).map(item => <div className="pairing-bar-item" key={item.id}>
+          <button type="button" className="pairing-bar-row" aria-expanded={partnerOpen && b === item.id} aria-controls={partnerOpen && b === item.id ? 'pairing-mobile-recipes' : undefined} aria-label={`${item.name}, ${item.count} shared recipes, ${fmt(item.similarity * 100, 1)}% overlap. ${partnerOpen && b === item.id ? 'Hide' : 'Show'} recipes.`} onClick={() => { setPartnerOpen(b !== item.id || !partnerOpen); setB(item.id); }}>
+            <span>{item.name}<small aria-hidden="true">{partnerOpen && b === item.id ? '−' : '+'}</small></span>
+            <span className="pairing-bar-track" aria-hidden="true"><i style={{ width: `${(metric === 'count' ? item.count : item.similarity) / maximum * 100}%` }} /></span>
+            <strong>{metric === 'count' ? item.count : fmt(item.similarity * 100, 1) + '%'}</strong>
+          </button>
+          {partnerOpen && b === item.id && <div className="pairing-inline-result" id="pairing-mobile-recipes"><h4>{ingredientName(a)} & {item.name}</h4><p>{item.count} shared recipes · {fmt(item.similarity * 100, 1)}% overlap</p><RecipeLinks recipes={rows.slice(0, 3)} />{!rows.length && <p>No recipes in common.</p>}</div>}
+        </div>)}
+      </div>
+      <nav className="study-pagination" aria-label="Ingredient partners"><span aria-live="polite">{current * 4 + 1}–{Math.min(current * 4 + 4, ranked.length)} of {ranked.length}</span><div><button type="button" aria-label="Previous ingredient partners" disabled={!current} onClick={() => setPage(current - 1)}><ArrowLeft size={18} /></button><button type="button" aria-label="Next ingredient partners" disabled={(current + 1) * 4 >= ranked.length} onClick={() => setPage(current + 1)}><ArrowRight size={18} /></button></div></nav>
+      <p className="study-note">Overlap: shared recipes as a share of recipes containing either ingredient.</p>
+    </div>;
+  }
   const summary = (
     <div className="atlas-network-notes study-pairing-summary" aria-live="polite">
           <div className="atlas-pair-number">

@@ -1,8 +1,8 @@
+import { RecipeIngredientRow, RecipeAvailability } from './RecipeIngredient';
 import { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { motion, useReducedMotion } from 'framer-motion';
 import { acquirePageScrollLock } from '../pageScrollLock';
-import { formatMeasure } from '../measure';
 import { EASE } from '../motion';
 import { setBackgroundInert } from '../overlayGate';
 import type { RecipeFocusPhase, RecipeFocusSession } from '../recipeFocusTypes';
@@ -109,7 +109,7 @@ export function RecipeFocus({ session, phase, onRequestClose, onEntered, onExite
       if (event.key !== 'Tab') return;
       const focusable = Array.from(dialogRef.current?.querySelectorAll<HTMLElement>(
         'button:not([disabled]), a[href], [tabindex]:not([tabindex="-1"])',
-      ) ?? []);
+      ) ?? []).filter(element => element.getClientRects().length > 0 && getComputedStyle(element).visibility !== 'hidden' && !element.closest('[hidden], [inert]'));
       if (!focusable.length) return;
       const first = focusable[0];
       const last = focusable[focusable.length - 1];
@@ -238,18 +238,9 @@ export function RecipeFocus({ session, phase, onRequestClose, onEntered, onExite
               <div className="recipe-focus-recipe">
                 <section className="recipe-focus-ingredients" aria-labelledby="recipe-focus-ingredients-title">
                   <p className="recipe-focus-section-index k-label">01</p>
-                  <h2 id="recipe-focus-ingredients-title">Ingredients</h2>
+                  <h2 id="recipe-focus-ingredients-title">Ingredients</h2><RecipeAvailability recipe={session.recipe} />
                   <ul>
-                    {session.recipe.ingredients.map((ingredient, index) => (
-                      <li key={`${ingredient.name}-${index}`} className={ingredient.have === false ? 'is-missing' : ''}>
-                        <span className="recipe-focus-ingredient-name">
-                          {ingredient.have === false && <span className="recipe-focus-state">Out</span>}
-                          <span>{ingredient.name}</span>
-                          {ingredient.optional && <span className="recipe-focus-state is-optional">Optional</span>}
-                        </span>
-                        <span className="recipe-focus-measure">{formatMeasure(ingredient.measure) || '—'}</span>
-                      </li>
-                    ))}
+                    {session.recipe.ingredients.map((ingredient, index) => <RecipeIngredientRow key={`${ingredient.name}-${index}`} ingredient={ingredient} recipe={session.recipe} locked={locked} />)}
                   </ul>
                 </section>
 

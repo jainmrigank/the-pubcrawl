@@ -26,7 +26,7 @@ export default defineConfig({
     { name: 'webkit-taste-discovery', testMatch: '**/taste-discovery.spec.ts' },
     { name: 'webkit-quiz-record', testMatch: '**/daily-quiz.spec.ts', grep: /non-perfect run|dropped answer/ },
     { name: 'webkit-atlas', testMatch: '**/atlas.spec.ts' },
-    { name: 'webkit-scroll-bar', testMatch: ['**/landing-data.spec.ts', '**/recipe-focus.spec.ts', '**/content-navigation.spec.ts'] },
+    { name: 'webkit-scroll-bar', testMatch: ['**/landing-data.spec.ts', '**/recipe-focus.spec.ts', '**/content-navigation.spec.ts', '**/mobile-studies.spec.ts', '**/ingredient-guide.spec.ts'] },
     {
       name: 'physical-iphone-shell',
       testMatch: '**/physical-iphone.spec.ts',

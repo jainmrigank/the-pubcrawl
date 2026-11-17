@@ -156,8 +156,7 @@ p.story-source { margin: 24px 0 0; max-width: 90ch; }
 .culture-timeline a.story-source { display: inline-block; padding-block: 8px; }
 
 .editorial-links { border-top: 1px solid var(--line-strong); }
-.editorial-links > a { display: grid; grid-template-columns: 40px 1fr 150px 40px; align-items: center; gap: 16px; min-height: 170px; padding-block: 16px; border-bottom: 1px solid var(--line); color: var(--ink); text-decoration: none; }
-.editorial-link-index { color: var(--accent); font-size: 10px; }
+.editorial-links > a { display: grid; grid-template-columns: minmax(0, 1fr) 150px 40px; align-items: center; gap: 16px; min-height: 170px; padding-block: 16px; border-bottom: 1px solid var(--line); color: var(--ink); text-decoration: none; }
 .editorial-link-copy { display: flex; flex-direction: column; gap: 10px; }
 .editorial-link-copy > span { font-family: var(--display-serif); font-size: clamp(32px, 5vw, 64px); font-style: italic; line-height: 1.1; letter-spacing: -.03em; }
 .editorial-link-copy small { font-size: 11px; color: var(--ink-60); }
@@ -279,7 +278,7 @@ html[data-theme='dark'] .recipe-focus-photo img { outline-color: rgb(255 255 255
   .culture-timeline { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 28px 20px; margin-top: 28px; }
   .culture-timeline .bar-glass-drawing { height: 124px; width: 108px; }
   .culture-timeline h4 { font-size: 15px; }
-  .editorial-links > a { grid-template-columns: 20px 1fr 50px 20px; min-height: 120px; gap: 8px; }
+  .editorial-links > a { grid-template-columns: minmax(0, 1fr) 50px 20px; min-height: 120px; gap: 8px; }
   .editorial-link-copy > span { font-size: clamp(25px, 7vw, 36px); }
   .editorial-link-copy small { font-size: 10px; }
   .editorial-links .bar-glass-drawing { height: 75px; width: 55px; }

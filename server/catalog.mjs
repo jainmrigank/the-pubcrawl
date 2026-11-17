@@ -8,7 +8,9 @@ import { readFileSync, existsSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { withVibe, VIBES } from './vibes.mjs';
-import { shelfMatchRecipes } from '../shared/catalog-engine.mjs';
+import { recipeSearchScore as sharedRecipeSearchScore, ingredientMatches as sharedIngredientMatches, isStaple as sharedIsStaple, shelfMatchRecipes } from '../shared/catalog-engine.mjs';
+
+import { GUIDE_INGREDIENTS, ingredientGuide, ingredientGuidance, searchIngredientIndex } from '../shared/ingredient-guide.mjs';
 
 const VIBES_SET = VIBES;
 
@@ -180,117 +182,14 @@ export const norm = (s) =>
     .replace(/\s+/g, ' ')
     .trim();
 
-const INDIA_LANE_SEARCH = {
-  everyday: 'lane everyday india home household go-to familiar simple',
-  'modern-bar': 'lane modern indian bar restaurant contemporary new generation gen z trending',
-  regional: 'lane regional cultural local indigenous heritage specialty',
-  'zero-proof': 'lane zero proof non alcoholic alcohol free mocktail gen alpha safe',
-};
-
-const INDIA_ACCESS_SEARCH = {
-  1: 'access 1 access tier 1 common household standard restaurant bar easy available',
-  2: 'access 2 access tier 2 specialty purchase larger city simple preparation',
-  3: 'access 3 access tier 3 regional seasonal licensed source specialist hard to find',
-};
-
-const containsPhrase = (haystack, needle) => ` ${haystack} `.includes(` ${needle} `);
-
 /**
  * Ranked recipe search shared by the menu and shelf results. Research metadata
  * is intentionally first-class: "regional", "tier 1", "coupe", "zero proof",
  * a vibe, a place in the tagline, or a preparation method can all find a drink.
  */
-export function recipeSearchScore(recipe, query) {
-  const q = norm(String(query || ''));
-  if (!q) return 0;
-  const name = norm(recipe.name || '');
-  if (name === q) return 0;
-  if (name.startsWith(q)) return 1;
-  if (` ${name} `.includes(` ${q} `)) return 2;
-  if (name.includes(q)) return 3;
-
-  const ingredientText = norm((recipe.ingredients || []).map((ingredient) => ingredient.name).join(' '));
-  if (containsPhrase(ingredientText, q)) return 4;
-
-  const lane = recipe.india?.lane || '';
-  const tier = recipe.india?.pantryTier;
-  const metadata = norm([
-    recipe.category,
-    recipe.iba,
-    recipe.glass,
-    'glass ' + (recipe.glass || ''),
-    recipe.alcoholic,
-    recipe.vibe,
-    VIBES_SET[recipe.vibe]?.label,
-    recipe.tagline,
-    ...(recipe.tags || []),
-    lane,
-    INDIA_LANE_SEARCH[lane] || '',
-    tier ? INDIA_ACCESS_SEARCH[tier] : '',
-  ].join(' '));
-  if (containsPhrase(metadata, q)) return 5;
-
-  const words = q.split(' ').filter(Boolean);
-  if (words.length > 1 && words.every((word) =>
-    containsPhrase(metadata, word) || containsPhrase(ingredientText, word)
-  )) return 5;
-
-  const method = norm(recipe.instructions || '');
-  if (containsPhrase(method, q) || (words.length > 1 && words.every((word) => containsPhrase(method, word)))) return 6;
-  return -1;
-}
-
-// interchangeable families — pantry item matches recipe item if both hit the same group
-const ALIAS_GROUPS = [
-  ['whiskey', 'whisky', 'bourbon', 'scotch', 'rye whiskey', 'blended whiskey', 'irish whiskey', 'tennessee whiskey'],
-  ['apple', 'fresh apple', 'apple juice'],
-  ['white rum', 'light rum', 'silver rum'],
-  ['dark rum', 'black rum'],
-  ['gold rum', 'anejo rum', 'aged rum'],
-  ['club soda', 'soda water', 'sparkling water', 'seltzer', 'carbonated water'],
-  ['7 up', 'sprite', 'lemon lime soda'],
-  ['angostura bitters', 'aromatic bitters', 'bitters'],
-  ['simple syrup', 'sugar syrup', 'gomme syrup'],
-  ['heavy cream', 'double cream', 'fresh cream', 'light cream', 'cream'],
-  ['coca cola', 'cola', 'coke', 'pepsi cola'],
-  ['st germain', 'elderflower liqueur', 'elderflower cordial'],
-  ['kahlua', 'coffee liqueur', 'tia maria'],
-  ['baileys irish cream', 'irish cream', 'baileys'],
-  ['cointreau', 'triple sec', 'orange liqueur', 'grand marnier'],
-  ['mint', 'mint leaves', 'fresh mint', 'spearmint'],
-  ['lime', 'lime juice', 'fresh lime', 'juice of lime', 'lime wedge'],
-  ['lemon', 'lemon juice', 'fresh lemon', 'juice of lemon', 'lemon wedge'],
-  ['orange', 'orange juice', 'fresh orange'],
-  ['champagne', 'prosecco', 'sparkling wine', 'cava'],
-  ['egg white', 'aquafaba'],
-];
-
-const STAPLES = new Set(['ice', 'crushed ice', 'cubed ice', 'water', 'hot water', 'sugar', 'salt', 'powdered sugar', 'brown sugar', 'black pepper', 'ice cubes']);
-
-function aliasGroupOf(n) {
-  for (let g = 0; g < ALIAS_GROUPS.length; g++) {
-    for (const term of ALIAS_GROUPS[g]) {
-      const p = ` ${n} `;
-      if (p.includes(` ${term} `) || term === n) return g;
-    }
-  }
-  return -1;
-}
-
-/** True if a pantry ingredient satisfies a recipe ingredient. */
-export function ingredientMatches(pantryName, recipeName) {
-  const a = norm(pantryName);
-  const b = norm(recipeName);
-  if (!a || !b) return false;
-  if (a === b) return true;
-  const pa = ` ${a} `;
-  const pb = ` ${b} `;
-  if (pa.includes(pb) || pb.includes(pa)) return true;
-  const ga = aliasGroupOf(a);
-  return ga !== -1 && ga === aliasGroupOf(b);
-}
-
-export const isStaple = (name) => STAPLES.has(norm(name));
+export const recipeSearchScore = (recipe, query) => sharedRecipeSearchScore(recipe, query, VIBES_SET);
+export const ingredientMatches = sharedIngredientMatches;
+export const isStaple = sharedIsStaple;
 
 /* ---------- catalog construction ---------- */
 export function loadCatalog(options = {}) {
@@ -377,18 +276,27 @@ export function loadCatalog(options = {}) {
   // image set is separately approved.
   if (options.applyAudit !== false) applyCatalogAudit(cocktails);
 
+  // Persist the same concise guidance in the ingredient index and every recipe.
+  // Keep original names/measures intact for matching, analytics and old saves.
+  for (const cocktail of cocktails) for (const ingredient of cocktail.ingredients) {
+    const guidance = ingredientGuidance(ingredient.name, cocktail);
+    if (guidance) ingredient.guidance = guidance;
+  }
+
   const seen = new Map(); // norm -> entry
-  const add = (name) => {
+  const add = (name, category) => {
     const key = norm(name);
     if (!key || seen.has(key)) return;
     seen.set(key, {
       name,
-      category: categorise(name),
+      category: category || (ingredientGuide(name) ? (ingredientGuide(name).id === 'IC04' ? 'Soda & Mixer' : ['IC29', 'IC31', 'IC32', 'IC35'].includes(ingredientGuide(name).id) ? 'Syrup & Sweetener' : 'Liqueur') : categorise(name)),
       image: `https://www.thecocktaildb.com/images/ingredients/${encodeURIComponent(name)}-small.png`,
+      ...(ingredientGuidance(name) ? { guidance: ingredientGuidance(name) } : {}),
     });
   };
-  scraped.forEach(add);
-  CURATED.forEach(add);
+  scraped.forEach(name => add(name));
+  CURATED.forEach(name => add(name));
+  GUIDE_INGREDIENTS.forEach(item => add(item.name, item.category));
   for (const c of cocktails) c.ingredients.forEach((i) => add(i.name));
 
   const ingredients = [...seen.values()].sort((a, b) => a.name.localeCompare(b.name));
@@ -396,22 +304,7 @@ export function loadCatalog(options = {}) {
 }
 
 /** Typeahead search over the ingredient index. */
-export function searchIngredients(ingredients, q, limit = 12) {
-  const n = norm(q);
-  if (!n) return [];
-  const scored = [];
-  for (const ing of ingredients) {
-    const name = norm(ing.name);
-    let score = -1;
-    if (name === n) score = 100;
-    else if (name.startsWith(n)) score = 80 - name.length * 0.1;
-    else if (name.split(' ').some((w) => w.startsWith(n))) score = 60 - name.length * 0.1;
-    else if (name.includes(n)) score = 40 - name.indexOf(n);
-    if (score >= 0) scored.push([score, ing]);
-  }
-  scored.sort((x, y) => y[0] - x[0]);
-  return scored.slice(0, limit).map(([, ing]) => ing);
-}
+export const searchIngredients = searchIngredientIndex;
 
 /** Score every cocktail against the pantry. */
 export function matchRecipes(cocktails, pantry, options = {}) {

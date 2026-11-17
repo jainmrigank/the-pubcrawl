@@ -1,3 +1,4 @@
+import { searchIngredientIndex } from '../shared/ingredient-guide';
 import type {
   BrowseFilter,
   ClientCatalogueBundle,
@@ -5,7 +6,7 @@ import type {
   RecipePage,
   ShelfRecipe,
 } from './types';
-import { norm, queryRecipes, shelfMatchRecipes } from '../shared/catalog-engine';
+import { queryRecipes, shelfMatchRecipes } from '../shared/catalog-engine';
 import { dailyQuizQuestion, quizPlaylistSlice } from '../shared/quiz-engine';
 
 let catalogPromise: Promise<ClientCatalogueBundle> | null = null;
@@ -84,14 +85,7 @@ export async function matchLocalRecipes(options: {
 
 export async function searchLocalIngredients(query: string, limit = 12): Promise<Ingredient[]> {
   const bundle = await loadLocalCatalogue();
-  const q = norm(query);
-  if (!q) return [];
-  const scored = bundle.ingredients.map((ingredient) => {
-    const name = norm(ingredient.name);
-    const score = name === q ? 100 : name.startsWith(q) ? 80 - name.length * 0.1 : name.split(' ').some((word: string) => word.startsWith(q)) ? 60 - name.length * 0.1 : name.includes(q) ? 40 - name.indexOf(q) : -1;
-    return [score, ingredient] as const;
-  }).filter(([score]) => score >= 0).sort((a, b) => b[0] - a[0]);
-  return scored.slice(0, limit).map(([, ingredient]) => ingredient);
+  return searchIngredientIndex(bundle.ingredients, query, limit);
 }
 
 export async function localQuizSlice(seed: string, from = 0, count = 20) {

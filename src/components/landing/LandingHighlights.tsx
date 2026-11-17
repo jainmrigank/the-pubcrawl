@@ -1,24 +1,24 @@
-import { Fragment } from 'react';
 import { CalorieComparison } from './CalorieComparison';
 import { HomeStudy } from './HomeStudy';
 import { HomeGroupHeading } from './HomeGroupHeading';
-import { DnaChart, PairingsChart } from '../atlas/RecipeCharts';
-import { catalogue } from '../atlas/data';
+import { PairingsStudy } from './PairingsStudy';
 import { PantryStudy } from './PantryStudy';
+import type { StudyActions } from './StudyRecipes';
 import '../atlas/atlas.css';
 import './studies.css';
+import './focus-return.css';
 
 const highlights = [
-  { id: 'pantry', number: '01', label: 'YOUR SHELF, MORE POSSIBILITIES', title: 'Just one more bottle.', intro: 'Choose ingredients. Find your best next addition.', meta: `${catalogue.recipes.length} recipes · Test shelf`, Chart: PantryStudy },
-  { id: 'dna', number: '03', label: 'THE RECIPE, REVEALED', title: 'Same shelf. Different intentions.', intro: 'Choose a classic. Compare its measures or proportions.', meta: '7 classics', Chart: DnaChart },
-  { id: 'pairings', number: '04', label: 'INGREDIENT CONNECTIONS', title: 'Who keeps whose company?', intro: 'See which ingredients share recipes, by count or overlap.', meta: '12 ingredients · 66 pairs', Chart: PairingsChart },
+  { id: 'pantry', label: 'YOUR INGREDIENTS', title: 'What can I make?', intro: 'Add ingredients. Choose a drink.' },
+  { id: 'pairings', label: 'INGREDIENT CONNECTIONS', title: 'Ingredient pairings', intro: 'Choose two ingredients. Find their drinks.' },
 ];
 
-export default function LandingHighlights() {
+export default function LandingHighlights({ actions }: { actions: StudyActions }) {
   return <section className="home-studies" aria-labelledby="home-studies-title">
-    <HomeGroupHeading id="home-studies-title" label="FOUR INTERACTIVE STUDIES" title="Drinks, decoded." description="Open a study. See what’s in your glass." />
-    {highlights.map(({ id, number, label, title, intro, meta, Chart }) => <Fragment key={id}><div className="bar-atlas home-highlights"><HomeStudy id={id} number={number} label={label} title={title} intro={intro} meta={meta} defaultOpen={id === 'pantry'}>
-      {id === 'pantry' ? <PantryStudy /> : <Chart compact />}
-    </HomeStudy></div>{id === 'pantry' && <CalorieComparison />}</Fragment>)}
+    <HomeGroupHeading id="home-studies-title" label="EXPLORE YOUR DRINK" title="Drinks, decoded." description="Pick a study to explore." />
+    {highlights.map(({ id, label, title, intro }) => <div key={id} className="bar-atlas home-highlights"><HomeStudy id={id} label={label} title={title} intro={intro} meta="">
+      {id === 'pantry' ? <PantryStudy actions={actions} /> : <PairingsStudy actions={actions} />}
+    </HomeStudy></div>)}
+    <CalorieComparison />
   </section>;
 }

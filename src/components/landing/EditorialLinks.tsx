@@ -11,8 +11,7 @@ export function EditorialLinks() {
       ['Play a round.', 'Pub Quiz', '#/quiz', 'rocks'],
       ['Learn the basics.', 'Bar Basics', '#/basics', 'tall'],
       ['Your saved drinks.', 'Your Tab', '#/tab', 'coupe'],
-    ] as const).map(([copy, label, href, kind], i) => <a href={href} key={href} aria-label={label}>
-      <span className="editorial-link-index k-label">0{i + 1}</span>
+    ] as const).map(([copy, label, href, kind]) => <a href={href} key={href} aria-label={label}>
       <span className="editorial-link-copy"><span>{copy}</span><small className="k-label">{label}</small></span>
       <GlassDrawing kind={kind} /><ArrowRight size={30} />
     </a>)}

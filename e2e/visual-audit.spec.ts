@@ -200,11 +200,11 @@ test('quiz questions, answer rows and the shared record retain clear hierarchy',
 
 test('landing analyses and daily question use the same readable system', async ({page},info) => {
   await openRoute(page,'/#/');
-  await expect(page.locator('[data-home-story]')).toHaveCount(4);
+  await expect(page.locator('[data-home-story]')).toHaveCount(3);
   for (const toggle of await page.locator('.home-study-toggle').all()) if (await toggle.getAttribute('aria-expanded') === 'false') await toggle.click();
   for (const width of [320,390,768,1440]) {
     await page.setViewportSize({width,height:900});
-    for (const id of ['calories','pantry','dna','pairings']) {
+    for (const id of ['pantry','pairings','calories']) {
       const story=page.locator(`[data-home-story="${id}"]`);
       await story.scrollIntoViewIfNeeded();
       expectClean(await audit(page));

@@ -1,3 +1,4 @@
+import { guideIngredientMatch, ingredientSearchText, resolveIngredient } from './ingredient-guide.mjs';
 /**
  * Runtime-neutral catalogue/query primitives.
  *
@@ -21,6 +22,7 @@ export const norm = (value) => String(value ?? '')
 const ALIAS_GROUPS = [
   ['whiskey', 'whisky', 'bourbon', 'scotch', 'rye whiskey', 'blended whiskey', 'irish whiskey', 'tennessee whiskey'],
   ['apple', 'fresh apple', 'apple juice'],
+  ['gin', 'london dry gin', 'dry gin'],
   ['white rum', 'light rum', 'silver rum'],
   ['dark rum', 'black rum'],
   ['gold rum', 'anejo rum', 'aged rum'],
@@ -50,7 +52,7 @@ const STAPLES = new Set([
 function aliasGroupOf(value) {
   const n = norm(value);
   for (let index = 0; index < ALIAS_GROUPS.length; index += 1) {
-    if (ALIAS_GROUPS[index].some((term) => ` ${n} `.includes(` ${term} `))) return index;
+    if (ALIAS_GROUPS[index].includes(n)) return index;
   }
   return -1;
 }
@@ -59,9 +61,14 @@ export function ingredientMatches(pantryName, recipeName) {
   const a = norm(pantryName);
   const b = norm(recipeName);
   if (!a || !b) return false;
-  if (a === b || ` ${a} `.includes(` ${b} `) || ` ${b} `.includes(` ${a} `)) return true;
-  const group = aliasGroupOf(a);
-  return group >= 0 && group === aliasGroupOf(b);
+  const guided = guideIngredientMatch(a, b);
+  if (a === b) return true;
+  if (guided !== null) return guided;
+  const plainA = a.replace(/^(?:freshly squeezed|fresh|chilled) /, '');
+  const plainB = b.replace(/^(?:freshly squeezed|fresh|chilled) /, '');
+  if (plainA === plainB) return true;
+  const group = aliasGroupOf(plainA);
+  return group >= 0 && group === aliasGroupOf(plainB);
 }
 
 export const isStaple = (name) => STAPLES.has(norm(name));
@@ -74,7 +81,7 @@ export function recipeSearchScore(recipe, query, vibes = {}) {
   if (name.startsWith(q)) return 1;
   if (` ${name} `.includes(` ${q} `)) return 2;
   if (name.includes(q)) return 3;
-  const ingredientText = norm((recipe?.ingredients || []).map((item) => item.name).join(' '));
+  const ingredientText = norm((recipe?.ingredients || []).map((item) => ingredientSearchText(item.name)).join(' '));
   if (` ${ingredientText} `.includes(` ${q} `)) return 4;
   const lane = recipe?.india?.lane || '';
   const tier = recipe?.india?.pantryTier;
@@ -109,7 +116,7 @@ export const isBrowseableRecipe = (recipe) => Boolean(
 );
 
 export function shelfMatchRecipes(recipes, pantry, options = {}) {
-  const pantryNames = Array.isArray(pantry) ? pantry.map(norm).filter(Boolean) : [];
+  const pantryNames = Array.isArray(pantry) ? pantry.map(name => String(name).trim()).filter(Boolean) : [];
   const query = norm(options.query);
   const category = options.category || '';
   const collection = options.collection || '';
@@ -126,18 +133,20 @@ export function shelfMatchRecipes(recipes, pantry, options = {}) {
     let matched = 0;
     const ingredients = (recipe.ingredients || []).map((item) => {
       const staple = isStaple(item.name);
-      const have = staple || pantryNames.some((name) => ingredientMatches(name, item.name));
+      const { have, alternative } = resolveIngredient(item.name, pantryNames, recipe, ingredientMatches, isStaple);
       if (!staple && !item.optional) {
         if (have) matched += 1;
         else missing.push(item.name);
       }
-      return { ...item, have, staple };
+      return { ...item, have, staple, ...(alternative ? { alternative } : {}) };
     });
     if (matched === 0 || missing.length > 2) continue;
     const requiredTotal = required.length;
     results.push({
       ...recipe,
       ingredients,
+      alternativeCount: ingredients.filter(item => item.alternative).length,
+      preparationCount: ingredients.filter(item => item.alternative?.kind === 'prepare').length,
       missing,
       matched,
       requiredTotal,
@@ -146,7 +155,7 @@ export function shelfMatchRecipes(recipes, pantry, options = {}) {
       total: requiredTotal,
     });
   }
-  results.sort((a, b) => a.missingCount - b.missingCount || b.matchRatio - a.matchRatio || b.matched - a.matched || b.requiredTotal - a.requiredTotal || norm(a.name).localeCompare(norm(b.name)));
+  results.sort((a, b) => a.missingCount - b.missingCount || a.preparationCount - b.preparationCount || a.alternativeCount - b.alternativeCount || b.matchRatio - a.matchRatio || b.matched - a.matched || b.requiredTotal - a.requiredTotal || norm(a.name).localeCompare(norm(b.name)));
   return results;
 }
 

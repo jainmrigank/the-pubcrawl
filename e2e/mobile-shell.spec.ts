@@ -98,7 +98,7 @@ test.describe('mobile shell and navigation', () => {
     // Home keeps four useful visualisations; media previews remain paused.
     await expect(page.locator('.landing-shorts-rail')).toHaveCount(0);
     await expect(page.locator('.landing-watch-rail')).toHaveCount(0);
-    await expect(page.locator('[data-home-story]')).toHaveCount(4);
+    await expect(page.locator('[data-home-story]')).toHaveCount(3);
     await expect(page.locator('[data-tour="landing-make"]')).toBeVisible();
     await expect(page.getByRole('link', { name: 'Browse all drinks', exact: true })).toBeVisible();
   });

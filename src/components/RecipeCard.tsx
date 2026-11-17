@@ -1,8 +1,8 @@
+import { RecipeIngredientRow, RecipeAvailability } from './RecipeIngredient';
 import { useId, useRef, useState } from 'react';
 import type { Recipe, Vibe } from '../types';
 import { ArrowLeft, ArrowRight, Check, Expand, GlassIcon, Heart, Play, Plus, Share, X } from '../icons';
 import { recipeShareText, shareContent } from '../share';
-import { formatMeasure } from '../measure';
 import type { RecipeFocusOrigin } from '../recipeFocusTypes';
 
 interface Props {
@@ -199,7 +199,7 @@ export function RecipeCard(props: Props) {
                 {vibe.label}
               </span>
             </div>
-            <h3 className="fc-name" data-recipe-heading tabIndex={flipped ? undefined : -1}>{recipe.name}</h3>
+            <h3 className="fc-name" data-recipe-heading tabIndex={flipped ? undefined : -1}>{recipe.name}</h3><RecipeAvailability recipe={recipe} />
             <div className="fc-botrow">
               <span className="fc-glass">
                 <GlassIcon glass={recipe.glass} size={16} />
@@ -224,21 +224,12 @@ export function RecipeCard(props: Props) {
               <span className="k-label">{cardLabel}</span>
               {flipped && <div className="fb-actions" data-tour={tourActions}>{buttons}</div>}
             </div>
-            <h3>{recipe.name}</h3>
+            <h3>{recipe.name}</h3><RecipeAvailability recipe={recipe} />
             {recipe.tagline && <p className="fb-tagline">{recipe.tagline}</p>}
           </div>
           <div className="fb-scroll" ref={scrollRef}>
             <ul className="fb-ings">
-              {recipe.ingredients.map((i, idx) => (
-                <li key={`${i.name}-${idx}`} className={i.have === false ? 'need' : ''}>
-                  <span className="fb-ing-name">
-                    {i.have === false && <span className="k-label miss-mark">Out</span>}
-                    {i.name}
-                    {i.optional && <span className="k-label opt-mark">Optional</span>}
-                  </span>
-                  <span className="fb-ing-measure">{formatMeasure(i.measure) || '—'}</span>
-                </li>
-              ))}
+              {recipe.ingredients.map((ingredient, index) => <RecipeIngredientRow key={`${ingredient.name}-${index}`} ingredient={ingredient} recipe={recipe} />)}
             </ul>
             <p className="fb-method">{recipe.instructions}</p>
           </div>

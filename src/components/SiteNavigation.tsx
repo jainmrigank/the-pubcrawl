@@ -3,7 +3,7 @@ import { createPortal } from 'react-dom';
 import type { MouseEvent } from 'react';
 import type { Route } from '../navigation';
 import type { Theme, TourId } from '../types';
-import { ArrowRight, Clipboard, PubGlyph, TasteMapIcon, ThemeGlyph, ToolIcon, X } from '../icons';
+import { ArrowRight, Clipboard, ExploreIcon, PubGlyph, TasteMapIcon, ThemeGlyph, ToolIcon, X } from '../icons';
 import { ContextualHelp } from './ContextualHelp';
 import { acquirePageScrollLock } from '../pageScrollLock';
 import { overlayGate, OVERLAY_PRIORITY, setBackgroundInert } from '../overlayGate';
@@ -86,7 +86,7 @@ export function SiteNavigation({ active, theme, preference, onPreference, onTogg
       <span>{item.label}{item.route === 'tab' && tabCount > 0 && <span className="house-tab-count" aria-hidden="true">{tabCount}</span>}</span>
     </a>)}
     <button className={`house-nav-link ${exploring || open ? 'active' : ''}`} type="button" onClick={show} aria-expanded={open} aria-haspopup="dialog" aria-controls={open ? 'explore-panel' : undefined}>
-      {mobile && <span className="more-glyph" aria-hidden="true">···</span>}<span>Explore<span aria-hidden="true" className="explore-plus">+</span></span>
+      {mobile && <ExploreIcon size={20} />}<span>Explore<span aria-hidden="true" className="explore-plus">+</span></span>
     </button>
   </>;
   return <>

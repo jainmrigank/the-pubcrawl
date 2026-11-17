@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { OVERLAY_PRIORITY, overlayGate } from './overlayGate';
 import {
   clearRecipeFocusMarker,
@@ -17,6 +17,7 @@ export function useRecipeFocus() {
   const phaseRef = useRef<RecipeFocusPhase>('opening');
   const registry = useRef(new Map<string, RecipeFocusSession>());
   const closeFallback = useRef(0);
+  const pendingRestore = useRef<RecipeFocusSession | null>(null);
 
   const updatePhase = useCallback((next: RecipeFocusPhase) => {
     phaseRef.current = next;
@@ -29,26 +30,50 @@ export function useRecipeFocus() {
     window.clearTimeout(closeFallback.current);
     if (readRecipeFocusMarker()?.token === closing.token) clearRecipeFocusMarker();
     sessionRef.current = null;
+    pendingRestore.current = closing;
     setSession(null);
-    const sameRoute = window.location.hash === closing.sourceHash;
-    window.requestAnimationFrame(() => {
-      overlayGate.release(RECIPE_FOCUS_GATE_ID);
-      if (!sameRoute) return;
-      window.scrollTo({ top: closing.pageScrollY, behavior: 'instant' as ScrollBehavior });
-      if (closing.element.isConnected) {
-        const scroller = closing.element.querySelector<HTMLElement>('.fb-scroll');
-        if (scroller) scroller.scrollTop = closing.cardScrollTop;
-        closing.trigger.focus({ preventScroll: true });
-      } else {
-        const heading = Array.from(document.querySelectorAll<HTMLElement>('main h1, main h2'))
-          .find((element) => element.getClientRects().length > 0);
-        if (heading) {
-          heading.tabIndex = -1;
-          heading.focus({ preventScroll: true });
-        }
-      }
-    });
   }, []);
+
+  // Restore only after React has removed the dialog and its inert background.
+  // An animation callback can run before that commit; focusing there is lost
+  // when the browser still considers the recipe's origin inert.
+  useLayoutEffect(() => {
+    const closing = pendingRestore.current;
+    if (session || !closing) return;
+    pendingRestore.current = null;
+    const sameRoute = window.location.hash === closing.sourceHash;
+    let frame = window.requestAnimationFrame(() => {
+      overlayGate.release(RECIPE_FOCUS_GATE_ID);
+      // Allow the resized source card to paint after the portal removes its
+      // visibility/inert state, then restore its exact control and reading offset.
+      frame = window.requestAnimationFrame(() => {
+        if (!sameRoute) return;
+        window.scrollTo({ top: closing.pageScrollY, behavior: 'instant' as ScrollBehavior });
+        if (closing.element.isConnected) {
+          const scroller = closing.element.querySelector<HTMLElement>('.fb-scroll');
+          if (scroller) scroller.scrollTop = closing.cardScrollTop;
+          let attempts = 0;
+          const focusOrigin = () => {
+            if (sessionRef.current || window.location.hash !== closing.sourceHash || !closing.trigger.isConnected) return;
+            closing.trigger.focus({ preventScroll: true });
+            // WebKit can defer a resized 3D card's focusability until its
+            // compositor has restored the visible face. Retry only while no
+            // other control has focus, and stop after a few rendering frames.
+            if (document.activeElement === document.body && ++attempts < 8) frame = window.requestAnimationFrame(focusOrigin);
+          };
+          focusOrigin();
+        } else {
+          const heading = Array.from(document.querySelectorAll<HTMLElement>('main h1, main h2'))
+            .find((element) => element.getClientRects().length > 0);
+          if (heading) {
+            heading.tabIndex = -1;
+            heading.focus({ preventScroll: true });
+          }
+        }
+      });
+    });
+    return () => window.cancelAnimationFrame(frame);
+  }, [session]);
 
   const beginClosing = useCallback(() => {
     if (!sessionRef.current || phaseRef.current === 'closing') return;

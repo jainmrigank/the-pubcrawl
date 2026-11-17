@@ -220,3 +220,17 @@ test('Worker queues the opt-in welcome only for a newly stored subscription', as
   assert.equal(queued[0].subscription.endpoint, subscription.endpoint);
   assert.match(queued[0].recipientHash, /^[a-f0-9]{32}$/);
 });
+
+test('Worker ingredient definitions and Shelf preparations use the same approved rules', async () => {
+  const search = await call('/api/ingredients/search?q=almond%20liqueur');
+  assert.equal(search.response.status, 200);
+  assert.ok(search.body.some(item => item.name === 'Amaretto'));
+  const prepared = await call('/api/recipes/match', { method: 'POST', body: JSON.stringify({ ingredients: ['Vodka', 'Almond extract', 'Vanilla extract'], q: 'Godmother' }) });
+  const godmother = prepared.body.canMake.find(recipe => recipe.name === 'Godmother');
+  assert.ok(godmother);
+  assert.equal(godmother.preparationCount, 1);
+  assert.equal(godmother.ingredients.find(item => item.name === 'Amaretto').alternative.kind, 'prepare');
+  const unprepared = await call('/api/recipes/match', { method: 'POST', body: JSON.stringify({ ingredients: ['Whisky', 'Honey', 'Orange peel', 'Orange juice', 'Pepsi Cola'], q: 'Mudslinger' }) });
+  assert.equal(unprepared.body.canMake.length, 0);
+  assert.ok(unprepared.body.almost.some(recipe => recipe.missing.includes('Southern Comfort')));
+});

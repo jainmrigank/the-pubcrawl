@@ -1,3 +1,4 @@
+import { recipeContent } from './recipeContent';
 import type {
   CollectionId,
   BrowseFilter,
@@ -182,7 +183,7 @@ export const fetchKeptRecipes = () => get<Recipe[]>('/api/kept');
 export const postLike = (id: string, action: 'like' | 'unlike') =>
   post<{ id: string; likes: number }>(`/api/likes/${id}`, { action });
 
-export const keepRecipe = (recipe: Recipe) => post<Recipe>('/api/keep', { recipe }, true);
+export const keepRecipe = (recipe: Recipe) => post<Recipe>('/api/keep', { recipe: recipeContent(recipe) }, true);
 
 /* ---- last orders (the quiz) ---- */
 export const fetchQuizBatch = (seed: string, from: number, count = 20) =>

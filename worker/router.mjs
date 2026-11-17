@@ -1,3 +1,4 @@
+import { searchIngredientIndex } from '../shared/ingredient-guide.mjs';
 import catalogue from '../src/generated/client_catalog.json' with { type: 'json' };
 import questionBank from '../src/generated/client_quiz.json' with { type: 'json' };
 import watchData from '../data/watchlist.json' with { type: 'json' };
@@ -268,7 +269,7 @@ async function handleApi(request, env, context) {
   if (path === '/api/ingredients/search' && request.method === 'GET') {
     const q = norm(url.searchParams.get('q') || '');
     const limit = Math.min(30, Math.max(1, Number(url.searchParams.get('limit')) || 12));
-    const ingredients = q ? catalogue.ingredients.filter((item) => norm(item.name).includes(q)).slice(0, limit) : [];
+    const ingredients = searchIngredientIndex(catalogue.ingredients, q, limit);
     return json(ingredients, 200, origin, cacheHeaders());
   }
 

@@ -4,16 +4,16 @@ import { facts, sources, type Story } from './data';
 import { ChartTooltip } from '../ChartTooltip';
 export const fmt = (n: number, digits = 0) =>
   n.toLocaleString('en-US', { maximumFractionDigits: digits });
-export function useNarrowPlot() {
+export function useNarrowPlot(maxWidth = 600) {
   const [narrow, setNarrow] = useState(
-    () => window.matchMedia('(max-width: 600px)').matches
+    () => window.matchMedia('(max-width: ' + maxWidth + 'px)').matches
   );
   useEffect(() => {
-    const query = window.matchMedia('(max-width: 600px)');
+    const query = window.matchMedia('(max-width: ' + maxWidth + 'px)');
     const change = () => setNarrow(query.matches);
     query.addEventListener('change', change);
     return () => query.removeEventListener('change', change);
-  }, []);
+  }, [maxWidth]);
   return narrow;
 }
 export function Choices({

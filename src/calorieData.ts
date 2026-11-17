@@ -1,4 +1,4 @@
-/** Editorial serving estimates, checked 13 Nov 2026. Never nutrition-label claims. */
+/** Editorial serving estimates, checked 14 Nov 2026. Never nutrition-label claims. */
 export const CALORIE_SOURCES = {
   ranking: { title: 'Drinks International · 2026 bestselling classics', url: 'https://drinksint.com/the-bestselling-classic-cocktails-at-the-worlds-best-bars-2026/' },
   energy: { title: 'NHS · energy in alcohol', url: 'https://www.nhs.uk/live-well/alcohol-advice/calories-in-alcohol/' },
@@ -67,9 +67,62 @@ export const energyIngredients: Record<string, EnergyIngredient> = {
   soda: liquid('Soda water', 0, 0, 'Unsweetened soda water; splash volumes are explicit assumptions.', CALORIE_SOURCES.energy),
 };
 
-export type CalorieDrink = { id: string; name: string; group: 'cocktail' | 'reference' | 'shot'; serving: string; parts: [string, number][]; rank?: number; recipeSource?: Source; note?: string; menuQuery?: string };
+export type CalorieDrink = { id: string; name: string; group: 'cocktail' | 'beer' | 'wine' | 'shot'; serving: string; parts: [string, number][]; rank?: number; recipeSource?: Source; note?: string; menuQuery?: string };
 const iba = (slug: string): Source => ({ title: 'IBA · recipe specification', url: `https://iba-world.com/iba-cocktail/${slug}/` });
 const cocktail = (rank: number, name: string, slug: string, parts: [string, number][], note = '', recipeSource = iba(slug)): CalorieDrink => ({ id: slug, name, group: 'cocktail', serving: '1 recipe', rank, parts, recipeSource, note, menuQuery: name === 'Aperol Spritz' ? 'Spritz' : name });
+type ServingProfile = { id: string; name: string; group: 'beer' | 'wine'; ingredient: EnergyIngredient; amount: number; example: string; approximateAbv?: boolean };
+const brewer = (name: string, abv: number, kcal: number, volume: number, url: string) => liquid(name, abv, kcal / volume * 100, `Published ${kcal} kcal per ${volume} ml; scaled linearly to the stated serving. A named example, not a style-wide average.`, { title: name + ' · brewer nutrition', url });
+const sierra = (name: string, abv: number, kcal: number, slug: string) => brewer('Sierra Nevada ' + name, abv, kcal, 354.882, 'https://sierranevada.com/brews/' + slug);
+const wineSector = { title: 'Wine sector · typical energy values (2018), hosted by the European Commission', url: 'https://food.ec.europa.eu/document/download/ff877db0-752c-4970-9434-1e989f6a8136_en?filename=fs_labelling-nutrition_legis_alcohol-self-regulatory-proposal_annex-wine-en.pdf' };
+const sparkling = (name: string, kcal: number) => liquid(name, 11, kcal, '2018 wine-sector typical energy table, page 10. Alcohol split assumes 11% ABV; total energy is the published style estimate, not a bottle label.', wineSector);
+const wine = (name: string, id: number, kcal: number, alcohol: number, gramsPerOz: number) => liquid(name, alcohol * (gramsPerOz / 29.5735) / .789, kcal * (gramsPerOz / 29.5735), `USDA SR Legacy ${id}: ${kcal} kcal and ${alcohol} g alcohol per 100 g. Density estimated from its ${gramsPerOz} g/fl oz portion. ABV and ml conversion are approximate; vintage and producer vary.`, { title: 'USDA · ' + name, url: `https://fdc.nal.usda.gov/food-details/${id}/nutrients` });
+const servingProfiles: ServingProfile[] = [
+  { id: 'beer', name: 'Lager', group: 'beer', ingredient: energyIngredients.lager, amount: 568, example: 'Heineken Original' },
+  { id: 'beer-light', name: 'Light lager', group: 'beer', ingredient: brewer('Coors Light', 4.2, 102, 354.882, 'https://www.coorslight.com/en-US/our-beer'), amount: 568, example: 'Coors Light' },
+  { id: 'beer-pilsner', name: 'Pilsner', group: 'beer', ingredient: sierra('Summerfest', 5, 155, 'summerfest'), amount: 568, example: 'Sierra Nevada Summerfest' },
+  { id: 'beer-wheat', name: 'Wheat beer', group: 'beer', ingredient: brewer('Erdinger Weissbier', 5.3, 44, 100, 'https://static.erdinger.de/assets/biere/weissbier/gebinde-hefe-flasche.pdf'), amount: 568, example: 'Erdinger Weissbier' },
+  { id: 'beer-pale', name: 'Pale ale', group: 'beer', ingredient: sierra('Pale Ale', 5.6, 175, 'pale-ale'), amount: 568, example: 'Sierra Nevada Pale Ale' },
+  { id: 'beer-ipa', name: 'IPA', group: 'beer', ingredient: sierra('Torpedo', 7.2, 237, 'torpedo'), amount: 568, example: 'Sierra Nevada Torpedo' },
+  { id: 'beer-hazy', name: 'Hazy IPA', group: 'beer', ingredient: sierra('Hazy Little Thing', 6.7, 214, 'hazy-little-thing'), amount: 568, example: 'Sierra Nevada Hazy Little Thing' },
+  { id: 'beer-imperial-ipa', name: 'Imperial IPA', group: 'beer', ingredient: sierra('Big Little Thing', 9.5, 250, 'big-little-thing'), amount: 568, example: 'Sierra Nevada Big Little Thing' },
+  { id: 'beer-stout', name: 'Dry stout', group: 'beer', ingredient: brewer('Guinness Draught', 4.2, 35, 100, 'https://www.guinness.com/en-gb/beers/guinness-draught'), amount: 568, example: 'Guinness Draught' },
+  { id: 'beer-porter', name: 'Porter', group: 'beer', ingredient: brewer('Guinness West Indies Porter', 6, 53, 100, 'https://www.guinness.com/en-gb/frequently-asked-questions'), amount: 568, example: 'Guinness West Indies Porter' },
+  { id: 'beer-imperial-stout', name: 'Imperial stout', group: 'beer', ingredient: sierra('Narwhal', 10.2, 327, 'narwhal'), amount: 568, example: 'Sierra Nevada Narwhal' },
+  { id: 'beer-sour', name: 'Sour ale', group: 'beer', ingredient: sierra('Wild Little Thing', 5.5, 180, 'wild-little-thing'), amount: 568, example: 'Sierra Nevada Wild Little Thing' },
+  { id: 'beer-bitter', name: 'Bitter / light ale', group: 'beer', ingredient: brewer("Young’s Light Ale", 3.2, 29, 100, 'https://www.carlsbergbritvic.co.uk/products/youngs/young-s-light-ale/?Ckey=56700'), amount: 568, example: "Young’s Light Ale" },
+  { id: 'beer-zero', name: 'Alcohol-free lager', group: 'beer', ingredient: brewer('Heineken 0.0', 0, 21, 100, 'https://www.heineken.com/global/en/our-products/heineken-0-0'), amount: 568, example: 'Heineken 0.0' },
+  // All wines use 150 ml for a like-volume comparison, including dessert wine.
+  { id: 'red-wine', name: 'Red wine', group: 'wine', ingredient: wine('Red wine', 173190, 85.0, 10.6, 29.4), amount: 150, example: 'USDA style estimate', approximateAbv: true },
+  { id: 'wine-cabernet', name: 'Cabernet Sauvignon', group: 'wine', ingredient: wine('Cabernet Sauvignon', 174833, 83.0, 10.5, 29.4), amount: 150, example: 'USDA style estimate', approximateAbv: true },
+  { id: 'wine-merlot', name: 'Merlot', group: 'wine', ingredient: wine('Merlot', 171925, 83.0, 10.6, 29.4), amount: 150, example: 'USDA style estimate', approximateAbv: true },
+  { id: 'wine-pinot-noir', name: 'Pinot Noir', group: 'wine', ingredient: wine('Pinot Noir', 174835, 82.0, 10.4, 29.4), amount: 150, example: 'USDA style estimate', approximateAbv: true },
+  { id: 'wine-syrah', name: 'Syrah / Shiraz', group: 'wine', ingredient: wine('Syrah / Shiraz', 174836, 83.0, 10.5, 29.4), amount: 150, example: 'USDA style estimate', approximateAbv: true },
+  { id: 'wine-zinfandel', name: 'Zinfandel', group: 'wine', ingredient: wine('Zinfandel', 173192, 88.0, 11.1, 29.4), amount: 150, example: 'USDA style estimate', approximateAbv: true },
+  { id: 'wine-sangiovese', name: 'Sangiovese', group: 'wine', ingredient: wine('Sangiovese', 174839, 86.0, 10.9, 29.4), amount: 150, example: 'USDA style estimate', approximateAbv: true },
+  { id: 'wine-gamay', name: 'Gamay', group: 'wine', ingredient: wine('Gamay', 171872, 78.0, 9.8, 29.4), amount: 150, example: 'USDA style estimate', approximateAbv: true },
+  { id: 'white-wine', name: 'White wine', group: 'wine', ingredient: wine('White wine', 174837, 82.0, 10.3, 29.4), amount: 150, example: 'USDA style estimate', approximateAbv: true },
+  { id: 'wine-chardonnay', name: 'Chardonnay', group: 'wine', ingredient: wine('Chardonnay', 174110, 84.0, 10.7, 29.3), amount: 150, example: 'USDA style estimate', approximateAbv: true },
+  { id: 'wine-sauvignon', name: 'Sauvignon Blanc', group: 'wine', ingredient: wine('Sauvignon Blanc', 173201, 81.0, 10.5, 29.3), amount: 150, example: 'USDA style estimate', approximateAbv: true },
+  { id: 'wine-pinot-grigio', name: 'Pinot Grigio', group: 'wine', ingredient: wine('Pinot Grigio', 174841, 83.0, 10.7, 29.3), amount: 150, example: 'USDA style estimate', approximateAbv: true },
+  { id: 'wine-riesling', name: 'Riesling', group: 'wine', ingredient: wine('Riesling', 173200, 80.0, 9.5, 29.6), amount: 150, example: 'USDA style estimate', approximateAbv: true },
+  { id: 'wine-chenin', name: 'Chenin Blanc', group: 'wine', ingredient: wine('Chenin Blanc', 173195, 80.0, 9.6, 29.5), amount: 150, example: 'USDA style estimate', approximateAbv: true },
+  { id: 'wine-gewurztraminer', name: 'Gewürztraminer', group: 'wine', ingredient: wine('Gewürztraminer', 174843, 81.0, 10.1, 29.5), amount: 150, example: 'USDA style estimate', approximateAbv: true },
+  { id: 'wine-muscat', name: 'Muscat', group: 'wine', ingredient: wine('Muscat', 174849, 82.0, 8.8, 30), amount: 150, example: 'USDA style estimate', approximateAbv: true },
+  { id: 'wine-semillon', name: 'Sémillon', group: 'wine', ingredient: wine('Sémillon', 174845, 82.0, 10.1, 29.5), amount: 150, example: 'USDA style estimate', approximateAbv: true },
+  { id: 'wine-rose', name: 'Rosé', group: 'wine', ingredient: wine('Rosé', 171908, 83.0, 9.6, 30.3), amount: 150, example: 'USDA style estimate', approximateAbv: true },
+  { id: 'wine-late-harvest', name: 'Late-harvest white', group: 'wine', ingredient: wine('Late-harvest white', 173202, 112.0, 8.5, 30.8), amount: 150, example: 'USDA style estimate', approximateAbv: true },
+  { id: 'wine-dessert-sweet', name: 'Sweet dessert wine', group: 'wine', ingredient: wine('Sweet dessert wine', 173176, 160.0, 15.3, 29.5), amount: 150, example: 'USDA style estimate', approximateAbv: true },
+  { id: 'wine-dessert-dry', name: 'Dry dessert wine', group: 'wine', ingredient: wine('Dry dessert wine', 175112, 152.0, 15.3, 29.5), amount: 150, example: 'USDA style estimate', approximateAbv: true },
+  { id: 'wine-light', name: 'Light wine', group: 'wine', ingredient: wine('Light wine', 169071, 49.0, 6.4, 29.5), amount: 150, example: 'USDA style estimate', approximateAbv: true },
+  { id: 'wine-brut-nature', name: 'Sparkling · brut nature', group: 'wine', ingredient: sparkling('Sparkling · brut nature', 68), amount: 150, example: 'Wine-sector style estimate', approximateAbv: true },
+  { id: 'wine-extra-brut', name: 'Sparkling · extra brut', group: 'wine', ingredient: sparkling('Sparkling · extra brut', 68), amount: 150, example: 'Wine-sector style estimate', approximateAbv: true },
+  { id: 'wine-brut', name: 'Sparkling · brut', group: 'wine', ingredient: sparkling('Sparkling · brut', 70), amount: 150, example: 'Wine-sector style estimate', approximateAbv: true },
+  { id: 'wine-extra-dry', name: 'Sparkling · extra dry', group: 'wine', ingredient: sparkling('Sparkling · extra dry', 73), amount: 150, example: 'Wine-sector style estimate', approximateAbv: true },
+  { id: 'wine-dry', name: 'Sparkling · dry', group: 'wine', ingredient: sparkling('Sparkling · dry', 77), amount: 150, example: 'Wine-sector style estimate', approximateAbv: true },
+  { id: 'wine-demi-sec', name: 'Sparkling · demi-sec', group: 'wine', ingredient: sparkling('Sparkling · demi-sec', 84), amount: 150, example: 'Wine-sector style estimate', approximateAbv: true },
+  { id: 'wine-sweet', name: 'Sparkling · sweet', group: 'wine', ingredient: sparkling('Sparkling · sweet', 92), amount: 150, example: 'Wine-sector style estimate', approximateAbv: true },
+];
+for (const profile of servingProfiles) energyIngredients['profile-' + profile.id] = profile.ingredient;
 export const calorieDrinks: CalorieDrink[] = [
   cocktail(1, 'Negroni', 'negroni', [['gin',30],['campari',30],['sweetVermouth',30]]),
   cocktail(2, 'Margarita', 'margarita', [['tequila',50],['triple',20],['lime',15]], 'Cointreau models the triple sec. Salt rim and garnish excluded.'),
@@ -91,9 +144,7 @@ export const calorieDrinks: CalorieDrink[] = [
   cocktail(18, 'Zombie', 'zombie', [['darkRum',45],['goldRum',45],['overproof',30],['lime',20],['falernum',15],['grapefruit',10],['cinnamonSyrup',5],['grenadine',5],['bitters',.8],['anise',.3]], 'Demerara rum assumed 75.5% ABV. Donn’s Mix = 10 ml grapefruit + 5 ml cinnamon syrup. 1 tsp = 5 ml; 6 drops = 0.3 ml. This estimate is especially recipe-sensitive.'),
   cocktail(19, 'Boulevardier', 'boulevardier', [['bourbon',45],['campari',30],['sweetVermouth',30]]),
   cocktail(20, 'Penicillin', 'penicillin', [['scotch',60],['islay',7.5],['lemon',22.5],['honeySyrup',22.5]], 'Islay float assumed 43% ABV. Equal-weight honey syrup model; ginger and garnish excluded.'),
-  { id: 'beer', name: 'Pint of lager', group: 'reference', serving: '568 ml · 5%', parts: [['lager',568]], note: 'UK imperial pint, rounded to 568 ml. A US pint is 473 ml. Representative Heineken Original nutrition.' },
-  { id: 'red-wine', name: 'Glass of red wine', group: 'reference', serving: '150 ml · 13%', parts: [['redWine',150]], note: 'A 150 ml table-wine serving, not a universal glass size. Brand and strength vary.' },
-  { id: 'white-wine', name: 'Glass of white wine', group: 'reference', serving: '150 ml · 12.5%', parts: [['whiteWine',150]], note: 'A 150 ml table-wine serving. USDA mass values converted using an approximate density.' },
+  ...servingProfiles.map((profile): CalorieDrink => ({ id: profile.id, name: profile.name, group: profile.group, serving: `${profile.amount} ml · ${profile.approximateAbv ? '~' : ''}${Number(profile.ingredient.abv.toFixed(1))}%`, parts: [['profile-' + profile.id, profile.amount]], note: profile.example })),
   ...['vodka','gin','rum','darkRum','whisky','bourbon','tequila','mezcal','cognac','pisco','cachaca','absinthe','triple','amaretto','coffeeLiqueur','cream'].map((id): CalorieDrink => ({ id: `shot-${id}`, name: energyIngredients[id].name, group: 'shot', serving: `30 ml · ${energyIngredients[id].abv}%`, parts: [[id,30]], note: energyIngredients[id].basis })),
 ];
 

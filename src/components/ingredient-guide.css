@@ -1,0 +1,44 @@
+/* Specific row selectors keep the same rhythm in cards, dl previews and reader. */
+.fb-ings > .ingredient-row,
+.recipe-focus-ingredients ul > .ingredient-row,
+.taste-ingredients > .ingredient-row,
+.study-recipe-details dl > .ingredient-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(64px, 35%);
+  align-items: start;
+  gap: 8px 14px;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--line);
+  line-height: 1.5;
+}
+.ingredient-row > .ingredient-row-name { display: block; min-width: 0; margin: 0; overflow-wrap: anywhere; }
+.ingredient-row > .ingredient-row-measure { min-width: 0; max-width: none; margin: 0; text-align: right; font-size: .85em; font-variant-numeric: tabular-nums; overflow-wrap: anywhere; color: var(--grey); }
+.ingredient-guide-trigger { display: flex; align-items: center; justify-content: space-between; gap: 8px; min-height: 44px; width: 100%; margin: -6px 0; padding: 6px 0; background: transparent; border: 0; border-radius: 4px; color: inherit; font: inherit; line-height: inherit; text-align: left; cursor: pointer; }
+.ingredient-guide-trigger:focus-visible { outline: 2px solid var(--accent); outline-offset: 4px; }
+.ingredient-guide-trigger:disabled { cursor: default; opacity: 1; }
+.ingredient-description { color: var(--grey); }
+.ingredient-guide-trigger svg { flex: 0 0 14px; transition: transform .18s ease; color: var(--accent); }
+.ingredient-guide-trigger svg.is-open { transform: rotate(180deg); }
+.ingredient-row-state, .ingredient-row-alternative { display: block; color: var(--accent); font-size: 12px; line-height: 1.5; margin-top: 3px; }
+.ingredient-row > .ingredient-guide-details { grid-column: 1 / -1; min-width: 0; margin: 4px 0 0; padding: 14px; border: 1px solid var(--line); border-radius: 12px; background: var(--panel, transparent); font-size: 14px; text-align: left; color: var(--ink); }
+.ingredient-guide-details[hidden] { display: none; }
+.ingredient-guide-details p { margin: 0 0 8px; font: inherit; line-height: 1.55; }
+.ingredient-guide-details .ingredient-guide-title { font-size: 12px; font-weight: 650; color: var(--accent); }
+.ingredient-guide-details small { font-size: 12px; color: var(--grey); }
+.ingredient-preparation { margin-top: 12px; border-top: 1px solid var(--line); }
+.ingredient-preparation-toggle { display: flex; align-items: center; justify-content: space-between; gap: 12px; width: 100%; min-height: 44px; padding: 8px 0; border: 0; border-radius: 4px; background: transparent; color: var(--ink); font: inherit; text-align: left; cursor: pointer; }
+.ingredient-preparation-toggle:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.ingredient-preparation-toggle:disabled { cursor: default; opacity: 1; }
+.ingredient-preparation-toggle svg { flex: 0 0 14px; transition: transform .18s ease; color: var(--accent); }
+.ingredient-preparation-toggle svg.is-open { transform: rotate(180deg); }
+.ingredient-preparation-content[hidden] { display: none; }
+.ingredient-preparation-content > ol { display: block; list-style: decimal; margin: 12px 0; padding-left: 20px; }
+.ingredient-preparation-content > ol > li { display: list-item; padding: 0 0 6px; border: 0; font: inherit; line-height: 1.55; }
+.ingredient-guide-details .ingredient-guide-note { color: var(--grey); font-size: 12px; }
+.ingredient-guide-add { display: block; min-height: 44px; margin: 8px 0; padding: 8px 12px; border: 1px solid var(--line-strong); border-radius: 8px; color: var(--ink); background: transparent; font: inherit; cursor: pointer; }
+.ingredient-guide-add:disabled { color: var(--grey); cursor: default; }
+.ingredient-guide-details a { display: inline-flex; align-items: center; min-height: 44px; color: var(--accent); font-size: 13px; text-underline-offset: 4px; }
+.recipe-availability { display: flex; flex-wrap: wrap; gap: 4px 10px; margin: 10px 0 0; color: var(--accent); font-family: var(--body, inherit); font-size: 12px; line-height: 1.5; }
+.recipe-availability span { color: var(--grey); }
+.ta-name .ingredient-description { display: block; font-size: 12px; }
+@media (prefers-reduced-motion: reduce) { .ingredient-guide-trigger svg, .ingredient-preparation-toggle svg { transition: none; } }

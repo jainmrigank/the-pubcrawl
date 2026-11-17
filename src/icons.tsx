@@ -45,6 +45,13 @@ export const TasteMapIcon = (props: P) => <S {...props} data-icon="taste-map">
   <circle cx="16" cy="17" r="1.5" />
 </S>;
 
+export const ExploreIcon = (props: P) => <S {...props} data-icon="explore">
+  <rect x="3" y="3" width="7" height="7" rx="1.5" />
+  <rect x="14" y="3" width="7" height="7" rx="1.5" />
+  <rect x="3" y="14" width="7" height="7" rx="1.5" />
+  <rect x="14" y="14" width="7" height="7" rx="1.5" />
+</S>;
+
 /** Header actions: familiar silhouettes, kept in the existing SVG system. */
 export const Sun = (props: P) => <S {...props} data-icon="sun">
   <circle cx="12" cy="12" r="5" fill="currentColor" stroke="none" />
@@ -230,6 +237,11 @@ export const ArrowLeft = (p: P) => (
 export const ArrowDown = (p: P) => (
   <S {...p}>
     <path d="M12 4 Q11.6 11 12 19M6 13l6 6 6-6" />
+  </S>
+);
+export const ArrowUp = (p: P) => (
+  <S {...p}>
+    <path d="M12 20 Q11.6 13 12 5M6 11l6-6 6 6" />
   </S>
 );
 export const Expand = (p: P) => (

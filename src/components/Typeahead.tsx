@@ -1,3 +1,4 @@
+import { ingredientGuide, ingredientLabel } from '../../shared/ingredient-guide';
 import { useEffect, useRef, useState } from 'react';
 import { searchIngredients } from '../api';
 import { searchLocalIngredients } from '../localData';
@@ -103,7 +104,7 @@ export function Typeahead({ onAdd }: Props) {
               }}
             >
               <IngredientIcon category={r.category} size={22} />
-              <span className="ta-name">{r.name}</span>
+              <span className="ta-name">{r.name}{ingredientGuide(r.name) && ingredientLabel(r.name) !== r.name && <span className="ingredient-description">{ingredientGuide(r.name)?.description}</span>}{r.category === 'Prepared ingredient' && <span className="ingredient-description">Add only when already made</span>}</span>
               <span className="ta-cat">{r.category}</span>
             </li>
           ))}
