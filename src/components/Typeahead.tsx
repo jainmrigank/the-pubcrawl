@@ -20,6 +20,7 @@ export function Typeahead({ onAdd }: Props) {
   const inputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
+    let cancelled = false;
     if (!q.trim()) {
       setResults([]);
       setOpen(false);
@@ -28,17 +29,19 @@ export function Typeahead({ onAdd }: Props) {
     const t = setTimeout(() => {
       searchLocalIngredients(q)
         .then((r) => {
+          if (cancelled) return;
           setResults(r);
           setOpen(true);
           setHi(0);
         })
         .catch(() => searchIngredients(q).then((r) => {
+          if (cancelled) return;
           setResults(r);
           setOpen(true);
           setHi(0);
         }).catch(() => {}));
     }, 160);
-    return () => clearTimeout(t);
+    return () => { cancelled = true; clearTimeout(t); };
   }, [q]);
 
   useEffect(() => {

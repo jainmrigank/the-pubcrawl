@@ -28,13 +28,26 @@ export function ingredientSearchText(name) {
   const guide = ingredientGuide(name);
   return [name, guide?.description, ...(guide?.aliases || [])].filter(Boolean).join(' ');
 }
+/** Search-only word normalization; it never makes different ingredients interchangeable. */
+export function ingredientSearchTokens(value) {
+  return key(value).split(' ').filter(Boolean).map(word => {
+    if (word.endsWith('ies') && word.length > 4) return `${word.slice(0, -3)}y`;
+    if (/(?:ches|shes|sses|xes|zes|oes)$/.test(word)) return word.slice(0, -2);
+    if (word.endsWith('s') && word.length > 3 && !/(?:ss|us)$/.test(word)) return word.slice(0, -1);
+    return word;
+  });
+}
 export function searchIngredientIndex(ingredients, query, limit = 12) {
   const q = key(query);
   if (!q) return [];
+  const words = ingredientSearchTokens(q);
   return ingredients.map(item => {
     const n = key(item.name);
     const text = key(ingredientSearchText(item.name));
-    const score = n === q ? 100 : n.startsWith(q) ? 80 : n.split(' ').some(word => word.startsWith(q)) ? 60 : n.includes(q) ? 40 : text.includes(q) ? 20 : -1;
+    const nameWords = ingredientSearchTokens(n);
+    const searchWords = ingredientSearchTokens(text);
+    const allWordsIn = tokens => words.every(word => tokens.some(token => token.startsWith(word)));
+    const score = n === q ? 100 : n.startsWith(q) ? 80 : nameWords.join(' ') === words.join(' ') ? 75 : n.split(' ').some(word => word.startsWith(q)) ? 60 : n.includes(q) || allWordsIn(nameWords) ? 40 : text.includes(q) || allWordsIn(searchWords) ? 20 : -1;
     return { item, score };
   }).filter(row => row.score >= 0).sort((a, b) => b.score - a.score || a.item.name.length - b.item.name.length || a.item.name.localeCompare(b.item.name)).slice(0, limit).map(row => row.item);
 }

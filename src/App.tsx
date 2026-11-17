@@ -825,13 +825,13 @@ export default function App() {
                     note={browseLoading ? `${health?.cocktails ?? 691} recipes` : browseNote}
                     loading={browseLoading}
                   />
-                  <p className="house-page-intro">Search by name or ingredient.</p>
+                  <p className="house-page-intro">Search by name, ingredient, spirit or flavour.</p>
                   <div className="field menu-search" data-tour="menu-controls">
                     <input
                       value={browseQ}
                       onChange={(e) => onBrowseQuery(e.target.value)}
-                      placeholder="Search drinks or ingredients"
-                      aria-label="Search menu by name, ingredient, lane, access tier, glass, place, mood or method"
+                      placeholder="Try peach, citrusy gin or tropical"
+                      aria-label="Search menu by name, ingredient, spirit, taste, vibe, category, glass, place or method"
                     />
                   </div>
                   <div className="menu-refine-controls">
@@ -959,7 +959,7 @@ export default function App() {
                 {hasPantry && <section className="sec" id="pour" aria-busy={matching}>
                   <SectionHead
                     index="02"
-                    title="What you can make"
+                    title="Drinks for your shelf"
                     note={`${barResults.length} matches`}
                     loading={matching}
                   />

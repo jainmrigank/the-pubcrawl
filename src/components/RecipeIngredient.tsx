@@ -61,6 +61,9 @@ export function RecipeIngredientRow({ ingredient, recipe, as = 'li', locked = fa
 
 export function RecipeAvailability({ recipe }: { recipe: Recipe }) {
   const alternatives = recipe.ingredients.filter(item => item.alternative);
-  if (!alternatives.length) return null;
-  return <p className="recipe-availability">{alternatives.some(item => item.alternative?.kind === 'prepare') ? 'Prep first' : 'With alternatives'}<span>See ingredients</span></p>;
+  const missing = recipe.missing?.length;
+  const related = [...new Set(recipe.relatedIngredients?.map(item => item.required) || [])];
+  if (missing === undefined && !alternatives.length) return null;
+  const status = missing ? `Needs ${missing} ingredient${missing === 1 ? '' : 's'}` : alternatives.some(item => item.alternative?.kind === 'prepare') ? 'Prep first' : alternatives.length ? 'With alternatives' : 'Ready to mix';
+  return <p className="recipe-availability">{status}<span>{related.length ? `Related: ${related.join(', ')}` : alternatives.length ? 'See ingredients' : ''}</span></p>;
 }

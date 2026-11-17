@@ -24,6 +24,21 @@ async function call(path, options = {}, customEnv = env) {
   return { response, body };
 }
 
+test('Worker Shelf search discovers Peach and preserves missing ingredients; menu search combines taste and spirit', async () => {
+  const match = await call('/api/recipes/match', { method: 'POST', body: JSON.stringify({ ingredients: ['Peach'] }) });
+  assert.equal(match.response.status, 200);
+  assert.deepEqual(match.body.canMake, []);
+  const bellini = match.body.almost.find(recipe => recipe.name === 'Bellini');
+  assert.ok(bellini);
+  assert.ok(bellini.missing.includes('Peach schnapps'));
+  assert.equal(bellini.ingredients.find(item => item.name === 'Peach schnapps').have, false);
+  assert.deepEqual(bellini.relatedIngredients, [{ owned: 'Peach', required: 'Peach schnapps' }]);
+  const menu = await call('/api/recipes?q=citrusy%20gin&limit=48');
+  assert.equal(menu.response.status, 200);
+  assert.ok(menu.body.recipes.some(recipe => recipe.name === 'Gimlet'));
+  assert.ok(menu.body.recipes.every(recipe => recipe.name !== 'Margarita'));
+});
+
 test('Worker API preserves catalogue, dynamic state, CORS, AI fallback, and validation contracts', async () => {
   const health = await call('/api/health');
   assert.equal(health.response.status, 200);

@@ -314,10 +314,11 @@ export function matchRecipes(cocktails, pantry, options = {}) {
     collection: options.collection || '',
     vibes: VIBES,
   });
-  // The compatibility response retains the historical two-lane shape and
-  // 24-card cap. New callers use the complete shared result list directly.
+  // Keep the compatibility response's two-lane shape, with the complete result
+  // set just like the browser and Worker. Card pagination belongs to the UI.
+  // Only genuinely available ingredients can put a recipe in canMake.
   return {
-    canMake: results.filter((recipe) => recipe.missingCount === 0).slice(0, 24),
-    almost: results.filter((recipe) => recipe.missingCount > 0).slice(0, 24),
+    canMake: results.filter((recipe) => recipe.missingCount === 0),
+    almost: results.filter((recipe) => recipe.missingCount > 0),
   };
 }

@@ -60,6 +60,8 @@ export interface Recipe {
   preparationCount?: number;
   matched?: number;
   missing?: string[];
+  /** Discovery only: related ingredients are still missing, never owned substitutes. */
+  relatedIngredients?: { owned: string; required: string }[];
   total?: number;
   source?: 'ai' | 'fallback';
   /** A real house recipe created by the owner, rather than an AI invention. */
