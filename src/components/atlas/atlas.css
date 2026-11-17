@@ -86,10 +86,8 @@ html[data-theme='dark'] .bar-atlas {
   line-height: 1;
 }
 .atlas-cover h1 {
-  font-size: clamp(64px, 7.7vw, 112px);
-  font-weight: 430;
-  line-height: 0.98;
-  letter-spacing: -0.067em;
+  font: 400 var(--text-page)/1.08 var(--display);
+  letter-spacing: -0.025em;
   margin: 28px 0;
 }
 .atlas-cover h1 em {
@@ -249,10 +247,8 @@ html[data-theme='dark'] .bar-atlas {
   align-items: end;
 }
 .atlas-story-heading h2 {
-  font-size: clamp(34px, 4.1vw, 60px);
-  letter-spacing: -0.05em;
-  line-height: 1.07;
-  font-weight: 440;
+  font: 400 var(--text-section)/1.12 var(--display);
+  letter-spacing: -0.02em;
   max-width: 15ch;
   margin-top: 14px;
 }
@@ -260,7 +256,7 @@ html[data-theme='dark'] .bar-atlas {
   outline: none;
 }
 .atlas-story-heading > p {
-  font-size: 14px;
+  font-size: var(--text-body);
   max-width: 44ch;
   color: var(--ink-60);
   padding-bottom: 2px;
@@ -308,7 +304,7 @@ html[data-theme='dark'] .bar-atlas {
   min-height: 46px;
   width: 100%;
   min-width: 0;
-  font-size: 13px;
+  font: 400 var(--text-body)/1.5 var(--sans);
   text-overflow: ellipsis;
 }
 .atlas-control-row {
@@ -1512,11 +1508,10 @@ html[data-theme='dark'] .atlas-blend-vat i span {
     padding: 35px 0 24px;
   }
   .atlas-cover h1 {
-    font-size: clamp(58px, 12vw, 76px);
     margin: 25px 0;
   }
   .atlas-cover-intro {
-    font-size: 14px;
+    font-size: var(--text-body);
   }
   .atlas-cover-art {
     width: min(100%, 380px);
@@ -1577,11 +1572,8 @@ html[data-theme='dark'] .atlas-blend-vat i span {
     gap: 20px;
     padding: 8px 0 26px;
   }
-  .atlas-story-heading h2 {
-    font-size: 38px;
-  }
   .atlas-story-heading > p {
-    font-size: 13px;
+    font-size: var(--text-body);
   }
   .atlas-reader > .atlas-select {
     margin-bottom: 28px;

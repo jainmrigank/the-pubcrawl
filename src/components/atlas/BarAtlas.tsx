@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
+import { useSwipePagination } from '../../useSwipePagination';
 import { ArrowRight } from '../../icons';
 import { chapters, catalogue, facts, palette, sources, stories } from './data';
 import {
@@ -247,6 +248,11 @@ export default function BarAtlas() {
       heading.current?.focus({ preventScroll: true });
     }
   }
+  const swipe = useSwipePagination({
+    pageKey: selected,
+    onNext: () => choose((selected + 1) % stories.length),
+    onPrevious: () => choose((selected + stories.length - 1) % stories.length),
+  });
   return (
     <div className="bar-atlas">
       <header className="atlas-cover">
@@ -309,19 +315,22 @@ export default function BarAtlas() {
         ))}
       </nav>
       <section
-        className="atlas-reader"
+        className="atlas-reader swipe-pages"
         id="atlas-reader"
         ref={reader}
         aria-label="Interactive visual story"
+        {...swipe}
       >
         <div className="atlas-reader-toolbar">
           <span>
             {chapters[chapter].name} / {String(selected + 1).padStart(2, '0')}{' '}
             of 20
           </span>
+          <span className="pagination-swipe-hint" aria-hidden="true">Swipe left or right</span>
           <div>
             <button
               type="button"
+              className="pagination-arrow"
               onClick={() => choose((selected + 19) % 20)}
               aria-label="Previous visual story"
             >
@@ -329,6 +338,7 @@ export default function BarAtlas() {
             </button>
             <button
               type="button"
+              className="pagination-arrow"
               onClick={() => choose((selected + 1) % 20)}
               aria-label="Next visual story"
             >
@@ -345,7 +355,7 @@ export default function BarAtlas() {
           }))}
           onChange={(id) => choose(stories.findIndex((s) => s.id === id))}
         />
-        <Enter id={story.id}>
+        <div className="swipe-page-viewport"><div data-swipe-content><Enter id={story.id}>
           <div className="atlas-story-heading">
             <div>
               <p className="atlas-overline">{story.type}</p>
@@ -359,7 +369,7 @@ export default function BarAtlas() {
             <Chart />
           </div>
           <SourceNotes story={story} />
-        </Enter>
+        </Enter></div></div>
         <div className="atlas-reader-bottom">
           <span>Curiosity doesn’t need a last call.</span>
           <button

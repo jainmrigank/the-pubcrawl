@@ -1,4 +1,5 @@
 import { useMemo, useState } from 'react';
+import { useSwipePagination } from '../../useSwipePagination';
 import { pantryAnalysis } from '../../atlasMath';
 import { menuLink } from '../../landingStories';
 import { ArrowLeft, ArrowRight, Check } from '../../icons';
@@ -295,6 +296,11 @@ export function PairingsChart({ compact = false }: { compact?: boolean }) {
       .sort(classicFirst);
   const max = Math.max(...catalogue.pairs.map((p) => p.count));
   const options = top.map((i) => ({ value: i.id, label: i.name }));
+  const turnPage = (delta: number) => {
+    setPage(current => Math.max(0, Math.min(Math.ceil((top.length - 1) / 4) - 1, current + delta)));
+    setPartnerOpen(false);
+  };
+  const swipe = useSwipePagination({ pageKey: page, canNext: (page + 1) * 4 < top.length - 1, canPrevious: page > 0, onNext: () => turnPage(1), onPrevious: () => turnPage(-1) });
   if (compact && narrow) {
     const ranked = top.filter(item => item.id !== a).map(item => ({ ...item, ...get(a, item.id) }))
       .sort((x, y) => (metric === 'count' ? y.count - x.count : y.similarity - x.similarity) || x.name.localeCompare(y.name));
@@ -307,7 +313,8 @@ export function PairingsChart({ compact = false }: { compact?: boolean }) {
         <Choices label="Pairing measure" value={metric} onChange={value => { setMetric(value); setPage(0); }} options={[{ value: 'count', label: 'Shared recipes' }, { value: 'similarity', label: 'Overlap · %' }]} />
       </div>
       <p className="pairing-instruction">Choose a partner to see recipes.</p>
-      <div className="pairing-bars" role="group" aria-label={'Ingredients paired with ' + ingredientName(a)}>
+      <div className="swipe-pages swipe-page-viewport" {...swipe}>
+      <div className="pairing-bars" data-swipe-content role="group" aria-label={'Ingredients paired with ' + ingredientName(a)}>
         {ranked.slice(current * 4, current * 4 + 4).map(item => <div className="pairing-bar-item" key={item.id}>
           <button type="button" className="pairing-bar-row" aria-expanded={partnerOpen && b === item.id} aria-controls={partnerOpen && b === item.id ? 'pairing-mobile-recipes' : undefined} aria-label={`${item.name}, ${item.count} shared recipes, ${fmt(item.similarity * 100, 1)}% overlap. ${partnerOpen && b === item.id ? 'Hide' : 'Show'} recipes.`} onClick={() => { setPartnerOpen(b !== item.id || !partnerOpen); setB(item.id); }}>
             <span>{item.name}<small aria-hidden="true">{partnerOpen && b === item.id ? '−' : '+'}</small></span>
@@ -317,7 +324,8 @@ export function PairingsChart({ compact = false }: { compact?: boolean }) {
           {partnerOpen && b === item.id && <div className="pairing-inline-result" id="pairing-mobile-recipes"><h4>{ingredientName(a)} & {item.name}</h4><p>{item.count} shared recipes · {fmt(item.similarity * 100, 1)}% overlap</p><RecipeLinks recipes={rows.slice(0, 3)} />{!rows.length && <p>No recipes in common.</p>}</div>}
         </div>)}
       </div>
-      <nav className="study-pagination" aria-label="Ingredient partners"><span aria-live="polite">{current * 4 + 1}–{Math.min(current * 4 + 4, ranked.length)} of {ranked.length}</span><div><button type="button" aria-label="Previous ingredient partners" disabled={!current} onClick={() => setPage(current - 1)}><ArrowLeft size={18} /></button><button type="button" aria-label="Next ingredient partners" disabled={(current + 1) * 4 >= ranked.length} onClick={() => setPage(current + 1)}><ArrowRight size={18} /></button></div></nav>
+      <nav className="study-pagination" aria-label="Ingredient partners"><span aria-live="polite">{current * 4 + 1}–{Math.min(current * 4 + 4, ranked.length)} of {ranked.length}</span><span className="pagination-swipe-hint" aria-hidden="true">Swipe left or right</span><div><button type="button" className="pagination-arrow" aria-label="Previous ingredient partners" disabled={!current} onClick={() => turnPage(-1)}><ArrowLeft size={18} /></button><button type="button" className="pagination-arrow" aria-label="Next ingredient partners" disabled={(current + 1) * 4 >= ranked.length} onClick={() => turnPage(1)}><ArrowRight size={18} /></button></div></nav>
+      </div>
       <p className="study-note">Overlap: shared recipes as a share of recipes containing either ingredient.</p>
     </div>;
   }

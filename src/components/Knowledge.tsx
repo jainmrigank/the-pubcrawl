@@ -52,21 +52,23 @@ export function Knowledge() {
         const expanded = nq ? true : openGroup === group.id;
         return (
           <div className="manual-group" key={group.id} data-tour={groupIndex === 0 ? 'basics-terms' : undefined}>
-            <button
-              className={`manual-group-head ${expanded ? 'open' : ''}`}
-              aria-expanded={expanded}
-              onClick={() => !nq && setOpenGroup(expanded ? null : group.id)}
-            >
-              <span className="manual-index">{group.index}</span>
-              <span className="manual-group-title">
-                <span className="manual-title">{group.title}</span>
-                <span className="k-label dim">{group.note}</span>
-              </span>
-              <span className="k-label dim manual-count">{String(group.terms.length).padStart(2, '0')} entries</span>
-              <span className="manual-plus" aria-hidden>
-                {expanded ? '−' : '+'}
-              </span>
-            </button>
+            <h2 className="manual-group-heading">
+              <button
+                className={`manual-group-head ${expanded ? 'open' : ''}`}
+                aria-expanded={expanded}
+                onClick={() => !nq && setOpenGroup(expanded ? null : group.id)}
+              >
+                <span className="manual-index">{group.index}</span>
+                <span className="manual-group-title">
+                  <span className="manual-title">{group.title}</span>
+                  <span className="k-label dim">{group.note}</span>
+                </span>
+                <span className="k-label dim manual-count">{String(group.terms.length).padStart(2, '0')} entries</span>
+                <span className="manual-plus" aria-hidden>
+                  {expanded ? '−' : '+'}
+                </span>
+              </button>
+            </h2>
             <AnimatePresence initial={false}>
               {expanded && (
                 <motion.div
@@ -82,19 +84,21 @@ export function Knowledge() {
                       const open = openId === id || forcedOpenId === id;
                       return (
                         <li key={id} className={open ? 'open' : ''}>
-                          <button
-                            className="manual-row"
-                            aria-expanded={open}
-                            onClick={() => setOpenId(open ? null : id)}
-                          >
-                            <span className="k-label manual-no">
-                              {group.index}·{String(i + 1).padStart(2, '0')}
-                            </span>
-                            <span className="manual-term">{t.term}</span>
-                            <span className="manual-plus" aria-hidden>
-                              {open ? '−' : '+'}
-                            </span>
-                          </button>
+                          <h3 className="manual-term-heading">
+                            <button
+                              className="manual-row"
+                              aria-expanded={open}
+                              onClick={() => setOpenId(open ? null : id)}
+                            >
+                              <span className="k-label manual-no">
+                                {group.index}·{String(i + 1).padStart(2, '0')}
+                              </span>
+                              <span className="manual-term">{t.term}</span>
+                              <span className="manual-plus" aria-hidden>
+                                {open ? '−' : '+'}
+                              </span>
+                            </button>
+                          </h3>
                           <AnimatePresence initial={false}>
                             {open && (
                               <motion.div

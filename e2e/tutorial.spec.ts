@@ -4,6 +4,30 @@ import { openRoute, seedStableDevice } from './helpers';
 test.describe('contextual tours', () => {
   test.use({ viewport: { width: 320, height: 700 }, isMobile: true, hasTouch: true });
 
+  test('tour pages swipe both ways and require the Done button to finish', async ({ page }) => {
+    await seedStableDevice(page);
+    await page.emulateMedia({ reducedMotion: 'reduce' });
+    await openRoute(page, '/#/taste-map');
+    await page.locator('button.contextual-help:visible').click();
+    const popover = page.locator('.guided-tour-popover');
+    const swipe = async (dx: number) => {
+      const start = { pointerId: 1, pointerType: 'touch', isPrimary: true, clientX: 150, clientY: 200 };
+      await popover.dispatchEvent('pointerdown', start);
+      await popover.dispatchEvent('pointermove', { ...start, clientX: start.clientX + dx });
+      await popover.dispatchEvent('pointerup', { ...start, clientX: start.clientX + dx });
+    };
+    await expect(popover).toContainText('1 / 2');
+    await swipe(-100);
+    await expect(popover).toContainText('2 / 2');
+    await swipe(100);
+    await expect(popover).toContainText('1 / 2');
+    await swipe(-100);
+    await swipe(-100);
+    await expect(popover).toContainText('2 / 2');
+    await popover.getByRole('button', { name: 'Done', exact: true }).click();
+    await expect(popover).toHaveCount(0);
+  });
+
   test('completes the available empty Shelf step once and supports replay', async ({ page }) => {
     await seedStableDevice(page);
     await page.addInitScript(() => {

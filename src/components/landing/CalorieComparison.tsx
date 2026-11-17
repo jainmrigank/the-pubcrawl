@@ -3,6 +3,7 @@ import { ArrowLeft, ArrowRight } from '../../icons';
 import { menuLink } from '../../landingStories';
 import { calorieDrinks, drinkEnergy, energyIngredients, roundedKcal, type CalorieDrink } from '../../calorieData';
 import { HomeStudy } from './HomeStudy';
+import { useSwipePagination } from '../../useSwipePagination';
 
 const PAGE_SIZE = 4;
 const groups = [{ id: 'cocktail', label: 'Cocktails' }, { id: 'beer', label: 'Beer' }, { id: 'wine', label: 'Wine' }, { id: 'shot', label: 'Shots' }] as const;
@@ -31,6 +32,11 @@ export function CalorieComparison() {
   const pages = Math.max(1, Math.ceil(ordered.length / PAGE_SIZE));
   const current = Math.min(page, pages - 1);
   const visible = ordered.slice(current * PAGE_SIZE, (current + 1) * PAGE_SIZE);
+  const turnPage = (delta: number) => {
+    setPage(Math.max(0, Math.min(pages - 1, current + delta)));
+    setSelected(null);
+  };
+  const swipe = useSwipePagination({ pageKey: current, canNext: current + 1 < pages, canPrevious: current > 0, onNext: () => turnPage(1), onPrevious: () => turnPage(-1) });
   // A consistent scale across every page of this category, independent of sort.
   const maxKcal = Math.ceil(Math.max(...ordered.map(drink => drinkEnergy(drink).total)) / 100) * 100;
   const serving = filter === 'beer' ? '568 ml pint' : filter === 'wine' ? '150 ml glass' : filter === 'shot' ? '30 ml per shot' : 'One cocktail';
@@ -43,7 +49,8 @@ export function CalorieComparison() {
     </div>
     <div className="calorie-legend"><span><i className="calorie-alcohol" />Alcohol</span><span><i className="calorie-other" />Other calories</span></div>
     </div>
-    <section className="calorie-group" aria-label={groups.find(group => group.id === filter)!.label}>
+    <div className="swipe-pages swipe-page-viewport" {...swipe}>
+    <section className="calorie-group" data-swipe-content aria-label={groups.find(group => group.id === filter)!.label}>
       <div className="calorie-axis" aria-hidden="true"><div><span>0</span><span>{maxKcal / 2}</span><span>{maxKcal} kcal</span></div></div>
       <ol className="calorie-rows" start={current * PAGE_SIZE + 1}>{visible.map(drink => {
         const energy = drinkEnergy(drink), expanded = selected === drink.id;
@@ -58,7 +65,8 @@ export function CalorieComparison() {
         </li>;
       })}</ol>
     </section>
-    <nav className="study-pagination" aria-label="Calorie servings"><span aria-live="polite">{current * PAGE_SIZE + 1}–{Math.min((current + 1) * PAGE_SIZE, ordered.length)} of {ordered.length}</span><div><button type="button" aria-label="Previous calorie servings" disabled={!current} onClick={() => setPage(current - 1)}><ArrowLeft size={18} /></button><button type="button" aria-label="Next calorie servings" disabled={current + 1 >= pages} onClick={() => setPage(current + 1)}><ArrowRight size={18} /></button></div></nav>
+    <nav className="study-pagination" aria-label="Calorie servings"><span aria-live="polite">{current * PAGE_SIZE + 1}–{Math.min((current + 1) * PAGE_SIZE, ordered.length)} of {ordered.length}</span>{pages > 1 && <span className="pagination-swipe-hint" aria-hidden="true">Swipe left or right</span>}<div><button type="button" className="pagination-arrow" aria-label="Previous calorie servings" disabled={!current} onClick={() => turnPage(-1)}><ArrowLeft size={18} /></button><button type="button" className="pagination-arrow" aria-label="Next calorie servings" disabled={current + 1 >= pages} onClick={() => turnPage(1)}><ArrowRight size={18} /></button></div></nav>
+    </div>
     <p className="study-note">{filter === 'beer' ? 'Named beer examples · Estimated kcal' : filter === 'wine' ? 'Representative styles · Estimated kcal' : 'Estimated kcal · Pours and brands vary.'}</p>
   </HomeStudy>;
 }

@@ -42,6 +42,13 @@
 .study-pagination button { display: grid; place-items: center; width: 44px; height: 44px; border: 1px solid var(--control); border-radius: 50%; background: transparent; color: var(--ink); cursor: pointer; }
 .study-pagination button:hover:not(:disabled) { color: var(--accent); border-color: var(--accent); }
 .study-pagination button:disabled { opacity: .3; cursor: default; }
+.study-pagination .pagination-swipe-hint { font: 400 var(--text-caption)/1.5 var(--sans); }
+@media (max-width: 860px), (pointer: coarse) {
+  .study-pagination { padding-right: 56px; min-height: 32px; }
+  .study-pagination > div { position: absolute; }
+  .study-pagination > div:focus-within { position: static; }
+  .study-pagination:focus-within .pagination-swipe-hint { display: none; }
+}
 .study-note { margin: 18px 0 0; color: var(--grey); font: 13px/1.6 var(--sans); }
 
 /* A shared colour key works on hover, keyboard focus and touch focus. */
@@ -71,7 +78,7 @@
 .calorie-filters small { font: 11px var(--mono); }
 .calorie-toolbar { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px 20px; padding: 4px 0 12px; }
 .calorie-sort { display: flex; align-items: center; flex-wrap: wrap; gap: 10px; min-width: 0; color: var(--grey); font-size: 14px; }
-.calorie-sort select { min-height: 44px; max-width: 100%; border: 1px solid var(--control); border-radius: 8px; background: var(--paper); color: var(--ink); padding: 8px 30px 8px 10px; font: 14px var(--sans); }
+.calorie-sort select { min-height: 44px; max-width: 100%; border: 1px solid var(--control); border-radius: 8px; background: var(--paper); color: var(--ink); padding: 8px 30px 8px 10px; font: 400 var(--text-body)/1.5 var(--sans); }
 .calorie-legend { display: flex; flex-wrap: wrap; gap: 8px 24px; align-items: center; padding: 0 0 16px; font-size: 13px; color: var(--ink-60); }
 .calorie-legend > span { display: flex; gap: 8px; align-items: center; }
 .calorie-legend i { display: inline-block; width: 12px; height: 12px; }
@@ -196,7 +203,7 @@
 .home-highlights .pairing-controls .atlas-choices { margin: 0; }
 .pairings-study .study-pairing-summary { display: flex; justify-content: space-between; align-items: start; gap: 10px 24px; padding: 16px 0; border-bottom: 1px solid var(--line); }
 .pairing-selected-pair { min-width: 0; }
-.pairing-selected-pair h4 { margin: 0; font: 400 26px/1.2 var(--display); text-wrap: balance; }
+.pairing-selected-pair h4 { margin: 0; font: 700 var(--text-item)/1.4 var(--sans); text-wrap: balance; }
 .pairing-selected-pair h4 span { color: var(--grey); }
 .pairing-selected-pair p { margin: 6px 0 0; color: var(--ink-60); font: 12px/1.5 var(--sans); }
 .pairing-selected-pair strong { color: var(--ink); font: 500 14px/1.5 var(--mono); }
@@ -230,7 +237,6 @@
   .pairings-study .study-pairing-summary { gap: 10px 16px; }
   .pairing-recipes { flex-basis: 100px; }
   .pairing-recipes summary { font-size: 13px; }
-  .pairing-selected-pair h4 { font-size: 24px; }
   .pairing-matrix { max-width: 460px; }
   .pairing-matrix-pages { margin-top: 8px; padding-right: 0; }
   .pairing-matrix-caption span { font-size: 11px; }
@@ -239,7 +245,7 @@
 @media (max-width: 600px) {
   .pantry-results-box { padding: 16px; }
   .calorie-comparison .calorie-filters button { min-width: 44px; }
-  .calorie-comparison .calorie-sort select { width: auto; font-size: 14px; }
+  .calorie-comparison .calorie-sort select { width: auto; font-size: var(--text-body); }
   .calorie-comparison .calorie-controls { padding-bottom: 10px; }
   .calorie-comparison .calorie-row { grid-template-columns: minmax(0, 1fr) 44px; gap: 7px 12px; padding-block: 12px; min-height: 66px; }
   .calorie-comparison .calorie-name { grid-area: 1 / 1; }

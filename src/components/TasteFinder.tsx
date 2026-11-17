@@ -1,5 +1,6 @@
 import { RecipeIngredientRow } from './RecipeIngredient';
-import { useEffect, useId, useMemo, useRef, useState, type PointerEvent } from 'react';
+import { useEffect, useId, useMemo, useRef, useState } from 'react';
+import { useSwipePagination } from '../useSwipePagination';
 import { motion } from 'framer-motion';
 import type { Recipe, Vibe } from '../types';
 import type { RecipeFocusOrigin } from '../recipeFocusTypes';
@@ -39,8 +40,6 @@ export function TasteFinder({ active, saved, onSave, onExpand, onList }: Props) 
   const comparisonTrigger = useRef<HTMLButtonElement>(null);
   const chooser = useRef<HTMLButtonElement | null>(null);
   const needFocus = useRef(false);
-  const swipe = useRef<{ id: number; x: number; y: number; axis: 'x' | 'y' | null } | null>(null);
-  const suppressSwipeClick = useRef(false);
   const instance = useId();
 
   useEffect(() => {
@@ -87,32 +86,7 @@ export function TasteFinder({ active, saved, onSave, onExpand, onList }: Props) 
   const turnPage = (delta: number) => {
     setPage(Math.max(0, Math.min(pageCount - 1, currentPage + delta)));
   };
-  const startSwipe = (event: PointerEvent<HTMLDivElement>) => {
-    suppressSwipeClick.current = false;
-    if (!event.isPrimary || !['touch', 'pen'].includes(event.pointerType) || !window.matchMedia('(max-width: 760px), (pointer: coarse)').matches) return;
-    swipe.current = { id: event.pointerId, x: event.clientX, y: event.clientY, axis: null };
-  };
-  const moveSwipe = (event: PointerEvent<HTMLDivElement>) => {
-    const start = swipe.current;
-    if (!start || start.id !== event.pointerId) return;
-    const dx = Math.abs(event.clientX - start.x), dy = Math.abs(event.clientY - start.y);
-    if (!start.axis && Math.max(dx, dy) >= 12) {
-      if (dx > dy * 1.25) {
-        start.axis = 'x';
-        // Touch pointers retain their original target through implicit capture.
-        // Suppress its click after dragging; pan-y leaves scrolling native.
-        suppressSwipeClick.current = true;
-      } else if (dy > dx) start.axis = 'y';
-    }
-  };
-  const endSwipe = (event: PointerEvent<HTMLDivElement>) => {
-    const start = swipe.current;
-    if (!start || start.id !== event.pointerId) return;
-    swipe.current = null;
-    const dx = event.clientX - start.x;
-    const threshold = Math.max(42, Math.min(68, event.currentTarget.clientWidth * .16));
-    if (start.axis === 'x' && Math.abs(dx) >= threshold) turnPage(dx < 0 ? 1 : -1);
-  };
+  const swipe = useSwipePagination({ pageKey: currentPage, canNext: currentPage + 1 < pageCount, canPrevious: currentPage > 0, onNext: () => turnPage(1), onPrevious: () => turnPage(-1) });
 
   useEffect(() => {
     if (!active || !selected || !needFocus.current) return;
@@ -171,12 +145,12 @@ export function TasteFinder({ active, saved, onSave, onExpand, onList }: Props) 
           {flavourPath && <div className="taste-specific-words" role="group" aria-label="More specific flavours"><span>Narrow it down</span>{flavourPath.words.map(item => <button key={item} aria-pressed={word === item} onClick={() => { setWord(word === item ? '' : item); setPage(0); }}>{item}</button>)}<button className="taste-clear" onClick={() => changeFlavour('')}>Clear</button></div>}
         </div>
         <nav className="taste-pagination" aria-label="Map pages">
-          <div className="taste-page-summary" aria-live="polite" aria-atomic="true"><strong>{filtered.length ? `${visible.length} of ${filtered.length} classics` : '0 classics'}</strong><span className="taste-swipe-hint">Swipe to browse</span></div>
-          <div className="taste-page-actions"><button type="button" disabled={!currentPage} onClick={() => turnPage(-1)} aria-label="Previous drinks"><ArrowLeft size={19} /></button><span className="taste-page-position" aria-live="polite" aria-atomic="true"><span className="sr-only">Page </span>{currentPage + 1} / {pageCount}</span><button type="button" disabled={currentPage + 1 >= pageCount} onClick={() => turnPage(1)} aria-label="Next drinks"><ArrowRight size={19} /></button></div>
+          <div className="taste-page-summary" aria-live="polite" aria-atomic="true"><strong>{filtered.length ? `${visible.length} of ${filtered.length} classics` : '0 classics'}</strong>{pageCount > 1 && <span className="taste-swipe-hint">Swipe left or right</span>}</div>
+          <div className="taste-page-actions"><button type="button" className="pagination-arrow" disabled={!currentPage} onClick={() => turnPage(-1)} aria-label="Previous drinks"><ArrowLeft size={19} /></button><span className="taste-page-position" aria-live="polite" aria-atomic="true"><span className="sr-only">Page </span>{currentPage + 1} / {pageCount}</span><button type="button" className="pagination-arrow" disabled={currentPage + 1 >= pageCount} onClick={() => turnPage(1)} aria-label="Next drinks"><ArrowRight size={19} /></button></div>
         </nav>
         {filtered.length ? <div className="taste-map-canvas" data-motion={reduced ? 'reduced' : 'animated'}>
           <span className="taste-axis taste-axis-top"><ArrowUp size={15} />Stronger spirit taste</span>
-          <div className="taste-plot" role="group" aria-label="Choose a cocktail on the Taste Map" onPointerDown={startSwipe} onPointerMove={moveSwipe} onPointerUp={endSwipe} onPointerCancel={() => { swipe.current = null; }} onClickCapture={event => { if (event.detail && suppressSwipeClick.current) { event.preventDefault(); event.stopPropagation(); suppressSwipeClick.current = false; } }}>
+          <div className="taste-plot swipe-pages swipe-page-viewport" role="group" aria-label="Choose a cocktail on the Taste Map" {...swipe}>
             <svg className="taste-graph" viewBox="0 0 100 100" preserveAspectRatio="none" fill="none" aria-hidden="true">
               <path className="taste-graph-grid" d="M25 0V100M75 0V100M0 25H100M0 75H100" />
               <path className="taste-graph-axes taste-graph-axes-x" d="M2 50H98" />
@@ -188,14 +162,14 @@ export function TasteFinder({ active, saved, onSave, onExpand, onList }: Props) 
               <span className="taste-projection taste-projection-vertical" aria-hidden="true" style={{ left: `clamp(var(--taste-node-half), ${selectedProfile.x}%, calc(100% - var(--taste-node-half)))`, top: `${Math.min(50, selectedProfile.y)}%`, height: `${Math.abs(50 - selectedProfile.y)}%` }} />
               <span className="taste-projection taste-projection-horizontal" aria-hidden="true" style={{ top: `${selectedProfile.y}%`, left: selectedProfile.x >= 50 ? '50%' : `clamp(var(--taste-node-half), ${selectedProfile.x}%, calc(100% - var(--taste-node-half)))`, width: selectedProfile.x >= 50 ? `calc(clamp(var(--taste-node-half), ${selectedProfile.x}%, calc(100% - var(--taste-node-half))) - 50%)` : `calc(50% - clamp(var(--taste-node-half), ${selectedProfile.x}%, calc(100% - var(--taste-node-half))))` }} />
             </>}
-            <motion.div className="taste-page-points" key={visible.map(profile => profile.id).join('-')} initial={reduced ? false : { opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: reduced ? 0 : .18, ease: 'easeOut' }}>
+            <div className="taste-page-points" data-swipe-content key={visible.map(profile => profile.id).join('-')}>
             {visible.map(profile => {
               const recipe = recipeById.get(profile.id)!;
               return <button className={`taste-node ${selectedId === profile.id ? 'selected' : ''}`} key={profile.id} style={{ ['--taste-x' as string]: `${profile.x}%`, ['--taste-y' as string]: `${profile.y}%` }} onClick={event => select(profile.id, event.currentTarget)} aria-pressed={selectedId === profile.id} aria-label={`Preview ${recipe.name}`}>
                 <DrinkDrawing profile={profile} /><span className="taste-node-name">{recipe.name}</span>
               </button>;
             })}
-            </motion.div>
+            </div>
           </div>
           <div className="taste-sweetness"><span><ArrowLeft size={14} />Less sweet</span><span>Sweeter<ArrowRight size={14} /></span></div><span className="taste-axis taste-axis-bottom"><ArrowDown size={15} />Gentler spirit taste</span>
         </div> : <div className="taste-empty" role="status"><h3>No matching classics.</h3><p>Try another flavour.</p><button className="text-btn" onClick={event => onList(event.currentTarget)}>Browse all drinks <ArrowRight size={16} /></button>{(path || word) && <button className="text-btn" onClick={() => { setPath(''); setWord(''); }}>Clear filters</button>}</div>}

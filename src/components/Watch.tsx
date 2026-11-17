@@ -344,7 +344,7 @@ function WatchShelf({ data, active, initialId, source }: WatchShelfProps) {
         <div className="rule" />
         <div className="sec-head-row">
           <span className="k-label sec-index">/01</span>
-          <h2 className="sec-title">Watch</h2>
+          <h1 className="sec-title">Watch</h1>
           <span className="k-label dim sec-note">
             {q || lane ? `${filtered.length} of ${data.videos.length}` : `${data.videos.length} videos`}
           </span>

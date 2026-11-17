@@ -961,6 +961,7 @@ export default function App() {
                     index="02"
                     title="Drinks for your shelf"
                     note={`${barResults.length} matches`}
+                    sub
                     loading={matching}
                   />
                   <div className="shelf-results-head">
@@ -1180,7 +1181,7 @@ function SectionHead({
       />
       <div className="sec-head-row">
         <span className="k-label sec-index">/{index}</span>
-        <Lines as="h2" className="sec-title" lines={[title]} stagger={0} />
+        <Lines as={sub ? 'h2' : 'h1'} className="sec-title" lines={[title]} stagger={0} />
         {note && <span className="k-label dim sec-note">{note}</span>}
       </div>
       {lead && <p className="sec-lead">{lead}</p>}

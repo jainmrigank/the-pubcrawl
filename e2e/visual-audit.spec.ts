@@ -35,16 +35,29 @@ async function audit(page: Page) {
         if (Math.min(a.right,b.right)-Math.max(a.left,b.left)>2 && Math.min(a.bottom,b.bottom)-Math.max(a.top,b.top)>2) collisions.push(`${row.className}: ${children[i].className} / ${children[j].className}`);
       }
     }
-    const display = [...document.querySelectorAll('.home-opening h1, .home-group-heading h2, .home-story-heading h3, .sec-title, .house-brand, .taste-preview-heading h2, .taste-section-heading h2, .manual-title, .quiz-title, .quiz-q, .daily-q, .wv-title, .recipe-focus-heading h1, .recipe-focus-recipe h2, .atlas-cover h1, .atlas-story-heading h2, .fc-name, .fb-head h3, .landing-atlas-entry em, .story-title-row h3, .editorial-link-copy > span, .flavour-intro h2')].filter(visible);
-    const body = [...document.querySelectorAll('input, .taste-ingredients, .fb-method, .fb-ings li, .manual-body p, .quiz-opt-text, .recipe-focus-tagline')].filter(visible);
+    const display = [...document.querySelectorAll('.home-opening h1, .home-group-heading h2, .sec-title, .house-brand, .taste-preview-heading h2, .taste-section-heading h2, .recipe-focus-heading h1, .atlas-cover h1, .atlas-story-heading h2, .fc-name, .fb-head h3, .landing-atlas-entry em, .story-title-row h3, .flavour-intro h2')].filter(visible);
+    const subheadings = [...document.querySelectorAll('.home-study-title, .manual-title, .manual-term, .quiz-title, .quiz-q, .daily-q, .wv-title, .recipe-focus-recipe h2, .editorial-link-copy > span, .taste-preview h3, .study-recipe-details h5')].filter(visible);
+    const body = [...document.querySelectorAll('input, select, .taste-ingredients, .fb-method, .fb-ings li, .manual-body p, .quiz-opt-text, .recipe-focus-tagline, .home-group-description')].filter(visible);
     const wrongDisplay = display.filter(el=>!getComputedStyle(el).fontFamily.includes('InstrumentSerif')).map(el=>({text:el.textContent?.trim(),font:getComputedStyle(el).fontFamily}));
-    const wrongBody = body.filter(el=>!getComputedStyle(el).fontFamily.includes('InstrumentSans')).map(el=>({text:el.textContent?.trim().slice(0,45),font:getComputedStyle(el).fontFamily}));
-    const clippedHeadings = display.filter(el=>el instanceof HTMLElement && el.scrollWidth>el.clientWidth+2).map(el=>el.textContent?.trim());
+    const wrongBody = [...body, ...subheadings].filter(el=>!getComputedStyle(el).fontFamily.includes('InstrumentSans')).map(el=>({text:el.textContent?.trim().slice(0,45),font:getComputedStyle(el).fontFamily}));
+    // The approved Explore reference uses regular text. Hierarchy comes from
+    // distinct type roles, size and spacing, rather than adding bold everywhere.
+    const inconsistentWeights = subheadings.filter(el=>getComputedStyle(el).fontWeight !== '400').map(el=>({text:el.textContent?.trim(),weight:getComputedStyle(el).fontWeight}));
+    const crampedBody = body.filter(el=>parseFloat(getComputedStyle(el).fontSize)<16).map(el=>el.textContent?.trim().slice(0,45));
+    const unclearHierarchy: string[] = [];
+    for (const group of document.querySelectorAll('.home-studies, .home-explore')) {
+      const heading = group.querySelector('.home-group-heading h2');
+      if (!heading || !visible(heading)) continue;
+      for (const child of group.querySelectorAll('.home-study-title, .editorial-link-copy > span')) {
+        if (visible(child) && parseFloat(getComputedStyle(heading).fontSize)<parseFloat(getComputedStyle(child).fontSize)*1.4) unclearHierarchy.push(child.textContent?.trim() || 'Untitled choice');
+      }
+    }
+    const clippedHeadings = [...display, ...subheadings].filter(el=>el instanceof HTMLElement && el.scrollWidth>el.clientWidth+2).map(el=>el.textContent?.trim());
     const clippedTabs = [...document.querySelectorAll('.wv-tabs,.wv-tab')].filter(visible).filter(el=>el instanceof HTMLElement && el.scrollWidth>el.clientWidth+2).map(el=>el.textContent?.trim());
     const targets = [...document.querySelectorAll('.house-nav-utilities button, .house-nav-link, .fc-expand, .act-btn, .wv-share, .wv-clear')].filter(visible).map(el=>({label:el.getAttribute('aria-label')||el.textContent?.trim(),...box(el)}));
     const overflow=document.documentElement.scrollWidth-innerWidth;
     const overflowElements=overflow>1?[...document.body.querySelectorAll('*')].filter(visible).filter(el=>el.getBoundingClientRect().right>innerWidth+1).slice(0,12).map(el=>({class:el.className,text:el.textContent?.trim().slice(0,45),...box(el)})):[];
-    return { viewport:innerWidth, overflow, overflowElements, collisions, wrongDisplay, wrongBody, clippedHeadings, clippedTabs, targets };
+    return { viewport:innerWidth, overflow, overflowElements, collisions, wrongDisplay, wrongBody, inconsistentWeights, crampedBody, unclearHierarchy, clippedHeadings, clippedTabs, targets };
   });
 }
 
@@ -53,6 +66,9 @@ function expectClean(result: Awaited<ReturnType<typeof audit>>) {
   expect(result.collisions).toEqual([]);
   expect(result.wrongDisplay).toEqual([]);
   expect(result.wrongBody).toEqual([]);
+  expect(result.inconsistentWeights).toEqual([]);
+  expect(result.crampedBody).toEqual([]);
+  expect(result.unclearHierarchy).toEqual([]);
   expect(result.clippedHeadings).toEqual([]);
   expect(result.clippedTabs).toEqual([]);
   for (const target of result.targets) {
@@ -68,6 +84,43 @@ const routes = [
   ['atlas','/#/atlas','.atlas-cover'], ['watch','/#/watch','.wv'],
   ['shorts','/#/shorts','.shorts-feed'],
 ] as const;
+
+test('Home uses the Explore type roles and ends Calories without an empty spacer', async ({ page }) => {
+  await openRoute(page, '/#/');
+  await expect(page.locator('.home-study-title')).toHaveText(['Ingredient pairings', 'What can I make?', 'Calories, by the glass.']);
+  for (const width of [320, 390, 768, 1440]) {
+    await page.setViewportSize({ width, height: 900 });
+    const gap = await page.evaluate(() => {
+      const row = document.querySelector('#home-calories > header')!.getBoundingClientRect();
+      const next = document.querySelector('.home-explore > header')!.getBoundingClientRect();
+      return next.top - row.bottom;
+    });
+    expect(gap).toBeGreaterThanOrEqual(20);
+    expect(gap).toBeLessThanOrEqual(40);
+  }
+  await page.setViewportSize({ width: 390, height: 844 });
+  const home = await page.locator('.home-study-title').first().evaluate(el => {
+    const style = getComputedStyle(el);
+    return { family: style.fontFamily, size: style.fontSize, weight: style.fontWeight };
+  });
+  const group = await page.locator('.home-group-heading h2').first().evaluate(el => {
+    const style = getComputedStyle(el);
+    return { family: style.fontFamily, size: style.fontSize, weight: style.fontWeight };
+  });
+  await page.getByRole('button', { name: 'Explore', exact: true }).click();
+  const explore = page.getByRole('dialog', { name: 'Explore PubCrawl' });
+  const item = await explore.locator('nav strong').first().evaluate(el => {
+    const style = getComputedStyle(el);
+    return { family: style.fontFamily, size: style.fontSize, weight: style.fontWeight };
+  });
+  const heading = await explore.locator('h2').evaluate(el => {
+    const style = getComputedStyle(el);
+    return { family: style.fontFamily, size: style.fontSize, weight: style.fontWeight };
+  });
+  expect(home).toEqual(item);
+  expect(group).toEqual(heading);
+});
+
 for (const [name,route,ready] of routes) test(`spacing and type: ${name}, every width and theme`, async ({ page },info) => {
   test.setTimeout(90_000);
   await openRoute(page,route);

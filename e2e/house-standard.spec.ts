@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test';
-import { navigateTo, openRoute, seedStableDevice, useDrinksList, useTasteMap } from './helpers';
+import { navigateTo, openRoute, seedStableDevice, swipePage, useDrinksList, useTasteMap } from './helpers';
 
 // The same journeys run in Chromium and in the focused iPhone WebKit project.
 test.use({ viewport: { width: 390, height: 844 }, isMobile: true, hasTouch: true, serviceWorkers: 'block' });
@@ -56,10 +56,11 @@ test('narrows broad flavours, supports a full-list search and retains the select
   await page.getByRole('button', { name: 'coffee', exact: true }).click();
   await expect(page.locator('.taste-node')).toHaveCount(1);
   await expect(page.locator('.taste-node')).toContainText('Espresso Martini');
-  await page.getByRole('button', { name: 'Next drinks' }).click();
+  await swipePage(page.locator('.taste-plot'));
   await expect(page.locator('.taste-node')).toContainText('White Russian');
   await useDrinksList(page);
-  await page.getByRole('textbox', { name: /^Search menu/ }).fill('not-a-drink');
+  // Real words such as "drink" now match recipe descriptions as well as names.
+  await page.getByRole('textbox', { name: /^Search menu/ }).fill('zzzxqv98765');
   await expect(page.getByText('Nothing by that name', { exact:true })).toBeVisible();
   await page.getByRole('textbox', { name: /^Search menu/ }).fill('Vesper');
   await expect(page.locator('#menu-list .fc[data-recipe-id="17218"]')).toBeVisible();
@@ -140,10 +141,10 @@ test('fits every map group and comparison at all requested widths in both themes
           const a = geometry.nodes[i], b = geometry.nodes[j];
           expect(a.right <= b.left + 1 || b.right <= a.left + 1 || a.bottom <= b.top + 1 || b.bottom <= a.top + 1, JSON.stringify({ width, theme, group, a, b })).toBe(true);
         }
-        if (group < 3) await page.getByRole('button', { name: 'Next drinks' }).click();
+        if (group < 3) await swipePage(page.locator('.taste-plot'));
       }
       await page.screenshot({ path: info.outputPath(`map-${width}-${theme}.png`) });
-      for (let i = 0; i < 3; i++) await page.getByRole('button', { name: 'Previous drinks' }).click();
+      for (let i = 0; i < 3; i++) await swipePage(page.locator('.taste-plot'), 'previous');
     }
   }
   await page.setViewportSize({ width: 320, height: 700 });

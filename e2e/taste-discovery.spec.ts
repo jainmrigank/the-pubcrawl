@@ -1,5 +1,5 @@
 import { expect, test } from '@playwright/test';
-import { navigateTo, openRoute, seedStableDevice, useTasteMap } from './helpers';
+import { navigateTo, openRoute, seedStableDevice, swipePage, useTasteMap } from './helpers';
 
 test.use({ viewport: { width: 390, height: 844 }, isMobile: true, hasTouch: true, serviceWorkers: 'block' });
 test.beforeEach(async ({ page }) => { await seedStableDevice(page); });
@@ -26,7 +26,7 @@ test('Home offers Taste Map alongside browsing and in More at the bar without lo
 test('Drinks shows keyword matches directly with filters and no map controls or card clutter', async ({ page }) => {
   await openRoute(page, '/#/menu');
   await page.getByRole('textbox', { name: /^Search menu/ }).fill('sour');
-  await expect(page.locator('#menu-list .sec-note')).toContainText('Showing 12 of 55');
+  await expect(page.locator('#menu-list .sec-note')).toContainText('Showing 12 of 209');
   await expect(page.locator('#menu-list .fc')).toHaveCount(12);
   await expect(page.locator('#menu-list .taste-finder, .drink-view-switch, .drink-search-summary, .fc-taste-control')).toHaveCount(0);
   await expect(page.locator('.taste-plot')).toBeHidden();
@@ -41,13 +41,13 @@ test('Map keeps its page and preview across Drinks searches and browser Back', a
   await openRoute(page, '/#/taste-map');
   await expect(page.locator('.taste-node')).toHaveCount(4);
   await expect(page.locator('#taste-page input')).toHaveCount(0);
-  await page.getByRole('button', { name: 'Next drinks' }).click();
+  await swipePage(page.locator('.taste-plot'));
   await page.getByRole('button', { name: 'Preview Old Fashioned', exact: true }).click();
   await expect(page.locator('.taste-preview h2')).toHaveText('Old Fashioned');
   const position = await page.evaluate(() => scrollY);
   await navigateTo(page, 'Drinks');
   await page.getByRole('textbox', { name: /^Search menu/ }).fill('sour');
-  await expect(page.locator('#menu-list .sec-note')).toContainText('of 55');
+  await expect(page.locator('#menu-list .sec-note')).toContainText('of 209');
   await page.goBack();
   await expect(page).toHaveURL(/#\/taste-map$/);
   await expect(page.locator('.taste-preview h2')).toHaveText('Old Fashioned');
@@ -56,7 +56,7 @@ test('Map keeps its page and preview across Drinks searches and browser Back', a
   await expect.poll(() => page.evaluate(() => scrollY)).toBeCloseTo(position, 0);
   await navigateTo(page, 'Drinks');
   await expect(page.getByRole('textbox', { name: /^Search menu/ })).toHaveValue('sour');
-  await expect(page.locator('#menu-list .sec-note')).toContainText('of 55');
+  await expect(page.locator('#menu-list .sec-note')).toContainText('of 209');
 });
 
 test('old map links redirect to the standalone page without carrying a library search into the map', async ({ page }) => {
@@ -105,11 +105,18 @@ test('flavour controls and paging sit above the full-width graph and update it i
   expect(layout.filtersBottom).toBeLessThan(layout.pagingTop);
   expect(layout.pagingBottom).toBeLessThan(layout.plotTop);
   for (const name of ['Previous drinks', 'Next drinks']) {
-    const bounds = await page.getByRole('button', { name, exact:true }).boundingBox();
-    expect(bounds!.width).toBeGreaterThanOrEqual(48);
-    expect(bounds!.height).toBeGreaterThanOrEqual(48);
+    const control = page.getByRole('button', { name, exact:true });
+    const touch = await page.evaluate(() => matchMedia('(pointer: coarse)').matches);
+    const bounds = (await control.boundingBox())!;
+    if (touch) {
+      expect(bounds.width).toBeLessThanOrEqual(1);
+      await expect(control).toHaveCSS('pointer-events', 'none');
+    } else {
+      expect(bounds.width).toBeGreaterThanOrEqual(48);
+      expect(bounds.height).toBeGreaterThanOrEqual(48);
+    }
   }
-  await page.getByRole('button', { name: 'Next drinks', exact:true }).click();
+  await swipePage(page.locator('.taste-plot'));
   await expect(page.locator('.taste-pagination')).toContainText('Page 2 / 4');
   await expect(graph.getByRole('button', {name:'Preview Old Fashioned',exact:true})).toBeVisible();
   await page.getByRole('group', {name:'Flavour',exact:true}).getByRole('button', {name:'Bold & rich',exact:true}).click();
@@ -124,12 +131,13 @@ test('fast page changes remain usable and reduced motion renders the final graph
   await page.emulateMedia({ reducedMotion: 'no-preference' });
   await openRoute(page, '/#/taste-map');
   await expect(page.locator('.taste-map-canvas')).toHaveAttribute('data-motion', 'animated');
-  await page.getByRole('button', {name:'Next drinks',exact:true}).dblclick();
+  await swipePage(page.locator('.taste-plot'));
+  await swipePage(page.locator('.taste-plot'));
   await expect(page.locator('.taste-pagination')).toContainText('Page 3 / 4');
   await expect(page.locator('.taste-node')).toHaveCount(4);
   await expect(page.getByRole('button', {name:'Preview Espresso Martini',exact:true})).toBeVisible();
   await page.emulateMedia({ reducedMotion: 'reduce' });
-  await page.getByRole('button', {name:'Next drinks',exact:true}).click();
+  await swipePage(page.locator('.taste-plot'));
   await expect(page.locator('.taste-map-canvas')).toHaveAttribute('data-motion', 'reduced');
   await expect(page.locator('.taste-page-points')).toHaveCSS('opacity', '1');
   await expect(page.getByRole('button', {name:'Preview White Russian',exact:true})).toBeVisible();

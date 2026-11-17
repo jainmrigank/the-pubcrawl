@@ -156,7 +156,7 @@ export function Quiz() {
       <div className="quiz" data-tour="quiz-round">
         <div className="quiz-intro">
           <p className="k-label quiz-eyebrow">{over ? practice ? 'Practice round' : 'That is your round' : 'Pub Quiz'}</p>
-          <h3 className="quiz-title">{over ? answer?.swept ? 'You drank the bar dry.' : v.title : 'Think you know your drinks?'}</h3>
+          <h2 className="quiz-title">{over ? answer?.swept ? 'You drank the bar dry.' : v.title : 'Think you know your drinks?'}</h2>
           {over ? (
             <>
               <p className="quiz-score-big">{score}</p>

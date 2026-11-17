@@ -1,11 +1,225 @@
-import { expect, test } from '@playwright/test';
-import { openRoute, seedStableDevice, navigateTo } from './helpers';
+import { expect, test, type Locator } from '@playwright/test';
+import { openRoute, seedStableDevice, swipePage, navigateTo } from './helpers';
 import { addFinderIngredients } from './fixtures/studyRecipes';
 
 test.use({ serviceWorkers: 'block' });
 test.beforeEach(async ({ page }) => {
   await seedStableDevice(page);
   await page.emulateMedia({ reducedMotion: 'reduce' });
+});
+
+async function swipe(target: Locator, dx: number, dy = 0, cancel = false) {
+  await target.evaluate((el, { dx, dy, cancel }) => {
+    const box = el.getBoundingClientRect();
+    const start = { bubbles: true, pointerId: 1, pointerType: 'touch', isPrimary: true, clientX: box.x + box.width / 2, clientY: box.y + box.height / 2 };
+    el.dispatchEvent(new PointerEvent('pointerdown', start));
+    const end = { ...start, clientX: start.clientX + dx, clientY: start.clientY + dy };
+    el.dispatchEvent(new PointerEvent('pointermove', end));
+    el.dispatchEvent(new PointerEvent(cancel ? 'pointercancel' : 'pointerup', end));
+    // Emulate the compatibility click a touch drag can leave on its initial target.
+    if (Math.abs(dx) > Math.abs(dy)) el.dispatchEvent(new MouseEvent('click', { bubbles: true, cancelable: true, detail: 1 }));
+  }, { dx, dy, cancel });
+}
+
+test('swipes visibly follow the drag, enter from the right or left, and settle when cancelled', async ({ page }, info) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.emulateMedia({ reducedMotion: 'no-preference' });
+  await openRoute(page, '/#/');
+  const study = page.locator('#home-calories');
+  await study.locator('.home-study-toggle').click();
+  const content = study.locator('[data-swipe-content]');
+  const position = study.getByRole('navigation', { name: 'Calorie servings' });
+  await expect(content).toHaveCSS('transform', 'none');
+  const row = study.locator('.calorie-row').first();
+  await row.scrollIntoViewIfNeeded();
+  const box = (await row.boundingBox())!;
+  const counterX = (await position.boundingBox())!.x;
+  await page.mouse.move(box.x + box.width * .8, box.y + box.height / 2);
+  await page.mouse.down();
+  await page.mouse.move(box.x + box.width * .45, box.y + box.height / 2, { steps: 8 });
+  const offset = await content.evaluate(el => new DOMMatrixReadOnly(getComputedStyle(el).transform).m41);
+  expect(offset).toBeLessThan(-20);
+  expect(offset).toBeGreaterThan(-84);
+  await expect(position).toContainText('1–4 of 20');
+  expect((await position.boundingBox())!.x).toBe(counterX);
+  expect(await page.evaluate(() => document.documentElement.scrollWidth - innerWidth)).toBeLessThanOrEqual(1);
+  await page.screenshot({ path: info.outputPath('calories-drag-feedback.png') });
+  await page.mouse.up();
+  await expect(position).toContainText('5–8 of 20');
+  const entrance = async () => content.evaluate(el => {
+    const animation = el.getAnimations()[0];
+    if (!animation) return null;
+    animation.pause();
+    return (animation.effect as KeyframeEffect).getKeyframes().map(frame => new DOMMatrixReadOnly(String(frame.transform)).m41);
+  });
+  const next = await entrance();
+  expect(next?.[0]).toBeGreaterThan(0);
+  expect(next?.at(-1)).toBe(0);
+  // A second swipe interrupts the entrance instead of waiting or getting stuck.
+  await swipe(row, 110);
+  await expect(position).toContainText('1–4 of 20');
+  const previous = await entrance();
+  expect(previous?.[0]).toBeLessThan(0);
+  expect(previous?.at(-1)).toBe(0);
+  await content.evaluate(el => el.getAnimations().forEach(animation => animation.finish()));
+  await expect(content).toHaveCSS('transform', 'none');
+  await swipe(row, -110, 0, true);
+  await expect(position).toContainText('1–4 of 20');
+  const cancelled = await entrance();
+  expect(cancelled?.[0]).toBeLessThan(0);
+  expect(cancelled?.at(-1)).toBe(0);
+  // Reduced motion also cancels an animation already in progress.
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  await expect(content).toHaveCSS('transform', 'none');
+  await expect(content).toHaveCSS('opacity', '1');
+  await swipe(row, -110);
+  await expect(position).toContainText('5–8 of 20');
+  expect(await content.evaluate(el => el.getAnimations().length)).toBe(0);
+  await expect(study.locator('.calorie-recipe')).toHaveCount(0);
+});
+
+test('phone preview drags page left and right without arrow targets or accidental details', async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await openRoute(page, '/#/');
+  const study = page.locator('#home-calories');
+  await study.locator('.home-study-toggle').click();
+  const position = study.getByRole('navigation', { name: 'Calorie servings' });
+  await expect(position.locator('.pagination-swipe-hint')).toBeVisible();
+  for (const arrow of await position.locator('.pagination-arrow').all()) {
+    await expect(arrow).toHaveCSS('pointer-events', 'none');
+    expect((await arrow.boundingBox())!.width).toBeLessThanOrEqual(1);
+  }
+  const drag = async (left: boolean) => {
+    const row = study.locator('.calorie-row').first();
+    await row.scrollIntoViewIfNeeded();
+    const box = (await row.boundingBox())!;
+    await page.mouse.move(box.x + box.width * (left ? .8 : .2), box.y + box.height / 2);
+    await page.mouse.down();
+    // End outside the region to verify capture, as a casual preview drag can.
+    await page.mouse.move(left ? box.x - 8 : box.x + box.width + 8, box.y + box.height / 2, { steps: 8 });
+    await page.mouse.up();
+  };
+  await drag(true);
+  await expect(position).toContainText('5–8 of 20');
+  await expect(study.locator('.calorie-recipe')).toHaveCount(0);
+  await drag(false);
+  await expect(position).toContainText('1–4 of 20');
+  await expect(study.locator('.calorie-recipe')).toHaveCount(0);
+  await study.locator('.calorie-row').first().click();
+  await expect(study.locator('.calorie-recipe')).toHaveCount(1);
+});
+
+test.describe('desktop pagination', () => {
+  test.use({ viewport: { width: 1440, height: 900 }, isMobile: false, hasTouch: false });
+  test('keeps arrow clicks available and leaves text dragging alone', async ({ page }) => {
+    await openRoute(page, '/#/');
+    const study = page.locator('#home-calories');
+    await study.locator('.home-study-toggle').click();
+    const next = study.getByRole('button', { name: 'Next calorie servings' });
+    await expect(next).toHaveCSS('pointer-events', 'auto');
+    expect((await next.boundingBox())!.width).toBeGreaterThanOrEqual(44);
+    await expect(study.locator('.pagination-swipe-hint')).toBeHidden();
+    await next.click();
+    await expect(study.locator('.study-pagination')).toContainText('5–8 of 20');
+    const row = study.locator('.calorie-row').first();
+    const box = (await row.boundingBox())!;
+    await page.mouse.move(box.x + box.width * .8, box.y + box.height / 2);
+    await page.mouse.down();
+    await page.mouse.move(box.x + box.width * .2, box.y + box.height / 2, { steps: 8 });
+    await page.mouse.up();
+    await expect(study.locator('.study-pagination')).toContainText('5–8 of 20');
+  });
+});
+
+test('calorie pages support swiping, bounded navigation and ordinary drink taps', async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await openRoute(page, '/#/');
+  const study = page.locator('#home-calories');
+  await study.locator('.home-study-toggle').click();
+  const position = study.getByRole('navigation', { name: 'Calorie servings' });
+  const row = study.locator('.calorie-row').first();
+  await swipe(row, 110);
+  await expect(position).toContainText('1–4 of 20');
+  await swipe(row, -110);
+  await expect(position).toContainText('5–8 of 20');
+  await expect(study.locator('.calorie-recipe')).toHaveCount(0);
+  await swipe(row, -6, -130);
+  await swipe(row, -20);
+  await swipe(row, -110, 0, true);
+  await expect(position).toContainText('5–8 of 20');
+  await swipe(row, 110);
+  await expect(position).toContainText('1–4 of 20');
+  await row.click();
+  await expect(study.locator('.calorie-recipe')).toHaveCount(1);
+  await swipePage(study.locator('.calorie-group'));
+  await expect(study.locator('.calorie-recipe')).toHaveCount(0);
+  for (let i = 0; i < 5; i++) await swipe(row, -110);
+  await expect(position).toContainText('17–20 of 20');
+  await expect(study.getByRole('button', { name: 'Next calorie servings' })).toBeDisabled();
+  await study.getByRole('button', { name: 'Wine', exact: true }).click();
+  await expect(position).toContainText('1–4 of 29');
+  await swipe(study.getByLabel('Calorie sort'), -110);
+  await expect(position).toContainText('1–4 of 29');
+});
+
+test('real touch paging leaves vertical calorie scrolling native', async ({ page, browserName }) => {
+  test.skip(browserName !== 'chromium', 'Native touch uses Chromium CDP; pointer journeys also run in WebKit.');
+  await page.setViewportSize({ width: 390, height: 844 });
+  await openRoute(page, '/#/');
+  const study = page.locator('#home-calories');
+  await study.locator('.home-study-toggle').click();
+  const cdp = await page.context().newCDPSession(page);
+  await cdp.send('Emulation.setTouchEmulationEnabled', { enabled: true });
+  const stroke = async (x: number, y: number, dx: number, dy = 0) => {
+    await cdp.send('Input.dispatchTouchEvent', { type: 'touchStart', touchPoints: [{ x, y, id: 1 }] });
+    for (let i = 1; i <= 8; i++) await cdp.send('Input.dispatchTouchEvent', { type: 'touchMove', touchPoints: [{ x: x + dx * i / 8, y: y + dy * i / 8, id: 1 }] });
+    await cdp.send('Input.dispatchTouchEvent', { type: 'touchEnd', touchPoints: [] });
+  };
+  const row = study.locator('.calorie-row').first();
+  await row.scrollIntoViewIfNeeded();
+  const box = (await row.boundingBox())!;
+  await stroke(box.x + box.width * .7, box.y + box.height / 2, -110);
+  const position = study.getByRole('navigation', { name: 'Calorie servings' });
+  await expect(position).toContainText('5–8 of 20');
+  await expect(study.locator('.calorie-recipe')).toHaveCount(0);
+  const second = (await study.locator('.calorie-row').nth(2).boundingBox())!;
+  const previousY = await page.evaluate(() => scrollY);
+  await stroke(second.x + second.width / 2, second.y + second.height / 2, 2, -130);
+  await expect.poll(() => page.evaluate(() => scrollY)).toBeGreaterThan(previousY + 30);
+  await expect(position).toContainText('5–8 of 20');
+  // A wide chart must pan instead of paging its parent Atlas story.
+  await openRoute(page, '/#/atlas?story=pairings');
+  const plot = page.locator('.atlas-chart-stage .atlas-plot');
+  await plot.scrollIntoViewIfNeeded();
+  const chart = (await plot.boundingBox())!;
+  await stroke(chart.x + chart.width * .7, Math.min(chart.y + chart.height / 2, 600), -100);
+  await expect.poll(() => plot.evaluate(el => el.scrollLeft)).toBeGreaterThan(30);
+  await expect(page.getByLabel('Choose a visual story')).toHaveValue('pairings');
+  await cdp.detach();
+});
+
+test('Atlas swipes change stories while sliders and pannable charts keep their gestures', async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await openRoute(page, '/#/atlas?story=beer');
+  const chooser = page.getByLabel('Choose a visual story');
+  const heading = page.locator('.atlas-story-heading h2');
+  await swipe(heading, -110);
+  await expect(chooser).toHaveValue('scotch');
+  await swipe(heading, 110);
+  await expect(chooser).toHaveValue('beer');
+  await swipe(heading, -4, -120);
+  await expect(chooser).toHaveValue('beer');
+  await chooser.selectOption('dilution');
+  const slider = page.getByRole('slider', { name: 'Meltwater added' });
+  await swipe(slider, -110);
+  await expect(chooser).toHaveValue('dilution');
+  await slider.press('End');
+  await expect(page.locator('.atlas-insight-number')).toContainText('13.5');
+  await chooser.selectOption('pairings');
+  const plot = page.locator('.atlas-chart-stage .atlas-plot');
+  expect(await plot.evaluate(el => el.scrollWidth > el.clientWidth)).toBe(true);
+  await swipe(plot.locator('svg'), -110);
+  await expect(chooser).toHaveValue('pairings');
 });
 
 for (const width of [320, 390, 430, 768, 1024, 1440]) {
@@ -70,7 +284,7 @@ test('beer and wine are separate, browse every style with a stable scale and onl
       await expect(study.locator('.calorie-axis')).toHaveText(scale!);
       const next = study.getByRole('button', { name: 'Next calorie servings' });
       if (await next.isDisabled()) break;
-      await next.click();
+      await swipePage(study.locator('.calorie-group'));
     }
     expect(new Set(seen).size).toBe(count);
     await study.getByLabel('Calorie sort').selectOption('high');

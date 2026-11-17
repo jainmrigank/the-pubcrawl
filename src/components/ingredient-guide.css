@@ -12,7 +12,7 @@
   line-height: 1.5;
 }
 .ingredient-row > .ingredient-row-name { display: block; min-width: 0; margin: 0; overflow-wrap: anywhere; }
-.ingredient-row > .ingredient-row-measure { min-width: 0; max-width: none; margin: 0; text-align: right; font-size: .85em; font-variant-numeric: tabular-nums; overflow-wrap: anywhere; color: var(--grey); }
+.ingredient-row > .ingredient-row-measure { min-width: 0; max-width: none; margin: 0; text-align: right; font-size: var(--text-small); font-variant-numeric: tabular-nums; overflow-wrap: anywhere; color: var(--grey); }
 .ingredient-guide-trigger { display: flex; align-items: center; justify-content: space-between; gap: 8px; min-height: 44px; width: 100%; margin: -6px 0; padding: 6px 0; background: transparent; border: 0; border-radius: 4px; color: inherit; font: inherit; line-height: inherit; text-align: left; cursor: pointer; }
 .ingredient-guide-trigger:focus-visible { outline: 2px solid var(--accent); outline-offset: 4px; }
 .ingredient-guide-trigger:disabled { cursor: default; opacity: 1; }
@@ -23,10 +23,10 @@
 .ingredient-row > .ingredient-guide-details { grid-column: 1 / -1; min-width: 0; margin: 4px 0 0; padding: 14px; border: 1px solid var(--line); border-radius: 12px; background: var(--panel, transparent); font-size: 14px; text-align: left; color: var(--ink); }
 .ingredient-guide-details[hidden] { display: none; }
 .ingredient-guide-details p { margin: 0 0 8px; font: inherit; line-height: 1.55; }
-.ingredient-guide-details .ingredient-guide-title { font-size: 12px; font-weight: 650; color: var(--accent); }
+.ingredient-guide-details .ingredient-guide-title { font-size: var(--text-small); font-weight: 400; color: var(--accent); }
 .ingredient-guide-details small { font-size: 12px; color: var(--grey); }
 .ingredient-preparation { margin-top: 12px; border-top: 1px solid var(--line); }
-.ingredient-preparation-toggle { display: flex; align-items: center; justify-content: space-between; gap: 12px; width: 100%; min-height: 44px; padding: 8px 0; border: 0; border-radius: 4px; background: transparent; color: var(--ink); font: inherit; text-align: left; cursor: pointer; }
+.ingredient-preparation-toggle { display: flex; align-items: center; justify-content: space-between; gap: 12px; width: 100%; min-height: 44px; padding: 8px 0; border: 0; border-radius: 4px; background: transparent; color: var(--ink); font: 400 var(--text-small)/1.5 var(--sans); text-align: left; cursor: pointer; }
 .ingredient-preparation-toggle:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
 .ingredient-preparation-toggle:disabled { cursor: default; opacity: 1; }
 .ingredient-preparation-toggle svg { flex: 0 0 14px; transition: transform .18s ease; color: var(--accent); }

@@ -9,8 +9,8 @@ import './studies.css';
 import './focus-return.css';
 
 const highlights = [
-  { id: 'pantry', label: 'YOUR INGREDIENTS', title: 'What can I make?', intro: 'Add ingredients. Choose a drink.' },
   { id: 'pairings', label: 'INGREDIENT CONNECTIONS', title: 'Ingredient pairings', intro: 'Choose two ingredients. Find their drinks.' },
+  { id: 'pantry', label: 'YOUR INGREDIENTS', title: 'What can I make?', intro: 'Add ingredients. Choose a drink.' },
 ];
 
 export default function LandingHighlights({ actions }: { actions: StudyActions }) {

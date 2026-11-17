@@ -1,4 +1,14 @@
-import type { Page } from '@playwright/test';
+import type { Locator, Page } from '@playwright/test';
+
+/** Cross-browser finger paging; native touch and preview mouse drags have separate coverage. */
+export async function swipePage(surface: Locator, direction: 'next' | 'previous' = 'next') {
+  const box = (await surface.boundingBox())!;
+  const start = { pointerId: 1, pointerType: 'touch', isPrimary: true, clientX: box.x + box.width / 2, clientY: box.y + box.height / 2 };
+  const end = { ...start, clientX: start.clientX + (direction === 'next' ? -110 : 110) };
+  await surface.dispatchEvent('pointerdown', start);
+  await surface.dispatchEvent('pointermove', end);
+  await surface.dispatchEvent('pointerup', end);
+}
 
 export async function seedStableDevice(page: Page, options: { daily?: boolean; tours?: boolean } = {}) {
   await page.addInitScript(({ suppressDaily, suppressTours }) => {
