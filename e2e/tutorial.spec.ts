@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test';
-import { openRoute, seedStableDevice } from './helpers';
+import { openRoute, seedStableDevice, swipePage } from './helpers';
 
 test.describe('contextual tours', () => {
   test.use({ viewport: { width: 320, height: 700 }, isMobile: true, hasTouch: true });
@@ -10,12 +10,7 @@ test.describe('contextual tours', () => {
     await openRoute(page, '/#/taste-map');
     await page.locator('button.contextual-help:visible').click();
     const popover = page.locator('.guided-tour-popover');
-    const swipe = async (dx: number) => {
-      const start = { pointerId: 1, pointerType: 'touch', isPrimary: true, clientX: 150, clientY: 200 };
-      await popover.dispatchEvent('pointerdown', start);
-      await popover.dispatchEvent('pointermove', { ...start, clientX: start.clientX + dx });
-      await popover.dispatchEvent('pointerup', { ...start, clientX: start.clientX + dx });
-    };
+    const swipe = (dx: number) => swipePage(popover.locator('.paged-carousel'), dx < 0 ? 'next' : 'previous');
     await expect(popover).toContainText('1 / 2');
     await swipe(-100);
     await expect(popover).toContainText('2 / 2');

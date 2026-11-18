@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { ArrowRight } from '../icons';
-import { useSwipePagination } from '../useSwipePagination';
+import { PagedCarousel } from './PagedCarousel';
 import type { TourId, TourStep } from '../types';
 import { readTourOutcome, requestTourReplay, saveTourOutcome, TOURS } from '../tutorial';
 import { OVERLAY_PRIORITY, overlayGate, setBackgroundInert } from '../overlayGate';
@@ -358,16 +358,6 @@ export function GuidedTour({ id, active, autoStart = true }: GuidedTourProps) {
     setStepIndex(Math.max(0, previous));
   }, [steps, stepIndex]);
 
-  const swipe = useSwipePagination({
-    pageKey: stepIndex,
-    canNext: stepIndex + 1 < steps.length,
-    canPrevious: stepIndex > 0,
-    // Completing or dismissing a tour remains an explicit button action.
-    onNext: () => { if (stepIndex + 1 < steps.length) advance(); },
-    onPrevious: retreat,
-    enabled: open,
-  });
-
   if (!open || !geometry || typeof document === 'undefined') return null;
   const step = steps[stepIndex];
   if (!step) return null;
@@ -381,13 +371,12 @@ export function GuidedTour({ id, active, autoStart = true }: GuidedTourProps) {
       <div style={{ ...scrim, left: target.right + 8, right: 0, top: target.top - 8, height: target.height + 16 }} />
       <div style={{ ...scrim, left: 0, right: 0, top: target.bottom + 8, bottom: 0 }} />
       <div className="guided-tour-focus" style={{ top: target.top - 8, left: target.left - 8, width: target.width + 16, height: target.height + 16 }} aria-hidden="true" />
-      <div ref={popoverRef} className="guided-tour-popover swipe-pages" data-side={side} style={{ top: popover.top, left: popover.left, width: popover.width }} {...swipe}>
+      <div ref={popoverRef} className="guided-tour-popover" data-side={side} style={{ top: popover.top, left: popover.left, width: popover.width }}>
         <span className="guided-tour-arrow" aria-hidden="true"><ArrowRight size={20} /></span>
         <span className="k-label dim">{stepIndex + 1} / {steps.length}</span>
-        <div className="swipe-page-viewport"><div data-swipe-content>
-        <h2 id={`guided-tour-${id}-title`}>{step.label}</h2>
-        <p>{step.body}</p>
-        </div></div>
+        <PagedCarousel page={stepIndex} count={steps.length} onPageChange={index => { if (index > stepIndex) advance(); else if (index < stepIndex) retreat(); }} label="Tour steps">
+        {index => <div><h2 id={index === stepIndex ? `guided-tour-${id}-title` : undefined}>{steps[index].label}</h2><p>{steps[index].body}</p></div>}
+        </PagedCarousel>
         <div className="guided-tour-actions">
           <button ref={firstButtonRef} type="button" className="text-btn" onClick={() => finish('skipped')}>Skip</button>
           {stepIndex > 0 && <button type="button" className="text-btn" onClick={retreat}>Back</button>}

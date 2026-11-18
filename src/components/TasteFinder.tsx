@@ -1,6 +1,6 @@
 import { RecipeIngredientRow } from './RecipeIngredient';
 import { useEffect, useId, useMemo, useRef, useState } from 'react';
-import { useSwipePagination } from '../useSwipePagination';
+import { PagedCarousel } from './PagedCarousel';
 import { motion } from 'framer-motion';
 import type { Recipe, Vibe } from '../types';
 import type { RecipeFocusOrigin } from '../recipeFocusTypes';
@@ -86,7 +86,6 @@ export function TasteFinder({ active, saved, onSave, onExpand, onList }: Props) 
   const turnPage = (delta: number) => {
     setPage(value => Math.max(0, Math.min(pageCount - 1, value + delta)));
   };
-  const swipe = useSwipePagination({ pageKey: currentPage, canNext: currentPage + 1 < pageCount, canPrevious: currentPage > 0, onNext: () => turnPage(1), onPrevious: () => turnPage(-1) });
 
   useEffect(() => {
     if (!active || !selected || !needFocus.current) return;
@@ -150,7 +149,7 @@ export function TasteFinder({ active, saved, onSave, onExpand, onList }: Props) 
         </nav>
         {filtered.length ? <div className="taste-map-canvas" data-motion={reduced ? 'reduced' : 'animated'}>
           <span className="taste-axis taste-axis-top"><ArrowUp size={15} />Stronger spirit taste</span>
-          <div className="taste-plot swipe-pages swipe-page-viewport" role="group" aria-label="Choose a cocktail on the Taste Map" {...swipe}>
+          <div className="taste-plot" role="group" aria-label="Choose a cocktail on the Taste Map">
             <svg className="taste-graph" viewBox="0 0 100 100" preserveAspectRatio="none" fill="none" aria-hidden="true">
               <path className="taste-graph-grid" d="M25 0V100M75 0V100M0 25H100M0 75H100" />
               <path className="taste-graph-axes taste-graph-axes-x" d="M2 50H98" />
@@ -162,14 +161,16 @@ export function TasteFinder({ active, saved, onSave, onExpand, onList }: Props) 
               <span className="taste-projection taste-projection-vertical" aria-hidden="true" style={{ left: `clamp(var(--taste-node-half), ${selectedProfile.x}%, calc(100% - var(--taste-node-half)))`, top: `${Math.min(50, selectedProfile.y)}%`, height: `${Math.abs(50 - selectedProfile.y)}%` }} />
               <span className="taste-projection taste-projection-horizontal" aria-hidden="true" style={{ top: `${selectedProfile.y}%`, left: selectedProfile.x >= 50 ? '50%' : `clamp(var(--taste-node-half), ${selectedProfile.x}%, calc(100% - var(--taste-node-half)))`, width: selectedProfile.x >= 50 ? `calc(clamp(var(--taste-node-half), ${selectedProfile.x}%, calc(100% - var(--taste-node-half))) - 50%)` : `calc(50% - clamp(var(--taste-node-half), ${selectedProfile.x}%, calc(100% - var(--taste-node-half))))` }} />
             </>}
-            <div className="taste-page-points" data-swipe-content key={visible.map(profile => profile.id).join('-')}>
-            {visible.map(profile => {
+            <PagedCarousel key={`${path}-${word}`} page={currentPage} count={pageCount} onPageChange={setPage} label="Taste Map pages">
+            {pageIndex => <div className="taste-page-points">
+            {(groups[pageIndex] || []).map(profile => {
               const recipe = recipeById.get(profile.id)!;
               return <button className={`taste-node ${selectedId === profile.id ? 'selected' : ''}`} key={profile.id} style={{ ['--taste-x' as string]: `${profile.x}%`, ['--taste-y' as string]: `${profile.y}%` }} onClick={event => select(profile.id, event.currentTarget)} aria-pressed={selectedId === profile.id} aria-label={`Preview ${recipe.name}`}>
                 <DrinkDrawing profile={profile} /><span className="taste-node-name">{recipe.name}</span>
               </button>;
             })}
-            </div>
+            </div>}
+            </PagedCarousel>
           </div>
           <div className="taste-sweetness"><span><ArrowLeft size={14} />Less sweet</span><span>Sweeter<ArrowRight size={14} /></span></div><span className="taste-axis taste-axis-bottom"><ArrowDown size={15} />Gentler spirit taste</span>
         </div> : <div className="taste-empty" role="status"><h3>No matching classics.</h3><p>Try another flavour.</p><button className="text-btn" onClick={event => onList(event.currentTarget)}>Browse all drinks <ArrowRight size={16} /></button>{(path || word) && <button className="text-btn" onClick={() => { setPath(''); setWord(''); }}>Clear filters</button>}</div>}

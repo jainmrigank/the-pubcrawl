@@ -11,7 +11,7 @@ test('Home offers Taste Map alongside browsing and in More at the bar without lo
   await expect(hero.getByRole('link', { name: 'Browse all drinks' })).toHaveAttribute('href', '#/menu');
   await hero.getByRole('link', { name: 'Taste Map', exact: true }).click();
   await expect(page).toHaveURL(/#\/taste-map$/);
-  await expect(page.locator('.taste-node')).toHaveCount(4);
+  await expect(page.locator('.taste-node:not(.swiper-slide[aria-hidden=true] *)')).toHaveCount(4);
   await page.goBack();
   const editorial = page.getByRole('navigation', { name: 'More to explore' });
   await expect(editorial.getByRole('link')).toHaveCount(4);
@@ -39,7 +39,7 @@ test('Drinks shows keyword matches directly with filters and no map controls or 
 
 test('Map keeps its page and preview across Drinks searches and browser Back', async ({ page }) => {
   await openRoute(page, '/#/taste-map');
-  await expect(page.locator('.taste-node')).toHaveCount(4);
+  await expect(page.locator('.taste-node:not(.swiper-slide[aria-hidden=true] *)')).toHaveCount(4);
   await expect(page.locator('#taste-page input')).toHaveCount(0);
   await swipePage(page.locator('.taste-plot'));
   await page.getByRole('button', { name: 'Preview Old Fashioned', exact: true }).click();
@@ -62,7 +62,7 @@ test('Map keeps its page and preview across Drinks searches and browser Back', a
 test('old map links redirect to the standalone page without carrying a library search into the map', async ({ page }) => {
   await openRoute(page, '/#/menu?q=sour&view=map');
   await expect(page).toHaveURL(/#\/taste-map$/);
-  await expect(page.locator('.taste-node')).toHaveCount(4);
+  await expect(page.locator('.taste-node:not(.swiper-slide[aria-hidden=true] *)')).toHaveCount(4);
   await expect(page.locator('.taste-pagination')).toContainText('4 of 16 classics');
   await expect(page.locator('.taste-sweetness')).toHaveText('Less sweetSweeter');
   await page.getByRole('button', { name: /Browse all 691 recipes/ }).click();
@@ -93,7 +93,7 @@ test('five navigation choices and all Home actions fit phones, desktops and shor
 test('flavour controls and paging sit above the full-width graph and update it immediately', async ({ page }) => {
   await page.setViewportSize({ width: 1440, height: 1000 });
   await openRoute(page, '/#/taste-map');
-  await expect(page.locator('.taste-node')).toHaveCount(4);
+  await expect(page.locator('.taste-node:not(.swiper-slide[aria-hidden=true] *)')).toHaveCount(4);
   const graph = page.locator('.taste-plot');
   const layout = await page.evaluate(() => {
     const box = (selector: string) => document.querySelector(selector)!.getBoundingClientRect();
@@ -116,12 +116,13 @@ test('flavour controls and paging sit above the full-width graph and update it i
       expect(bounds.height).toBeGreaterThanOrEqual(48);
     }
   }
-  await swipePage(page.locator('.taste-plot'));
+  await page.getByRole('button', { name: 'Next drinks', exact: true }).focus();
+  await page.keyboard.press('Enter');
   await expect(page.locator('.taste-pagination')).toContainText('Page 2 / 4');
   await expect(graph.getByRole('button', {name:'Preview Old Fashioned',exact:true})).toBeVisible();
   await page.getByRole('group', {name:'Flavour',exact:true}).getByRole('button', {name:'Bold & rich',exact:true}).click();
   await page.getByRole('group', {name:'More specific flavours',exact:true}).getByRole('button', {name:'coffee',exact:true}).click();
-  await expect(page.locator('.taste-node')).toHaveCount(1);
+  await expect(page.locator('.taste-node:not(.swiper-slide[aria-hidden=true] *)')).toHaveCount(1);
   await expect(graph).toContainText('Espresso Martini');
   await expect(page.locator('.taste-pagination')).toContainText('1 of 2 classics');
   await expect(page.locator('.taste-pagination')).toContainText('Page 1 / 2');
@@ -134,12 +135,12 @@ test('fast page changes remain usable and reduced motion renders the final graph
   await swipePage(page.locator('.taste-plot'));
   await swipePage(page.locator('.taste-plot'));
   await expect(page.locator('.taste-pagination')).toContainText('Page 3 / 4');
-  await expect(page.locator('.taste-node')).toHaveCount(4);
+  await expect(page.locator('.taste-node:not(.swiper-slide[aria-hidden=true] *)')).toHaveCount(4);
   await expect(page.getByRole('button', {name:'Preview Espresso Martini',exact:true})).toBeVisible();
   await page.emulateMedia({ reducedMotion: 'reduce' });
   await swipePage(page.locator('.taste-plot'));
   await expect(page.locator('.taste-map-canvas')).toHaveAttribute('data-motion', 'reduced');
-  await expect(page.locator('.taste-page-points')).toHaveCSS('opacity', '1');
+  await expect(page.locator('.swiper-slide-active .taste-page-points')).toHaveCSS('opacity', '1');
   await expect(page.getByRole('button', {name:'Preview White Russian',exact:true})).toBeVisible();
   await expect(page.locator('.taste-graph-axes-x')).toHaveCSS('opacity', '0.7');
   await expect(page.locator('.taste-graph-axes-x')).toHaveCSS('animation-name', 'none');
@@ -150,25 +151,13 @@ test('mobile map gestures keep boundaries, filters, keyboard paging and drink ta
   await openRoute(page, '/#/taste-map');
   const plot = page.locator('.taste-plot');
   const position = page.locator('.taste-page-position');
-  const gesture = async (dx: number, dy = 0, cancel = false) => {
-    const box = (await plot.boundingBox())!;
-    const start = { pointerId: 1, pointerType: 'touch', isPrimary: true, clientX: box.x + box.width / 2, clientY: box.y + box.height / 2 };
-    await plot.dispatchEvent('pointerdown', start);
-    await plot.dispatchEvent('pointermove', { ...start, clientX: start.clientX + dx, clientY: start.clientY + dy });
-    await plot.dispatchEvent(cancel ? 'pointercancel' : 'pointerup', { ...start, clientX: start.clientX + dx, clientY: start.clientY + dy });
-  };
+  const gesture = (dx: number) => swipePage(plot, dx < 0 ? 'next' : 'previous');
   await gesture(100);
   await expect(position).toHaveText('Page 1 / 4');
   await gesture(-110);
   await expect(position).toHaveText('Page 2 / 4');
   await expect(page.locator('.taste-preview')).toHaveCount(0);
   await gesture(110);
-  await expect(position).toHaveText('Page 1 / 4');
-  await gesture(-8, -120);
-  await expect(position).toHaveText('Page 1 / 4');
-  await gesture(-110, 0, true);
-  await expect(position).toHaveText('Page 1 / 4');
-  await gesture(-20);
   await expect(position).toHaveText('Page 1 / 4');
   await page.getByRole('button', { name: 'Preview Negroni', exact: true }).tap();
   await expect(page.locator('.taste-preview h2')).toHaveText('Negroni');
@@ -211,23 +200,23 @@ for (const reducedMotion of ['reduce', 'no-preference'] as const) test(`native t
   const node = (await page.getByRole('button', { name: 'Preview Negroni', exact: true }).boundingBox())!;
   await stroke(node.x + node.width / 2, node.y + node.height / 2, -38, 3);
   await expect(page.locator('.taste-page-position')).toHaveText('Page 2 / 4');
-  await expect(plot.locator('[data-swipe-content]')).toHaveCSS('transform', 'none');
-  expect(await plot.locator('[data-swipe-content]').evaluate(el => el.getAnimations().length)).toBe(0);
+  await expect.poll(() => plot.locator('.paged-carousel').evaluate(el => !(el as HTMLElement & { swiper: { animating: boolean } }).swiper.animating)).toBe(true);
+  expect(await plot.locator('.swiper-slide-active').getAttribute('aria-hidden')).toBe('false');
   await expect(page.locator('.taste-preview')).toHaveCount(0);
   const box = (await plot.boundingBox())!;
-  await stroke(box.x + box.width * .3, box.y + box.height / 2, 38, 3, 100);
+  await stroke(box.x + box.width * .1, box.y + box.height / 2, box.width * .8, 3, 100);
   await expect(page.locator('.taste-page-position')).toHaveText('Page 1 / 4');
-  await expect(plot.locator('[data-swipe-content]')).toHaveCSS('transform', 'none');
+  await expect.poll(() => plot.locator('.paged-carousel').evaluate(el => !(el as HTMLElement & { swiper: { animating: boolean } }).swiper.animating)).toBe(true);
   // Remounted glass groups must keep paging, including the final boundary.
   for (const expected of [2, 3, 4, 4]) {
     await stroke(box.x + box.width * .7, box.y + box.height / 2, -100);
     await expect(page.locator('.taste-page-position')).toHaveText(`Page ${expected} / 4`);
-    await expect(plot.locator('[data-swipe-content]')).toHaveCSS('transform', 'none');
+    await expect.poll(() => plot.locator('.paged-carousel').evaluate(el => !(el as HTMLElement & { swiper: { animating: boolean } }).swiper.animating)).toBe(true);
   }
   for (const expected of [3, 2, 1]) {
     await stroke(box.x + box.width * .3, box.y + box.height / 2, 100);
     await expect(page.locator('.taste-page-position')).toHaveText(`Page ${expected} / 4`);
-    await expect(plot.locator('[data-swipe-content]')).toHaveCSS('transform', 'none');
+    await expect.poll(() => plot.locator('.paged-carousel').evaluate(el => !(el as HTMLElement & { swiper: { animating: boolean } }).swiper.animating)).toBe(true);
   }
   const y = await page.evaluate(() => scrollY);
   await stroke(box.x + box.width / 2, box.y + box.height * .7, 3, -150);

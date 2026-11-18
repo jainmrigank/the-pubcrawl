@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { useSwipePagination } from '../../useSwipePagination';
+import { PagedCarousel } from '../PagedCarousel';
 import { ArrowRight } from '../../icons';
 import { chapters, catalogue, facts, palette, sources, stories } from './data';
 import {
@@ -30,7 +30,7 @@ import {
   HistoryChart,
   ScreenChart,
 } from './CultureCharts';
-import { Enter, Select, SourceNotes } from './shared';
+import { Select, SourceNotes } from './shared';
 import './atlas.css';
 const charts = [
   BeerChart,
@@ -227,7 +227,6 @@ export default function BarAtlas() {
   const heading = useRef<HTMLHeadingElement>(null);
   const chapter = Math.floor(selected / 5);
   const story = stories[selected];
-  const Chart = charts[selected];
   useEffect(() => {
     const sync = () => {
       if (window.location.hash.startsWith('#/atlas')) setSelected(fromUrl());
@@ -248,11 +247,6 @@ export default function BarAtlas() {
       heading.current?.focus({ preventScroll: true });
     }
   }
-  const swipe = useSwipePagination({
-    pageKey: selected,
-    onNext: () => choose((selected + 1) % stories.length),
-    onPrevious: () => choose((selected + stories.length - 1) % stories.length),
-  });
   return (
     <div className="bar-atlas">
       <header className="atlas-cover">
@@ -315,11 +309,10 @@ export default function BarAtlas() {
         ))}
       </nav>
       <section
-        className="atlas-reader swipe-pages"
+        className="atlas-reader"
         id="atlas-reader"
         ref={reader}
         aria-label="Interactive visual story"
-        {...swipe}
       >
         <div className="atlas-reader-toolbar">
           <span>
@@ -355,21 +348,26 @@ export default function BarAtlas() {
           }))}
           onChange={(id) => choose(stories.findIndex((s) => s.id === id))}
         />
-        <div className="swipe-page-viewport"><div data-swipe-content><Enter id={story.id}>
+        <PagedCarousel page={selected} count={stories.length} onPageChange={choose} label="Visual stories" rewind>
+        {index => {
+          const item = stories[index], Chart = charts[index];
+          return <div>
           <div className="atlas-story-heading">
             <div>
-              <p className="atlas-overline">{story.type}</p>
-              <h2 ref={heading} tabIndex={-1}>
-                {story.title}
+              <p className="atlas-overline">{item.type}</p>
+              <h2 ref={index === selected ? heading : undefined} tabIndex={-1}>
+                {item.title}
               </h2>
             </div>
-            <p>{story.dek}</p>
+            <p>{item.dek}</p>
           </div>
-          <div className="atlas-chart-stage" data-story={story.id}>
+          <div className="atlas-chart-stage" data-story={item.id}>
             <Chart />
           </div>
-          <SourceNotes story={story} />
-        </Enter></div></div>
+          <SourceNotes story={item} />
+        </div>;
+        }}
+        </PagedCarousel>
         <div className="atlas-reader-bottom">
           <span>Curiosity doesn’t need a last call.</span>
           <button

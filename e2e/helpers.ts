@@ -1,13 +1,40 @@
-import type { Locator, Page } from '@playwright/test';
+import { expect, type Locator, type Page } from '@playwright/test';
 
-/** Cross-browser finger paging; native touch and preview mouse drags have separate coverage. */
+/** Exercise Swiper through actual browser input; native touch has separate CDP coverage. */
 export async function swipePage(surface: Locator, direction: 'next' | 'previous' = 'next') {
-  const box = (await surface.boundingBox())!;
-  const start = { pointerId: 1, pointerType: 'touch', isPrimary: true, clientX: box.x + box.width / 2, clientY: box.y + box.height / 2 };
-  const end = { ...start, clientX: start.clientX + (direction === 'next' ? -110 : 110) };
-  await surface.dispatchEvent('pointerdown', start);
-  await surface.dispatchEvent('pointermove', end);
-  await surface.dispatchEvent('pointerup', end);
+  const page = surface.page();
+  const target = await surface.count() > 1 ? surface.and(page.locator('.swiper-slide-active *')) : surface;
+  await target.hover();
+  const state = await target.evaluate(el => {
+    const root = el.closest('.paged-carousel') || el.querySelector('.paged-carousel');
+    const swiper = (root as HTMLElement & { swiper: { activeIndex: number; slides: unknown[]; params: { rewind: boolean } } }).swiper;
+    const bounds = root!.getBoundingClientRect();
+    return { page: swiper.activeIndex, count: swiper.slides.length, rewind: swiper.params.rewind, left: bounds.left, width: bounds.width };
+  });
+  const next = state.page + (direction === 'next' ? 1 : -1);
+  const expected = state.rewind ? (next + state.count) % state.count : Math.max(0, Math.min(state.count - 1, next));
+  const box = (await target.boundingBox())!;
+  const y = Math.min(box.y + box.height / 2, page.viewportSize()!.height - 140);
+  if (page.viewportSize()!.width > 860) {
+    // Swiper groups wheel input within 150ms into a single trackpad gesture.
+    await page.waitForTimeout(160);
+    await page.mouse.move(box.x + box.width / 2, y);
+    await page.mouse.wheel(direction === 'next' ? 450 : -450, 0);
+  } else {
+    const left = direction === 'next';
+    await page.mouse.move(state.left + state.width * (left ? .85 : .15), y);
+    await page.mouse.down();
+    await page.mouse.move(state.left + state.width * (left ? .15 : .85), y, { steps: 8 });
+    await page.mouse.up();
+  }
+  await expect.poll(() => target.evaluate(el => {
+    const root = el.closest('.paged-carousel') || el.querySelector('.paged-carousel');
+    return (root as HTMLElement & { swiper: { activeIndex: number } }).swiper.activeIndex;
+  })).toBe(expected);
+  await expect.poll(() => target.evaluate(el => {
+    const carousel = el.closest('.paged-carousel') || el.querySelector('.paged-carousel');
+    return !(carousel as HTMLElement & { swiper?: { animating: boolean } })?.swiper?.animating;
+  })).toBe(true);
 }
 
 export async function seedStableDevice(page: Page, options: { daily?: boolean; tours?: boolean } = {}) {

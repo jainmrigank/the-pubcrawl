@@ -1,0 +1,7 @@
+.paged-carousel { width: 100%; min-width: 0; --swiper-wrapper-transition-timing-function: var(--ease); }
+.paged-carousel > .swiper-wrapper { align-items: flex-start; }
+.paged-carousel > .swiper-wrapper > .swiper-slide { height: auto; min-width: 0; }
+.paged-carousel .swiper-slide[aria-hidden='true'] { pointer-events: none; }
+.taste-plot > .paged-carousel { position: absolute; inset: 0; height: 100%; }
+.taste-plot > .paged-carousel > .swiper-wrapper,
+.taste-plot > .paged-carousel > .swiper-wrapper > .swiper-slide { height: 100% !important; }

@@ -39,12 +39,12 @@ test('all twenty stories render, expose a readable data view and explain their s
   );
   for (const id of ids) {
     await atlas.getByLabel('Choose a visual story').selectOption(id);
-    const stage = atlas.locator(`[data-story="${id}"]`);
+    const stage = atlas.locator(`.swiper-slide-active [data-story="${id}"]`);
     await expect(stage).toBeVisible();
     await stage.locator('.atlas-data > summary').click();
     await expect(stage.locator('tbody tr').first()).toBeVisible();
-    await atlas.locator('.atlas-sources > summary').click();
-    await expect(atlas.locator('.atlas-sources > p').first()).not.toBeEmpty();
+    await atlas.locator('.swiper-slide-active .atlas-sources > summary').click();
+    await expect(atlas.locator('.swiper-slide-active .atlas-sources > p').first()).not.toBeEmpty();
     expect(
       await page.evaluate(
         () => document.documentElement.scrollWidth > window.innerWidth + 1
@@ -59,11 +59,11 @@ test('recipe analyses, dilution and blend controls change real results and survi
 }) => {
   await page.goto('/#/atlas?story=dilution');
   const atlas = page.locator('.bar-atlas');
-  await expect(atlas.locator('.atlas-insight-number')).toContainText('20.3');
+  await expect(atlas.locator('.swiper-slide-active .atlas-insight-number')).toContainText('20.3');
   await atlas.getByRole('slider', { name: 'Meltwater added' }).press('Home');
-  await expect(atlas.locator('.atlas-insight-number')).toContainText('27');
+  await expect(atlas.locator('.swiper-slide-active .atlas-insight-number')).toContainText('27');
   await atlas.getByRole('slider', { name: 'Meltwater added' }).press('End');
-  await expect(atlas.locator('.atlas-insight-number')).toContainText('13.5');
+  await expect(atlas.locator('.swiper-slide-active .atlas-insight-number')).toContainText('13.5');
   await page.getByRole('link', { name: 'Just here for a drink? ↗' }).click();
   await expect(page).toHaveURL(/#\/menu/);
   await page.goBack();
@@ -104,12 +104,12 @@ test('recipe analyses, dilution and blend controls change real results and survi
   await atlas
     .getByLabel('Second ingredient', { exact: true })
     .selectOption('gin');
-  const n = await atlas.locator('.atlas-pair-number').innerText();
+  const n = await atlas.locator('.swiper-slide-active .atlas-pair-number').innerText();
   expect(n).toMatch(/^\d+/);
   await atlas
     .getByRole('button', { name: 'Shared / union · %', exact: true })
     .click();
-  await expect(atlas.locator('.atlas-pair-number')).toContainText('100');
+  await expect(atlas.locator('.swiper-slide-active .atlas-pair-number')).toContainText('100');
 });
 test('notes are searchable and chart links keep the selected drink context', async ({
   page,
@@ -170,7 +170,7 @@ for (const width of [320, 390, 430, 768, 1024, 1440]) {
         'bottles',
       ]) {
         await atlas.getByLabel('Choose a visual story').selectOption(id);
-        await expect(atlas.locator(`[data-story="${id}"]`)).toBeVisible();
+        await expect(atlas.locator(`.swiper-slide-active [data-story="${id}"]`)).toBeVisible();
         expect(
           await page.evaluate(
             () => document.documentElement.scrollWidth <= window.innerWidth + 1
@@ -206,7 +206,7 @@ test.describe('Atlas in a short landscape phone', () => {
     const atlas = page.locator('.bar-atlas');
     await atlas.getByLabel('Choose a visual story').selectOption('sugar');
     await atlas.getByRole('slider', { name: 'Sugar in the wine' }).press('End');
-    await expect(atlas.locator('.atlas-inline-insight')).toContainText(
+    await expect(atlas.locator('.swiper-slide-active .atlas-inline-insight')).toContainText(
       '60 g/L'
     );
     await expect(page.locator('.house-mobile-links')).toBeVisible();
