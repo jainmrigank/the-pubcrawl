@@ -94,9 +94,54 @@ test('home ingredient picker understands plain names and keeps the selection on 
   const finder = page.locator('#home-pantry');
   await finder.locator('.home-study-toggle').click();
   await finder.getByRole('textbox', { name: 'Add an ingredient', exact: true }).fill('almond liqueur');
-  await expect(finder.locator('.finder-ingredient-options')).toContainText('Amaretto / almond liqueur');
-  await finder.locator('.finder-ingredient-options').getByRole('button', { name: 'Amaretto / almond liqueur', exact: true }).click();
-  await finder.getByRole('button', { name: 'Done', exact: true }).click();
+  await expect(finder.getByRole('listbox')).toContainText('Amaretto');
+  await expect(finder.getByRole('listbox')).toContainText('almond liqueur');
+  await finder.getByRole('option', { name: /^Amaretto / }).first().click();
   await finder.getByRole('link', { name: 'Add & open Shelf', exact: true }).click();
   await expect(page.locator('.pantry')).toContainText('Amaretto');
+});
+
+test('Home and Shelf offer common ingredients on focus, then filter typed searches', async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  for (const [route, selector, label] of [
+    ['/#/', '#home-pantry', 'Add an ingredient'],
+    ['/#/bar', '#shelf', 'Search ingredients'],
+  ]) {
+    await openRoute(page, route);
+    const section = page.locator(selector);
+    if (selector === '#home-pantry') await section.locator('.home-study-toggle').click();
+    const input = section.getByRole('textbox', { name: label, exact: true });
+    await input.click();
+    const common = section.getByRole('listbox', { name: 'Common ingredients', exact: true });
+    await expect(common.getByRole('option')).toHaveCount(12);
+    await expect(common.getByRole('option', { name: /^Vodka/ })).toBeVisible();
+    await expect.poll(() => common.evaluate(el => {
+      const r = el.getBoundingClientRect();
+      return r.top >= document.querySelector('.house-nav')!.getBoundingClientRect().bottom && r.bottom <= document.querySelector('.house-mobile-links')!.getBoundingClientRect().top;
+    })).toBe(true);
+    await input.press('ArrowDown');
+    await input.press('Enter');
+    await expect(input).toBeEmpty();
+    await expect(section.getByRole('listbox')).toHaveCount(0);
+    await expect(section.locator(selector === '#shelf' ? '.chip-row' : '.finder-selected')).toContainText('Gin');
+    // Clicking an already-focused input must reopen the common choices too.
+    await input.click();
+    await expect(common).toBeVisible();
+    await input.fill('peach');
+    const matching = section.getByRole('listbox', { name: 'Matching ingredients', exact: true });
+    await expect(matching.getByRole('option').filter({ has: page.locator('.ta-name', { hasText: /^Peach$/ }) })).toBeVisible();
+    await expect(matching.getByRole('option', { name: /^Gin/ })).toHaveCount(0);
+    await input.fill('');
+    await expect(common.getByRole('option')).toHaveCount(12);
+    await input.press('ArrowUp');
+    const last = common.getByRole('option', { name: /^Ice/ });
+    await expect(last).toHaveAttribute('aria-selected', 'true');
+    await expect.poll(() => last.evaluate(el => { const r = el.getBoundingClientRect(); return el.contains(document.elementFromPoint(r.x + r.width / 2, r.y + r.height / 2)); })).toBe(true);
+    await input.press('Escape');
+    await expect(section.getByRole('listbox')).toHaveCount(0);
+    await input.click();
+    await expect(common).toBeVisible();
+    await input.press('Tab');
+    await expect(section.getByRole('listbox')).toHaveCount(0);
+  }
 });

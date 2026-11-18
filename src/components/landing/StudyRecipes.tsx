@@ -53,8 +53,10 @@ export function StudyRecipes({ recipes, contextKey, actions, toolbar, missing, a
     requestAnimationFrame(() => {
       if (window.matchMedia('(max-width: 900px)').matches) {
         const top = preview.current?.getBoundingClientRect().top ?? 0;
-        const nav = document.querySelector('.house-nav')?.getBoundingClientRect().bottom ?? 68;
-        window.scrollBy({ top: top - nav - 12, behavior: 'instant' });
+        // Account for the study's pinned controls as well as the main navigation.
+        const returnBar = preview.current?.querySelector<HTMLElement>('.study-recipe-return');
+        const readingTop = returnBar ? parseFloat(getComputedStyle(returnBar).top) : 68;
+        window.scrollBy({ top: top - (Number.isFinite(readingTop) ? readingTop : 68) - 12, behavior: 'instant' });
       }
       back.current?.focus({ preventScroll: true });
     });

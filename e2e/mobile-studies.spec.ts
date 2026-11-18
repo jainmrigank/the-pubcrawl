@@ -111,6 +111,7 @@ for (const reducedMotion of ['reduce', 'no-preference'] as const) test(`native f
   await openRoute(page, '/#/');
   const study = page.locator('#home-calories');
   await study.locator('.home-study-toggle').click();
+  await expect(study.locator('.home-study-panel')).toHaveAttribute('style', /height: auto/);
   const cdp = await page.context().newCDPSession(page);
   await cdp.send('Emulation.setTouchEmulationEnabled', { enabled: true });
   const stroke = async (dx: number, dy = 0) => {
@@ -172,7 +173,7 @@ for (const width of [320, 390, 430, 768, 1024, 1440]) {
     const pair = page.locator('#home-pairings');
     await pair.locator('.home-study-toggle').click();
     await expect(pair.locator('.pairing-matrix-cell')).toHaveCount(144);
-    await expect(pair.locator('.pairing-selected-pair p')).toHaveText('11 matching recipes');
+    await expect(pair.locator('.pairing-selected-pair p')).toHaveText('11 shared recipes');
     await pair.getByRole('button', { name: 'View all 11 recipes', exact: true }).click();
     await expect(pair.locator('.study-recipe-list button')).toHaveCount(11);
     // Every result is available, including the last; no three-recipe hard cap.
@@ -220,11 +221,10 @@ test('beer and wine are separate, browse every style with a stable scale and onl
   for (const [label, count, volume] of [['Beer', 14, '568 ml'], ['Wine', 29, '150 ml']] as const) {
     await study.getByRole('button', { name: label, exact: true }).click();
     await expect(study.locator('.calorie-serving')).toContainText(volume);
-    const scale = await study.locator('.calorie-axis:not(.swiper-slide[aria-hidden=true] *)').textContent();
+    await expect(study.locator('.calorie-axis, .study-note')).toHaveCount(0);
     const seen: string[] = [];
     while (true) {
       seen.push(...await study.locator('[data-calorie-drink]:not(.swiper-slide[aria-hidden=true] *)').evaluateAll(els => els.map(el => el.getAttribute('data-calorie-drink')!)));
-      await expect(study.locator('.calorie-axis:not(.swiper-slide[aria-hidden=true] *)')).toHaveText(scale!);
       const next = study.getByRole('button', { name: 'Next calorie servings' });
       if (await next.isDisabled()) break;
       await swipePage(study.locator('.calorie-group:not(.swiper-slide[aria-hidden=true] *)'));
@@ -244,7 +244,7 @@ test('full matrix supports precision expansion, keyboard selection and rotation'
   const study = page.locator('#home-pairings');
   await study.locator('.home-study-toggle').click();
   await study.getByRole('button', { name: /^Gin and Lemon Juice:/ }).click();
-  await expect(study.locator('.pairing-selected-pair p')).toHaveText('24 matching recipes');
+  await expect(study.locator('.pairing-selected-pair p')).toHaveText('24 shared recipes');
   await study.locator('.pairing-matrix-cell[aria-pressed="true"]').focus();
   await page.keyboard.press('ArrowRight');
   await expect(study.getByLabel('Second ingredient', { exact: true })).toHaveValue('lime juice');
@@ -254,9 +254,9 @@ test('full matrix supports precision expansion, keyboard selection and rotation'
   const cell = await study.locator('.pairing-matrix-cell').first().boundingBox();
   expect(cell!.width).toBeGreaterThanOrEqual(44); expect(cell!.height).toBeGreaterThanOrEqual(44);
   await study.getByRole('button', { name: 'Fit grid', exact: true }).click();
-  await study.getByRole('button', { name: 'Overlap · %', exact: true }).click();
+  await expect(study.getByRole('group', { name: 'Pairing measure' })).toHaveCount(0);
   await study.getByLabel('Second ingredient', { exact: true }).selectOption('lemon juice');
-  await expect(study.locator('.pairing-selected-pair p')).toContainText('14.8%');
+  await expect(study.locator('.pairing-selected-pair p')).toHaveText('24 shared recipes');
   for (const size of [{width:1024,height:430}, {width:390,height:844}]) {
     await page.setViewportSize(size);
     await expect(study.locator('.pairing-matrix-cell')).toHaveCount(144);
@@ -270,7 +270,9 @@ test('mobile study controls stay reachable during scrolling and stop pinning in 
   await openRoute(page, '/#/');
   const study = page.locator('#home-calories');
   await study.locator('.home-study-toggle').click();
+  await expect.poll(() => study.locator('.home-study-panel').evaluate(el => (el as HTMLElement).style.height)).toBe('auto');
   await study.locator('.calorie-controls').evaluate(el => scrollTo(0, el.getBoundingClientRect().top + scrollY + 70));
+  await expect.poll(() => study.locator('.calorie-controls').evaluate(el => Math.abs(el.getBoundingClientRect().top - document.querySelector('.house-nav')!.getBoundingClientRect().bottom))).toBeLessThan(2);
   const pinned = await study.locator('.calorie-controls').evaluate(el => ({ top: el.getBoundingClientRect().top, nav: document.querySelector('.house-nav')!.getBoundingClientRect().bottom, position: getComputedStyle(el).position }));
   expect(pinned.position).toBe('sticky');
   expect(Math.abs(pinned.top - pinned.nav)).toBeLessThan(2);
@@ -279,6 +281,43 @@ test('mobile study controls stay reachable during scrolling and stop pinning in 
   await page.setViewportSize({ width: 844, height: 390 });
   expect(await study.locator('.calorie-controls').evaluate(el => getComputedStyle(el).position)).toBe('static');
   expect(await page.evaluate(() => document.documentElement.scrollWidth - innerWidth)).toBeLessThanOrEqual(1);
+  await page.setViewportSize({ width: 390, height: 844 });
+  const pair = page.locator('#home-pairings');
+  await pair.locator('.home-study-toggle').click();
+  await expect.poll(() => pair.locator('.home-study-panel').evaluate(el => (el as HTMLElement).style.height)).toBe('auto');
+  const controls = pair.locator('.pairing-toolbar');
+  const gridTop = (await pair.locator('.pairing-matrix').boundingBox())!.y;
+  expect((await pair.locator('.pairing-matrix-caption').boundingBox())!.y).toBeLessThan(gridTop);
+  expect((await pair.locator('.pairing-view-recipes').boundingBox())!.y).toBeLessThan(gridTop);
+  for (const width of [390, 1440]) {
+    await page.setViewportSize({ width, height: 844 });
+    const layout = await pair.evaluate(el => {
+      const bar = el.querySelector('.pairing-view-recipes')!.getBoundingClientRect();
+      const count = el.querySelector('.pairing-selected-pair p')!.getBoundingClientRect();
+      const study = el.getBoundingClientRect();
+      return { width: bar.width, expectedWidth: study.width, top: bar.top, countBottom: count.bottom, primary: el.querySelector('.pairing-view-recipes')!.classList.contains('is-primary') };
+    });
+    expect(Math.abs(layout.width - layout.expectedWidth)).toBeLessThan(2);
+    expect(layout.top).toBeGreaterThanOrEqual(layout.countBottom);
+    expect(layout.primary).toBe(true);
+  }
+  await page.setViewportSize({ width: 390, height: 844 });
+  await controls.evaluate(el => scrollTo(0, el.getBoundingClientRect().top + scrollY + 90));
+  const pairTop = await controls.boundingBox();
+  const navBottom = await page.locator('.house-nav').evaluate(el => el.getBoundingClientRect().bottom);
+  expect(Math.abs(pairTop!.y - navBottom)).toBeLessThan(2);
+  await pair.getByRole('button', { name: 'View all 11 recipes', exact: true }).click();
+  await pair.locator('.study-recipe-list').getByRole('button').first().click();
+  const back = pair.getByRole('button', { name: 'Back to 11 drinks', exact: true });
+  await expect(back).toBeFocused();
+  const controlsBox = (await controls.boundingBox())!, backBox = (await back.boundingBox())!;
+  expect(backBox.y).toBeGreaterThanOrEqual(controlsBox.y + controlsBox.height - 1);
+  // Hit testing catches a sticky toolbar covering an otherwise-visible Back action.
+  expect(await back.evaluate(el => { const r = el.getBoundingClientRect(); return el.contains(document.elementFromPoint(r.x + r.width / 2, r.y + r.height / 2)); })).toBe(true);
+  await back.click();
+  await expect(pair.locator('.study-recipe-list').getByRole('button')).toHaveCount(11);
+  await page.setViewportSize({ width: 844, height: 390 });
+  expect(await controls.evaluate(el => getComputedStyle(el).position)).toBe('static');
 });
 
 test('inline recipe actions, full-screen reader and Back preserve the result list', async ({ page }) => {

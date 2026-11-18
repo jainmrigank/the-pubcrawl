@@ -11,11 +11,12 @@ interface Props {
   defaultOpen?: boolean;
   className?: string;
   tour?: string;
+  illustration?: ReactNode;
   children: ReactNode;
 }
 
 /** An editorial chapter, with a persistent overview and a stateful reading panel. */
-export function HomeStudy({ id, label, title, intro, meta, defaultOpen = false, className = '', tour, children }: Props) {
+export function HomeStudy({ id, label, title, intro, meta, defaultOpen = false, className = '', tour, illustration, children }: Props) {
   const [open, setOpen] = useState(defaultOpen);
   const [folded, setFolded] = useState(!defaultOpen);
   const reduced = useReducedMotion();
@@ -56,13 +57,14 @@ export function HomeStudy({ id, label, title, intro, meta, defaultOpen = false, 
   return <section ref={section} className={`home-story home-study ${className}`} id={prefix} data-home-story={id} data-open={open} data-tour={tour} aria-labelledby={`${prefix}-title`}>
     <header className="home-story-heading">
       <h3 className="home-study-heading">
-        <button ref={trigger} type="button" className="home-study-toggle" id={`${prefix}-trigger`} aria-labelledby={`${prefix}-title`} aria-describedby={`${prefix}-intro`} aria-expanded={open} aria-controls={`${prefix}-panel`} onClick={toggle}>
+        <button ref={trigger} type="button" className={`home-study-toggle${illustration ? ' has-illustration' : ''}`} id={`${prefix}-trigger`} aria-labelledby={`${prefix}-title`} aria-describedby={`${prefix}-intro`} aria-expanded={open} aria-controls={`${prefix}-panel`} onClick={toggle}>
           <span className="home-study-copy">
             <span className="house-eyebrow">{label}</span>
             <span className="home-study-title" id={`${prefix}-title`}>{title}</span>
             <span className="home-story-intro" id={`${prefix}-intro`}>{intro}</span>
             {meta && <span className="home-study-meta">{meta}</span>}
           </span>
+          {illustration && <span className="home-study-illustration" aria-hidden="true">{illustration}</span>}
           <span className="home-study-action" aria-hidden="true">
             <span className="home-study-mark"><svg viewBox="0 0 24 24" fill="none"><path d="M5 12h14M12 5v14" stroke="currentColor" strokeWidth="1.25" /></svg></span>
             <span>{open ? 'Close' : 'Explore'}</span>

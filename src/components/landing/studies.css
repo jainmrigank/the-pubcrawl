@@ -78,16 +78,13 @@
 .calorie-filters small { font: 11px var(--mono); }
 .calorie-toolbar { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px 20px; padding: 4px 0 12px; }
 .calorie-sort { display: flex; align-items: center; flex-wrap: wrap; gap: 10px; min-width: 0; color: var(--grey); font-size: 14px; }
-.calorie-sort select { min-height: 44px; max-width: 100%; border: 1px solid var(--control); border-radius: 8px; background: var(--paper); color: var(--ink); padding: 8px 30px 8px 10px; font: 400 var(--text-body)/1.5 var(--sans); }
+.calorie-sort select { min-height: 44px; max-width: 100%; border: 0; border-radius: 0; background: transparent; color: var(--ink); padding: 8px 4px; font: 400 16px/1.5 var(--sans); cursor: pointer; }
 .calorie-legend { display: flex; flex-wrap: wrap; gap: 8px 24px; align-items: center; padding: 0 0 16px; font-size: 13px; color: var(--ink-60); }
 .calorie-legend > span { display: flex; gap: 8px; align-items: center; }
 .calorie-legend i { display: inline-block; width: 12px; height: 12px; }
 .calorie-alcohol { background: var(--accent); }
 .calorie-other { background: var(--ink); opacity: .55; }
-.calorie-axis, .calorie-row { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 2fr) 52px; gap: 20px; }
-.calorie-axis { padding-bottom: 12px; color: var(--grey); font: 11px/1.5 var(--mono); }
-.calorie-axis > div { grid-column: 2; display: flex; justify-content: space-between; }
-.calorie-axis > div > span { white-space: nowrap; }
+.calorie-row { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 2fr) 52px; gap: 20px; }
 .calorie-rows { list-style: none; margin: 0; padding: 0; }
 .calorie-rows > li { border-top: 1px solid var(--line); }
 .calorie-row { align-items: center; text-align: left; width: 100%; min-height: 56px; padding: 10px 0; border: 0; background: transparent; color: var(--ink); cursor: pointer; }
@@ -118,9 +115,7 @@
   .calorie-comparison .calorie-filters { gap: 4px 16px; }
   .calorie-comparison .calorie-filters button { font-size: 14px; gap: 5px; }
 
-  .calorie-comparison .calorie-sort { display: grid; grid-template-columns: 74px minmax(0, 1fr); gap: 8px; }
-  .calorie-comparison .calorie-sort select { width: 100%; }
-  .calorie-comparison .calorie-axis, .calorie-comparison .calorie-row { grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr) 44px; gap: 10px; }
+  .calorie-comparison .calorie-row { grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr) 44px; gap: 10px; }
   .calorie-comparison .calorie-name { font-size: 14px; }
   .calorie-comparison .calorie-name small { font-size: 11px; }
   .calorie-comparison .calorie-value { font-size: 12px; }
@@ -161,7 +156,7 @@
   .home-highlights .study-recipe-detail p { margin-block: 8px; }
   .calorie-comparison .calorie-toolbar { display: flex; gap: 4px 12px; padding-block: 6px 8px; }
   .calorie-comparison .calorie-sort { display: flex; gap: 6px; font-size: 12px; }
-  .calorie-comparison .calorie-sort select { min-width: 0; font-size: 16px; padding-left: 8px; }
+  .calorie-comparison .calorie-sort select { min-width: 0; font-size: 16px; }
   .calorie-comparison .calorie-filters { flex-wrap: nowrap; justify-content: space-between; margin: 0; gap: 8px; }
   .calorie-comparison .calorie-filters button { font-size: 13px; }
   .calorie-comparison .calorie-legend { padding: 0; gap: 4px 12px; font-size: 11px; }
@@ -245,15 +240,13 @@
 @media (max-width: 600px) {
   .pantry-results-box { padding: 16px; }
   .calorie-comparison .calorie-filters button { min-width: 44px; }
-  .calorie-comparison .calorie-sort select { width: auto; font-size: var(--text-body); }
+  .calorie-comparison .calorie-sort select { width: auto; }
   .calorie-comparison .calorie-controls { padding-bottom: 10px; }
   .calorie-comparison .calorie-row { grid-template-columns: minmax(0, 1fr) 44px; gap: 7px 12px; padding-block: 12px; min-height: 66px; }
   .calorie-comparison .calorie-name { grid-area: 1 / 1; }
   .calorie-comparison .calorie-name small { display: inline; padding-left: 8px; white-space: nowrap; }
   .calorie-comparison .calorie-value { grid-area: 1 / 2; }
   .calorie-comparison .calorie-track { grid-area: 2 / 1 / 3 / 3; height: 9px; }
-  .calorie-comparison .calorie-axis { grid-template-columns: minmax(0, 1fr); padding-bottom: 8px; }
-  .calorie-comparison .calorie-axis > div { grid-column: 1; }
 }
 
 .pairing-toolbar .study-pairing-summary { border-bottom: 0; padding-bottom: 4px; }

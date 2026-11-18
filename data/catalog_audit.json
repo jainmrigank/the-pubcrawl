@@ -376,9 +376,9 @@
       "reviewedAt": "2026-08-30",
       "image": {
         "status": "exact",
-        "displayUrl": "https://upload.wikimedia.org/wikipedia/commons/8/8b/Amaretto_Bottles_4.JPG",
-        "sourceUrl": "https://upload.wikimedia.org/wikipedia/commons/8/8b/Amaretto_Bottles_4.JPG",
-        "note": "Existing source-linked image was retained after availability and recipe-name review."
+        "displayUrl": "https://www.thecocktaildb.com/images/media/drink/dj8n0r1504375018.jpg",
+        "sourceUrl": "https://www.thecocktaildb.com/api/json/v1/1/lookup.php?i=11025",
+        "note": "2026-11-18 image review: Replaced plain amaretto bottles with the prepared amaretto-and-cream drink photo."
       },
       "video": {
         "status": "none",
@@ -391,9 +391,9 @@
       "reviewedAt": "2026-08-30",
       "image": {
         "status": "exact",
-        "displayUrl": "https://upload.wikimedia.org/wikipedia/commons/8/8b/Amaretto_Bottles_4.JPG",
-        "sourceUrl": "https://upload.wikimedia.org/wikipedia/commons/8/8b/Amaretto_Bottles_4.JPG",
-        "note": "Existing source-linked image was retained after availability and recipe-name review."
+        "displayUrl": "https://www.thecocktaildb.com/images/media/drink/utpxxq1483388370.jpg",
+        "sourceUrl": "https://www.thecocktaildb.com/api/json/v1/1/lookup.php?i=11026",
+        "note": "2026-11-18 image review: Replaced plain amaretto bottles with the prepared amaretto-and-lime drink photo."
       },
       "video": {
         "status": "none",
@@ -406,9 +406,9 @@
       "reviewedAt": "2026-08-30",
       "image": {
         "status": "exact",
-        "displayUrl": "https://upload.wikimedia.org/wikipedia/commons/8/8b/Amaretto_Bottles_4.JPG",
-        "sourceUrl": "https://upload.wikimedia.org/wikipedia/commons/8/8b/Amaretto_Bottles_4.JPG",
-        "note": "Existing source-linked image was retained after availability and recipe-name review."
+        "displayUrl": "https://www.thecocktaildb.com/images/media/drink/3jm41q1493069578.jpg",
+        "sourceUrl": "https://www.thecocktaildb.com/api/json/v1/1/lookup.php?i=11027",
+        "note": "2026-11-18 image review: Replaced plain amaretto bottles with the prepared amaretto, lime and soda drink photo."
       },
       "video": {
         "status": "none",
@@ -434,9 +434,9 @@
       "reviewedAt": "2026-08-30",
       "image": {
         "status": "exact",
-        "displayUrl": "https://upload.wikimedia.org/wikipedia/commons/8/8b/Amaretto_Bottles_4.JPG",
-        "sourceUrl": "https://upload.wikimedia.org/wikipedia/commons/8/8b/Amaretto_Bottles_4.JPG",
-        "note": "Existing source-linked image was retained after availability and recipe-name review."
+        "displayUrl": "https://www.thecocktaildb.com/images/media/drink/b7qzo21493070167.jpg",
+        "sourceUrl": "https://www.thecocktaildb.com/api/json/v1/1/lookup.php?i=11029",
+        "note": "2026-11-18 image review: Replaced plain amaretto bottles with the prepared tea-and-amaretto drink photo."
       },
       "video": {
         "status": "none",
@@ -1096,9 +1096,9 @@
       "reviewedAt": "2026-08-30",
       "image": {
         "status": "exact",
-        "displayUrl": "https://upload.wikimedia.org/wikipedia/en/b/b6/Jjjio.jpg",
-        "sourceUrl": "https://upload.wikimedia.org/wikipedia/en/b/b6/Jjjio.jpg",
-        "note": "Existing source-linked image was retained after availability and recipe-name review."
+        "displayUrl": "https://www.thecocktaildb.com/images/media/drink/r9cz3q1504519844.jpg",
+        "sourceUrl": "https://www.thecocktaildb.com/api/json/v1/1/lookup.php?i=11375",
+        "note": "2026-11-18 image review: Removed an album-cover image; restored the creamy Foxy Lady cocktail photo."
       },
       "video": {
         "status": "none",
@@ -1124,9 +1124,9 @@
       "reviewedAt": "2026-08-30",
       "image": {
         "status": "exact",
-        "displayUrl": "https://upload.wikimedia.org/wikipedia/commons/f/fd/Classic_Daiquiri_in_Cocktail_Glass.jpg",
-        "sourceUrl": "https://upload.wikimedia.org/wikipedia/commons/f/fd/Classic_Daiquiri_in_Cocktail_Glass.jpg",
-        "note": "Existing source-linked image was retained after availability and recipe-name review."
+        "displayUrl": "https://www.thecocktaildb.com/images/media/drink/7oyrj91504884412.jpg",
+        "sourceUrl": "https://www.thecocktaildb.com/api/json/v1/1/lookup.php?i=11387",
+        "note": "2026-11-18 image review: Replaced a clear liquid Daiquiri with the frozen Daiquiri recipe photo."
       },
       "video": {
         "status": "none",
@@ -1463,9 +1463,9 @@
       "reviewedAt": "2026-08-30",
       "image": {
         "status": "exact",
-        "displayUrl": "https://upload.wikimedia.org/wikipedia/commons/4/4e/IBA_Cocktail_John_Collins_%2829221732881%29.jpg",
-        "sourceUrl": "https://upload.wikimedia.org/wikipedia/commons/4/4e/IBA_Cocktail_John_Collins_%2829221732881%29.jpg",
-        "note": "Existing source-linked image was retained after availability and recipe-name review."
+        "displayUrl": "https://www.thecocktaildb.com/images/media/drink/0t4bv71606854479.jpg",
+        "sourceUrl": "https://www.thecocktaildb.com/api/json/v1/1/lookup.php?i=11580",
+        "note": "2026-11-18 image review: Restored the bourbon John Collins recipe photo, replacing the gin-based IBA variant."
       },
       "video": {
         "status": "none",
@@ -2244,9 +2244,9 @@
       "reviewedAt": "2026-08-30",
       "image": {
         "status": "exact",
-        "displayUrl": "https://upload.wikimedia.org/wikipedia/commons/f/f3/Four_bottles_of_vermouth.jpg",
-        "sourceUrl": "https://upload.wikimedia.org/wikipedia/commons/f/f3/Four_bottles_of_vermouth.jpg",
-        "note": "Existing source-linked image was retained after availability and recipe-name review."
+        "displayUrl": "https://www.thecocktaildb.com/images/media/drink/tswpxx1441554674.jpg",
+        "sourceUrl": "https://www.thecocktaildb.com/api/json/v1/1/lookup.php?i=12442",
+        "note": "2026-11-18 image review: Replaced plain vermouth bottles with the prepared vermouth-and-cassis drink photo."
       },
       "video": {
         "status": "none",
@@ -2607,9 +2607,9 @@
       "reviewedAt": "2026-08-30",
       "image": {
         "status": "exact",
-        "displayUrl": "https://upload.wikimedia.org/wikipedia/commons/f/f1/Salt_lassi.jpg",
-        "sourceUrl": "https://upload.wikimedia.org/wikipedia/commons/f/f1/Salt_lassi.jpg",
-        "note": "Existing source-linked image was retained after availability and recipe-name review."
+        "displayUrl": "https://www.thecocktaildb.com/images/media/drink/1bw6sd1487603816.jpg",
+        "sourceUrl": "https://www.thecocktaildb.com/api/json/v1/1/lookup.php?i=12698",
+        "note": "2026-11-18 image review: Replaced the shared white salted-lassi image with the yellow mango-lassi recipe photo."
       },
       "video": {
         "status": "none",
@@ -3219,9 +3219,9 @@
       "reviewedAt": "2026-08-30",
       "image": {
         "status": "exact",
-        "displayUrl": "https://upload.wikimedia.org/wikipedia/commons/9/9c/Carolans.jpg",
-        "sourceUrl": "https://upload.wikimedia.org/wikipedia/commons/9/9c/Carolans.jpg",
-        "note": "Existing source-linked image was retained after availability and recipe-name review."
+        "displayUrl": "https://www.thecocktaildb.com/images/media/drink/90etyl1504884699.jpg",
+        "sourceUrl": "https://www.thecocktaildb.com/api/json/v1/1/lookup.php?i=12820",
+        "note": "2026-11-18 image review: Replaced a commercial Irish cream bottle with the prepared homemade Irish cream photo."
       },
       "video": {
         "status": "none",
@@ -3980,9 +3980,9 @@
       "reviewedAt": "2026-08-30",
       "image": {
         "status": "exact",
-        "displayUrl": "https://upload.wikimedia.org/wikipedia/commons/8/8b/Amaretto_Bottles_4.JPG",
-        "sourceUrl": "https://upload.wikimedia.org/wikipedia/commons/8/8b/Amaretto_Bottles_4.JPG",
-        "note": "Existing source-linked image was retained after availability and recipe-name review."
+        "displayUrl": "https://www.thecocktaildb.com/images/media/drink/xnzc541493070211.jpg",
+        "sourceUrl": "https://www.thecocktaildb.com/api/json/v1/1/lookup.php?i=13731",
+        "note": "2026-11-18 image review: Replaced plain amaretto bottles with the prepared Amaretto Sour photo."
       },
       "video": {
         "status": "none",
@@ -4088,9 +4088,9 @@
       "reviewedAt": "2026-08-30",
       "image": {
         "status": "exact",
-        "displayUrl": "https://upload.wikimedia.org/wikipedia/commons/b/b2/Pi%C3%B1a_Colada.jpg",
-        "sourceUrl": "https://upload.wikimedia.org/wikipedia/commons/b/b2/Pi%C3%B1a_Colada.jpg",
-        "note": "Existing source-linked image was retained after availability and recipe-name review."
+        "displayUrl": "https://www.thecocktaildb.com/images/media/drink/qvuyqw1441208955.jpg",
+        "sourceUrl": "https://www.thecocktaildb.com/api/json/v1/1/lookup.php?i=13936",
+        "note": "2026-11-18 image review: Replaced a plain Pina Colada with the two-colour Miami Vice recipe photo."
       },
       "video": {
         "status": "none",
@@ -4196,9 +4196,9 @@
       "reviewedAt": "2026-08-30",
       "image": {
         "status": "exact",
-        "displayUrl": "https://upload.wikimedia.org/wikipedia/commons/1/1f/Bloody_Mary_Coctail_with_celery_stalk_-_Evan_Swigart.jpg",
-        "sourceUrl": "https://upload.wikimedia.org/wikipedia/commons/1/1f/Bloody_Mary_Coctail_with_celery_stalk_-_Evan_Swigart.jpg",
-        "note": "Existing source-linked image was retained after availability and recipe-name review."
+        "displayUrl": "https://www.thecocktaildb.com/images/media/drink/7p607y1504735343.jpg",
+        "sourceUrl": "https://www.thecocktaildb.com/api/json/v1/1/lookup.php?i=14087",
+        "note": "2026-11-18 image review: Removed Bloody Mary imagery; this Red Snapper recipe uses whisky, amaretto and cranberry juice."
       },
       "video": {
         "status": "none",
@@ -4360,9 +4360,9 @@
       "reviewedAt": "2026-08-30",
       "image": {
         "status": "exact",
-        "displayUrl": "https://upload.wikimedia.org/wikipedia/commons/8/8b/Amaretto_Bottles_4.JPG",
-        "sourceUrl": "https://upload.wikimedia.org/wikipedia/commons/8/8b/Amaretto_Bottles_4.JPG",
-        "note": "Existing source-linked image was retained after availability and recipe-name review."
+        "displayUrl": "https://www.thecocktaildb.com/images/media/drink/xwryyx1472719921.jpg",
+        "sourceUrl": "https://www.thecocktaildb.com/api/json/v1/1/lookup.php?i=14306",
+        "note": "2026-11-18 image review: Replaced plain amaretto bottles with the prepared orange-juice Stone Sour photo."
       },
       "video": {
         "status": "none",
@@ -4663,9 +4663,9 @@
       "reviewedAt": "2026-08-30",
       "image": {
         "status": "exact",
-        "displayUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/17/Drink_Hand_crafted_cream_soda_%2818705306063%29.jpg/3840px-Drink_Hand_crafted_cream_soda_%2818705306063%29.jpg",
-        "sourceUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/17/Drink_Hand_crafted_cream_soda_%2818705306063%29.jpg/3840px-Drink_Hand_crafted_cream_soda_%2818705306063%29.jpg",
-        "note": "Existing source-linked image was retained after availability and recipe-name review."
+        "displayUrl": "https://www.thecocktaildb.com/images/media/drink/yqstxr1479209367.jpg",
+        "sourceUrl": "https://www.thecocktaildb.com/api/json/v1/1/lookup.php?i=14608",
+        "note": "2026-11-18 image review: Removed nonalcoholic cream soda imagery; this recipe contains spiced rum and ginger ale."
       },
       "video": {
         "status": "none",
@@ -5600,9 +5600,9 @@
       "reviewedAt": "2026-08-30",
       "image": {
         "status": "exact",
-        "displayUrl": "https://upload.wikimedia.org/wikipedia/commons/8/8b/Amaretto_Bottles_4.JPG",
-        "sourceUrl": "https://upload.wikimedia.org/wikipedia/commons/8/8b/Amaretto_Bottles_4.JPG",
-        "note": "Existing source-linked image was retained after availability and recipe-name review."
+        "displayUrl": "https://www.thecocktaildb.com/images/media/drink/vswwus1472668546.jpg",
+        "sourceUrl": "https://www.thecocktaildb.com/api/json/v1/1/lookup.php?i=16202",
+        "note": "2026-11-18 image review: Replaced plain amaretto bottles with the prepared Sweet and Sour cocktail photo."
       },
       "video": {
         "status": "none",
@@ -5615,9 +5615,9 @@
       "reviewedAt": "2026-08-30",
       "image": {
         "status": "exact",
-        "displayUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/35/Indonesian_police_destroys_illegal_alcohol.jpg/3840px-Indonesian_police_destroys_illegal_alcohol.jpg",
-        "sourceUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/35/Indonesian_police_destroys_illegal_alcohol.jpg/3840px-Indonesian_police_destroys_illegal_alcohol.jpg",
-        "note": "Existing source-linked image was retained after availability and recipe-name review."
+        "displayUrl": "https://www.thecocktaildb.com/images/media/drink/vqws6t1504888857.jpg",
+        "sourceUrl": "https://www.thecocktaildb.com/api/json/v1/1/lookup.php?i=16250",
+        "note": "2026-11-18 image review: Removed a news photograph of alcohol destruction; restored the Rum Runner cocktail photo."
       },
       "video": {
         "status": "none",
@@ -5695,9 +5695,9 @@
       "reviewedAt": "2026-08-30",
       "image": {
         "status": "exact",
-        "displayUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/9d/ApplejohnV1.jpg/1920px-ApplejohnV1.jpg",
-        "sourceUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/9d/ApplejohnV1.jpg/1920px-ApplejohnV1.jpg",
-        "note": "Existing source-linked image was retained after availability and recipe-name review."
+        "displayUrl": "https://www.thecocktaildb.com/images/media/drink/sutyqp1479209062.jpg",
+        "sourceUrl": "https://www.thecocktaildb.com/api/json/v1/1/lookup.php?i=16311",
+        "note": "2026-11-18 image review: Removed an apple-variety photograph; restored the mixed Applejack drink photo used by this recipe."
       },
       "video": {
         "status": "none",
@@ -6048,9 +6048,9 @@
       "reviewedAt": "2026-08-30",
       "image": {
         "status": "exact",
-        "displayUrl": "https://upload.wikimedia.org/wikipedia/commons/1/18/ZIMA1.jpg",
-        "sourceUrl": "https://upload.wikimedia.org/wikipedia/commons/1/18/ZIMA1.jpg",
-        "note": "Existing source-linked image was retained after availability and recipe-name review."
+        "displayUrl": "https://www.thecocktaildb.com/images/media/drink/1wifuv1485619797.jpg",
+        "sourceUrl": "https://www.thecocktaildb.com/api/json/v1/1/lookup.php?i=17027",
+        "note": "2026-11-18 image review: Replaced a plain Zima bottle with the raspberry-and-Zima mixed drink photo."
       },
       "video": {
         "status": "none",
@@ -6995,9 +6995,9 @@
       "reviewedAt": "2026-08-30",
       "image": {
         "status": "exact",
-        "displayUrl": "https://upload.wikimedia.org/wikipedia/en/7/72/Absolutely_Fabulous_series_1_DVD.png",
-        "sourceUrl": "https://upload.wikimedia.org/wikipedia/en/7/72/Absolutely_Fabulous_series_1_DVD.png",
-        "note": "Existing source-linked image was retained after availability and recipe-name review."
+        "displayUrl": "https://www.thecocktaildb.com/images/media/drink/abcpwr1504817734.jpg",
+        "sourceUrl": "https://www.thecocktaildb.com/api/json/v1/1/lookup.php?i=17224",
+        "note": "2026-11-18 image review: Removed the Absolutely Fabulous DVD cover; restored the pink champagne cocktail photo."
       },
       "video": {
         "status": "none",
@@ -7075,9 +7075,9 @@
       "reviewedAt": "2026-08-30",
       "image": {
         "status": "exact",
-        "displayUrl": "https://upload.wikimedia.org/wikipedia/commons/8/8d/Gin_Rickey.jpg",
-        "sourceUrl": "https://upload.wikimedia.org/wikipedia/commons/8/8d/Gin_Rickey.jpg",
-        "note": "Existing source-linked image was retained after availability and recipe-name review."
+        "displayUrl": "https://www.thecocktaildb.com/images/media/drink/s00d6f1504883945.jpg",
+        "sourceUrl": "https://www.thecocktaildb.com/api/json/v1/1/lookup.php?i=17230",
+        "note": "2026-11-18 image review: Restored the pink drink photo: this catalogue recipe includes grenadine, unlike the clear canonical Rickey."
       },
       "video": {
         "status": "none",
@@ -7515,9 +7515,9 @@
       "reviewedAt": "2026-08-30",
       "image": {
         "status": "exact",
-        "displayUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f4/Brimham_Rocks_from_Flickr_O_01.jpg/3840px-Brimham_Rocks_from_Flickr_O_01.jpg",
-        "sourceUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f4/Brimham_Rocks_from_Flickr_O_01.jpg/3840px-Brimham_Rocks_from_Flickr_O_01.jpg",
-        "note": "Existing source-linked image was retained after availability and recipe-name review."
+        "displayUrl": "https://www.thecocktaildb.com/images/media/drink/v0at4i1582478473.jpg",
+        "sourceUrl": "https://www.thecocktaildb.com/api/json/v1/1/lookup.php?i=17837",
+        "note": "2026-11-18 image review: Removed a photograph of Brimham Rocks; restored the recipe-specific shaken rum cocktail photo."
       },
       "video": {
         "status": "none",
@@ -8128,9 +8128,9 @@
       "reviewedAt": "2026-08-30",
       "image": {
         "status": "exact",
-        "displayUrl": "https://upload.wikimedia.org/wikipedia/commons/8/82/Gowan%27s_Heirloom_Cider_-_August_2024_-_Sarah_Stierch_14.jpg",
-        "sourceUrl": "https://upload.wikimedia.org/wikipedia/commons/8/82/Gowan%27s_Heirloom_Cider_-_August_2024_-_Sarah_Stierch_14.jpg",
-        "note": "Existing source-linked image was retained after availability and recipe-name review."
+        "displayUrl": "https://www.thecocktaildb.com/images/media/drink/b4cadp1619695347.jpg",
+        "sourceUrl": "https://www.thecocktaildb.com/api/json/v1/1/lookup.php?i=178352",
+        "note": "2026-11-18 image review: Removed a cider photograph; restored the pink frozen rose-wine drink photo."
       },
       "video": {
         "status": "none",
@@ -8322,9 +8322,9 @@
       "reviewedAt": "2026-08-30",
       "image": {
         "status": "exact",
-        "displayUrl": "https://upload.wikimedia.org/wikipedia/commons/a/a5/Gin_Fizz_en_El_Bulli.jpg",
-        "sourceUrl": "https://upload.wikimedia.org/wikipedia/commons/a/a5/Gin_Fizz_en_El_Bulli.jpg",
-        "note": "Existing source-linked image was retained after availability and recipe-name review."
+        "displayUrl": "https://www.thecocktaildb.com/images/media/drink/967t911643844053.jpg",
+        "sourceUrl": "https://www.thecocktaildb.com/api/json/v1/1/lookup.php?i=178367",
+        "note": "2026-11-18 image review: Replaced ordinary Gin Fizz imagery with the tall creamy Ramos Gin Fizz recipe photo."
       },
       "video": {
         "status": "none",

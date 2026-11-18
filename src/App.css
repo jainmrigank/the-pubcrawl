@@ -911,6 +911,9 @@ main { flex: 1; width: 100%; max-width: 1440px; margin: 0 auto; padding: 0 clamp
   transition: background var(--t-fast) var(--ease), color var(--t-fast) var(--ease);
 }
 .ta-drop li:last-child { border-bottom: none; }
+.ta-drop.is-above { top: auto; bottom: calc(100% + 6px); }
+.ta-drop li:not(.ta-caption) { min-height: 44px; box-sizing: border-box; }
+.ta-drop .ta-caption { padding-block: 8px; font-size: 12px; color: var(--grey); cursor: default; }
 .ta-drop li.hi { background: var(--ink); color: var(--paper); }
 .ta-name { flex: 1; }
 .ta-cat {

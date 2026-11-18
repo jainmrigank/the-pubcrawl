@@ -1,10 +1,52 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { existsSync, readFileSync } from 'node:fs';
+import { copyFileSync, existsSync, mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
+import { tmpdir } from 'node:os';
+import { spawnSync } from 'node:child_process';
 import { join } from 'node:path';
 import { loadCatalog } from '../server/catalog.mjs';
 
 const ROOT = process.cwd();
+
+test('image discovery saves review candidates without changing approved mappings', () => {
+  const fixture = mkdtempSync(join(tmpdir(), 'pubcrawl-image-discovery-'));
+  try {
+    mkdirSync(join(fixture, 'scripts'));
+    mkdirSync(join(fixture, 'data'));
+    copyFileSync(join(ROOT, 'scripts', 'fetch_images.mjs'), join(fixture, 'scripts', 'fetch_images.mjs'));
+    writeFileSync(join(fixture, 'data', 'cocktails.json'), JSON.stringify([{ id: 'reviewed', name: 'Reviewed Drink' }, { id: 'new', name: 'New Drink' }]));
+    const approved = JSON.stringify({ reviewed: 'https://example.test/reviewed-drink.jpg' }, null, 2);
+    writeFileSync(join(fixture, 'data', 'images.json'), approved);
+    const preload = 'globalThis.fetch = async () => ({ ok: true, status: 200, json: async () => ({ title: "New Drink (cocktail)", description: "Cocktail", extract: "A mixed drink", originalimage: { source: "https://example.test/unreviewed-photo.jpg" } }) });';
+    const run = spawnSync(process.execPath, ['--import', `data:text/javascript,${encodeURIComponent(preload)}`, join(fixture, 'scripts', 'fetch_images.mjs')], { encoding: 'utf8', timeout: 10_000 });
+    assert.equal(run.status, 0, run.stderr);
+    assert.equal(readFileSync(join(fixture, 'data', 'images.json'), 'utf8'), approved);
+    const pending = JSON.parse(readFileSync(join(fixture, 'data', 'image_candidates.json'), 'utf8'));
+    assert.deepEqual(pending.entries, { new: { name: 'New Drink', url: 'https://example.test/unreviewed-photo.jpg', status: 'needs-visual-review' } });
+    // Resuming discovery must keep the candidate pending, without another lookup.
+    const resumed = spawnSync(process.execPath, ['--import', 'data:text/javascript,globalThis.fetch=async()=>{throw new Error("Unexpected lookup")}', join(fixture, 'scripts', 'fetch_images.mjs')], { encoding: 'utf8', timeout: 10_000 });
+    assert.equal(resumed.status, 0, resumed.stderr);
+    assert.equal(readFileSync(join(fixture, 'data', 'images.json'), 'utf8'), approved);
+  } finally {
+    rmSync(fixture, { recursive: true, force: true });
+  }
+});
+
+test('finished drinks do not inherit unrelated scenes, artwork or ingredient-bottle photos', () => {
+  const { cocktails } = loadCatalog();
+  for (const [id, name] of [
+    ['17837', 'Adam'], ['11375', 'Foxy Lady'], ['17224', 'Absolutely Fabulous'],
+    ['16250', 'Rum Runner'], ['16311', 'Applejack'], ['178352', 'Frosé'],
+    ['11025', 'Amaretto And Cream'], ['11026', 'Amaretto Mist'], ['11027', 'Amaretto Rose'],
+    ['13731', 'Amaretto Sour'], ['11029', 'Amaretto Tea'], ['14306', 'Amaretto Stone Sour'],
+    ['16202', 'Amaretto Sweet & Sour'], ['12442', 'Vermouth Cassis'], ['13936', 'Miami Vice'],
+    ['12698', 'Lassi - Mango'], ['11387', 'Frozen Daiquiri'], ['17027', 'Zima Blaster'],
+  ]) {
+    const recipe = cocktails.find(item => item.id === id);
+    assert.equal(recipe?.name, name);
+    assert.match(recipe.thumb, /^https:\/\/www\.thecocktaildb\.com\/images\/media\/drink\//, name);
+  }
+});
 
 test('the final catalogue audit is complete, with legacy images restored and reviewed videos served last', () => {
   const manifest = JSON.parse(readFileSync(join(ROOT, 'data', 'catalog_audit.json'), 'utf8'));

@@ -1,6 +1,6 @@
 import { expect, test, type Page, type Locator } from '@playwright/test';
 import { addFinderIngredients } from './fixtures/studyRecipes';
-import { openRoute, seedStableDevice, navigateTo } from './helpers';
+import { openRoute, seedStableDevice, navigateTo, swipePage } from './helpers';
 
 test.use({ serviceWorkers: 'block' });
 test.beforeEach(async ({ page }) => {
@@ -10,11 +10,14 @@ test.beforeEach(async ({ page }) => {
 
 async function leaveFrom(page: Page, link: Locator) {
   // Keep the departure link clear of persistent phone navigation.
-  // Playwright's nearest-viewport scroll can leave it underneath the bottom bar,
-  // causing click() to scroll again after the origin has been recorded.
+  // Record the actual tap position: WebKit may scroll a focused anchor before
+  // dispatching click, even after scrollIntoView has placed it in the viewport.
   await link.evaluate(el => el.scrollIntoView({ block: 'center', behavior: 'instant' }));
-  const y = await page.evaluate(() => scrollY);
+  const target = (await link.elementHandle())!;
+  await target.evaluate(el => el.addEventListener('click', () => el.setAttribute('data-test-departure-y', String(scrollY)), { once: true, capture: true }));
   await link.click();
+  const y = await target.evaluate(el => { const value = Number(el.getAttribute('data-test-departure-y')); el.removeAttribute('data-test-departure-y'); return value; });
+  await target.dispose();
   return y;
 }
 async function returnTo(page: Page, name: string, link: Locator, y: number) {
@@ -51,8 +54,11 @@ test('Back skips destination filter entries after a fullscreen recipe, retaining
   const study = page.locator('#home-calories');
   await study.locator('.home-study-toggle').click();
   await study.getByLabel('Calorie sort', { exact: true }).selectOption('kcal');
-  const row = study.locator('[data-calorie-drink="negroni"]');
-  for (let i = 0; i < 5 && !(await row.count()); i++) await study.getByRole('button', { name: 'Next calorie servings' }).click();
+  const row = study.locator('[data-calorie-drink="negroni"]:not(.swiper-slide[aria-hidden=true] *)');
+  for (let i = 0; i < 5 && !(await row.count()); i++) {
+    if (page.viewportSize()!.width <= 860) await swipePage(study.locator('.calorie-group:not(.swiper-slide[aria-hidden=true] *)'));
+    else await study.getByRole('button', { name: 'Next calorie servings' }).click();
+  }
   const position = await study.getByRole('navigation', { name: 'Calorie servings' }).textContent();
   await row.locator('.calorie-row').click();
   const link = row.getByRole('link', { name: 'Find the drink', exact: true });

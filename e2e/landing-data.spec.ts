@@ -139,16 +139,16 @@ test('the shelf flow and pair summary are clear without extra disclosures', asyn
   await expect(pantry.locator('.finder-result-tabs button')).toHaveText(['Can make2', 'Need 129', 'Need 2202']);
   await expect(pantry.locator('.study-recipe-list button')).toHaveCount(2);
   await pantry.getByRole('textbox', { name: 'Add an ingredient', exact: true }).fill('bourbon');
-  await pantry.locator('.finder-ingredient-options').getByRole('button', { name: 'Bourbon', exact: true }).click();
+  await pantry.getByRole('option', { name: /^Bourbon / }).first().click();
   await pantry.getByRole('textbox', { name: 'Add an ingredient', exact: true }).press('Escape');
-  await expect(pantry.locator('.finder-ingredient-picker')).toHaveCount(0);
+  await expect(pantry.getByRole('listbox')).toHaveCount(0);
   await expect(pantry.getByRole('button', { name: 'Remove Bourbon', exact: true })).toBeVisible();
   const pairings = page.locator('#home-pairings');
   await pairings.locator('.home-study-toggle').click();
   await pairings.getByLabel('First ingredient', { exact: true }).selectOption('gin');
   await pairings.getByLabel('Second ingredient', { exact: true }).selectOption('gin');
-  await pairings.getByRole('button', { name: 'Overlap · %', exact: true }).click();
-  await expect(pairings.locator('.pairing-selected-pair p')).toContainText('100%');
+  await expect(pairings.getByRole('group', { name: 'Pairing measure' })).toHaveCount(0);
+  await expect(pairings.locator('.pairing-selected-pair p')).toHaveText('109 shared recipes');
   const positions = await pairings.evaluate(el => ({ summary: el.querySelector('.study-pairing-summary')!.getBoundingClientRect().bottom, plot: el.querySelector('.pairing-matrix-svg')!.getBoundingClientRect().top }));
   expect(positions.summary).toBeLessThanOrEqual(positions.plot);
   await expect(pairings.getByRole('group', { name: 'Ingredient pairing heatmap' })).toBeVisible();
@@ -177,11 +177,9 @@ test('full-height opening, chart scales and expanded rows fit every width and th
       expect(opening.font).toBeGreaterThanOrEqual(width === 320 ? 70 : 80);
       expect(opening.overflow).toBeLessThanOrEqual(1);
       await page.locator('[data-calorie-drink="bamboo"]:not(.swiper-slide[aria-hidden=true] *) .calorie-row:not(.swiper-slide[aria-hidden=true] *)').click();
-      const scale = await page.locator('#home-calories .calorie-group:not(.swiper-slide[aria-hidden=true] *)').evaluate(el => {
-        const axis = el.querySelector('.calorie-axis:not(.swiper-slide[aria-hidden=true] *) > div')!.getBoundingClientRect(), track = el.querySelector('.calorie-track')!.getBoundingClientRect();
-        return { left: Math.abs(axis.left - track.left), right: Math.abs(axis.right - track.right), overflow: document.documentElement.scrollWidth - innerWidth };
-      });
-      expect(scale.left).toBeLessThan(1); expect(scale.right).toBeLessThan(1); expect(scale.overflow).toBeLessThanOrEqual(1);
+      await expect(page.locator('#home-calories .calorie-axis')).toHaveCount(0);
+      const overflow = await page.evaluate(() => document.documentElement.scrollWidth - innerWidth);
+      expect(overflow).toBeLessThanOrEqual(1);
       if (width === 390 || width === 1440) await page.screenshot({ path: info.outputPath(`calories-${width}-${theme}.png`) });
       await page.locator('[data-calorie-drink="bamboo"]:not(.swiper-slide[aria-hidden=true] *) .calorie-row:not(.swiper-slide[aria-hidden=true] *)').click();
       await page.getByRole('button', { name: 'Scroll to top', exact: true }).click();

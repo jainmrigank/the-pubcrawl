@@ -1,13 +1,11 @@
 /**
- * Finds accurate, high-quality, free-licensed cocktail photos from Wikipedia /
- * Wikimedia Commons and writes data/images.json (drinkId -> image url), which
- * the catalogue prefers over TheCocktailDB's often-wrong thumbnails.
+ * Finds candidate cocktail photos from Wikipedia / Wikimedia Commons and writes
+ * data/image_candidates.json for visual review. Never changes data/images.json.
  *
- * Only CONFIDENT matches are saved: the article title must closely match the
- * drink name and the page must actually describe a drink, so we never attach a
- * beach ("Margarita island") or the wrong cocktail. Drinks with no confident
- * real photo keep whatever they had (TheCocktailDB thumb, or the glyph card for
- * invented ones) — honest, since an invented drink has no true photo.
+ * A matching article title and drink-related text cannot establish the photo's
+ * subject or recipe. Review the actual picture and ingredients before promoting
+ * a candidate to images.json; title-only matches have previously produced
+ * landscapes, album covers, bottles and photos of different cocktails.
  *
  * Resumable: re-run to fill gaps. Run: node scripts/fetch_images.mjs
  */
@@ -17,6 +15,7 @@ import { fileURLToPath } from 'node:url';
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
 const OUT = join(ROOT, 'data', 'images.json');
+const CANDIDATE_OUT = join(ROOT, 'data', 'image_candidates.json');
 const UA = { 'user-agent': 'PubCrawl/1.0 (personal cocktail app; https://github.com/jainmrigank/the-pubcrawl)' };
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 
@@ -26,6 +25,8 @@ for (const f of ['extra_cocktails.json', 'indian_cocktails.json']) {
   if (existsSync(p)) cocktails.push(...JSON.parse(readFileSync(p, 'utf8')));
 }
 const images = existsSync(OUT) ? JSON.parse(readFileSync(OUT, 'utf8')) : {};
+const candidates = existsSync(CANDIDATE_OUT) ? JSON.parse(readFileSync(CANDIDATE_OUT, 'utf8')).entries || {} : {};
+const saveCandidates = () => writeFileSync(CANDIDATE_OUT, JSON.stringify({ generatedAt: new Date().toISOString().slice(0, 10), entries: candidates }, null, 1));
 
 const norm = (s) =>
   s.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/\(.*?\)/g, '').replace(/[^a-z0-9 ]/g, ' ').replace(/\s+/g, ' ').trim();
@@ -77,7 +78,7 @@ async function summary(title) {
   return { title: j.title || title, description: j.description || '', text: j.extract || '', img };
 }
 
-/** confident canonical photo for this drink, or null */
+/** A text-matched candidate; visual review must establish its suitability. */
 async function findImage(name) {
   const target = norm(name);
   if (!target) return null;
@@ -114,17 +115,17 @@ let found = 0;
 let done = 0;
 for (const c of cocktails) {
   done++;
-  if (images[c.id] !== undefined || skip(c.id)) continue;
+  if (images[c.id] !== undefined || candidates[c.id] !== undefined || skip(c.id)) continue;
   const img = await findImage(c.name);
   if (img) {
-    images[c.id] = img;
+    candidates[c.id] = { name: c.name, url: img, status: 'needs-visual-review' };
     found++;
   }
   if (done % 15 === 0) {
-    writeFileSync(OUT, JSON.stringify(images, null, 1));
+    saveCandidates();
     process.stdout.write(`\r${done}/${cocktails.length} found:${found}   `);
   }
   await sleep(200);
 }
-writeFileSync(OUT, JSON.stringify(images, null, 1));
-console.log(`\nDone. ${Object.keys(images).length} images mapped (${found} new this run).`);
+saveCandidates();
+console.log(`\nDone. ${Object.keys(candidates).length} candidates (${found} new this run) written to ${CANDIDATE_OUT}; images.json was not modified.`);
