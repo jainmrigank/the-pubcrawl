@@ -151,7 +151,7 @@ export function RecipeCard(props: Props) {
   return (
     <article
       ref={rootRef}
-      className={`fc${flipped ? ' flipped' : ''}${isAI ? ' ai' : ''}${photoFrame ? ' fc--framed-photo' : ''}`}
+      className={`fc${flipped ? ' flipped' : ''}${isAI ? ' ai' : ''}`}
       style={{ ['--vc' as string]: vibe.color }}
       onClick={flipFromSurface}
       onPointerDown={(event) => {
@@ -179,7 +179,6 @@ export function RecipeCard(props: Props) {
           )}
           <div
             className={`fc-img${showPhoto ? '' : ' fc-img-ai'}`}
-            style={photoFrame ? { aspectRatio: `${photoFrame.width} / ${photoFrame.height}` } : undefined}
             role={showPhoto ? undefined : 'img'}
             aria-label={showPhoto ? undefined : 'No verified photo available'}
           >
@@ -189,7 +188,7 @@ export function RecipeCard(props: Props) {
                 alt={recipe.name}
                 loading="lazy"
                 decoding="async"
-                style={photoFrame?.crop ? { objectFit: 'cover', objectPosition: photoFrame.crop } : undefined}
+                style={{ objectFit: photoFrame ? undefined : 'contain', objectPosition: photoFrame?.crop }}
                 onError={() => setFailedPhoto(thumb)}
               />
             ) : (

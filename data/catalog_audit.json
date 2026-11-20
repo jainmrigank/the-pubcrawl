@@ -3739,8 +3739,10 @@
       "categoryNote": "Reviewed required ingredients and preparation; assigned the single best-fit party primary category.",
       "reviewedAt": "2026-08-30",
       "image": {
-        "status": "none",
-        "note": "No source-linked recipe-appropriate image was approved; the card uses the honest glass fallback."
+        "status": "exact",
+        "displayUrl": "/images/recipes/illustrated/big-red.webp",
+        "sourceUrl": "https://www.thecocktaildb.com/drink/13222",
+        "note": "Recipe illustration generated with ImageGen from equal parts Irish cream and cinnamon schnapps in a shot glass."
       },
       "video": {
         "status": "none",

@@ -13,7 +13,7 @@ test.beforeEach(async ({ page }) => {
   await page.route('https://upload.wikimedia.org/**', (route) => route.fulfill({ contentType: 'image/svg+xml', body: photo }));
 });
 
-test('shows the same whole photo at every width and opens from either card face', async ({ page }, info) => {
+test('keeps a square card photo at every width and opens from either card face', async ({ page }, info) => {
   await openRoute(page, '/#/menu?q=Negroni');
   const card = page.locator('#menu-list .fc[data-recipe-id="11003"]');
   await expect(card).toBeVisible();
@@ -26,9 +26,9 @@ test('shows the same whole photo at every width and opens from either card face'
       const { objectFit, transform } = getComputedStyle(img);
       return { objectFit, transform, width: bounds.width, height: bounds.height };
     });
-    expect(photo.objectFit).toBe('contain');
+    expect(photo.objectFit).toBe('cover');
     expect(photo.transform).toBe('none');
-    expect(Math.abs(photo.height - photo.width * 800 / 600)).toBeLessThan(1);
+    expect(Math.abs(photo.height - photo.width)).toBeLessThan(1);
   }
   const frontTrigger = card.locator('.front').getByRole('button', { name: /full screen/ });
   await expect(frontTrigger).toHaveText('');
@@ -41,6 +41,7 @@ test('shows the same whole photo at every width and opens from either card face'
   await page.keyboard.press('Tab');
   await expect(dialog.getByRole('button', { name: 'Back to card' })).toBeFocused();
   await expect(dialog.locator('.recipe-focus-photo img')).toHaveAttribute('src', source!);
+  await expect(dialog.locator('.recipe-focus-photo img')).toHaveCSS('object-fit', 'contain');
   await expect(dialog.locator('.recipe-focus-photo img')).toBeVisible();
   await expect(dialog.getByRole('heading', { name: 'Ingredients', exact: true })).toBeVisible();
   await expect(dialog.getByRole('heading', { name: 'Method', exact: true })).toBeVisible();

@@ -1,5 +1,5 @@
 {
-  "dataVersion": "709c12e07519bad5",
+  "dataVersion": "d7bb260fce795b75",
   "health": {
     "catalogueCocktails": 691,
     "cocktails": 691,
@@ -4453,8 +4453,12 @@
       ],
       "instructions": "Pour ingredients into 1 ounce shot glass",
       "name": "Big Red",
+      "photoFrame": {
+        "height": 1254,
+        "width": 1254
+      },
       "tags": [],
-      "thumb": "",
+      "thumb": "/images/recipes/illustrated/big-red.webp",
       "vibe": "party",
       "video": ""
     },
@@ -17846,6 +17850,7 @@
       "instructions": "In a shaker half-filled with ice cubes, combine the gin, lemon juice, and sugar. Shake well. Strain into a collins glass alomst filled with ice cubes. Add the club soda. Stir and garnish with the cherry and the orange slice.",
       "name": "Tom Collins",
       "photoFrame": {
+        "crop": "50% 70%",
         "height": 1677,
         "width": 1203
       },

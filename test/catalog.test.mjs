@@ -21,7 +21,7 @@ test('the catalogue keeps every drink and serves complete, measured photo frames
   const photographed = cocktails.filter(hasRecipeImage);
   assert.equal(cocktails.length, 691);
   assert.deepEqual(cocktails.filter(recipe => !hasRecipeImage(recipe)).map(recipe => recipe.id).sort(),
-    ['11239', '13222', '16403', '17065', '17825']);
+    ['11239', '16403', '17065', '17825']);
   for (const recipe of photographed) {
     if (recipe.thumb.startsWith('/images/')) {
       assert.ok(existsSync(join(ROOT, 'public', recipe.thumb)), recipe.name);
@@ -32,6 +32,7 @@ test('the catalogue keeps every drink and serves complete, measured photo frames
     if (crop) assert.match(crop, /^\d{1,3}% \d{1,3}%$/, recipe.name);
   }
   const byId = new Map(cocktails.map(recipe => [recipe.id, recipe]));
+  assert.equal(byId.get('13222').thumb, '/images/recipes/illustrated/big-red.webp');
   assert.notEqual(byId.get('11720').thumb, byId.get('17256').thumb);
 });
 
