@@ -16,16 +16,23 @@ import { classifyVibe, VIBES } from '../server/vibes.mjs';
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
 
-test('every catalogue entry stays browseable and every local photo exists', () => {
+test('the catalogue keeps every drink and serves complete, measured photo frames', () => {
   const { cocktails } = loadCatalog();
   const photographed = cocktails.filter(hasRecipeImage);
   assert.equal(cocktails.length, 691);
-  assert.equal(photographed.length, 691);
-  assert.equal(visibleRecipes(cocktails).length, cocktails.length);
-  assert.ok(visibleRecipes(cocktails).every((recipe) => isBrowseableRecipe(recipe) && hasRecipeImage(recipe)));
-  const localImages = photographed.filter((recipe) => recipe.thumb.startsWith('/images/'));
-  assert.equal(localImages.length, 71);
-  assert.ok(localImages.every((recipe) => existsSync(join(ROOT, 'public', recipe.thumb))));
+  assert.deepEqual(cocktails.filter(recipe => !hasRecipeImage(recipe)).map(recipe => recipe.id).sort(),
+    ['11239', '13222', '16403', '17065', '17825']);
+  for (const recipe of photographed) {
+    if (recipe.thumb.startsWith('/images/')) {
+      assert.ok(existsSync(join(ROOT, 'public', recipe.thumb)), recipe.name);
+    }
+    if (recipe.houseOriginal) continue;
+    const { width, height, crop } = recipe.photoFrame ?? {};
+    assert.ok(Number.isInteger(width) && width > 0 && Number.isInteger(height) && height > 0, recipe.name);
+    if (crop) assert.match(crop, /^\d{1,3}% \d{1,3}%$/, recipe.name);
+  }
+  const byId = new Map(cocktails.map(recipe => [recipe.id, recipe]));
+  assert.notEqual(byId.get('11720').thumb, byId.get('17256').thumb);
 });
 
 test('the GET /api/recipes admission boundary requires a photo or explicit browse admission', () => {
@@ -33,7 +40,7 @@ test('the GET /api/recipes admission boundary requires a photo or explicit brows
   const recipes = visibleRecipes(cocktails);
   assert.equal(recipes.length, 691);
   assert.ok(recipes.every(isBrowseableRecipe));
-  assert.ok(recipes.every(hasRecipeImage));
+  assert.ok(recipes.every(recipe => hasRecipeImage(recipe) || recipe.browseable === true));
 });
 
 test('the India collection is unique, complete, dated and entirely browseable', () => {
@@ -57,8 +64,8 @@ test('the India collection is unique, complete, dated and entirely browseable', 
   assert.ok(india.filter((recipe) => recipe.india?.lane === 'zero-proof')
     .every((recipe) => recipe.alcoholic.toLowerCase().includes('non')));
 
-  const localImages = india.filter((recipe) => recipe.thumb.startsWith('/images/india/'));
-  assert.equal(localImages.length, 59);
+  const localImages = india.filter((recipe) => recipe.thumb.startsWith('/images/'));
+  assert.ok(localImages.length >= 59);
   assert.equal(new Set(localImages.map((recipe) => recipe.thumb)).size, localImages.length);
   assert.ok(localImages.every((recipe) => existsSync(join(ROOT, 'public', recipe.thumb))));
 

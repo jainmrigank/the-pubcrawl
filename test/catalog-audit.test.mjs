@@ -75,8 +75,7 @@ test('the final catalogue audit is complete, with legacy images restored and rev
       assert.equal(entry.image.displayUrl, undefined);
       assert.equal(entry.image.sourceUrl, undefined);
     }
-    // The manifest remains the review record, while the served catalogue uses
-    // the pre-audit images until a replacement set is explicitly approved.
+    // The catalogue audit leaves the separately managed photo overrides in place.
     assert.equal(recipe.thumb, legacyThumbs.get(recipe.id));
     if (entry.video.status === 'exact') {
       assert.match(entry.video.url, /^https:\/\/(?:www\.)?youtube\.com\/watch\?v=[\w-]{11}$/);

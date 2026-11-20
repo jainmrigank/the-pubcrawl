@@ -100,7 +100,7 @@ export function RecipeCardActions({
 export function RecipeCard(props: Props) {
   const { recipe, vibe, index, onVideo, onExpand, tourActions } = props;
   const [flipped, setFlipped] = useState(false);
-  const [imageFailed, setImageFailed] = useState(false);
+  const [failedPhoto, setFailedPhoto] = useState<string>();
   const rootRef = useRef<HTMLElement>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
   const pointerStart = useRef<{ x: number; y: number } | null>(null);
@@ -109,7 +109,8 @@ export function RecipeCard(props: Props) {
   const isAI = recipe.source === 'ai' || recipe.source === 'fallback';
   const isHouseOriginal = recipe.houseOriginal === true;
   const isIndia = (recipe.tags || []).includes('India');
-  const hasSquarePhoto = recipe.thumb?.startsWith('/images/recipes/square/');
+  const { photoFrame, thumb } = recipe;
+  const showPhoto = thumb && failedPhoto !== thumb;
   let cardLabel = `Nº ${String(index + 1).padStart(3, '0')}`;
   if (isIndia) cardLabel = 'India collection';
   if (isHouseOriginal) cardLabel = 'House special';
@@ -150,7 +151,7 @@ export function RecipeCard(props: Props) {
   return (
     <article
       ref={rootRef}
-      className={`fc${flipped ? ' flipped' : ''}${isAI ? ' ai' : ''}${hasSquarePhoto ? ' fc--square-photo' : ''}`}
+      className={`fc${flipped ? ' flipped' : ''}${isAI ? ' ai' : ''}${photoFrame ? ' fc--framed-photo' : ''}`}
       style={{ ['--vc' as string]: vibe.color }}
       onClick={flipFromSurface}
       onPointerDown={(event) => {
@@ -176,22 +177,28 @@ export function RecipeCard(props: Props) {
               <Expand size={21} />
             </button>
           )}
-          {recipe.thumb && !imageFailed ? (
-            <div className="fc-img">
+          <div
+            className={`fc-img${showPhoto ? '' : ' fc-img-ai'}`}
+            style={photoFrame ? { aspectRatio: `${photoFrame.width} / ${photoFrame.height}` } : undefined}
+            role={showPhoto ? undefined : 'img'}
+            aria-label={showPhoto ? undefined : 'No verified photo available'}
+          >
+            {showPhoto ? (
               <img
-                src={recipe.thumb}
+                src={thumb}
                 alt={recipe.name}
                 loading="lazy"
                 decoding="async"
-                onError={() => setImageFailed(true)}
+                style={photoFrame?.crop ? { objectFit: 'cover', objectPosition: photoFrame.crop } : undefined}
+                onError={() => setFailedPhoto(thumb)}
               />
-            </div>
-          ) : (
-            <div className="fc-img fc-img-ai" role="img" aria-label="No verified photo available">
-              <span className="fc-ai-mark">No photo</span>
-              <GlassIcon glass={recipe.glass} size={72} />
-            </div>
-          )}
+            ) : (
+              <>
+                <span className="fc-ai-mark">No photo</span>
+                <GlassIcon glass={recipe.glass} size={72} />
+              </>
+            )}
+          </div>
           <div className="fc-strip">
             <div className="fc-toprow">
               <span className="k-label">{cardLabel}</span>

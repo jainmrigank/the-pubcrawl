@@ -248,11 +248,19 @@ export function loadCatalog(options = {}) {
     }
   }
 
-  // images.json contains reviewed photo overrides for TheCocktailDB thumbnails.
+  // An empty override withdraws a mismatched photo while keeping the recipe.
+  // Frame measurements follow the image URL so a later swap uses its own size.
   const imagesPath = join(ROOT, 'data', 'images.json');
-  if (existsSync(imagesPath)) {
-    const imgs = JSON.parse(readFileSync(imagesPath, 'utf8'));
-    for (const c of cocktails) if (imgs[c.id]) c.thumb = imgs[c.id];
+  const framesPath = join(ROOT, 'data', 'recipe_photo_frames.json');
+  const images = existsSync(imagesPath) ? JSON.parse(readFileSync(imagesPath, 'utf8')) : {};
+  const frames = existsSync(framesPath) ? JSON.parse(readFileSync(framesPath, 'utf8')) : {};
+  for (const cocktail of cocktails) {
+    if (Object.hasOwn(images, cocktail.id)) cocktail.thumb = images[cocktail.id];
+    const frame = frames[cocktail.thumb];
+    if (frame) {
+      const [width, height, crop] = frame;
+      cocktail.photoFrame = { width, height, ...(crop ? { crop } : {}) };
+    }
   }
 
   // recipe_extras.json: optional ingredients TheCocktailDB omits, most of them
@@ -269,10 +277,8 @@ export function loadCatalog(options = {}) {
     }
   }
 
-  // The reviewed manifest is the final authority for categories and actionable
-  // videos. It runs after every legacy media overlay and automatic vibe
-  // candidate; legacy thumbnails intentionally remain in place until a new
-  // image set is separately approved.
+  // The catalogue audit finalises categories and actionable videos. Photo
+  // overrides and framing remain under the image manifests above.
   if (options.applyAudit !== false) applyCatalogAudit(cocktails);
 
   // Persist the same concise guidance in the ingredient index and every recipe.

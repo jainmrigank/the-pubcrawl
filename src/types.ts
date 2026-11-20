@@ -51,6 +51,7 @@ export interface Recipe {
   glass: string;
   instructions: string;
   thumb: string;
+  photoFrame?: { width: number; height: number; crop?: string };
   video: string;
   tags: string[];
   iba: string;

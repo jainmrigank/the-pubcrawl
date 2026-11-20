@@ -341,7 +341,24 @@ export default function App() {
     // Vibes and the immutable catalogue remain local-first, but Home no
     // longer pulls the full recipe chunk merely to render discovery cards.
     loadLocalCatalogue()
-      .then((bundle) => setVibes(bundle.vibes))
+      .then(({ recipes, vibes }) => {
+        setVibes(vibes);
+        const catalogue = new Map(recipes.map(recipe => [recipe.id, recipe]));
+        setTab(saved => {
+          let changed = false;
+          const refreshed = saved.map(recipe => {
+            const current = catalogue.get(recipe.id);
+            if (!current) return recipe;
+            const { thumb, photoFrame } = current;
+            const oldFrame = recipe.photoFrame;
+            if (thumb === recipe.thumb && photoFrame?.width === oldFrame?.width &&
+                photoFrame?.height === oldFrame?.height && photoFrame?.crop === oldFrame?.crop) return recipe;
+            changed = true;
+            return { ...recipe, thumb, photoFrame };
+          });
+          return changed ? refreshed : saved;
+        });
+      })
       .catch(() => fetchVibes().then(setVibes).catch(() => {}));
   }, [landing, route]);
 

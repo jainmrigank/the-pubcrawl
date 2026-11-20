@@ -17,12 +17,18 @@ test('shows the same whole photo at every width and opens from either card face'
   await openRoute(page, '/#/menu?q=Negroni');
   const card = page.locator('#menu-list .fc[data-recipe-id="11003"]');
   await expect(card).toBeVisible();
+  await expect(card.locator('.back')).toHaveCSS('opacity', '0');
   const source = await card.locator('.fc-img img').getAttribute('src');
   for (const width of [320, 390, 430, 768, 1024, 1440]) {
     await page.setViewportSize({ width, height: 900 });
-    const styles = await card.locator('.fc-img img').evaluate((img) => ({ fit: getComputedStyle(img).objectFit, transform: getComputedStyle(img).transform }));
-    expect(styles.fit).toBe('contain');
-    expect(styles.transform).toBe('none');
+    const photo = await card.locator('.fc-img img').evaluate((img) => {
+      const bounds = img.getBoundingClientRect();
+      const { objectFit, transform } = getComputedStyle(img);
+      return { objectFit, transform, width: bounds.width, height: bounds.height };
+    });
+    expect(photo.objectFit).toBe('contain');
+    expect(photo.transform).toBe('none');
+    expect(Math.abs(photo.height - photo.width * 800 / 600)).toBeLessThan(1);
   }
   const frontTrigger = card.locator('.front').getByRole('button', { name: /full screen/ });
   await expect(frontTrigger).toHaveText('');
@@ -44,6 +50,8 @@ test('shows the same whole photo at every width and opens from either card face'
   await expect(frontTrigger).toBeFocused();
   await expect(card).not.toHaveClass(/flipped/);
   await card.getByRole('button', { name: 'View recipe' }).click();
+  await expect(card.locator('.front')).toHaveCSS('opacity', '0');
+  await expect(card.locator('.back')).toHaveCSS('opacity', '1');
   const backTrigger = card.locator('.back').getByRole('button', { name: /full screen/ });
   await backTrigger.click();
   await expect(dialog).toHaveAttribute('data-phase', 'open');

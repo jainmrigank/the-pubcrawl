@@ -1136,6 +1136,7 @@ main { flex: 1; width: 100%; max-width: 1440px; margin: 0 auto; padding: 0 clamp
 .grid.is-loading { opacity: 0.35; pointer-events: none; }
 
 .fc {
+  --flip-duration: 620ms;
   perspective: 1600px;
   height: 540px;
   cursor: pointer;
@@ -1146,13 +1147,13 @@ main { flex: 1; width: 100%; max-width: 1440px; margin: 0 auto; padding: 0 clamp
   transition: box-shadow var(--t-med) var(--ease);
 }
 .fc[data-recipe-focus-origin='true'] { visibility: hidden; }
-.ff[aria-hidden='true'] { pointer-events: none; }
+.ff[aria-hidden='true'] { pointer-events: none; opacity: 0; }
 .fc-inner {
   position: relative;
   width: 100%;
   height: 100%;
   transform-style: preserve-3d;
-  transition: transform 0.62s var(--ease);
+  transition: transform var(--flip-duration) ease-in-out;
 }
 .fc.flipped .fc-inner { transform: rotateY(180deg); }
 
@@ -1165,6 +1166,8 @@ main { flex: 1; width: 100%; max-width: 1440px; margin: 0 auto; padding: 0 clamp
   display: flex;
   flex-direction: column;
   overflow: hidden;
+  /* WebKit can paint the reverse face through a rounded card. Switch faces at 90°. */
+  transition: opacity 0s calc(var(--flip-duration) / 2);
 }
 .ff.back { transform: rotateY(180deg); padding: 20px; }
 
@@ -1176,11 +1179,11 @@ main { flex: 1; width: 100%; max-width: 1440px; margin: 0 auto; padding: 0 clamp
   object-fit: contain;
   background: var(--paper-2);
 }
-.fc.fc--square-photo { height: auto; align-self: start; }
-.fc--square-photo .fc-inner { height: auto; }
-.fc--square-photo .ff.front { position: relative; }
-.fc--square-photo .fc-img { flex: none; aspect-ratio: 1; border-bottom: 0; }
-.fc--square-photo .fc-img img { display: block; object-fit: cover; }
+.fc.fc--framed-photo { height: auto; align-self: start; }
+.fc--framed-photo .fc-inner { height: auto; }
+.fc--framed-photo .ff.front { position: relative; }
+.fc--framed-photo .fc-img { flex: none; border-bottom: 0; }
+.fc--framed-photo .fc-img img { position: absolute; inset: 0; display: block; }
 .fc:hover { box-shadow: 9px 9px 0 rgba(22, 21, 18, 0.12); }
 
 .fc-img-ai {
@@ -2478,7 +2481,8 @@ button, a, .fc {
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
   }
-  .fc-inner { transition: none; }
+  .fc-inner,
+  .ff { transition: none; }
 }
 
 /* ==========================================================================
