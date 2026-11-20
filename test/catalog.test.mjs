@@ -16,7 +16,7 @@ import { classifyVibe, VIBES } from '../server/vibes.mjs';
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
 
-test('every catalogue entry restores the pre-audit browseable image set', () => {
+test('every catalogue entry stays browseable and every local photo exists', () => {
   const { cocktails } = loadCatalog();
   const photographed = cocktails.filter(hasRecipeImage);
   assert.equal(cocktails.length, 691);
@@ -24,7 +24,7 @@ test('every catalogue entry restores the pre-audit browseable image set', () => 
   assert.equal(visibleRecipes(cocktails).length, cocktails.length);
   assert.ok(visibleRecipes(cocktails).every((recipe) => isBrowseableRecipe(recipe) && hasRecipeImage(recipe)));
   const localImages = photographed.filter((recipe) => recipe.thumb.startsWith('/images/'));
-  assert.equal(localImages.length, 67);
+  assert.equal(localImages.length, 71);
   assert.ok(localImages.every((recipe) => existsSync(join(ROOT, 'public', recipe.thumb))));
 });
 

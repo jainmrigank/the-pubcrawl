@@ -109,6 +109,7 @@ export function RecipeCard(props: Props) {
   const isAI = recipe.source === 'ai' || recipe.source === 'fallback';
   const isHouseOriginal = recipe.houseOriginal === true;
   const isIndia = (recipe.tags || []).includes('India');
+  const hasSquarePhoto = recipe.thumb?.startsWith('/images/recipes/square/');
   let cardLabel = `Nº ${String(index + 1).padStart(3, '0')}`;
   if (isIndia) cardLabel = 'India collection';
   if (isHouseOriginal) cardLabel = 'House special';
@@ -149,7 +150,7 @@ export function RecipeCard(props: Props) {
   return (
     <article
       ref={rootRef}
-      className={`fc ${flipped ? 'flipped' : ''} ${isAI ? 'ai' : ''}`}
+      className={`fc${flipped ? ' flipped' : ''}${isAI ? ' ai' : ''}${hasSquarePhoto ? ' fc--square-photo' : ''}`}
       style={{ ['--vc' as string]: vibe.color }}
       onClick={flipFromSurface}
       onPointerDown={(event) => {
@@ -207,13 +208,11 @@ export function RecipeCard(props: Props) {
               </span>
               {recipe.iba && <span className="k-label dim">Classic</span>}
             </div>
-            {!flipped && (
-              <div className="fc-face-controls" data-card-control>
-                <button type="button" className="fc-flip-control" onClick={toggleFace}>
-                  View recipe <ArrowRight size={14} />
-                </button>
-              </div>
-            )}
+            <div className="fc-face-controls" data-card-control>
+              <button type="button" className="fc-flip-control" onClick={toggleFace} disabled={flipped}>
+                View recipe <ArrowRight size={14} />
+              </button>
+            </div>
           </div>
         </div>
 

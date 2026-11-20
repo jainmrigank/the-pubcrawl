@@ -248,8 +248,7 @@ export function loadCatalog(options = {}) {
     }
   }
 
-  // images.json (scripts/fetch_images.mjs): confident Wikipedia/Commons photos
-  // that override TheCocktailDB's often-inaccurate thumbnails
+  // images.json contains reviewed photo overrides for TheCocktailDB thumbnails.
   const imagesPath = join(ROOT, 'data', 'images.json');
   if (existsSync(imagesPath)) {
     const imgs = JSON.parse(readFileSync(imagesPath, 'utf8'));

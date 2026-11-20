@@ -1176,6 +1176,11 @@ main { flex: 1; width: 100%; max-width: 1440px; margin: 0 auto; padding: 0 clamp
   object-fit: contain;
   background: var(--paper-2);
 }
+.fc.fc--square-photo { height: auto; align-self: start; }
+.fc--square-photo .fc-inner { height: auto; }
+.fc--square-photo .ff.front { position: relative; }
+.fc--square-photo .fc-img { flex: none; aspect-ratio: 1; border-bottom: 0; }
+.fc--square-photo .fc-img img { display: block; object-fit: cover; }
 .fc:hover { box-shadow: 9px 9px 0 rgba(22, 21, 18, 0.12); }
 
 .fc-img-ai {

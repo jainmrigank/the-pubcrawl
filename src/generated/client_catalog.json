@@ -1,5 +1,5 @@
 {
-  "dataVersion": "d799b9d538968e52",
+  "dataVersion": "42ca5685ac9c6c76",
   "health": {
     "catalogueCocktails": 691,
     "cocktails": 691,
@@ -11562,7 +11562,7 @@
         "Modern Indian Bar",
         "Pantry Tier 2"
       ],
-      "thumb": "https://upload.wikimedia.org/wikipedia/commons/8/80/15-09-26-RalfR-WLC-0084.jpg",
+      "thumb": "/images/recipes/square/martini.webp",
       "vibe": "boozy",
       "video": "https://www.youtube.com/watch?v=ApMR3IWYZHI",
       "videoKind": "exact",
@@ -11702,7 +11702,7 @@
         "Modern Indian Bar",
         "Pantry Tier 2"
       ],
-      "thumb": "https://upload.wikimedia.org/wikipedia/commons/3/37/MargaritaReal.jpg",
+      "thumb": "/images/recipes/square/margarita.webp",
       "vibe": "boozy",
       "video": "https://www.youtube.com/watch?v=Ckp4SUYlBRU",
       "videoKind": "exact",
@@ -11841,7 +11841,7 @@
       "instructions": "Add all ingredients to a mixing glass and fill with ice.\r\n\r\nStir until chilled, and strain into a chilled coupe glass.",
       "name": "Martinez 2",
       "tags": [],
-      "thumb": "https://upload.wikimedia.org/wikipedia/commons/d/dc/Martinez_Cocktail.jpg",
+      "thumb": "/images/recipes/square/martinez-2.webp",
       "vibe": "boozy",
       "video": ""
     },
@@ -15456,7 +15456,7 @@
         "IBA",
         "Classic"
       ],
-      "thumb": "https://upload.wikimedia.org/wikipedia/commons/9/94/Sidecar-cocktail.jpg",
+      "thumb": "/images/recipes/square/sidecar.webp",
       "vibe": "boozy",
       "video": ""
     },
