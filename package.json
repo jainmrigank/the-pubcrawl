@@ -14,7 +14,7 @@
     "serve": "node server/index.mjs",
     "generate:client-data": "node scripts/build_client_data.mjs --write",
     "check:client-data": "node scripts/build_client_data.mjs --check",
-    "build": "npm run check:client-data && tsc -b && vite build",
+    "build": "npm run check:client-data && tsc -b && vite build && node scripts/site-pages.mjs",
     "test:e2e": "npm run build && playwright test",
     "test:e2e:preview": "npm run build && PUBCRAWL_E2E_MODE=preview playwright test",
     "test:e2e:webkit": "npm run build && playwright test --config=playwright.webkit.config.ts",

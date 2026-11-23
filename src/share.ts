@@ -1,5 +1,6 @@
 import type { Recipe } from './types';
 import { formatMeasure } from './measure';
+import { exactRecipePath } from '../shared/site-recipes.mjs';
 
 const SITE = 'https://thepubcrawl.in';
 
@@ -16,7 +17,7 @@ export function recipeShareText(r: Recipe, vibeLabel: string): string {
     r.instructions,
   ];
   if (r.video) lines.push('', `WATCH: ${r.video}`);
-  lines.push('', `What's your poison? Find it at ${SITE}`);
+  lines.push('', `Recipe link: ${SITE}${exactRecipePath(r.id)}`);
   return lines.join('\n');
 }
 
@@ -31,6 +32,7 @@ export function tabShareText(list: Recipe[]): string {
     lines.push(`   Need: ${r.ingredients.map((x) => x.name).join(', ')}`);
     lines.push(`   Make: ${make}`);
     if (r.video) lines.push(`   Watch: ${r.video}`);
+    lines.push(`   Recipe: ${SITE}${exactRecipePath(r.id)}`);
   });
   lines.push('', `Build your own menu for the night at ${SITE}`);
   return lines.join('\n');

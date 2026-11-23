@@ -12,6 +12,19 @@ export interface WorkerEnv {
   PUSH_DELIVERY_QUEUE?: WorkerQueue<PushDeliveryMessage>;
   RATE_LIMIT_SALT: string;
   FRONTEND_ORIGIN: string;
+  PUBCRAWL_BUSINESS_ADMIN_KEY?: string;
+  PUBCRAWL_BUSINESS_SIGNING_KEY?: string;
+  PUBCRAWL_BUSINESS_MEMORY?: string;
+  PUBCRAWL_PUBLIC_ORIGIN?: string;
+  PUBCRAWL_CONTACT_EMAIL?: string;
+  PUBCRAWL_MERCHANT_NAME?: string;
+  PUBCRAWL_EMAIL_FROM?: string;
+  PUBCRAWL_AFFILIATE_LINKS_JSON?: string;
+  PUBCRAWL_WORKSHOP_JSON?: string;
+  RAZORPAY_KEY_ID?: string;
+  RAZORPAY_KEY_SECRET?: string;
+  RAZORPAY_WEBHOOK_SECRET?: string;
+  RESEND_API_KEY?: string;
 }
 
 export interface DailyPushDeliveryMessage {

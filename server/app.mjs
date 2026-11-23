@@ -21,6 +21,7 @@ import { generateFallback, generateZeroProofFallback } from './generator.mjs';
 import { WELCOME } from './push.mjs';
 import { playlistSlice, questionOfDay, QUESTIONS } from './quiz.mjs';
 import { createQuizSession, quizClientKey } from '../shared/quiz-session.mjs';
+import { createBusinessService } from '../shared/business-service.mjs';
 import { buildLibrary, VIDEOS } from './videos.mjs';
 import { buildShortLibrary, SHORTS } from './shorts.mjs';
 import { validateShortSession } from './shorts-schema.mjs';
@@ -49,15 +50,14 @@ import {
   updateLike,
 } from './store.mjs';
 
-export async function createApp() {
+export async function createApp({ businessLocal = false } = {}) {
   // Catalogue/health routes are available immediately. Durable state is
   // loaded in the background and awaited only by handlers that need it.
   const app = express();
   const quiz = createQuizSession(QUESTIONS, quizRecordStore);
   const quizSalt = process.env.RATE_LIMIT_SALT || crypto.randomUUID();
   const PUSH_SECRET = process.env.PUSH_SECRET || '';
-  app.use('/api/quiz', express.json({ limit: '2kb' }));
-  app.use(express.json({ limit: '15mb' }));
+  const business = createBusinessService(process.env, { memory: businessLocal || process.env.PUBCRAWL_BUSINESS_MEMORY === '1' });
 
   const configuredOrigins = String(process.env.FRONTEND_ORIGIN || '')
     .split(',')
@@ -83,10 +83,27 @@ export async function createApp() {
     if (origin) res.setHeader('Access-Control-Allow-Origin', origin);
     res.setHeader('Vary', 'Origin');
     res.setHeader('Access-Control-Allow-Methods', 'GET,POST,OPTIONS');
-    res.setHeader('Access-Control-Allow-Headers', 'content-type, x-push-secret, ngrok-skip-browser-warning');
+    res.setHeader('Access-Control-Allow-Headers', 'content-type, x-push-secret, ngrok-skip-browser-warning, authorization');
     if (req.method === 'OPTIONS') return res.sendStatus(204);
     next();
   });
+  app.use('/api/business', express.raw({ type: () => true, limit: '64kb' }), async (req, res) => {
+    const headers = new Headers();
+    for (const [key, value] of Object.entries(req.headers)) {
+      if (typeof value === 'string') headers.set(key, value);
+    }
+    headers.set('x-pubcrawl-local-client', req.ip || 'unknown');
+    const request = new Request(new URL(req.originalUrl, 'http://localhost'), {
+      method: req.method,
+      headers,
+      body: ['GET', 'HEAD'].includes(req.method) ? undefined : req.body,
+    });
+    const response = await business(request);
+    for (const [key, value] of response.headers) res.setHeader(key, value);
+    res.status(response.status).send(Buffer.from(await response.arrayBuffer()));
+  });
+  app.use('/api/quiz', express.json({ limit: '2kb' }));
+  app.use(express.json({ limit: '15mb' }));
 
   const { cocktails, ingredients } = loadCatalog();
   const validIds = new Set(cocktails.map((c) => c.id));

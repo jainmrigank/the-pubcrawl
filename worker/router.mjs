@@ -9,6 +9,7 @@ import { generateDrink, identifyIngredients } from './ai.mjs';
 import { dailyQuizQuestion, quizPlaylist } from '../shared/quiz-engine.mjs';
 import { createQuizSession, quizClientKey, QuizError } from '../shared/quiz-session.mjs';
 import { createQuizRecordStore } from '../shared/quiz-record-store.mjs';
+import { createBusinessService } from '../shared/business-service.mjs';
 import { enqueueWelcomeNotification } from './push-delivery.mjs';
 import {
   STORE_KEYS,
@@ -41,6 +42,7 @@ const SHORT_METRICS_KEY = STORE_KEYS.shortMetrics;
 const WATCH_METRICS_KEY = STORE_KEYS.watchMetrics;
 const SUBS_KEY = STORE_KEYS.subs;
 const quizServices = new WeakMap();
+const businessServices = new WeakMap();
 function quizService(env) {
   if (!quizServices.has(env)) {
     const configured = storeConfigured(env);
@@ -104,7 +106,7 @@ assertWorkerShortsCapacity(shortsData);
 function corsHeaders(origin) {
   const headers = new Headers({
     'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
-    'Access-Control-Allow-Headers': 'content-type, x-push-secret',
+    'Access-Control-Allow-Headers': 'content-type, x-push-secret, authorization',
     Vary: 'Origin',
   });
   // handleApi validates the origin before any response is created, so any
@@ -250,6 +252,16 @@ async function handleApi(request, env, context) {
   if (origin && !allowedOrigins.has(origin)) return json({ error: 'origin not allowed' }, 403, undefined);
   if (request.method === 'OPTIONS') return new Response(null, { status: 204, headers: corsHeaders(origin) });
   const path = url.pathname.replace(/\/+$/, '') || '/';
+
+  if (path.startsWith('/api/business/')) {
+    if (!businessServices.has(env)) {
+      businessServices.set(env, createBusinessService(env, { memory: env.PUBCRAWL_BUSINESS_MEMORY === '1' }));
+    }
+    const response = await businessServices.get(env)(request);
+    const headers = new Headers(response.headers);
+    for (const [key, value] of corsHeaders(origin)) headers.set(key, value);
+    return new Response(response.body, { status: response.status, headers });
+  }
 
   if (path === '/api/health' && request.method === 'GET') {
     return json({

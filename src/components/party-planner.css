@@ -1,0 +1,24 @@
+.party-plan { margin-block: 12px 24px; padding: 14px clamp(13px, 3vw, 26px); border: 1px solid var(--line-strong); border-radius: 12px; background: var(--paper-2); max-width: 760px; }
+.party-plan-toggle { display: flex; align-items: center; justify-content: space-between; padding: 4px 0; width: 100%; min-height: 44px; background: transparent; border: 0; color: var(--ink); font: 1.65rem/1.2 var(--display); cursor: pointer; text-align: left; }
+.party-plan-content { display: grid; gap: 13px; padding: 8px 0; }
+.party-plan-intro, .party-plan-shopping p { margin: 0; max-width: 58ch; color: var(--grey); }
+.party-plan fieldset { margin: 0; padding: 5px 8px; border: 1px solid var(--line-strong); border-radius: 8px; min-width: 0; }
+.party-plan legend { padding: 0 5px; }
+.party-plan-count, .party-plan-option label, .party-plan-check { display: flex; gap: 8px; align-items: center; }
+.party-plan input[type='number'] { width: 4.4rem; min-height: 42px; padding-inline: 7px; color: var(--ink); background: var(--paper); border: 1px solid var(--control); border-radius: 5px; font-size: 1rem; }
+.party-plan input[type='checkbox'] { accent-color: var(--accent); }
+.party-plan-option { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 4px 14px; min-height: 47px; }
+.party-plan-option + .party-plan-option { border-top: 1px solid var(--line); }
+.party-plan-option label { min-height: 44px; }
+.party-plan-shopping h3 { font: 1.6rem/1.2 var(--display); }
+.party-plan-shopping h4 { margin: 10px 0 3px; }
+.party-plan-shopping ul { list-style: none; padding: 0; margin: 3px 0 8px; }
+.party-plan-shopping li { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; padding-block: 6px; border-bottom: 1px solid var(--line); }
+.party-plan-shopping li > span:last-child { text-align: right; }
+.party-plan-shopping small { display: block; color: var(--grey); }
+.party-plan-sample, .app-hosting-link, .app-business-links a { color: var(--accent); text-underline-offset: .2em; }
+.party-plan-content .btn { justify-self: start; }
+.app-hosting-link { display: inline-flex; align-items: center; min-height: 44px; }
+.app-business-links { display: flex; flex-wrap: wrap; justify-content: center; gap: 4px 18px; margin-top: 10px; }
+.app-business-links a { display: inline-flex; align-items: center; min-height: 44px; }
+.direct-drink-grid { max-width: 510px; grid-template-columns: minmax(0, 1fr); }

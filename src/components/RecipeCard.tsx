@@ -3,6 +3,7 @@ import { useId, useRef, useState } from 'react';
 import type { Recipe, Vibe } from '../types';
 import { ArrowLeft, ArrowRight, Check, Expand, GlassIcon, Heart, Play, Plus, Share, X } from '../icons';
 import { recipeShareText, shareContent } from '../share';
+import { trackProductEvent } from '../analytics';
 import type { RecipeFocusOrigin } from '../recipeFocusTypes';
 
 interface Props {
@@ -22,6 +23,7 @@ interface Props {
   onKeep?: (recipe: Recipe) => void;
   /** Optional stable tutorial anchor for this card's action rail. */
   tourActions?: string;
+  showRecipeFirst?: boolean;
   onExpand?: (origin: RecipeFocusOrigin) => void;
   /** Only offered for classics with a reviewed taste profile. */
 }
@@ -99,7 +101,7 @@ export function RecipeCardActions({
 /** Flip flash card. Photo and vibe on the front, the full recipe on the back. */
 export function RecipeCard(props: Props) {
   const { recipe, vibe, index, onVideo, onExpand, tourActions } = props;
-  const [flipped, setFlipped] = useState(false);
+  const [flipped, setFlipped] = useState(Boolean(props.showRecipeFirst));
   const [failedPhoto, setFailedPhoto] = useState<string>();
   const rootRef = useRef<HTMLElement>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
@@ -117,9 +119,14 @@ export function RecipeCard(props: Props) {
   if (isAI) cardLabel = recipe.source === 'ai' ? 'House special' : 'Off-menu special';
   const buttons = <RecipeCardActions {...props} />;
 
+  const flipCard = () => {
+    if (!flipped) trackProductEvent('recipe_open');
+    setFlipped((current) => !current);
+  };
+
   const toggleFace = (event: React.SyntheticEvent) => {
     event.stopPropagation();
-    setFlipped((current) => !current);
+    flipCard();
   };
 
   const expand = (event: React.MouseEvent<HTMLButtonElement>) => {
@@ -145,7 +152,7 @@ export function RecipeCard(props: Props) {
     const target = event.target as Element;
     if (target.closest('button, a, input, select, textarea, [data-card-control]')) return;
     if (window.getSelection()?.toString()) return;
-    setFlipped((current) => !current);
+    flipCard();
   };
 
   return (

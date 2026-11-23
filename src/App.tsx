@@ -1,4 +1,5 @@
 import { recipeContent } from './recipeContent';
+import { trackPageView, trackProductEvent } from './analytics';
 import { IngredientShelfContext } from './components/IngredientShelfContext';
 import { lazy, Suspense, useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import { AnimatePresence, motion, MotionConfig } from 'framer-motion';
@@ -41,8 +42,11 @@ import { advanceContentReturn } from './contentHistory';
 import './App.css';
 import './components/landing/landing.css';
 import './house-standard.css';
+import './components/party-planner.css';
 
 const BarAtlas = lazy(() => import('./components/atlas/BarAtlas'));
+const PartyPlanner = lazy(() => import('./components/PartyPlanner'));
+const commerceEnabled = import.meta.env.VITE_PUBCRAWL_COMMERCIAL !== '0';
 
 const FALLBACK_VIBE: Vibe = { id: 'boozy', label: 'Spirit-Forward', color: '#8A5A24' };
 const VIDEO_MODAL_GATE_ID = 'recipe-video';
@@ -76,6 +80,11 @@ function hashParams(): URLSearchParams {
 /** a nudge can deep-link straight to a drink: #/menu?q=<name> */
 function hashQuery(): string {
   return hashPath() === 'menu' && parseRoute() === 'menu' ? hashParams().get('q') || '' : '';
+}
+
+function hashRecipeId(): string {
+  const id = hashPath() === 'menu' ? hashParams().get('recipe') || '' : '';
+  return /^[a-z0-9][a-z0-9_-]{0,79}$/i.test(id) ? id : '';
 }
 
 function hashBrowseFilter(): BrowseFilter {
@@ -242,6 +251,7 @@ function useRoute(): RoutedView & {
 export default function App() {
   const { route, landing, homeVisit, beginFreshHome, restoreLastHomeOnNextEntry } = useRoute();
   const contentNavigation = useContentNavigation(homeVisit?.id, restoreLastHomeOnNextEntry);
+  useEffect(() => { trackPageView(landing ? '/' : `/${route}`); }, [landing, route]);
   const retainedHomeVisit = useRef<HomeVisit | null>(homeVisit);
   if (homeVisit) retainedHomeVisit.current = homeVisit;
   const shortsActive = route === 'shorts';
@@ -254,6 +264,8 @@ export default function App() {
   const [barQ, setBarQ] = useState('');
   const [browse, setBrowse] = useState<Recipe[]>([]);
   const [browseQ, setBrowseQ] = useState(hashQuery);
+  const [directRecipeId, setDirectRecipeId] = useState(hashRecipeId);
+  const [directLookup, setDirectLookup] = useState<{ id: string; recipe: Recipe | null } | null>(null);
   const [browseLimit] = useState(12);
   const [browseTotal, setBrowseTotal] = useState(0);
   const [browseHasMore, setBrowseHasMore] = useState(false);
@@ -282,6 +294,8 @@ export default function App() {
     }
   });
   const [tabShared, setTabShared] = useState(false);
+  const [plannerOpen, setPlannerOpen] = useState(false);
+  const [plannerStarted, setPlannerStarted] = useState(false);
   const [browseSeed, setBrowseSeed] = useState(() => String(Math.random()));
   const [likes, setLikes] = useState<Record<string, number>>({});
   const [likedIds, setLikedIds] = useState<Set<string>>(() => {
@@ -301,6 +315,23 @@ export default function App() {
   const [theme, setTheme] = useState<Theme>(() => currentTheme());
   const [themePreference, setThemePreference] = useState<Theme | 'system'>(() => readStoredTheme() || 'system');
   const recipeFocus = useRecipeFocus();
+  const directRecipe = directLookup?.id === directRecipeId ? directLookup.recipe : null;
+  const directCatalogActive = route === 'menu' && Boolean(directRecipeId);
+  useEffect(() => {
+    if (!directCatalogActive) return;
+    let cancelled = false;
+    const finish = (recipe: Recipe | null) => {
+      if (!cancelled) setDirectLookup({ id: directRecipeId, recipe });
+    };
+    const kept = keptRecipes.find(recipe => recipe.id === directRecipeId);
+    if (kept) finish(kept);
+    else void loadLocalCatalogue().then(bundle => finish(bundle.recipes.find(recipe => recipe.id === directRecipeId) || null))
+      .catch(() => finish(null));
+    return () => { cancelled = true; };
+  }, [directCatalogActive, directRecipeId, keptRecipes]);
+  useEffect(() => {
+    if (directCatalogActive && directRecipe?.id) trackProductEvent('recipe_open');
+  }, [directCatalogActive, directRecipe?.id]);
   // Most Loved is the only browse view whose ordering depends on likes. Keep
   // a stable null dependency for every other view so a background likes
   // refresh never clears/reorders the normal menu mid-scroll.
@@ -391,6 +422,7 @@ export default function App() {
   // pick the drink up from the new hash too
   useEffect(() => {
     const onHash = () => {
+      setDirectRecipeId(hashRecipeId());
       if (hashPath() === 'menu' && hashParams().get('view') === 'map') {
         window.history.replaceState(window.history.state, '', '#/taste-map');
       }
@@ -706,6 +738,14 @@ export default function App() {
   );
   const tabIds = useMemo(() => new Set(tab.map((r) => r.id)), [tab]);
 
+  const previousCounts = useRef({ ingredients: pantry.length, saved: tab.length });
+  useEffect(() => {
+    // Committed additions only, including when a single action adds several ingredients.
+    if (pantry.length > previousCounts.current.ingredients) trackProductEvent('shelf_add');
+    if (tab.length > previousCounts.current.saved) trackProductEvent('tab_save');
+    previousCounts.current = { ingredients: pantry.length, saved: tab.length };
+  }, [pantry.length, tab.length]);
+
   async function invent() {
     if (!pantry.length || generating) return;
     setGenerating(true);
@@ -761,6 +801,7 @@ export default function App() {
   const onBrowseQuery = useCallback((value: string) => {
     setBrowseQ(value);
     if (route !== 'menu' || landing) return;
+    setDirectRecipeId('');
     const state = window.history.state && typeof window.history.state === 'object' ? window.history.state : {};
     window.history.replaceState(state, '', menuHash(value, browseFilter));
   }, [browseFilter, landing, route]);
@@ -768,6 +809,7 @@ export default function App() {
     setBrowseFilter(value);
     setLoved(false);
     if (route !== 'menu' || landing) return;
+    setDirectRecipeId('');
     const state = window.history.state && typeof window.history.state === 'object' ? window.history.state : {};
     window.history.pushState(advanceContentReturn(state), '', menuHash(browseQ, value));
   }, [browseQ, landing, route]);
@@ -778,7 +820,7 @@ export default function App() {
       : loved ? 'Most loved' : browseQ ? `“${browseQ}”` : '';
   const browseNote = `Showing ${featured.length} of ${browseTotal}${browseContext ? ` · ${browseContext}` : ''}`;
 
-  const card = (r: Recipe, i: number, removeMode = false, tourActions?: string) => (
+  const card = (r: Recipe, i: number, removeMode = false, tourActions?: string, showRecipeFirst = false) => (
     <RecipeCard
       key={r.id}
       recipe={r}
@@ -794,6 +836,7 @@ export default function App() {
       onKeep={keepDrink}
       onExpand={recipeFocus.openRecipe}
       tourActions={tourActions}
+      showRecipeFirst={showRecipeFirst}
     />
   );
 
@@ -802,9 +845,9 @@ export default function App() {
     <MotionConfig reducedMotion="user">
       <div className={`site ${shortsActive ? 'shorts-active' : ''} ${landing ? 'landing-active' : ''}`}>
         <SketchDefs />
-        {!shortsActive && <DailyQuestion force={dailyForced} />}
-        {!shortsActive && <InstallBanner />}
-        {!shortsActive && <NudgePrompt />}
+        {!shortsActive && (!directCatalogActive || dailyForced) && <DailyQuestion force={dailyForced} />}
+        {!shortsActive && !directCatalogActive && <InstallBanner />}
+        {!shortsActive && !directCatalogActive && <NudgePrompt />}
         <GuidedTour id="landing" active={landing} autoStart={false} />
         <GuidedTour id="taste-map" active={route === 'taste-map'} autoStart={false} />
         <GuidedTour id="menu" active={route === 'menu' && !landing} autoStart={false} />
@@ -834,7 +877,14 @@ export default function App() {
               />
             </div>
 
-            <div hidden={route !== 'menu' || landing}>
+            {directCatalogActive && <section className="sec page-top" aria-label="Shared recipe">
+              <a href="#/menu" className="app-hosting-link">Browse all drinks</a>
+              {directRecipe ? <>
+                <SectionHead index="01" title={directRecipe.name} note={directRecipe.glass || 'Recipe'} />
+                <div className="grid direct-drink-grid">{card(directRecipe, 0, false, undefined, true)}</div>
+              </> : <p role="status">{directLookup?.id === directRecipeId ? 'This recipe is unavailable.' : 'Opening recipe…'}</p>}
+            </section>}
+            <div hidden={route !== 'menu' || landing || directCatalogActive}>
                 <section className="sec menu-page" id="menu-list">
                   <SectionHead
                     index="01"
@@ -949,6 +999,7 @@ export default function App() {
                       <UploadZone onAdd={addIngredient} onAddAll={addAll} pantry={pantry} />
                     </div>
                   </div>
+                  <a href="/hosting-sample/" className="app-hosting-link">Cooking for a group? Open a free drinks menu</a>
 
                   {hasPantry && (
                     <div className="pantry">
@@ -1091,6 +1142,17 @@ export default function App() {
                   title="Your Tab"
                   note={tab.length ? `${tab.length} saved ${tab.length === 1 ? 'drink' : 'drinks'}` : 'Your next round, saved.'}
                 />
+                <section className="party-plan">
+                  <button type="button" className="party-plan-toggle" aria-expanded={plannerOpen} aria-controls="party-plan-editor"
+                    onClick={() => {
+                      if (!plannerOpen) trackProductEvent('party_plan');
+                      setPlannerStarted(true);
+                      setPlannerOpen(value => !value);
+                    }}>Plan a party <ArrowDown size={18} /></button>
+                  <div id="party-plan-editor" hidden={!plannerOpen}>
+                    {plannerStarted && <Suspense fallback={<p role="status">Opening planner…</p>}><PartyPlanner pantry={pantry} saved={tabIds} /></Suspense>}
+                  </div>
+                </section>
                 <div data-tour="tab-lineup">
                 {tab.length === 0 ? (
                   <div className="empty">
@@ -1109,6 +1171,7 @@ export default function App() {
                           className="text-btn"
                           onClick={async () => {
                             const outcome = await shareContent("Tonight's Tab · The PubCrawl", tabShareText(tab));
+                            if (outcome === 'shared' || outcome === 'copied') trackProductEvent('tab_share');
                             if (outcome === 'copied') {
                               setTabShared(true);
                               setTimeout(() => setTabShared(false), 1600);
@@ -1143,6 +1206,11 @@ export default function App() {
             <div className="foot-nudge">
               <NudgeToggle />
             </div>
+            <nav className="app-business-links" aria-label="Pubcrawl resources">
+              <a href="/recipes/">Recipes</a><a href={commerceEnabled ? '/hosting-pack/' : '/hosting-sample/'}>Hosting</a>
+              {commerceEnabled && <><a href="/work-with-us/">Work with us</a><a href="/gurgaon-mocktail-workshop/">Gurgaon workshops</a><a href="/barware/">Bar tools</a></>}
+              <a href="/privacy/">Privacy</a>
+            </nav>
             <div className="foot-meta">
               <span className="k-label">Recipes from TheCocktailDB</span>
               <span className="k-label">Some House Specials use AI.</span>

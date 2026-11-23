@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react';
+import { trackProductEvent } from './analytics';
 import { OVERLAY_PRIORITY, overlayGate } from './overlayGate';
 import {
   clearRecipeFocusMarker,
@@ -108,6 +109,7 @@ export function useRecipeFocus() {
     sessionRef.current = next;
     updatePhase('opening');
     setSession(next);
+    trackProductEvent('recipe_open');
   }, [updatePhase]);
 
   const markOpen = useCallback(() => {
