@@ -180,7 +180,7 @@ Without `LLM_API_KEY`, the app still runs. AI photo detection is disabled and re
 
 ## Website Analytics
 
-First-party analytics use the API’s Upstash storage. Deploy the API with its Redis bindings and a private `PUBCRAWL_BUSINESS_ADMIN_KEY` of at least 32 characters. Use a randomly generated key such as the output of `openssl rand -hex 32`. Keep the key in the API runtime and an owner password manager. Set Vercel’s `VITE_API_BASE` to the deployed API origin and build the frontend. Enter the key at `/ops/` to see traffic, campaign placements, recipe and Shelf engagement, enquiries, confirmed signups and sales. The lead list is private and lets the owner mark enquiries qualified or won.
+First-party analytics use the API’s Upstash storage. Deploy the API with its Redis bindings and a private `PUBCRAWL_BUSINESS_ADMIN_KEY` of at least 32 characters. Use a randomly generated key such as the output of `openssl rand -hex 32`. Keep the key in the API runtime and an owner password manager. Set the frontend’s `VITE_API_BASE` to the deployed API origin before building. Enter the key at `/ops/` to see traffic, campaign placements, recipe and Shelf engagement, enquiries, confirmed signups and sales. The lead list is private and lets the owner mark enquiries qualified or won.
 
 For a Cloudflare Worker deployment, set the access key with `npx wrangler secret put PUBCRAWL_BUSINESS_ADMIN_KEY --config worker/wrangler.jsonc`. Confirm the API’s existing `KV_REST_API_URL` and `KV_REST_API_TOKEN` bindings are present. The first-party tracker and the enquiry forms operate with those bindings. Payment and email credentials activate the separate checkout, delivery and subscription features.
 
@@ -201,7 +201,7 @@ VITE_PUBCRAWL_COMMERCIAL=1 VITE_API_BASE=https://pubcrawl-api.jainmrigank3sgta.w
 npx wrangler deploy --config wrangler.site.jsonc
 ```
 
-The temporary `workers.dev` hostname uses a `noindex` response header. Connect the apex hostname as a Worker Custom Domain after the Cloudflare DNS zone is active. Check the HTTPS homepage, a recipe with UTM tags, `/sitemap.xml`, `/ops/`, the app and the `www` redirect after the cutover. [Cloudflare static asset pricing and limits](https://developers.cloudflare.com/workers/static-assets/billing-and-limitations/), [Worker custom domains](https://developers.cloudflare.com/workers/configuration/routing/custom-domains/).
+The `thepubcrawl.in/*` Worker route is declared in `wrangler.site.jsonc`. The apex uses Cloudflare-proxied placeholder records (`192.0.2.1` and `100::`). The proxied `www` CNAME points to the apex and a Cloudflare redirect rule keeps the path and query string. Universal SSL and Always Use HTTPS are enabled. The `workers.dev` preview uses a `noindex` response header. After deploying, check the HTTPS homepage, a recipe with UTM tags, `/sitemap.xml`, `/ops/`, the app and the `www` redirect. [Cloudflare static asset pricing and limits](https://developers.cloudflare.com/workers/static-assets/billing-and-limitations/), [Worker routes](https://developers.cloudflare.com/workers/configuration/routing/routes/).
 
 `npm run build` produces static HTML for the social entry, ten recipes, hosting pack and sample, business brief, Gurgaon workshop, buying guide and privacy page. The build uses the source photos under `scripts/instagram/photos/` and checks them against `scripts/site-recipe-photos.json`. The recipe pages have canonical URLs, share images and structured data. The homepage carries Google's URL-prefix verification tag for `https://thepubcrawl.in/`. Keep the tag in place across host changes and use `VITE_GOOGLE_SITE_VERIFICATION` if another URL-prefix verification tag is needed. Domain properties use DNS verification. The Search Console sitemap URL is `https://thepubcrawl.in/sitemap.xml`. Inspect the homepage, one recipe URL and the hosting page after submitting. [Search Console ownership](https://support.google.com/webmasters/answer/9008080), [sitemap submission](https://developers.google.com/search/docs/crawling-indexing/sitemaps/build-sitemap).
 
@@ -214,8 +214,8 @@ For local verification, start `npm run dev` or `npm run preview` with a local `P
 
 ## Deployment
 
-- Frontend: static Vite deployment on Vercel.
-- Custom domain: `thepubcrawl.in`, registered and DNS-managed at GoDaddy. `www.thepubcrawl.in` redirects to the apex domain. GoDaddy's required `.in` KYC must be approved and any Registrar Hold removed before DNS and HTTPS can become active.
+- Frontend: static Vite deployment on Cloudflare Workers Static Assets via `pubcrawl-site` on the Free plan.
+- Custom domain: `thepubcrawl.in` is registered at GoDaddy and uses Cloudflare DNS. Keep the registration and required `.in` KYC current. `www.thepubcrawl.in` redirects to the apex domain.
 - API: Cloudflare Worker `pubcrawl-api`; Express on Render through `render.yaml` is the fallback.
 - Runtime API base: `VITE_API_BASE`, plus browser override with `localStorage.setItem('pubcrawl.api', 'https://...')`.
 - Durable store: set `KV_REST_API_URL` and `KV_REST_API_TOKEN` or the `UPSTASH_REDIS_REST_*` equivalents.
