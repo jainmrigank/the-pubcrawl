@@ -69,6 +69,8 @@ function cells(values: [string, ...number[]]) {
 
 export function mountOperator() {
   const login = document.querySelector<HTMLFormElement>('[data-ops-login]')!;
+  const keyInput = login.querySelector<HTMLInputElement>('[data-ops-key]')!;
+  const submit = login.querySelector<HTMLButtonElement>('button[type="submit"]')!;
   const status = document.querySelector<HTMLElement>('[data-ops-status]')!;
   const content = document.querySelector<HTMLElement>('[data-ops-content]')!;
   let key = '';
@@ -281,8 +283,11 @@ export function mountOperator() {
 
   login.addEventListener('submit', event => {
     event.preventDefault();
-    key = String(new FormData(login).get('token') || '').trim();
+    key = keyInput.value.trim();
     login.reset();
     void refresh();
   });
+  status.textContent = '';
+  keyInput.disabled = false;
+  submit.disabled = false;
 }

@@ -229,8 +229,8 @@ add('/email/', 'Email preferences', 'Confirm your subscription or unsubscribe fr
 
 add('/ops/', 'Pubcrawl analytics', 'Private traffic, lead and checkout reports.',
   '<section class="entry-narrow">' + heading('Pubcrawl analytics', 'Traffic, leads and confirmed orders · India time') +
-  '<form data-ops-login class="entry-form-panel"><label>Analytics access key<input name="token" type="password" required autocomplete="off"></label><button type="submit" class="entry-button">Open dashboard</button></form>' +
-  '<p data-ops-status role="status"></p></section><div data-ops-content hidden></div>', { indexed: false, track: false });
+  '<form data-ops-login class="entry-form-panel" method="post"><label>Analytics access key<input data-ops-key type="password" required autocomplete="off" disabled></label><button type="submit" class="entry-button" disabled>Open dashboard</button></form>' +
+  '<p data-ops-status role="status">Preparing the dashboard…</p></section><div data-ops-content hidden></div>', { indexed: false, track: false });
 
 function schema(recipe, path) {
   if (!recipe) return '';

@@ -300,4 +300,8 @@ if ($('[data-contact], [data-form], [data-gear-link], [data-workshop-event]')) {
     status($('[data-checkout-state]'), 'Checkout is temporarily unavailable. You can open the free menu now.');
   });
 }
-if ($('[data-ops-login]')) void import('./operator').then(({ mountOperator }) => mountOperator());
+if ($('[data-ops-login]')) {
+  void import('./operator').then(({ mountOperator }) => mountOperator()).catch(() => {
+    status($('[data-ops-status]'), 'Could not load the dashboard. Reload the page and try again.');
+  });
+}
