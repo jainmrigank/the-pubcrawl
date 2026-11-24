@@ -3,7 +3,6 @@ import test from 'node:test';
 import { createBusinessService } from '../shared/business-service.mjs';
 import { sign } from '../shared/business-utils.mjs';
 import { buildPartyPlan, partyRecipes } from '../shared/party-plan.mjs';
-import { exactRecipePath } from '../shared/site-recipes.mjs';
 import { hostingPrice } from '../shared/business-metrics.mjs';
 
 const credentials = {
@@ -178,7 +177,7 @@ test('email opt-in is counted after confirmation and an old link cannot undo uns
   assert.deepEqual((await (await api.call('/admin/subscribers', undefined, api.auth)).json()).items, []);
 });
 
-test('party plan scales by drink, combines compatible ingredients and flags Shelf inputs', () => {
+test('batch calculations scale each drink, combine quantities and identify Shelf ingredients', () => {
   const sheet = buildPartyPlan([
     { recipe: partyRecipes[0], servings: 6 },
     { recipe: partyRecipes[1], servings: 12 },
@@ -187,6 +186,17 @@ test('party plan scales by drink, combines compatible ingredients and flags Shel
   assert.equal(sheet.rows.find(row => row.name === 'Sugar syrup (1:1)').prepare, 360);
   assert.equal(sheet.rows.find(row => row.name === 'Chilled water').serve, 1980);
   assert.throws(() => buildPartyPlan([{ recipe: partyRecipes[0], servings: 0 }]), RangeError);
-  assert.equal(exactRecipePath('11004'), '/recipes/whiskey-sour/');
-  assert.equal(exactRecipePath('x-kokum'), '/#/menu?recipe=x-kokum');
+});
+
+test('shelving offers closes public submissions while keeping tracking and reports available', async () => {
+  const api = client({ ...credentials, PUBCRAWL_PUBLIC_OFFERS: '0' });
+  const config = await (await api.call('/config')).json();
+  assert.equal(config.leads, false);
+  assert.equal(config.checkout, false);
+  assert.equal(config.newsletter, false);
+  for (const path of ['/enquiry', '/checkout', '/email/signup']) {
+    assert.equal((await api.call(path, {})).status, 503);
+  }
+  assert.equal((await api.call('/track', { visit: crypto.randomUUID(), event: 'page_view', path: '/' })).status, 200);
+  assert.equal(events(await api.metrics(), 'visit'), 1);
 });

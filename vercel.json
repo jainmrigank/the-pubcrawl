@@ -1,5 +1,5 @@
 {
-  "buildCommand": "VITE_PUBCRAWL_COMMERCIAL=${VITE_PUBCRAWL_COMMERCIAL:-0} npm run build",
+  "buildCommand": "npm run build",
   "outputDirectory": "dist",
   "trailingSlash": true
 }

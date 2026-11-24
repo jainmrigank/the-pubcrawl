@@ -9,7 +9,8 @@
   // and RATE_LIMIT_SALT (see worker/README.md).
   "vars": {
     "FRONTEND_ORIGIN": "https://thepubcrawl.in",
-    "PUSH_ENABLED": "false"
+    "PUSH_ENABLED": "false",
+    "PUBCRAWL_PUBLIC_OFFERS": "0"
   },
   "triggers": {
     "crons": ["0 12 * * *"]

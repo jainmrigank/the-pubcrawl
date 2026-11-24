@@ -23,7 +23,6 @@ interface Props {
   onKeep?: (recipe: Recipe) => void;
   /** Optional stable tutorial anchor for this card's action rail. */
   tourActions?: string;
-  showRecipeFirst?: boolean;
   onExpand?: (origin: RecipeFocusOrigin) => void;
   /** Only offered for classics with a reviewed taste profile. */
 }
@@ -101,7 +100,7 @@ export function RecipeCardActions({
 /** Flip flash card. Photo and vibe on the front, the full recipe on the back. */
 export function RecipeCard(props: Props) {
   const { recipe, vibe, index, onVideo, onExpand, tourActions } = props;
-  const [flipped, setFlipped] = useState(Boolean(props.showRecipeFirst));
+  const [flipped, setFlipped] = useState(false);
   const [failedPhoto, setFailedPhoto] = useState<string>();
   const rootRef = useRef<HTMLElement>(null);
   const scrollRef = useRef<HTMLDivElement>(null);

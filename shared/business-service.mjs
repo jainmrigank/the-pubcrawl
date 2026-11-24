@@ -1,14 +1,13 @@
-import { cleanCampaign, eventNames, hostingPrice, trafficSource } from './business-metrics.mjs';
+import { cleanCampaign, eventNames, hostingPrice, legacyRecipeNames, trafficSource } from './business-metrics.mjs';
 import { createOrders } from './business-orders.mjs';
 import { DAY, BusinessError, digest, emailAddress, equalStrings, json, mailer, parseBody, publicOrigin, rawBody, secureLink, signer, text, uuidPattern } from './business-utils.mjs';
 import { createBusinessStore, istDay, metric, metricField } from './business-store.mjs';
-import { siteRecipes } from './site-recipes.mjs';
 
 const paths = new Set([
   '/', '/menu', '/taste-map', '/bar', '/basics', '/tab', '/quiz', '/watch', '/shorts', '/atlas',
   '/start', '/recipes', '/hosting-pack', '/hosting-sample', '/work-with-us',
   '/gurgaon-mocktail-workshop', '/barware', '/batch-mocktails-for-10', '/privacy',
-  ...siteRecipes.map(recipe => '/recipes/' + recipe.slug),
+  ...Object.keys(legacyRecipeNames).map(slug => '/recipes/' + slug),
 ]);
 const optionalAffiliateKeys = ['jigger', 'shaker', 'strainer', 'soda'];
 const ACTION_LIMITS = { enquiry: 8, checkout: 12, order: 45, email: 8 };
@@ -56,14 +55,15 @@ export function createBusinessService(env, { memory = false, fetcher = fetch } =
   const orders = createOrders(orderEnv, store, tokens, mail, fetcher);
   const origin = publicOrigin(env);
   const contactEmail = emailAddress(env.PUBCRAWL_CONTACT_EMAIL);
-  const newsletter = store.available && tokens.available && mail.available && Boolean(contactEmail);
+  const publicOffers = env.PUBCRAWL_PUBLIC_OFFERS !== '0';
+  const newsletter = publicOffers && store.available && tokens.available && mail.available && Boolean(contactEmail);
   const adminKey = String(env.PUBCRAWL_BUSINESS_ADMIN_KEY || '');
   const config = {
-    leads: store.available && (memory || adminKey.length >= 32),
+    leads: publicOffers && store.available && (memory || adminKey.length >= 32),
     newsletter,
-    checkout: orders.available,
-    checkoutTest: orders.available && orders.test,
-    affiliate: affiliateLinks(env.PUBCRAWL_AFFILIATE_LINKS_JSON),
+    checkout: publicOffers && orders.available,
+    checkoutTest: publicOffers && orders.available && orders.test,
+    affiliate: publicOffers ? affiliateLinks(env.PUBCRAWL_AFFILIATE_LINKS_JSON) : {},
     supportEmail: contactEmail,
     merchantName: String(env.PUBCRAWL_MERCHANT_NAME || '').trim(),
     price: hostingPrice,
@@ -222,7 +222,9 @@ export function createBusinessService(env, { memory = false, fetcher = fetch } =
     const url = new URL(request.url);
     const path = url.pathname.slice('/api/business'.length).replace(/\/$/, '');
     const method = request.method;
-    if (method === 'GET' && path === '/config') return json({ ...config, workshop: workshopConfig(env.PUBCRAWL_WORKSHOP_JSON) });
+    if (method === 'GET' && path === '/config') {
+      return json({ ...config, workshop: publicOffers ? workshopConfig(env.PUBCRAWL_WORKSHOP_JSON) : null });
+    }
     try {
       if (path.startsWith('/admin/')) {
         if (adminKey.length < 32 || !equalStrings(request.headers.get('authorization'), 'Bearer ' + adminKey)) {
@@ -239,7 +241,10 @@ export function createBusinessService(env, { memory = false, fetcher = fetch } =
       switch (path) {
         case '/track': return await track(request, input);
         case '/enquiry': await limit(request, 'enquiry'); return await submitLead(input);
-        case '/checkout': await limit(request, 'checkout'); return await orders.requestCheckout(input);
+        case '/checkout':
+          if (!publicOffers) throw new BusinessError(503, 'Checkout is temporarily unavailable.');
+          await limit(request, 'checkout');
+          return await orders.requestCheckout(input);
         case '/order': await limit(request, 'order'); return await orders.openOrder(input);
         case '/order/download': await limit(request, 'order'); return await orders.openOrder(input, true);
         case '/email/signup': await limit(request, 'email'); return await startSignup(input);

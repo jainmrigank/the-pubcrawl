@@ -20,6 +20,7 @@ export interface WorkerEnv {
   PUBCRAWL_MERCHANT_NAME?: string;
   PUBCRAWL_EMAIL_FROM?: string;
   PUBCRAWL_AFFILIATE_LINKS_JSON?: string;
+  PUBCRAWL_PUBLIC_OFFERS?: string;
   PUBCRAWL_WORKSHOP_JSON?: string;
   RAZORPAY_KEY_ID?: string;
   RAZORPAY_KEY_SECRET?: string;

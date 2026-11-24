@@ -2,6 +2,19 @@ export const siteOrigin = 'https://thepubcrawl.in';
 export const hostingPrice = 39900; // INR paise
 export const campaignKeys = ['utm_source', 'utm_medium', 'utm_campaign', 'utm_content'];
 
+export const legacyRecipeNames = {
+  'whiskey-sour': 'Whiskey Sour',
+  daiquiri: 'Daiquiri',
+  margarita: 'Margarita',
+  mojito: 'Mojito',
+  negroni: 'Negroni',
+  'old-fashioned': 'Old Fashioned',
+  'espresso-martini': 'Espresso Martini',
+  'irish-coffee': 'Irish Coffee',
+  shikanji: 'Nimbu Shikanji',
+  'masala-chaas': 'Masala Chaas',
+};
+
 export function cleanCampaign(input) {
   const fields = {};
   for (const key of campaignKeys) {
